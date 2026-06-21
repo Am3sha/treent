@@ -191,7 +191,7 @@ export function BenchmarkInsightsView() {
                 />
                 <KpiCard
                   icon={<Target className="h-4 w-4" />}
-                  label="Average maturity score"
+                  label="Average strategic maturity score"
                   value={`${stats.averageOverall}`}
                   sub="/ 100"
                   accent
@@ -511,7 +511,7 @@ export function BenchmarkInsightsView() {
               <SectionHeading
                 eyebrow="Segments"
                 title="Maturity by sector & scale"
-                description="Average maturity scores broken down by industry and organisation size — a view of where different segments of the market currently sit."
+                description="Average strategic strategic maturity scores broken down by industry and organisation size — a view of where different segments of the market currently sit."
               />
             </Reveal>
             <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -606,7 +606,7 @@ export function BenchmarkInsightsView() {
                     </ResponsiveContainer>
                   </div>
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Each bar shows the average maturity score for organisations of that
+                    Each bar shows the average strategic maturity score for organisations of that
                     headcount band.
                   </p>
                 </Card>

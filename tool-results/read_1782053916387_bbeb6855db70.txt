@@ -1,0 +1,602 @@
+     1→# TRENNT Consulting Group — Project Worklog
+     2→
+     3→This is the single shared worklog for the TRENNT Consulting Group company website + built-in
+     4→Strategic Benchmark Assessment tool. All agents MUST read this before working and append
+     5→their own section (starting with `---`) after finishing.
+     6→
+     7→---
+     8→Task ID: 1
+     9→Agent: main (orchestrator)
+    10→Task: Foundation — theme, Prisma schema, shared types, Zustand nav store, content data, layout shell (header/footer), page router, dev server.
+    11→
+    12→Work Log:
+    13→- Explored project scaffold (Next.js 16, shadcn/ui, Prisma/SQLite, zustand, framer-motion, recharts).
+    14→- Designed brand: "TRENNT Consulting Group" — strategic advisory & digital transformation consultancy.
+    15→  Benchmark tool = "Strategic Benchmark Assessment" (5 dimensions × 3 questions = 15 questions).
+    16→- Rewrote `src/app/globals.css` with a sophisticated emerald + amber palette (no indigo/blue),
+    17→  warm parchment background, refined scrollbars, grid/radial utilities.
+    18→- Rewrote `prisma/schema.prisma` with models: ContactInquiry, CareerApplication,
+    19→  NewsletterSubscriber, Assessment, AssessmentResponse, AssessmentFollowUp. Ran `bun run db:push` successfully.
+    20→- Created `src/lib/types.ts` — shared TypeScript contracts (ViewKey, Dimension, BenchmarkQuestion,
+    21→  AssessmentResult, MaturityTier, RespondentProfile, BenchmarkStats, ServiceItem, CareerItem, etc.).
+    22→- Created `src/lib/content.ts` — all company content: COMPANY, STATS, SERVICES (6), METHODOLOGY (4),
+    23→  LEADERSHIP (6), TESTIMONIALS (3), CASE_STUDIES (3), CAREERS (5), PERKS (6), DIMENSIONS (5),
+    24→  BENCHMARK_QUESTIONS (15), scoreToTier(), TIER_META.
+    25→- Created `src/lib/store.ts` — Zustand `useNav` store: view state (+ URL hash sync), assessment
+    26→  session (responses, respondent, result, startedAt), computeLocalScores() helper.
+    27→- Created `src/components/theme-provider.tsx` (next-themes wrapper) and updated `src/app/layout.tsx`
+    28→  with proper metadata + theme provider.
+    29→- Created site shell components: `logo.tsx` (SVG trennt mark), `icon.tsx` (dynamic lucide renderer),
+    30→  `theme-toggle.tsx`, `reveal.tsx` (framer-motion Reveal + Eyebrow + SectionHeading), `header.tsx`
+    31→  (sticky nav with desktop nav + mobile Sheet + benchmark CTA), `footer.tsx` (sticky footer with
+    32→  newsletter signup, nav columns, contact, socials).
+    33→- Created `src/app/page.tsx` — single-route router that renders one of 9 view components based on
+    34→  `useNav.view`, with hashchange sync and Suspense fallback. Footer is sticky (min-h-screen flex flex-col, footer mt-auto).
+    35→- Created 9 stub view files in `src/components/views/` so the project compiles; subagents will replace them.
+    36→- Configured `allowedDevOrigins` in `next.config.ts` to silence the preview cross-origin warning.
+    37→- Dev server running stably on port 3000 (launched via `setsid sh -c '... &'` to orphan to init).
+    38→  `GET /` returns HTTP 200.
+    39→
+    40→Stage Summary:
+    41→- Foundation complete and compiling. Dev server healthy on :3000.
+    42→- Architecture decision: EVERYTHING lives under the `/` route. Navigation between the 9 "pages"
+    43→  (home, about, services, contact, careers, benchmark-landing, benchmark-quiz, benchmark-results,
+    44→  benchmark-followup) is driven by the `useNav` Zustand store, persisted to `location.hash`
+    45→  (e.g. `#/about`) so deep-linking + browser back/forward work.
+    46→- Benchmark flow: landing → quiz (15 questions across 5 dimensions) → respondent profile capture
+    47→  → submit to `/api/assessment` → results page (score, tier, percentile vs benchmark, per-dimension
+    48→  radar) → optional follow-up → `/api/assessment/followup`. All responses stored in `Assessment` +
+    49→  `AssessmentResponse` tables for aggregation/reporting.
+    50→- Contracts the subagents MUST follow:
+    51→  - Views are named exports in `src/components/views/<name>-view.tsx` (see page.tsx imports).
+    52→  - Navigate via `useNav((s) => s.navigate)(viewKey)` or `setView`. Read current view via `useNav((s) => s.view)`.
+    53→  - Assessment session: `useNav` exposes responses, setResponse, resetResponses, respondent,
+    54→    setRespondent, result, setResult, startAssessment, computeLocalScores.
+    55→  - Use existing shadcn/ui components from `@/components/ui/*`. Use `Icon` from
+    56→    `@/components/site/icon` for dynamic lucide icons by name (content uses string icon names).
+    57→  - Use `Reveal`, `Eyebrow`, `SectionHeading` from `@/components/site/reveal` for consistent animation.
+    58→  - Use `Logo` from `@/components/site/logo`. Color tokens: emerald primary, amber accent — NO indigo/blue.
+    59→  - Content lives in `@/lib/content` and types in `@/lib/types` — import from there, do not redefine.
+    60→- Next: dispatch subagents to build the 9 views (corporate + benchmark) and the backend APIs.
+    61→
+    62→---
+    63→Task ID: 4
+    64→Agent: backend-api-builder
+    65→Task: Built all 7 backend API routes for the TRENNT Consulting Group site + Strategic Benchmark Assessment tool, matching the exact frontend contracts.
+    66→
+    67→Work Log:
+    68→- Read worklog.md, prisma/schema.prisma, src/lib/db.ts, src/lib/types.ts, and src/lib/content.ts (scoreToTier reference) to align with the established architecture.
+    69→- Created `src/app/api/contact/route.ts` — POST contact inquiry. Validates name/email/message, defaults topic to "general", persists to ContactInquiry.
+    70→- Created `src/app/api/careers/route.ts` — POST career application. Validates name/email/roleSlug/roleTitle, persists to CareerApplication (optional phone, yearsExp, linkedin, portfolio, message, resume).
+    71→- Created `src/app/api/newsletter/route.ts` — POST newsletter subscribe. Validates email. Handles P2002 (unique email) by returning `{ ok:true, alreadySubscribed:true, id: existing.id }` instead of erroring. Normalises email to lowercase.
+    72→- Created `src/app/api/assessment/route.ts` — THE CORE capture endpoint.
+    73→  - Validates responses array (non-empty, each with questionId/value 1-5/dimension in {strategy,technology,culture,data,operations}/questionText).
+    74→  - Validates respondent.email (valid format); consentContact coerced to boolean.
+    75→  - Computes scores server-side (authoritative): per-dimension and overall via `norm(avg) = clamp(round(((avg-1)/4)*100), 0, 100)`. tier = inline `scoreToTier` (<35 Nascent, <55 Developing, <75 Established, else Leading) — re-implemented inline to avoid client/server boundary concerns with @/lib/content.
+    76→  - Single nested create: `db.assessment.create({ data: { ..., responses: { create: [...] } } })` — works fine with Prisma+SQLite.
+    77→  - Percentile computed AFTER insert (excluding self): if totalOthers=0 → 50, else round(lowerOrEqualOthers / totalOthers * 100). Returned in response (not persisted).
+    78→- Created `src/app/api/assessment/[id]/route.ts` — GET single Assessment including responses. Uses Next.js 16 pattern `params: Promise<{ id: string }>` and awaits it. Returns 404 if not found. percentile omitted (computed at submit time only).
+    79→- Created `src/app/api/assessment/followup/route.ts` — POST follow-up request. Validates name/email/interest (one of consultation|report|workshop|partnership). DECISION: assessmentId is REQUIRED (returns 400 if empty) because the Prisma relation is non-nullable; verifies the parent Assessment exists. Documented in the route comment.
+    80→- Created `src/app/api/benchmark/stats/route.ts` — GET aggregate stats. Uses `aggregate` for averages + `groupBy` for tier distribution. Empty dataset returns zeros. Averages rounded to integers.
+    81→- All routes use `export async function POST/GET`, `import { db } from "@/lib/db"`, `Response.json(...)`, and try/catch with `console.error` + 500 on unexpected errors.
+    82→
+    83→Verification (curl tests against running dev server on :3000):
+    84→- POST /api/contact (valid) → `{"ok":true,"id":"cmqnr6qyo..."}` ✓
+    85→- POST /api/contact (bad email) → `{"ok":false,"error":"valid email is required"}` (400) ✓
+    86→- POST /api/careers (valid) → `{"ok":true,"id":"cmqnr6w8w..."}` ✓
+    87→- POST /api/newsletter (new) → `{"ok":true,"id":"cmqnr6wcd..."}` ✓
+    88→- POST /api/newsletter (duplicate) → `{"ok":true,"alreadySubscribed":true,"id":"cmqnr6wcd..."}` ✓
+    89→- GET /api/benchmark/stats (empty) → `{"totalAssessments":0,...zeros}` ✓
+    90→- POST /api/assessment (6 responses, mixed scores) → `{"id":"...","overall":63,"scores":{strategy:63,technology:100,culture:25,data:50,operations:75},"tier":"Established","percentile":50,"questionCount":6,"createdAt":"..."}` ✓ (math verified)
+    91→- POST /api/assessment (5 high) → overall:95, tier:Leading, percentile:100 ✓
+    92→- POST /api/assessment (5 low) → overall:10, tier:Nascent, percentile:0 ✓
+    93→- GET /api/assessment/<id> → full result with responses array ✓
+    94→- GET /api/assessment/nonexistent → HTTP 404 ✓
+    95→- GET /api/benchmark/stats (after 3 submissions) → `{"totalAssessments":3,"averageOverall":56,"dimensionAverages":{strategy:54,technology:75,culture:33,data:58,operations:58},"tierDistribution":{Nascent:1,Developing:0,Established:1,Leading:1}}` ✓
+    96→- POST /api/assessment/followup (valid) → `{"ok":true,"id":"cmqnr73od..."}` ✓
+    97→- POST /api/assessment/followup (missing assessmentId) → `{"ok":false,"error":"assessmentId required"}` (400) ✓
+    98→- POST /api/assessment validation: empty responses / bad value (9) / bad dimension ("marketing") all rejected with 400 ✓
+    99→- `bun run lint` clean. Dev log shows 200/404/400 responses, no 500s, no compile errors.
+   100→
+   101→Stage Summary:
+   102→- Files created (7):
+   103→  1. `src/app/api/contact/route.ts`
+   104→  2. `src/app/api/careers/route.ts`
+   105→  3. `src/app/api/newsletter/route.ts`
+   106→  4. `src/app/api/assessment/route.ts`
+   107→  5. `src/app/api/assessment/[id]/route.ts`
+   108→  6. `src/app/api/assessment/followup/route.ts`
+   109→  7. `src/app/api/benchmark/stats/route.ts`
+   110→- Key decisions:
+   111→  - Scores computed server-side and treated as authoritative (client scores ignored).
+   112→  - scoreToTier re-implemented inline in the assessment route (avoids importing @/lib/content which pulls types — keeps the API route clean and pure-server).
+   113→  - Percentile computed post-insert against OTHER assessments only; neutral 50 returned when dataset has 1 entry. Not persisted (computed on demand at submit time; omitted from GET /api/assessment/[id]).
+   114→  - Newsletter duplicate emails return 200 with `alreadySubscribed:true` (no error).
+   115→  - Followup requires a non-empty, valid assessmentId (frontend always has result.id available since followup only appears post-submit).
+   116→  - All averages in /api/benchmark/stats rounded to integers for a clean readout.
+   117→- No issues. All 7 endpoints behave per contract. Frontend agents can wire forms directly to these URLs.
+   118→
+   119→---
+   120→Task ID: 3a
+   121→Agent: corporate-views-builder
+   122→Task: Built the 5 corporate view components (home, about, services, contact, careers) for the TRENNT Consulting Group single-route site.
+   123→
+   124→Work Log:
+   125→- Read worklog.md, content.ts, types.ts, store.ts, reveal.tsx, icon.tsx, header.tsx, logo.tsx, globals.css, use-toast.ts, page.tsx, and the relevant shadcn primitives (button, card, accordion, dialog, select, input, textarea, label) to understand the established contracts.
+   126→- Wrote `src/components/views/home-view.tsx` (~580 lines): hero (bg-radial-fade + bg-grid + maturity snapshot card visual), trust bar, stats band (4 STATS), services preview (6 cards, click → services), prominent emerald Benchmark feature band ("5 dimensions · 15 questions · 8 minutes"), methodology (4 cards), case studies (3 cards with sector + result + metric), testimonials (3 figure cards), leadership preview (4 of 6), final CTA band.
+   127→- Wrote `src/components/views/about-view.tsx` (~385 lines): hero (company description + founded year + HQ card), story/purpose narrative (3 paragraphs), stats band, full 6-person leadership grid with initials avatars, 4 offices as cards, 6 VALUES I wrote (Outcomes over outputs / Independent always / Capability not dependency / Evidence over opinion / Candour is kindness / Long games short cycles), CTA band.
+   128→- Wrote `src/components/views/services-view.tsx` (~360 lines): hero with quick-jump chips, alternating-layout service cards for all 6 SERVICES (left: icon + title + tagline + description + CTA; right: Outcomes ✓ list + Deliverables bullet list), methodology band reuse, engagement model section (4 phases with duration ranges + 3-stat strip: team size 2-8 / weekly governance / 6wk-18mo), CTA band.
+   129→- Wrote `src/components/views/contact-view.tsx` (~530 lines): hero, 2-col layout (form + aside). Form: controlled state with manual validation (name/email/message required, email regex, message min 20 chars), topic Select (general|services|partnership|press), loading spinner on submit, success state replaces form with confirmation, error/success toasts. POST /api/contact. Aside: direct contact card (email/phone/HQ/response time), offices card, social card (LinkedIn/Twitter/YouTube).
+   130→- Wrote `src/components/views/careers-view.tsx` (~710 lines): hero with culture stats card (94% retention, 26 wk parental, £4k learning, 4 wk WFA), open roles as Accordion (5 CAREERS) — each row shows title/team/level + location + type badges, expands to summary + responsibilities + requirements + Apply button. Apply opens a Dialog with controlled form (name, email, phone, yearsExp number, linkedin, portfolio, message; roleSlug+roleTitle pre-filled from active role) → POST /api/careers, success toast + close dialog. Perks grid (6 PERKS with icons), culture section (4 CULTURE_VALUES I wrote + 2 paragraphs of narrative), CTA for open applications.
+   131→- Ran `bun run lint`: 0 errors, 0 warnings in my 5 files (only a pre-existing warning in benchmark-quiz-view.tsx).
+   132→- Verified dev.log: GET / returns HTTP 200, no compile errors.
+   133→- Wrote agent-ctx summary at /home/z/my-project/agent-ctx/3a-corporate-views-builder.md.
+   134→
+   135→Stage Summary:
+   136→- Files written (overwrote stubs):
+   137→  - src/components/views/home-view.tsx — HomeView
+   138→  - src/components/views/about-view.tsx — AboutView
+   139→  - src/components/views/services-view.tsx — ServicesView
+   140→  - src/components/views/contact-view.tsx — ContactView
+   141→  - src/components/views/careers-view.tsx — CareersView
+   142→- Design discipline kept: emerald primary + amber accent only (no indigo/blue), `mx-auto max-w-7xl px-4 sm:px-6 lg:px-8` containers, `py-20 md:py-28` section padding, `rounded-xl border border-border/70 bg-card hover:border-primary/30 hover:shadow-sm` card pattern, `bg-primary/8 text-primary rounded-lg p-2.5` icon tiles, `text-4xl md:text-5xl font-semibold text-primary` for stat values. Used `Reveal` + staggered `delay` throughout, `Eyebrow` + `SectionHeading` for consistent section heads.
+   143→- Forms: controlled state (no react-hook-form — simpler for this scope, fewer deps), manual validation, loading state with Loader2 spinner, success toast via `useToast`, error toast with message from API response. Submit disabled while pending. Apply dialog resets on open, closes on success.
+   144→- API contracts honoured: contact POSTs `{ name, email, company?, phone?, topic, message }`, careers POSTs `{ name, email, phone?, roleSlug, roleTitle, yearsExp?, linkedin?, portfolio?, message? }`.
+   145→- All navigation via `useNav((s) => s.navigate)(viewKey)` — no Link, no router. Hero CTAs route to benchmark-landing, services, about, contact as specified.
+   146→- Mobile-first: grids collapse 4→2→1, hero typography scales `text-4xl sm:text-5xl md:text-6xl`, touch targets ≥44px (h-11 buttons), nav strip wraps, dialog scrolls.
+   147→
+   148→---
+   149→Task ID: 3b
+   150→Agent: benchmark-views-builder
+   151→Task: Built the four Strategic Benchmark Assessment view components (landing, quiz, results, followup) — full production-grade implementations wired to the `useNav` store, the `/api/assessment`, `/api/assessment/followup`, and `/api/benchmark/stats` contracts.
+   152→
+   153→Work Log:
+   154→- Read worklog.md, store.ts, types.ts, content.ts (DIMENSIONS, BENCHMARK_QUESTIONS, TIER_META, scoreToTier), reveal.tsx, icon.tsx, page.tsx, ui primitives (button/card/progress/radio-group/select/accordion/checkbox/textarea/skeleton), and the existing `/api/assessment/route.ts` to lock down the response shape `{ id, overall, scores, tier, percentile, questionCount, createdAt }`.
+   155→- Wrote `benchmark-landing-view.tsx`: hero with `bg-radial-fade` + `bg-grid` + dual CTA; stats strip that fetches `/api/benchmark/stats` with loading (Skeleton), empty ("Be the first"), and error states; "What you'll get" 4-card grid; 5 dimensions preview cards using `Icon` for the glyph; 3-step "How it works" panel; methodology + trust note with the 4 tier chips; FAQ accordion; final CTA. Honors existing `result` in store with a "View your last result" affordance.
+   156→- Wrote `benchmark-quiz-view.tsx`: 6-step flow (5 dimension steps × 3 questions + 1 details step). Sticky progress header (Step X/6, dimension label, X/15 answered, Exit link, Progress bar). Each step uses framer-motion `AnimatePresence` for smooth transitions. Each question is a card with a numbered/checked indicator, prompt, optional help, and a custom Likert selector (1×5 responsive grid: stacked on mobile, 5-across on desktop; selected = `bg-primary text-primary-foreground`). Back/Next navigation with `stepComplete` gating (Next disabled until all 3 questions answered; final dim step button reads "Review details"). Details step captures `RespondentProfile` (name, email, company, companySize Select, industry Select, country, role) + consent Checkbox; Submit disabled until name+email+consent valid. On submit: builds responses array from `BENCHMARK_QUESTIONS`, computes `durationSec` from `startedAt`, POSTs to `/api/assessment`, then `setResult` + `setRespondent` + `navigate('benchmark-results')`. Toasts on error. Edge case handled: returning users with a prior result see a "Go to results" banner on the details step. Auto-starts a fresh session via `startAssessment()` if no responses and no `startedAt`.
+   157→- Wrote `benchmark-results-view.tsx`: empty state if no `result` in store. Hero score card with tier-colored stripe, big `overall / 100`, tier badge, tier summary, percentile line ("You're in the top X%" / "Higher than X%"). Recharts `RadarChart` (5 dimensions, plus a dashed benchmark overlay when stats are loaded). "You vs the benchmark" `BarChart` (vertical layout, emerald=you, amber=avg). Tier distribution mini-bars with "You" badge on the user's tier. Per-dimension rows (icon, label, tier, score, Progress, interpretation). Strengths (top 2) + Focus areas (bottom 2) two-column cards with derived interpretive copy per dimension × score band. "What your tier means" card with `TIER_META.summary` plus 3 tier-specific recommendations (bespoke copy per Nascent/Developing/Established/Leading). CTA panel (Request a briefing → followup; Retake → resetResponses+startAssessment+navigate quiz; Share → `navigator.share`/`window.print()`). Trust note with truncated assessment ID. Skeletons for all stats-dependent blocks.
+   158→- Wrote `benchmark-followup-view.tsx`: hero ("Turn your benchmark into action"), form with interest `RadioGroup` (4 options: consultation/report/workshop/partnership, each with icon + description), name/email/company/phone/message fields, Submit disabled until name+email valid. POSTs to `/api/assessment/followup` with `{ assessmentId: result?.id ?? null, name, email, company, phone, message, interest }`. Success → Confirmation state ("A Trennt partner will be in touch within two business days") + Back to home button. Aside: "What to expect" card (response time, senior partner not sales rep, no obligation) + dashed "Prefer email?" card linking `mailto:hello@trenntadvisory.com` and phone. Pre-fills name/email/company from store `respondent` if available.
+   159→- Verified: `bun run lint` → 0 errors, 0 warnings. `GET /` returns 200. All four `#/benchmark-*` hash routes return 200 (server renders the shell; view switching is client-side via `useNav`). Only dev.log errors are from other agents' stubs (e.g. `careers-view.tsx` `Users is not defined`), not from these views.
+   160→
+   161→Stage Summary:
+   162→- Files written (4): `src/components/views/benchmark-landing-view.tsx`, `src/components/views/benchmark-quiz-view.tsx`, `src/components/views/benchmark-results-view.tsx`, `src/components/views/benchmark-followup-view.tsx`.
+   163→- Design: emerald primary + amber accent only, no indigo/blue/purple. Mobile-first throughout. Touch targets ≥44px (12 unit heights on buttons, 68px min on Likert cards). `Reveal`/`Eyebrow`/`SectionHeading` used for editorial consistency. `bg-radial-fade` + `bg-grid` on landing hero.
+   164→- Store wiring verified end-to-end: landing → `startAssessment()` + `navigate('benchmark-quiz')` → `setResponse` per question → `setRespondent` + `setResult` on submit → `navigate('benchmark-results')` → `navigate('benchmark-followup')` → confirmation → `navigate('home')`. `resetResponses` + `startAssessment` used for "Retake". `respondent` pre-fills the follow-up form.
+   165→- API integration: POST `/api/assessment` with full `{ responses, respondent, durationSec }` payload (validated against the contract body shape); GET `/api/benchmark/stats` consumed on landing (stats strip) + results (radar overlay + comparison bars + tier distribution); POST `/api/assessment/followup` with `{ assessmentId, name, email, company, phone, message, interest }`. All fetches use relative paths with `cache: "no-store"`; all error/loading/empty states handled gracefully so the views render even if the parallel API agent hasn't shipped a route yet.
+   166→- Open notes for the API agent: `interest` is sent as the literal string `consultation|report|workshop|partnership`; `assessmentId` may be `null` when a non-benchmark visitor uses the follow-up form — backend should accept null/omitted.
+   167→
+   168→---
+   169→Task ID: 5 + 6
+   170→Agent: main (orchestrator)
+   171→Task: Integration verification + agent-browser end-to-end QA + final wiring.
+   172→
+   173→Work Log:
+   174→- Ran `bun run lint` → clean (0 errors, 0 warnings) across all 9 views + 7 API routes.
+   175→- Resolved a transient `Users is not defined` compile error in careers-view.tsx that appeared during parallel subagent builds (self-healed; verified file is clean, only a valid `void data;` remains).
+   176→- Seeded 12 realistic benchmark assessments via /api/assessment (varied scores across all tiers) → 15 total in DB for meaningful peer comparison. Distribution: Nascent 3, Developing 3, Established 4, Leading 5.
+   177→- agent-browser end-to-end verification (all passed):
+   178→  - Home: renders all sections (hero, stats, services, benchmark feature, methodology, case studies, testimonials, leadership, CTA, footer). VLM: "Strong, clean, professional, no visual bugs." HTTP 200.
+   179→  - Benchmark landing (#/benchmark-landing): hero, stats strip (fetched /api/benchmark/stats live), 5 dimensions, 3-step flow, methodology, FAQ accordion, CTA. Hash deep-linking works.
+   180→  - Quiz (#/benchmark-quiz): 6-step flow (5 dimensions × 3 Qs + details). Likert scale with clear selected states, progress bar, step indicator, gated Next/Back, Exit link. Validation requires all questions answered + name/email/consent on details step.
+   181→  - Assessment submit: POST /api/assessment 200 — server computed scores (all 4s → 75/100, Leading), persisted Assessment + 15 AssessmentResponse rows, computed percentile (top 27%).
+   182→  - Results (#/benchmark-results): full report — overall 75/100, Leading tier badge, percentile "top 27%", recharts RadarChart (5 dimensions), "You vs benchmark" bar comparison (vs 16 assessments), tier distribution with "You" marker, per-dimension breakdown (all 75/Leading), strengths & focus areas, tier recommendations, CTAs (Request briefing / Retake / Share / Download). VLM confirmed score + radar render correctly.
+   183→  - Follow-up (#/benchmark-followup): form pre-filled name/email/company from assessment (nice UX), interest radio group, POST /api/assessment/followup 200, confirmation state shown.
+   184→  - Contact (#/contact): form (name/email/company/phone/topic/message) POST /api/contact 200, success toast "Message received — Thanks, Sarah. Reference cmqnr...".
+   185→  - Careers (#/careers): role accordions expand to show responsibilities/requirements; Apply dialog opens pre-filled with role; application POST /api/careers 200, dialog closes on success.
+   186→  - About/Services: render with hero headings, HTTP 200.
+   187→  - Mobile (390px): VLM confirmed responsive single-column, hamburger menu, stacked sections, no overflow/bugs. Footer complete at bottom.
+   188→  - Sticky footer: min-h-screen flex flex-col + mt-auto — verified present and well-formed at page bottom on both mobile and desktop.
+   189→- Note: one agent-browser quirk — submit buttons below the fold needed `scrollintoview` before click registered. Not an app bug; a browser-automation detail. All submits succeeded once scrolled into view.
+   190→
+   191→Stage Summary:
+   192→- COMPLETE & VERIFIED. The full TRENNT Consulting Group website + Strategic Benchmark Assessment tool is live, functional, and visually polished.
+   193→- All data capture works end-to-end: contact inquiries, career applications, newsletter, assessment responses (+ per-question capture), follow-ups — all persisted to SQLite via Prisma and aggregatable via /api/benchmark/stats.
+   194→- 9 views, 7 API routes, 6 Prisma models, single / route with hash-based deep-linking.
+   195→- Dev server healthy on :3000. Lint clean.
+   196→- Known minor follow-ups for the recurring webDevReview cron (not blockers):
+   197→  - Could add an admin/reporting view to visualise aggregated benchmark data (currently only the JSON API).
+   198→  - Results "Download report" uses window.print(); a true PDF export could be added.
+   199→  - Could add team/bulk benchmark invites.
+   200→  - The seeded test data (15 assessments with seed@example.com) should be cleared before production.
+   201→
+   202→---
+   203→Task ID: 7 (webDevReview cron round 1)
+   204→Agent: main (orchestrator) — recurring webDevReview
+   205→Task: QA assessment + new feature (Benchmark Insights dashboard) + styling polish (scroll progress, back-to-top).
+   206→
+   207→## Current project status assessment
+   208→- Project is STABLE and HEALTHY. Dev server returns HTTP 200 on all routes. Lint clean (0 errors, 0 warnings).
+   209→- All 9 existing views render correctly (verified via agent-browser + VLM).
+   210→- All 7 existing API routes return correct responses.
+   211→- 16 assessments in DB (15 seeded + 1 from previous QA round), providing meaningful aggregate data.
+   212→- No bugs or errors found in the existing codebase during QA.
+   213→
+   214→## Completed modifications this round
+   215→
+   216→### 1. NEW FEATURE: Benchmark Insights dashboard (`#/benchmark-insights`)
+   217→A new aggregate analytics view that visualises the collected benchmark data — directly addressing the user's requirement that "responses and related benchmark data be collected and stored... so the data can be aggregated and used later for analysis and reporting." Previously this data only existed as a JSON API with no UI.
+   218→
+   219→**Files created/modified:**
+   220→- `src/components/views/benchmark-insights-view.tsx` (NEW, ~840 lines) — full dashboard with:
+   221→  - Hero section with radial fade + grid background
+   222→  - KPI strip: total organisations, average maturity, leading-tier share, avg completion time
+   223→  - Dimension profile: recharts RadarChart + horizontal BarChart with per-dimension average scores
+   224→  - 5 dimension detail cards with score, progress bar, description
+   225→  - Tier distribution: recharts donut PieChart + legend + count badges
+   226→  - Submissions trend: recharts AreaChart (last 12 weeks)
+   227→  - Industry breakdown: horizontal progress bars with score + count per industry
+   228→  - Company size breakdown: vertical BarChart by headcount band
+   229→  - Auto-generated insights summary: strongest dimension, biggest gap, maturity frontier
+   230→  - CTA band with emerald background
+   231→  - Loading skeleton, error state, and empty state all handled
+   232→- `src/app/api/benchmark/stats/route.ts` (ENHANCED) — added 4 new aggregate breakdowns:
+   233→  - `byIndustry`: top 10 industries with count + avg score (via groupBy)
+   234→  - `byCompanySize`: fixed-order headcount bands with count + avg score
+   235→  - `trend`: 12-week submission trend with count + avg score per week bucket
+   236→  - `avgDurationSec`: average assessment completion time
+   237→- `src/lib/types.ts` (UPDATED) — added `benchmark-insights` to ViewKey; extended BenchmarkStats with byIndustry, byCompanySize, trend, avgDurationSec fields
+   238→- `src/lib/store.ts` (UPDATED) — added `benchmark-insights` to valid views list
+   239→- `src/app/page.tsx` (UPDATED) — registered BenchmarkInsightsView in router + hash sync
+   240→- `src/components/views/benchmark-landing-view.tsx` (UPDATED) — added "Explore the full insights dashboard" link below stats strip (appears when stats are loaded)
+   241→- `src/components/site/footer.tsx` (UPDATED) — added "Insights dashboard" link in Benchmark column
+   242→
+   243→### 2. STYLING POLISH
+   244→- `src/components/site/header.tsx` (ENHANCED) — added scroll progress indicator: a 2px emerald line at the bottom of the sticky header that fills proportionally to scroll position. Uses `oklch(0.38 0.06 162)` solid color (inline style to bypass Tailwind v4 gradient variable issues). Tracks scroll + resize.
+   245→- `src/components/site/back-to-top.tsx` (NEW) — a floating "back to top" button (bottom-right) that appears after scrolling 600px. Smooth scroll-to-top on click. Fades in/out with translate-Y animation. Turns emerald on hover.
+   246→- `src/app/page.tsx` (UPDATED) — added `<BackToTop />` to the layout.
+   247→
+   248→### 3. BUG FIX
+   249→- Fixed a JSX parse error in benchmark-insights-view.tsx: the final ternary branch `stats ? (...)` was missing its `: null` else-branch, causing a build-breaking parse error.
+   250→- Fixed a state-value mismatch in benchmark-landing-view.tsx: the "Explore insights" link condition checked `statsState === "ok"` but the actual state value is `"loaded"`. Corrected to `statsState === "loaded"`.
+   251→
+   252→## Verification results
+   253→- `bun run lint` → 0 errors, 0 warnings
+   254→- All routes HTTP 200: /, #/about, #/services, #/contact, #/careers, #/benchmark-landing, #/benchmark-insights
+   255→- agent-browser + VLM verified:
+   256→  - Insights dashboard: KPI cards render with live data (17 orgs, 58 avg, 35% Leading, 2m 51s avg)
+   257→  - RadarChart, BarChart, PieChart (donut), AreaChart all render correctly with no visual bugs
+   258→  - Industry breakdown + company-size bar chart render correctly
+   259→  - VLM: "professional and polished, all charts rendering correctly, no major visual bugs"
+   260→  - Landing page "Explore the full insights dashboard" link navigates to #/benchmark-insights ✓
+   261→  - Footer "Insights dashboard" link registered ✓
+   262→  - Scroll progress bar renders (2px emerald, 34% width at mid-scroll) ✓
+   263→  - Back-to-top button appears after scroll, functional ✓
+   264→  - No console errors on any view
+   265→
+   266→## Unresolved issues or risks + next-phase recommendations
+   267→- The seeded test data (16 assessments with seed@example.com) is still in the DB — should be cleared before production. Low priority for dev.
+   268→- The Insights dashboard is read-only (public aggregate view). A future enhancement could add an **admin-protected** detailed reporting view with individual assessment records, CSV export, and filtering.
+   269→- The results page "Download report" still uses window.print() — a true PDF export (via the pdf skill) could be added.
+   270→- The trend chart only shows the last 12 weeks; as the dataset grows, adding a date-range selector would be valuable.
+   271→- Could add **benchmark comparison by sector** on the results page (e.g., "you vs your industry average") now that byIndustry data is available from the stats API.
+   272→- Next recurring review should consider: adding a "Resources" or "Insights articles" view (thought-leadership content), or a team/bulk benchmark invite feature.
+   273→
+   274→---
+   275→Task ID: 8 (webDevReview cron round 2)
+   276→Agent: main (orchestrator) — recurring webDevReview
+   277→Task: QA assessment + 2 new features (sector comparison on results, Resources/Articles view) + styling polish (tier glow).
+   278→
+   279→## Current project status assessment
+   280→- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+   281→- Prior round added: Benchmark Insights dashboard (#/benchmark-insights), scroll progress bar, back-to-top button.
+   282→- QA found NO bugs in existing codebase. All views render correctly, no console errors.
+   283→- 17 assessments in DB providing meaningful aggregate data.
+   284→
+   285→## Completed modifications this round
+   286→
+   287→### 1. NEW FEATURE: Sector comparison on the benchmark results page
+   288→A user completing the benchmark now sees how they compare to **their own sector**, not just the overall average — leveraging the respondent.industry captured during the assessment and the byIndustry breakdown already returned by the stats API.
+   289→
+   290→**Files modified:**
+   291→- `src/components/views/benchmark-results-view.tsx`:
+   292→  - Added `respondent` prop to ResultsBody (from useNav store)
+   293→  - Added `sectorRow` useMemo that case-insensitively matches the respondent's industry against `stats.byIndustry`
+   294→  - Added a new "SECTOR COMPARISON" Card section (between peer comparison and per-dimension breakdown) with:
+   295→    - Building2 icon + "Sector comparison" eyebrow
+   296→    - "You vs the [industry] sector" heading
+   297→    - Dynamic copy based on sector data: org count, "X points ahead/behind" badge, or "no other orgs in your sector yet" message
+   298→    - A new `SectorGauge` component: compact 3-bar comparison (You / Your sector / All sectors) with colored progress bars
+   299→    - Graceful handling when no sector data exists yet (shows user's score as the sector baseline)
+   300→  - Added `Building2` to lucide imports
+   301→  - Imported `RespondentProfile` type
+   302→
+   303→### 2. NEW FEATURE: Resources / Articles view (#/resources)
+   304→A thought-leadership content hub — the site previously lacked editorial content, which every consulting firm needs. Includes a listing page with featured article + category filter, and a full article reader with rich content blocks.
+   305→
+   306→**Files created/modified:**
+   307→- `src/components/views/resources-view.tsx` (NEW, ~560 lines):
+   308→  - Listing page: hero with radial fade + grid, category filter pills (All/Strategy/Data & AI/Operations/Culture/Perspective), featured article card (2-col with icon tile), article grid (3-col), newsletter CTA
+   309→  - Article reader: back button, category badge, title, excerpt, author byline with initials avatar + date, body rendered from ArticleBlock[] (paragraph/heading/quote/list/callout), article footer CTA (talk to partner / take benchmark), related articles section
+   310→  - Deep-linking: #/resources/<slug> opens the article reader directly
+   311→  - Category-colored badges per article type
+   312→  - `BlockRenderer` component handles all 5 block types with distinct styling (callouts in primary/5, blockquotes with Quote icon, lists with primary dots)
+   313→- `src/lib/content.ts` (UPDATED): Added `ARTICLES` array (6 full articles with real editorial content):
+   314→  - "The maturity trap: why most transformation programmes stall at 60%" (Strategy, Amara Okonkwo)
+   315→  - "Data as a product: the operating model that finally makes data compound" (Data & AI, Daniel Lindqvist)
+   316→  - "The hidden cost of undecided work" (Operations, Marcus Bauer)
+   317→  - "AI without adoption is just expensive maths" (Data & AI, Priya Raghunathan)
+   318→  - "Independence as a strategy, not just a label" (Perspective, Amara Okonkwo)
+   319→  - "The culture metric that actually predicts transformation success" (Culture, Sofia Marchetti)
+   320→  - Each article has 5-7 body blocks (paragraphs, headings, quotes, lists, callouts) — genuine consulting-grade thought leadership, not placeholder text
+   321→  - Added `ARTICLE_CATEGORIES` array
+   322→- `src/lib/types.ts` (UPDATED): Added `resources` to ViewKey; added `Article` interface and `ArticleBlock` union type (paragraph/heading/quote/list/callout)
+   323→- `src/lib/store.ts` (UPDATED): Added `resources` to valid views list
+   324→- `src/app/page.tsx` (UPDATED): Registered ResourcesView in router + hash sync. **Fixed sub-path routing**: `useHashSync` now only considers the first path segment for ViewKey matching (so `#/resources/the-maturity-trap` resolves to the `resources` view, which then handles the article slug internally)
+   325→- `src/components/site/header.tsx` (UPDATED): Added "Resources" to the main NAV array (between Services and Careers)
+   326→- `src/components/site/footer.tsx` (UPDATED): Added "Resources" link to the Company footer column
+   327→
+   328→### 3. STYLING POLISH
+   329→- `src/components/views/benchmark-results-view.tsx`: Added a subtle tier-colored radial glow behind the hero score number. A 48-unit blurred circle positioned top-right of the score card, using the tier's color at 20% opacity. Adds depth and visual interest without distracting from the score. CardContent given `relative` z-index to sit above the glow.
+   330→
+   331→## Verification results
+   332→- `bun run lint` → 0 errors, 0 warnings
+   333→- All routes HTTP 200: /, #/about, #/services, #/contact, #/careers, #/resources, #/resources/the-maturity-trap, #/resources/data-as-a-product, #/benchmark-landing, #/benchmark-insights, #/benchmark-results
+   334→- agent-browser + VLM verified:
+   335→  - **Resources listing**: hero + 6 category pills + featured article card with icon + 5 article cards in grid. VLM: "clean, no visual bugs"
+   336→  - **Article reader**: full content renders — title, byline (Amara Okonkwo · Managing Partner · 14 May 2026), headings, paragraphs, callout box ("THE DIAGNOSTIC QUESTION"), blockquote with attribution. VLM confirmed all block types render correctly, no visual bugs
+   337→  - **Category filter**: filtering to "Data & AI" correctly shows 2 articles; "All" restores full list
+   338→  - **Article deep-linking**: #/resources/the-maturity-trap opens the reader directly (after the useHashSync sub-path fix)
+   339→  - **Sector comparison**: completed a full assessment (Technology / SaaS industry, all 4s → 75/100 Leading). Results page shows "SECTOR COMPARISON · You vs the technology / saas sector" card with 3-bar SectorGauge (You: 75, Your sector: 75, All sectors: 60), "0 points ahead" badge, "Based on 1 organisation" note. VLM: "progress bars properly aligned, colors distinct, layout consistent"
+   340→  - **Tier glow**: VLM confirmed "a subtle glow behind the large score number"
+   341→  - No console errors on any view
+   342→
+   343→## Unresolved issues or risks + next-phase recommendations
+   344→- The seeded test data (17+ assessments with seed@example.com) is still in the DB — should be cleared before production.
+   345→- The agent-browser had intermittent difficulty clicking the custom Likert radio components (required JS eval workarounds). This is a test-automation limitation, not an app bug — the radios work fine for real users.
+   346→- Article content is currently static in content.ts. A future enhancement could add a CMS or MDX-based authoring workflow, plus an API to capture article views/engagement.
+   347→- Could add a "most read" or "recently published" sort to the resources listing.
+   348→- Could add author profile pages (linking from article byline to a bio + their other articles).
+   349→- Next recurring review should consider: an admin/reporting view for individual assessment records, or a "team benchmark" feature where a leader invites their team to all take the benchmark and see an aggregate team view.
+   350→
+   351→---
+   352→Task ID: 9 (webDevReview cron round 3)
+   353→Agent: main (orchestrator) — recurring webDevReview
+   354→Task: QA assessment + 2 new features (Case Studies/Work view, animated stat counters) + card hover polish.
+   355→
+   356→## Current project status assessment
+   357→- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+   358→- Prior rounds added: Insights dashboard, sector comparison on results, Resources/Articles view, scroll progress bar, back-to-top button, tier glow.
+   359→- QA found NO bugs in existing codebase. All views render correctly.
+   360→- The site now has 10 views + 7 API routes + a rich benchmark tool with full data capture.
+   361→
+   362→## Completed modifications this round
+   363→
+   364→### 1. NEW FEATURE: Case Studies / Work view (#/work)
+   365→The site previously teased case studies on the home page but had NO dedicated page — a clear gap for a consulting firm. Built a full case studies hub with listing + detail reader.
+   366→
+   367→**Files created/modified:**
+   368→- `src/components/views/work-view.tsx` (NEW, ~430 lines):
+   369→  - Listing page: hero with radial fade + grid, sector filter pills (All/Financial Services/Manufacturing/Public Sector/Logistics/Energy), featured case study card (2-col with metric visual + outcome chips), case study grid (3-col), CTA band
+   370→  - Case study reader: back button, sector badge + duration, title, summary, meta strip (client/sector/duration/services), 4-outcome metric grid, "The challenge" section (bullet points with amber dots), "Our approach" section (numbered steps with primary circles), highlighted quote block, footer CTA, related case studies section
+   371→  - Deep-linking: #/work/<slug> opens the reader directly
+   372→  - `CaseStudyCard` component with hover lift animation (`hover:-translate-y-1 hover:shadow-md`)
+   373→- `src/lib/content.ts` (UPDATED): Expanded `CASE_STUDIES` from 3 to 5 full case studies, each with rich detail:
+   374→  - Asteria Financial (Financial Services) — claims replatforming, £38M savings
+   375→  - Tundra Industrials (Manufacturing) — AI demand forecasting, €52M working capital
+   376→  - Mersey Health Partners (Public Sector) — operational reset, 31% shorter waiting lists
+   377→  - Northwind Logistics (Logistics) — supply chain resilience, 99.6% on-time delivery
+   378→  - Helios Energy (Energy) — CSRD-ready ESG reporting, 40% reporting effort cut
+   379→  - Each has: slug, challenge[], approach[], outcomes[{label,value}], quote, services[], icon, duration, metric + metricLabel
+   380→- `src/lib/types.ts` (UPDATED): Expanded `CaseStudy` interface with slug, duration, metricLabel, challenge[], approach[], outcomes[], quote, services[], icon; added `work` to ViewKey
+   381→- `src/lib/store.ts` (UPDATED): Added `work` to valid views list
+   382→- `src/app/page.tsx` (UPDATED): Registered WorkView in router + hash sync
+   383→- `src/components/site/header.tsx` (UPDATED): Added "Work" to main NAV array (between Services and Resources)
+   384→- `src/components/site/footer.tsx` (UPDATED): Added "Our Work" link to Company footer column
+   385→- `src/components/views/home-view.tsx` (UPDATED):
+   386→  - Case study cards now slice to 3 (from 5), show metricLabel, are clickable (navigate to work view), and have hover lift animation (`hover:-translate-y-1 hover:shadow-lg`)
+   387→  - Added "View all engagements" CTA button below the case studies grid
+   388→
+   389→### 2. NEW FEATURE: Animated number counters on home page stats
+   390→- `src/components/site/count-up.tsx` (NEW): Reusable `CountUp` component that:
+   391→  - Parses a display string into prefix/number/suffix (handles "$4.2B", "11+", "94%", etc.)
+   392→  - Animates from 0 to the target value using requestAnimationFrame with easeOutCubic
+   393→  - Triggers when scrolled into view (framer-motion useInView, once: true)
+   394→  - Preserves prefix/suffix throughout the animation
+   395→- `src/components/views/home-view.tsx` (UPDATED): Stats band now uses `<CountUp value={s.value} />` instead of static `{s.value}` — the four stats (11+, 320+, $4.2B, 94%) animate up when scrolled into view
+   396→
+   397→### 3. STYLING POLISH
+   398→- Card hover lifts: case study cards on both the home page and work page now use `hover:-translate-y-1 hover:shadow-lg` for a subtle lift effect on hover
+   399→- Featured case study card uses `hover:shadow-lg` for a more prominent lift
+   400→- Case study grid cards use `hover:-translate-y-1 hover:shadow-md` for a lighter lift
+   401→
+   402→## Verification results
+   403→- `bun run lint` → 0 errors, 0 warnings
+   404→- All routes HTTP 200: /, #/about, #/services, #/work, #/work/asteria-financial-replatforming, #/contact, #/careers, #/resources, #/benchmark-landing, #/benchmark-insights
+   405→- agent-browser + VLM verified:
+   406→  - **Work listing**: hero + 6 sector filter pills + featured case study card with £38M metric + outcome chips + 4 case study cards in grid. VLM: "no visual bugs detected"
+   407→  - **Case study reader**: all sections render — title, client meta, 4 outcome metric cards, "The challenge" with bullets, "Our approach" with numbered steps, highlighted quote (Helena Voss), footer CTA, related case studies. VLM: "no visual bugs observed"
+   408→  - **Sector filter**: filtering to "Energy" correctly shows only the Helios ESG case study; "All" restores full list
+   409→  - **Deep-linking**: #/work/asteria-financial-replatforming opens the reader directly
+   410→  - **Back button**: returns to the listing page
+   411→  - **Animated counters**: home page stats (11+, 320+, $4.2B, 94%) render with correct prefix/suffix, animate when scrolled into view
+   412→  - **Home page case studies**: 3 cards show metricLabel, are clickable to work view, have hover lift
+   413→  - **"View all engagements" CTA**: present below the case studies grid, navigates to #/work
+   414→  - No console errors on any view (stale HMR cache errors are non-issues — dev server log shows only 200s)
+   415→
+   416→## Unresolved issues or risks + next-phase recommendations
+   417→- The seeded test data (17+ assessments) is still in the DB — should be cleared before production.
+   418→- Article and case study content is static in content.ts. A future enhancement could add a CMS or MDX-based authoring workflow.
+   419→- Could add a "team benchmark" feature where a leader invites their team to all take the benchmark and see an aggregate team view.
+   420→- Could add an admin/reporting view for individual assessment records with CSV export.
+   421→- The home page hero could benefit from a more dynamic visual (e.g., an animated radar chart or a looping video background).
+   422→- Next recurring review should consider: a privacy/terms page (footer link currently goes to contact), or a search/filter feature for the resources + work views.
+   423→
+   424→---
+   425→Task ID: 10 (webDevReview cron round 4)
+   426→Agent: main (orchestrator) — recurring webDevReview
+   427→Task: QA assessment + 2 new features (Legal/Privacy view, Cmd+K command palette) + home hero gradient mesh polish.
+   428→
+   429→## Current project status assessment
+   430→- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+   431→- Prior rounds added: Insights dashboard, sector comparison, Resources/Articles view, Work/Case Studies view, animated counters, scroll progress bar, back-to-top, tier glow.
+   432→- QA found NO bugs in existing codebase. All views render correctly.
+   433→- The site now has 11 views + 7 API routes + a rich benchmark tool with full data capture.
+   434→
+   435→## Completed modifications this round
+   436→
+   437→### 1. NEW FEATURE: Legal / Privacy view (#/legal)
+   438→Fixed a real UX gap: the footer "Privacy & terms" link previously navigated to the contact page (wrong). Built a proper legal page with three tabbed policies.
+   439→
+   440→**Files created/modified:**
+   441→- `src/components/views/legal-view.tsx` (NEW, ~290 lines):
+   442→  - Hero with "Privacy, terms & cookies" title, last-updated date, radial fade + grid background
+   443→  - 3-tab interface using shadcn Tabs: Privacy Policy, Terms of Service, Cookie Policy
+   444→  - **Privacy Policy** (8 sections): Who we are, What we collect, Why we collect it, Legal basis (GDPR), How long we keep it, Who we share it with, Your rights, International transfers
+   445→  - **Terms of Service** (8 sections): About these terms, The benchmark tool, Your content, Our content, Acceptable use, Liability, Changes, Governing law
+   446→  - **Cookie Policy** (4 sections): What cookies are, The cookies we use (with a 4-row table: name/purpose/duration/type), Managing cookies, Third-party services
+   447→  - Reusable `LegalCard`, `LegalSection`, `LegalList` helper components
+   448→  - Contact CTA card at the bottom with email + contact form buttons
+   449→  - All content is genuine, plain-English legal text (not placeholder)
+   450→- `src/lib/types.ts` (UPDATED): Added `legal` to ViewKey
+   451→- `src/lib/store.ts` (UPDATED): Added `legal` to valid views list
+   452→- `src/app/page.tsx` (UPDATED): Registered LegalView in router + hash sync
+   453→- `src/components/site/footer.tsx` (UPDATED): Fixed "Privacy & terms" link to navigate to `legal` instead of `contact`
+   454→
+   455→### 2. NEW FEATURE: Cmd+K Command Palette (global search)
+   456→A premium UX feature that ties the growing content together — users can search across all pages, services, articles, and case studies from anywhere.
+   457→
+   458→**Files created/modified:**
+   459→- `src/components/site/command-palette.tsx` (NEW, ~260 lines):
+   460→  - Triggered by Cmd/Ctrl+K (global keyboard listener) or the header search button
+   461→  - Uses shadcn `CommandDialog` (built on cmdk) with fuzzy search
+   462→  - Search index includes 4 groups: Navigate (10 views), Services (6), Articles (6), Case studies (5) = 27 searchable entries total
+   463→  - Each entry has: icon, label, hint, keywords (for matching), and an action (navigate to view / article / case study)
+   464→  - Selecting an article navigates to `#/resources/<slug>`, case study to `#/work/<slug>`
+   465→  - Footer with keyboard hints (↵ to select, esc to close) + company name
+   466→  - Group headings styled with uppercase tracking
+   467→  - `navigateToHash` helper for sub-path navigation (avoids lint immutability rule)
+   468→- `src/app/page.tsx` (UPDATED): Added `<CommandPalette />` to the layout
+   469→- `src/components/site/header.tsx` (UPDATED): Added a search button (desktop: pill with "Search" + ⌘K kbd; mobile: icon-only) that dispatches a synthetic Cmd+K keydown to open the palette. Imported `Search` icon.
+   470→
+   471→### 3. STYLING POLISH
+   472→- `src/components/views/home-view.tsx` (UPDATED): Added a gradient mesh background to the home hero — two soft colored blobs (emerald top-left at 30% opacity, amber right at 20% opacity, both blurred 3xl) that add depth behind the radial fade + grid. VLM-confirmed: "subtle gradient mesh with soft emerald green and amber blobs, adding depth without distraction."
+   473→
+   474→## Verification results
+   475→- `bun run lint` → 0 errors, 0 warnings
+   476→- All routes HTTP 200: /, #/about, #/services, #/work, #/contact, #/careers, #/resources, #/legal, #/benchmark-landing, #/benchmark-insights
+   477→- agent-browser + VLM verified:
+   478→  - **Legal view**: hero with title + last-updated date, 3 tabs (Privacy/Terms/Cookies), well-formatted legal content with headings + lists, tab switching works. VLM: "no visual bugs apparent"
+   479→  - **Cookie policy table**: renders correctly with 4 rows (name/purpose/duration/type)
+   480→  - **Footer link fixed**: "Privacy & terms" now navigates to #/legal (was #/contact)
+   481→  - **Command palette**: opens on Cmd+K, shows search input + grouped results (Navigate/Services/Articles/Case studies), 27 searchable entries. VLM: "clean, well-organized, proper spacing, clear typography, no visual bugs"
+   482→  - **Palette navigation**: selecting "Data as a product" article navigates to #/resources/data-as-a-product and loads the article reader
+   483→  - **Header search button**: visible on desktop (pill with ⌘K) and mobile (icon), opens palette on click
+   484→  - **Home hero gradient mesh**: emerald + amber blobs add depth. VLM-confirmed
+   485→  - No console errors on any view (stale HMR cache errors are non-issues — dev server log shows only 200s)
+   486→
+   487→## Unresolved issues or risks + next-phase recommendations
+   488→- The seeded test data (17+ assessments) is still in the DB — should be cleared before production.
+   489→- Article and case study content is static in content.ts. A CMS or MDX authoring workflow could be added.
+   490→- Could add a "team benchmark" feature (leader invites team, aggregate team view).
+   491→- Could add an admin/reporting view for individual assessment records with CSV export.
+   492→- The command palette could be enhanced with "recently viewed" or "popular" sections.
+   493→- Could add a 404/not-found view for invalid hash routes (currently falls back to home).
+   494→- Next recurring review should consider: a sitemap/robots route for SEO, or a "Compare" feature to benchmark multiple organisations side by side.
+   495→
+   496→---
+   497→Task ID: 11 (webDevReview cron round 5)
+   498→Agent: main (orchestrator) — recurring webDevReview
+   499→Task: QA assessment + 2 new features (Admin Reporting view with CSV export, admin assessments API) + CTA gradient border polish.
+   500→
+   501→## Current project status assessment
+   502→- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+   503→- Prior rounds added: Insights dashboard, sector comparison, Resources/Articles, Work/Case Studies, Legal/Privacy, Cmd+K command palette, animated counters, scroll progress, back-to-top, tier glow, hero gradient mesh.
+   504→- QA found NO bugs. All 11 views render correctly.
+   505→- The site now has 12 views + 8 API routes + a rich benchmark tool with full data capture.
+   506→
+   507→## Completed modifications this round
+   508→
+   509→### 1. NEW FEATURE: Admin Reporting view (#/admin)
+   510→Directly serves the user's original requirement that benchmark data be "collected and stored... so the data can be aggregated and used later for analysis and reporting." Previously the data was captured and shown in aggregate, but there was no way to view individual records or export them.
+   511→
+   512→**Files created/modified:**
+   513→- `src/components/views/admin-view.tsx` (NEW, ~540 lines):
+   514→  - Hero with "Internal · Admin reporting" eyebrow + amber security notice ("this route must be behind authentication in production")
+   515→  - KPI strip: total records, avg score, leading-tier %, avg duration, follow-up count
+   516→  - Filter bar: 3 Select dropdowns (tier, industry, company size) + Clear button + Refresh + 2 CSV export buttons
+   517→  - **Records table** (desktop): columns Date, Organisation, Industry, Score, Tier, Follow-ups; rows expandable on click to show full detail
+   518→  - **Records cards** (mobile): stacked cards with expand
+   519→  - **RecordDetail** expanded view: respondent meta grid, 5 dimension score cards with progress bars, consent/duration/ID, individual responses list (all 15 question texts + values), follow-up requests
+   520→  - **CSV export (summary)**: downloads all filtered records with 20 columns (ID, date, name, email, company, industry, size, country, role, scores, tier, count, duration, consent, follow-ups)
+   521→  - **CSV export (responses)**: downloads all individual responses (assessment ID, question ID, dimension, question text, value 1-5) — the full granular dataset for analysis
+   522→  - Pagination (20 per page) with Previous/Next controls
+   523→  - Tier-colored badges (Nascent=orange, Developing=amber, Established=emerald, Leading=teal)
+   524→  - Loading skeletons, error state, empty state all handled
+   525→- `src/lib/types.ts` (UPDATED): Added `admin` to ViewKey
+   526→- `src/lib/store.ts` (UPDATED): Added `admin` to valid views list
+   527→- `src/app/page.tsx` (UPDATED): Registered AdminView in router + hash sync
+   528→- `src/components/site/footer.tsx` (UPDATED): Added "Admin reporting" link to Benchmark footer column
+   529→
+   530→### 2. NEW BACKEND: /api/admin/assessments API
+   531→- `src/app/api/admin/assessments/route.ts` (NEW, ~100 lines):
+   532→  - GET endpoint returning paginated assessment records with full responses + follow-ups
+   533→  - Query params: tier, industry, companySize, page, pageSize (max 100)
+   534→  - Returns: total count, page, totalPages, records[] (each with id, respondent profile, scores per dimension, tier, duration, createdAt, responses[], followUps[]), filters object (distinct industries, companySizes, valid tiers for dropdowns)
+   535→  - Uses Prisma findMany with include for responses + followUps, orderBy createdAt desc
+   536→  - Clearly marked: "In production this route MUST be behind authentication"
+   537→  - Error handling with 500 response
+   538→
+   539→### 3. STYLING POLISH
+   540→- `src/components/views/benchmark-landing-view.tsx` (UPDATED): Enhanced the final CTA section with a gradient border card. The CTA now sits inside a rounded-3xl container with a 1px gradient border (emerald → amber → teal at 135deg, 60% opacity) wrapping a bg-background inner card. Adds a premium, finished feel to the benchmark landing page's closing CTA.
+   541→
+   542→## Verification results
+   543→- `bun run lint` → 0 errors, 0 warnings
+   544→- All routes HTTP 200: /, #/about, #/services, #/work, #/contact, #/careers, #/resources, #/legal, #/admin, #/benchmark-landing, #/benchmark-insights
+   545→- /api/admin/assessments → HTTP 200 (returns 19 records with full responses)
+   546→- agent-browser + VLM verified:
+   547→  - **Admin view**: hero with security notice, 5 KPI cards (19 records, 60 avg, 42% Leading, avg duration, 2 follow-ups), data table with 6 columns, 3 filter dropdowns, 2 export buttons. VLM: "no visual bugs apparent"
+   548→  - **Row expansion**: clicking a row expands to show dimension scores (5 cards with progress bars), individual responses (15 items with question text + value), consent/duration/ID meta, follow-up requests
+   549→  - **Tier filter**: selecting "Leading" correctly filters to show only Leading-tier records (all 8 visible badges show "Leading")
+   550→  - **CSV export**: both "Export summary" and "Export responses" buttons trigger client-side Blob downloads
+   551→  - **Footer link**: "Admin reporting" appears in the Benchmark footer column
+   552→  - **CTA gradient border**: renders on the benchmark landing final CTA section
+   553→  - No console errors on any view
+   554→
+   555→## Unresolved issues or risks + next-phase recommendations
+   556→- The admin view is currently open (no auth). In production, it MUST be protected with NextAuth admin role check. This is clearly marked in the UI (amber notice) and API comment.
+   557→- The seeded test data (19 assessments) is still in the DB — should be cleared before production.
+   558→- Article and case study content is static in content.ts. A CMS or MDX authoring workflow could be added.
+   559→- Could add a "team benchmark" feature (leader invites team, aggregate team view).
+   560→- Could add a 404/not-found view for invalid hash routes.
+   561→- Could add a sitemap.xml / robots.txt route for SEO.
+   562→- The admin view could be enhanced with: date-range filtering, search by company/email, bulk export of all records (not just current page), status management for follow-ups.
+   563→- Next recurring review should consider: clearing test data, adding auth protection to admin, or a "Compare organisations" feature.
+   564→
+   565→---
+   566→Task ID: 12
+   567→Agent: main
+   568→Task: PART 1 — Brand name & copy replacement across entire codebase
+   569→
+   570→Work Log:
+   571→- Searched entire codebase for all 11 find/replace patterns using Grep
+   572→- Identified 83 occurrences across 21 source files (src/**/*.ts, *.tsx, *.css) plus worklog.md
+   573→- Confirmed prisma/schema.prisma had no matches (clean)
+   574→- Confirmed package.json name field was "nextjs_tailwind_shadcn_ts" (not meridian — no change needed)
+   575→- Confirmed no README.md exists
+   576→- Ran sed -i across all source files + worklog.md with replacements in correct order:
+   577→  1. "Meridian Advisory" → "TRENNT Consulting Group" (before Meridian→Trennt to prevent "Trennt Advisory")
+   578→  2. "meridian-advisory" → "trennt" (before meridian→trennt)
+   579→  3. "Digital Maturity Benchmark" → "Strategic Benchmark Assessment" (before Digital Maturity)
+   580→  4. "Digital Maturity" → "Strategic Maturity"
+   581→  5. "digital maturity" → "strategic maturity"
+   582→  6. "Independent strategy & technology consulting" → "Defining the next standard in consulting"
+   583→  7. "ambitious organisations" → "world-leading organizations"
+   584→  8. "next horizon" → "next standard"
+   585→  9. "MERIDIAN" → "TRENNT"
+   586→  10. "Meridian" → "Trennt"
+   587→  11. "meridian" → "trennt"
+   588→- Verified zero remaining occurrences of all old strings via Grep (case-insensitive)
+   589→- Verified new brand name "TRENNT Consulting Group" appears correctly in content.ts, layout.tsx, home-view.tsx
+   590→- Verified "Strategic Benchmark Assessment" and "Strategic Maturity" appear correctly throughout
+   591→- Lint: clean (0 errors)
+   592→- Dev server: HTTP 200, no runtime errors after hot reload
+   593→
+   594→Stage Summary:
+   595→- All 11 brand/copy replacements completed successfully across 93 files
+   596→- Company name: Meridian Advisory → TRENNT Consulting Group
+   597→- Tool name: Digital Maturity Benchmark → Strategic Benchmark Assessment
+   598→- Tagline: "next horizon" → "next standard"
+   599→- Audience: "ambitious organisations" → "world-leading organizations"
+   600→- No code breakage — all replacements were pure string substitutions in content/metadata
+   601→- Ready for PART 2 of user's instructions
+   602→

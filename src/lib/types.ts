@@ -14,7 +14,8 @@ export type ViewKey =
   | "benchmark-quiz"
   | "benchmark-results"
   | "benchmark-followup"
-  | "benchmark-insights";
+  | "benchmark-insights"
+  | "not-found";
 
 export type Dimension =
   | "strategy"

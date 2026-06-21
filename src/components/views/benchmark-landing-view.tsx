@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils";
 const OUTCOMES = [
   {
     icon: Compass,
-    title: "Your maturity tier",
+    title: "Your strategic maturity tier",
     description:
       "A clear Nascent → Leading rating, normalised from 15 evidence-based questions across the five dimensions of strategic maturity.",
   },
@@ -80,7 +80,7 @@ const STEPS = [
     n: "02",
     title: "Get your score & tier",
     description:
-      "We normalise your answers to a 0–100 maturity score, place you in one of four tiers, and compute your percentile vs the cohort.",
+      "We normalise your answers to a 0–100 strategic maturity score, place you in one of four tiers, and compute your percentile vs the cohort.",
   },
   {
     n: "03",
@@ -101,7 +101,7 @@ const FAQ = [
   },
   {
     q: "What do I get at the end?",
-    a: "A full results report: your overall maturity score, tier, percentile against the cohort, a per-dimension radar profile, identified strengths and focus areas, and a short set of recommendations calibrated to your tier. You can request a 1:1 follow-up from the results page.",
+    a: "A full results report: your overall strategic maturity score, tier, percentile against the cohort, a per-dimension radar profile, identified strengths and focus areas, and a short set of recommendations calibrated to your tier. You can request a 1:1 follow-up from the results page.",
   },
   {
     q: "Can my team take it too?",
@@ -160,7 +160,7 @@ export function BenchmarkLandingView() {
           </Reveal>
           <Reveal delay={0.05}>
             <h1 className="mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
-              How digitally mature is your organisation,{" "}
+              How strategically mature is your organisation,{" "}
               <span className="text-primary">really?</span>
             </h1>
           </Reveal>
@@ -246,7 +246,7 @@ export function BenchmarkLandingView() {
             }
           />
           <StatCell
-            label="Average maturity score"
+            label="Average strategic maturity score"
             value={
               statsState === "loading" ? (
                 <Skeleton className="h-9 w-24" />
@@ -425,7 +425,7 @@ export function BenchmarkLandingView() {
             <div className="mt-8 space-y-5 text-base leading-relaxed text-muted-foreground">
               <p>
                 Each of the fifteen statements uses a 1–5 Likert scale. Your
-                answers are normalised to a 0–100 maturity score per dimension
+                answers are normalised to a 0–100 strategic maturity score per dimension
                 (where 1 maps to 0 and 5 maps to 100), and a weighted overall
                 score is computed across all five. The overall score places you
                 in one of four tiers — Nascent, Developing, Established, or
@@ -463,7 +463,7 @@ export function BenchmarkLandingView() {
                   We never share individual scores. You can request deletion at
                   any time by emailing{" "}
                   <span className="font-medium text-foreground">
-                    hello@trenntadvisory.com
+                    hello@trennt.com
                   </span>
                   .
                 </span>

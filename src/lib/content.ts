@@ -19,7 +19,7 @@ export const COMPANY = {
   description:
     "TRENNT Consulting Group is an independent consulting firm helping world-leading organizations turn strategy into measurable outcomes — across digital transformation, data & AI, and operational excellence.",
   foundedYear: 2014,
-  email: "hello@trenntadvisory.com",
+  email: "hello@trennt.com",
   phone: "+44 20 7946 0312",
   address: "60 Holborn Viaduct, London EC1A 2BN, United Kingdom",
   offices: [

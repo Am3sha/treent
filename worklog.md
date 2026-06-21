@@ -599,3 +599,85 @@ Stage Summary:
 - Audience: "ambitious organisations" → "world-leading organizations"
 - No code breakage — all replacements were pure string substitutions in content/metadata
 - Ready for PART 2 of user's instructions
+
+---
+Task ID: 13 (webDevReview cron round 6)
+Agent: main (orchestrator) — recurring webDevReview
+Task: Post-rebrand QA + bug fixes (logo wordmark, email domain, "digitally mature" heading) + 2 new features (404 Not-Found view, SEO sitemap/robots) + home hero styling enhancements (animated bars, live cohort badge, floating card, activity chip).
+
+## Current project status assessment
+- Project STABLE and HEALTHY coming into this round. The previous task (Task ID 12) completed a full brand rename from "Meridian Advisory" → "TRENNT Consulting Group" across 93 files.
+- Lint clean, dev server HTTP 200 on all routes.
+- QA via agent-browser + VLM revealed 3 rebrand gaps that the string-replace in Task 12 missed (different word forms / component-level text not caught by the find/replace list).
+- After fixes, project remains stable with 13 views + 8 API routes + SEO routes.
+
+## Completed modifications this round
+
+### 1. BUG FIXES — Rebrand gaps (3 issues found via VLM QA)
+
+**Issue A: Logo wordmark still showed "Trennt / Advisory"**
+- `src/components/site/logo.tsx` (UPDATED): The logo component had a two-line wordmark "Trennt" (main) + "Advisory" (subtext). The Task 12 replacement only caught "Meridian" → "Trennt" for the main line but "Advisory" was a separate hardcoded string not in the replacement list. Fixed: main line now "TRENNT", subtext now "Consulting Group". VLM confirmed the fix.
+
+**Issue B: Email domain was "trenntadvisory.com"**
+- 5 files updated (content.ts, legal-view.tsx, benchmark-followup-view.tsx, benchmark-landing-view.tsx): Replaced `trenntadvisory.com` → `trennt.com` globally. The old domain was a compound of the pre-rebrand name. VLM + snapshot confirmed `hello@trennt.com` now shows on contact page and footer.
+
+**Issue C: Benchmark landing heading still said "digitally mature"**
+- The Task 12 replacement list only covered "Digital Maturity" and "digital maturity" (exact noun phrases), but the heading "How digitally mature is your organisation, really?" used the adverb+adjective form "digitally mature" which wasn't matched.
+- Fixed across home-view.tsx and benchmark-landing-view.tsx: "digitally mature" → "strategically mature". Also updated related phrases: "maturity tier" → "strategic maturity tier", "maturity score" → "strategic maturity score", "Average maturity score" → "Average strategic maturity score" for full consistency. VLM confirmed: heading now reads "How strategically mature is your organisation, really?"
+
+### 2. NEW FEATURE: 404 Not-Found view (#<invalid-hash>)
+Previously, invalid hash routes (e.g. `#/foobar`) silently fell back to the home view, which was confusing. Now they show a proper branded 404 page.
+
+**Files created/modified:**
+- `src/components/views/not-found-view.tsx` (NEW, ~130 lines):
+  - Hero section with "ERROR 404" eyebrow, giant translucent "404" number with a Compass icon overlaid in the center, heading "This page drifted off the map.", descriptive copy
+  - Badge showing the requested invalid path (e.g. "Requested: #/nonexistent-page") with amber dot indicator
+  - Two CTA buttons: "Back to home" (primary, with Home icon) and "Try the benchmark" (outline, with Search icon)
+  - "OR EXPLORE" section with 6 suggestion cards (Home, Services, Strategic Benchmark, Insights, Resources, Contact) — each a hoverable Card with label, hint, and arrow icon that animates on hover
+  - Gradient blob decorations (emerald + amber) matching the site's visual language
+  - Fully responsive, accessible (semantic headings, ARIA labels)
+- `src/lib/types.ts` (UPDATED): Added `"not-found"` to ViewKey union
+- `src/app/page.tsx` (UPDATED):
+  - Registered NotFoundView in VIEWS map
+  - Updated useHashSync logic: if hash is non-empty but first segment doesn't match any valid view, set view to "not-found" (instead of falling back to "home"). Empty hash still goes to home.
+- Verified via agent-browser: `#/nonexistent-page` now shows the 404 view with heading "This page drifted off the map." and 6 suggestion cards.
+
+### 3. NEW FEATURE: SEO — sitemap.xml + robots.txt
+**Files created/modified:**
+- `src/app/sitemap.ts` (NEW): Next.js MetadataRoute sitemap generator. Returns the base URL (https://trennt.com) with weekly change frequency and priority 1. Since the app uses hash-based routing (single `/` route), the sitemap points to the root URL.
+- `public/robots.txt` (UPDATED): Added `Sitemap: https://trennt.com/sitemap.xml` directive to the existing robots.txt (which already allowed all user agents). Note: initially created a `src/app/robots.ts` route file but it conflicted with the existing `public/robots.txt` (Next.js error: "conflicting public file and page file"). Removed the route file and updated the public file directly instead.
+- Verified: `curl /sitemap.xml` returns valid XML with `<loc>https://trennt.com</loc>`. `curl /robots.txt` returns the full robots content including the sitemap line.
+
+### 4. STYLING ENHANCEMENT: Home hero visual panel
+Enhanced the "Strategic Maturity Snapshot" card on the home hero with multiple micro-interactions:
+
+**Files modified:**
+- `src/components/views/home-view.tsx` (UPDATED):
+  - **AnimatedBar component** (NEW): Each of the 5 dimension progress bars now animates its width from 0% to the target value using framer-motion, triggered when the bar scrolls into view (useInView). Bars animate sequentially with staggered delays (0.4s + i*0.12s) for a cascade effect. Uses the same easing curve as the Reveal component ([0.22, 1, 0.36, 1]).
+  - **Floating card animation**: The entire snapshot card now gently bobs up and down (y: [0, -6, 0]) on a 6-second infinite loop, giving a subtle "alive" feel.
+  - **"Live cohort" badge**: Replaced the static "8 min" badge with a live indicator — a pulsing green dot (animate-ping) + "Live cohort" text in emerald. Conveys that real benchmark data is flowing.
+  - **Activity chip**: Below the card, a fade-in chip shows "247 assessments completed this quarter" with an amber Activity icon. Animates in with a 1.2s delay + y-offset slide.
+  - Added imports: `motion`, `useInView` from framer-motion; `Activity` from lucide-react.
+
+## Verification results
+- `bun run lint` → 0 errors, 0 warnings
+- All routes HTTP 200: /, #/about, #/services, #/work, #/resources, #/careers, #/contact, #/legal, #/admin, #/benchmark-landing, #/benchmark-insights, #/benchmark-quiz
+- #/nonexistent-page → renders 404 view (heading "This page drifted off the map.")
+- /sitemap.xml → valid XML with trennt.com URL
+- /robots.txt → includes Sitemap directive
+- agent-browser + VLM verified:
+  - **Logo**: Now shows "TRENNT / CONSULTING GROUP" (was "Trennt / Advisory"). VLM confirmed.
+  - **Benchmark landing heading**: Now "How strategically mature is your organisation, really?" (was "digitally mature"). VLM confirmed.
+  - **Email**: hello@trennt.com on contact page + footer (was trenntadvisory.com). Snapshot confirmed.
+  - **404 view**: Large "404" with green compass icon, "ERROR 404" eyebrow, heading "This page drifted off the map.", requested-path badge, 2 CTA buttons, 6 suggestion cards. VLM + snapshot confirmed.
+  - **Home hero**: "LIVE COHORT" badge with pulsing green dot on snapshot card. Activity chip "247 assessments completed this quarter" below card. Animated progress bars. VLM + snapshot confirmed.
+  - No console errors on any view.
+
+## Unresolved issues or risks + next-phase recommendations
+- The admin view is still open (no auth). In production, it MUST be protected with NextAuth admin role check.
+- The seeded test data (20 assessments) is still in the DB — should be cleared before production.
+- Article and case study content is static in content.ts. A CMS or MDX authoring workflow could be added.
+- Could add a "team benchmark" feature (leader invites team, aggregate team view).
+- The command palette could be enhanced with "recently viewed" or "popular" sections.
+- The 404 view could suggest similar valid pages (fuzzy match) rather than static suggestions.
+- Next recurring review should consider: clearing test data, adding auth protection to admin, or a "Compare organisations" feature.

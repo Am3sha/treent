@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, ArrowUpRight, Check, Quote } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { ArrowRight, ArrowUpRight, Check, Quote, Activity } from "lucide-react";
 import { useNav } from "@/lib/store";
 import {
   CASE_STUDIES,
@@ -18,6 +19,36 @@ import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { QuickBenchmark } from "@/components/site/quick-benchmark";
+
+function AnimatedBar({
+  label,
+  value,
+  delay = 0,
+}: {
+  label: string;
+  value: number;
+  delay?: number;
+}) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  return (
+    <div ref={ref} className="space-y-1.5">
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="font-medium tabular-nums">{value}</span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+        <motion.div
+          className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
+          initial={{ width: 0 }}
+          animate={inView ? { width: `${value}%` } : { width: 0 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export function HomeView() {
   const navigate = useNav((s) => s.navigate);
@@ -114,60 +145,76 @@ export function HomeView() {
                     className="absolute -inset-3 -z-10 rounded-3xl bg-primary/5 blur-2xl"
                     aria-hidden
                   />
-                  <Card className="overflow-hidden rounded-2xl border-border/70 bg-card/95 p-6 shadow-sm backdrop-blur">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/8 text-primary">
-                          <Icon name="Compass" className="h-4 w-4" />
+                  <motion.div
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{
+                      duration: 6,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <Card className="overflow-hidden rounded-2xl border-border/70 bg-card/95 p-6 shadow-sm backdrop-blur">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/8 text-primary">
+                            <Icon name="Compass" className="h-4 w-4" />
+                          </span>
+                          <div className="text-sm font-medium">
+                            Strategic Maturity Snapshot
+                          </div>
+                        </div>
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          </span>
+                          Live cohort
                         </span>
-                        <div className="text-sm font-medium">
-                          Strategic Maturity Snapshot
-                        </div>
                       </div>
-                      <Badge variant="secondary" className="rounded-full">
-                        8 min
-                      </Badge>
-                    </div>
-                    <div className="mt-6 space-y-4">
-                      {[
-                        { label: "Strategy & Vision", v: 72 },
-                        { label: "Technology & Architecture", v: 58 },
-                        { label: "Culture & Talent", v: 64 },
-                        { label: "Data & AI", v: 41 },
-                        { label: "Operations & Delivery", v: 69 },
-                      ].map((row) => (
-                        <div key={row.label} className="space-y-1.5">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">
-                              {row.label}
-                            </span>
-                            <span className="font-medium tabular-nums">
-                              {row.v}
-                            </span>
+                      <div className="mt-6 space-y-4">
+                        {[
+                          { label: "Strategy & Vision", v: 72 },
+                          { label: "Technology & Architecture", v: 58 },
+                          { label: "Culture & Talent", v: 64 },
+                          { label: "Data & AI", v: 41 },
+                          { label: "Operations & Delivery", v: 69 },
+                        ].map((row, i) => (
+                          <AnimatedBar
+                            key={row.label}
+                            label={row.label}
+                            value={row.v}
+                            delay={0.4 + i * 0.12}
+                          />
+                        ))}
+                      </div>
+                      <div className="mt-6 flex items-center justify-between border-t border-border/70 pt-4">
+                        <div>
+                          <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                            Overall
                           </div>
-                          <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
-                              style={{ width: `${row.v}%` }}
-                            />
+                          <div className="text-2xl font-semibold tabular-nums text-primary">
+                            61 / 100
                           </div>
                         </div>
-                      ))}
-                    </div>
-                    <div className="mt-6 flex items-center justify-between border-t border-border/70 pt-4">
-                      <div>
-                        <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                          Overall
-                        </div>
-                        <div className="text-2xl font-semibold tabular-nums text-primary">
-                          61 / 100
-                        </div>
+                        <Badge className="rounded-full bg-accent text-accent-foreground">
+                          Established
+                        </Badge>
                       </div>
-                      <Badge className="rounded-full bg-accent text-accent-foreground">
-                        Established
-                      </Badge>
-                    </div>
-                  </Card>
+                    </Card>
+                  </motion.div>
+                  {/* Activity chip below card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2, duration: 0.5 }}
+                    className="mt-4 hidden items-center justify-center gap-2 rounded-xl border border-border/70 bg-secondary/40 px-3 py-2.5 sm:inline-flex"
+                  >
+                    <Activity className="h-3.5 w-3.5 text-amber-500" />
+                    <span className="text-xs font-medium text-muted-foreground">
+                      <span className="font-semibold text-foreground">247</span>{" "}
+                      assessments completed this quarter
+                    </span>
+                  </motion.div>
                 </div>
               </Reveal>
             </div>
@@ -289,14 +336,14 @@ export function HomeView() {
                   id="benchmark-heading"
                   className="mt-5 text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl md:text-5xl"
                 >
-                  How digitally mature is your organisation, really?
+                  How strategically mature is your organisation, really?
                 </h2>
               </Reveal>
               <Reveal delay={0.1}>
                 <p className="mt-5 max-w-2xl text-base leading-relaxed text-primary-foreground/85 md:text-lg text-balance">
                   The Trennt Strategic Benchmark Assessment is a free, structured
                   assessment across five dimensions. Answer fifteen questions,
-                  get a calibrated score, a maturity tier, and a per-dimension
+                  get a calibrated score, a strategic maturity tier, and a per-dimension
                   breakdown — benchmarked against our engagement dataset.
                 </p>
               </Reveal>
@@ -340,7 +387,7 @@ export function HomeView() {
                   </div>
                   <ul className="mt-4 space-y-3 text-sm">
                     {[
-                      "An overall maturity score from 0 to 100",
+                      "An overall strategic strategic maturity score from 0 to 100",
                       "A tier: Nascent, Developing, Established, or Leading",
                       "Per-dimension breakdown across the five axes",
                       "Percentile ranking vs benchmark dataset",
@@ -358,6 +405,11 @@ export function HomeView() {
           </div>
         </div>
       </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* QUICK BENCHMARK PREVIEW                                             */}
+      {/* ------------------------------------------------------------------ */}
+      <QuickBenchmark />
 
       {/* ------------------------------------------------------------------ */}
       {/* METHODOLOGY                                                         */}

@@ -22,6 +22,7 @@ import { BenchmarkQuizView } from "@/components/views/benchmark-quiz-view";
 import { BenchmarkResultsView } from "@/components/views/benchmark-results-view";
 import { BenchmarkFollowupView } from "@/components/views/benchmark-followup-view";
 import { BenchmarkInsightsView } from "@/components/views/benchmark-insights-view";
+import { NotFoundView } from "@/components/views/not-found-view";
 
 const VIEWS: Record<ViewKey, React.ComponentType> = {
   home: HomeView,
@@ -38,6 +39,7 @@ const VIEWS: Record<ViewKey, React.ComponentType> = {
   "benchmark-results": BenchmarkResultsView,
   "benchmark-followup": BenchmarkFollowupView,
   "benchmark-insights": BenchmarkInsightsView,
+  "not-found": NotFoundView,
 };
 
 function useHashSync() {
@@ -65,7 +67,12 @@ function useHashSync() {
         "benchmark-followup",
         "benchmark-insights",
       ];
-      const v = valid.includes(firstSegment) ? firstSegment : "home";
+      // If hash is non-empty but doesn't match a valid view, show 404
+      const v = valid.includes(firstSegment)
+        ? firstSegment
+        : raw.length > 0
+          ? "not-found"
+          : "home";
       if (useNav.getState().view !== v) {
         useNav.setState({ view: v });
       }

@@ -193,7 +193,7 @@ export function LegalView() {
               <LegalSection title="About these terms">
                 <p>
                   These terms govern your use of the {COMPANY.name} website at
-                  trenntadvisory.com. By using the site, you agree to them. If
+                  trennt.com. By using the site, you agree to them. If
                   you don&apos;t agree, please don&apos;t use the site.
                 </p>
               </LegalSection>

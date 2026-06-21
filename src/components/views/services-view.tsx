@@ -9,6 +9,7 @@ import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 const ENGAGEMENT_MODEL = [
   {
@@ -39,6 +40,34 @@ const ENGAGEMENT_MODEL = [
 
 export function ServicesView() {
   const navigate = useNav((s) => s.navigate);
+  const [activeSlug, setActiveSlug] = React.useState<string>(SERVICES[0]?.slug ?? "");
+
+  // Scroll-spy: track which service card is in view
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const slug = entry.target.id.replace("service-", "");
+            setActiveSlug(slug);
+          }
+        }
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: 0 }
+    );
+    SERVICES.forEach((s) => {
+      const el = document.getElementById(`service-${s.slug}`);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const handleNavClick = (slug: string) => {
+    const el = document.getElementById(`service-${slug}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <div className="flex flex-col">
@@ -72,22 +101,47 @@ export function ServicesView() {
                 built.
               </p>
             </Reveal>
-            <Reveal delay={0.15}>
-              <div className="mt-8 flex flex-wrap gap-2">
-                {SERVICES.map((s) => (
-                  <a
-                    key={s.slug}
-                    href={`#service-${s.slug}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/70 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur transition-colors hover:border-primary/30 hover:text-foreground"
-                  >
-                    {s.title}
-                  </a>
-                ))}
-              </div>
-            </Reveal>
           </div>
         </div>
       </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* STICKY QUICK-NAV WITH SCROLL-SPY                                   */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <nav
+            aria-label="Services quick navigation"
+            className="flex gap-1 overflow-x-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {SERVICES.map((s, i) => {
+              const active = activeSlug === s.slug;
+              return (
+                <button
+                  key={s.slug}
+                  onClick={() => handleNavClick(s.slug)}
+                  className={cn(
+                    "group inline-flex shrink-0 items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
+                    active
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "font-mono text-[10px] transition-colors",
+                      active ? "text-primary-foreground/70" : "text-muted-foreground/60"
+                    )}
+                  >
+                    0{i + 1}
+                  </span>
+                  {s.title}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
 
       {/* ------------------------------------------------------------------ */}
       {/* SERVICES LIST                                                       */}
@@ -102,11 +156,15 @@ export function ServicesView() {
         <div className="space-y-8">
           {SERVICES.map((s, i) => {
             const reversed = i % 2 === 1;
+            const active = activeSlug === s.slug;
             return (
               <Reveal key={s.slug} delay={0.05}>
                 <Card
                   id={`service-${s.slug}`}
-                  className="scroll-mt-24 overflow-hidden rounded-2xl border-border/70 bg-card transition-all hover:border-primary/30 hover:shadow-sm"
+                  className={cn(
+                    "scroll-mt-24 overflow-hidden rounded-2xl border-border/70 bg-card transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5",
+                    active && "border-primary/40 ring-1 ring-primary/20"
+                  )}
                 >
                   <div
                     className={

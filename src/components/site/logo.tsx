@@ -57,10 +57,10 @@ export function Logo({
       {withWordmark && (
         <span className="flex flex-col leading-none">
           <span className="font-semibold tracking-tight text-[15px] text-foreground">
-            Trennt
+            TRENNT
           </span>
           <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Advisory
+            Consulting Group
           </span>
         </span>
       )}

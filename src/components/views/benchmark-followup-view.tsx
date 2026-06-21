@@ -357,11 +357,11 @@ export function BenchmarkFollowupView() {
                       Reach us directly — we read every message.
                     </p>
                     <a
-                      href="mailto:hello@trenntadvisory.com"
+                      href="mailto:hello@trennt.com"
                       className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                     >
                       <Mail className="h-4 w-4" />
-                      hello@trenntadvisory.com
+                      hello@trennt.com
                     </a>
                     <a
                       href="tel:+442079460312"
