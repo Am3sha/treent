@@ -9,6 +9,7 @@ export type ViewKey =
   | "resources"
   | "work"
   | "legal"
+  | "admin"
   | "benchmark-landing"
   | "benchmark-quiz"
   | "benchmark-results"

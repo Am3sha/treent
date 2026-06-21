@@ -499,35 +499,48 @@ export function BenchmarkLandingView() {
 
       {/* FINAL CTA ---------------------------------------------------- */}
       <section className="border-t border-border/70 bg-secondary/30">
-        <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
           <Reveal>
-            <Eyebrow className="justify-center">Begin</Eyebrow>
-            <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
-              Eight minutes. A clearer picture of where you stand.
-            </h2>
-            <p className="mx-auto mt-5 max-w-xl text-balance text-base leading-relaxed text-muted-foreground">
-              There is no signup required to start. Your responses save
-              automatically as you go.
-            </p>
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button
-                size="lg"
-                onClick={handleStart}
-                className="h-12 gap-2 rounded-full px-8 text-base shadow-sm"
-              >
-                Start the assessment
-                <ArrowUpRight className="h-4 w-4" />
-              </Button>
-              {result && (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => navigate("benchmark-results")}
-                  className="h-12 gap-2 rounded-full px-6 text-base"
-                >
-                  Review your last result
-                </Button>
-              )}
+            <div className="relative overflow-hidden rounded-3xl p-px">
+              {/* Gradient border */}
+              <div
+                className="absolute inset-0 rounded-3xl opacity-60"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.38 0.06 162), oklch(0.72 0.13 75), oklch(0.52 0.1 195))",
+                }}
+                aria-hidden
+              />
+              <div className="relative rounded-[calc(1.5rem-1px)] bg-background px-6 py-14 text-center sm:px-12 md:py-20">
+                <Eyebrow className="justify-center">Begin</Eyebrow>
+                <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+                  Eight minutes. A clearer picture of where you stand.
+                </h2>
+                <p className="mx-auto mt-5 max-w-xl text-balance text-base leading-relaxed text-muted-foreground">
+                  There is no signup required to start. Your responses save
+                  automatically as you go.
+                </p>
+                <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <Button
+                    size="lg"
+                    onClick={handleStart}
+                    className="h-12 gap-2 rounded-full px-8 text-base shadow-sm"
+                  >
+                    Start the assessment
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Button>
+                  {result && (
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      onClick={() => navigate("benchmark-results")}
+                      className="h-12 gap-2 rounded-full px-6 text-base"
+                    >
+                      Review your last result
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
           </Reveal>
         </div>

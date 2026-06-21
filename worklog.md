@@ -492,3 +492,72 @@ A premium UX feature that ties the growing content together — users can search
 - The command palette could be enhanced with "recently viewed" or "popular" sections.
 - Could add a 404/not-found view for invalid hash routes (currently falls back to home).
 - Next recurring review should consider: a sitemap/robots route for SEO, or a "Compare" feature to benchmark multiple organisations side by side.
+
+---
+Task ID: 11 (webDevReview cron round 5)
+Agent: main (orchestrator) — recurring webDevReview
+Task: QA assessment + 2 new features (Admin Reporting view with CSV export, admin assessments API) + CTA gradient border polish.
+
+## Current project status assessment
+- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+- Prior rounds added: Insights dashboard, sector comparison, Resources/Articles, Work/Case Studies, Legal/Privacy, Cmd+K command palette, animated counters, scroll progress, back-to-top, tier glow, hero gradient mesh.
+- QA found NO bugs. All 11 views render correctly.
+- The site now has 12 views + 8 API routes + a rich benchmark tool with full data capture.
+
+## Completed modifications this round
+
+### 1. NEW FEATURE: Admin Reporting view (#/admin)
+Directly serves the user's original requirement that benchmark data be "collected and stored... so the data can be aggregated and used later for analysis and reporting." Previously the data was captured and shown in aggregate, but there was no way to view individual records or export them.
+
+**Files created/modified:**
+- `src/components/views/admin-view.tsx` (NEW, ~540 lines):
+  - Hero with "Internal · Admin reporting" eyebrow + amber security notice ("this route must be behind authentication in production")
+  - KPI strip: total records, avg score, leading-tier %, avg duration, follow-up count
+  - Filter bar: 3 Select dropdowns (tier, industry, company size) + Clear button + Refresh + 2 CSV export buttons
+  - **Records table** (desktop): columns Date, Organisation, Industry, Score, Tier, Follow-ups; rows expandable on click to show full detail
+  - **Records cards** (mobile): stacked cards with expand
+  - **RecordDetail** expanded view: respondent meta grid, 5 dimension score cards with progress bars, consent/duration/ID, individual responses list (all 15 question texts + values), follow-up requests
+  - **CSV export (summary)**: downloads all filtered records with 20 columns (ID, date, name, email, company, industry, size, country, role, scores, tier, count, duration, consent, follow-ups)
+  - **CSV export (responses)**: downloads all individual responses (assessment ID, question ID, dimension, question text, value 1-5) — the full granular dataset for analysis
+  - Pagination (20 per page) with Previous/Next controls
+  - Tier-colored badges (Nascent=orange, Developing=amber, Established=emerald, Leading=teal)
+  - Loading skeletons, error state, empty state all handled
+- `src/lib/types.ts` (UPDATED): Added `admin` to ViewKey
+- `src/lib/store.ts` (UPDATED): Added `admin` to valid views list
+- `src/app/page.tsx` (UPDATED): Registered AdminView in router + hash sync
+- `src/components/site/footer.tsx` (UPDATED): Added "Admin reporting" link to Benchmark footer column
+
+### 2. NEW BACKEND: /api/admin/assessments API
+- `src/app/api/admin/assessments/route.ts` (NEW, ~100 lines):
+  - GET endpoint returning paginated assessment records with full responses + follow-ups
+  - Query params: tier, industry, companySize, page, pageSize (max 100)
+  - Returns: total count, page, totalPages, records[] (each with id, respondent profile, scores per dimension, tier, duration, createdAt, responses[], followUps[]), filters object (distinct industries, companySizes, valid tiers for dropdowns)
+  - Uses Prisma findMany with include for responses + followUps, orderBy createdAt desc
+  - Clearly marked: "In production this route MUST be behind authentication"
+  - Error handling with 500 response
+
+### 3. STYLING POLISH
+- `src/components/views/benchmark-landing-view.tsx` (UPDATED): Enhanced the final CTA section with a gradient border card. The CTA now sits inside a rounded-3xl container with a 1px gradient border (emerald → amber → teal at 135deg, 60% opacity) wrapping a bg-background inner card. Adds a premium, finished feel to the benchmark landing page's closing CTA.
+
+## Verification results
+- `bun run lint` → 0 errors, 0 warnings
+- All routes HTTP 200: /, #/about, #/services, #/work, #/contact, #/careers, #/resources, #/legal, #/admin, #/benchmark-landing, #/benchmark-insights
+- /api/admin/assessments → HTTP 200 (returns 19 records with full responses)
+- agent-browser + VLM verified:
+  - **Admin view**: hero with security notice, 5 KPI cards (19 records, 60 avg, 42% Leading, avg duration, 2 follow-ups), data table with 6 columns, 3 filter dropdowns, 2 export buttons. VLM: "no visual bugs apparent"
+  - **Row expansion**: clicking a row expands to show dimension scores (5 cards with progress bars), individual responses (15 items with question text + value), consent/duration/ID meta, follow-up requests
+  - **Tier filter**: selecting "Leading" correctly filters to show only Leading-tier records (all 8 visible badges show "Leading")
+  - **CSV export**: both "Export summary" and "Export responses" buttons trigger client-side Blob downloads
+  - **Footer link**: "Admin reporting" appears in the Benchmark footer column
+  - **CTA gradient border**: renders on the benchmark landing final CTA section
+  - No console errors on any view
+
+## Unresolved issues or risks + next-phase recommendations
+- The admin view is currently open (no auth). In production, it MUST be protected with NextAuth admin role check. This is clearly marked in the UI (amber notice) and API comment.
+- The seeded test data (19 assessments) is still in the DB — should be cleared before production.
+- Article and case study content is static in content.ts. A CMS or MDX authoring workflow could be added.
+- Could add a "team benchmark" feature (leader invites team, aggregate team view).
+- Could add a 404/not-found view for invalid hash routes.
+- Could add a sitemap.xml / robots.txt route for SEO.
+- The admin view could be enhanced with: date-range filtering, search by company/email, bulk export of all records (not just current page), status management for follow-ups.
+- Next recurring review should consider: clearing test data, adding auth protection to admin, or a "Compare organisations" feature.

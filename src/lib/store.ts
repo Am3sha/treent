@@ -51,6 +51,7 @@ function readHashView(): ViewKey {
     "resources",
     "work",
     "legal",
+    "admin",
     "benchmark-landing",
     "benchmark-quiz",
     "benchmark-results",
