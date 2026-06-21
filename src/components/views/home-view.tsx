@@ -31,6 +31,17 @@ export function HomeView() {
         aria-labelledby="hero-heading"
         className="relative overflow-hidden border-b border-border/60"
       >
+        {/* Gradient mesh — soft colored blobs for depth */}
+        <div
+          className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full opacity-30 blur-3xl"
+          style={{ background: "oklch(0.38 0.06 162)" }}
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -right-24 top-20 h-80 w-80 rounded-full opacity-20 blur-3xl"
+          style={{ background: "oklch(0.72 0.13 75)" }}
+          aria-hidden
+        />
         <div className="absolute inset-0 bg-radial-fade" aria-hidden />
         <div className="absolute inset-0 bg-grid mask-fade-b opacity-60" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 md:pb-24 md:pt-24 lg:px-8">

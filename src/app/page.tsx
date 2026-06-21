@@ -5,6 +5,7 @@ import { useNav } from "@/lib/store";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { BackToTop } from "@/components/site/back-to-top";
+import { CommandPalette } from "@/components/site/command-palette";
 import type { ViewKey } from "@/lib/types";
 
 import { HomeView } from "@/components/views/home-view";
@@ -14,6 +15,7 @@ import { ContactView } from "@/components/views/contact-view";
 import { CareersView } from "@/components/views/careers-view";
 import { ResourcesView } from "@/components/views/resources-view";
 import { WorkView } from "@/components/views/work-view";
+import { LegalView } from "@/components/views/legal-view";
 import { BenchmarkLandingView } from "@/components/views/benchmark-landing-view";
 import { BenchmarkQuizView } from "@/components/views/benchmark-quiz-view";
 import { BenchmarkResultsView } from "@/components/views/benchmark-results-view";
@@ -28,6 +30,7 @@ const VIEWS: Record<ViewKey, React.ComponentType> = {
   careers: CareersView,
   resources: ResourcesView,
   work: WorkView,
+  legal: LegalView,
   "benchmark-landing": BenchmarkLandingView,
   "benchmark-quiz": BenchmarkQuizView,
   "benchmark-results": BenchmarkResultsView,
@@ -52,6 +55,7 @@ function useHashSync() {
         "careers",
         "resources",
         "work",
+        "legal",
         "benchmark-landing",
         "benchmark-quiz",
         "benchmark-results",
@@ -91,6 +95,7 @@ export default function Home() {
       </main>
       <Footer />
       <BackToTop />
+      <CommandPalette />
     </div>
   );
 }

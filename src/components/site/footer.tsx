@@ -186,7 +186,7 @@ export function Footer() {
               {COMPANY.offices.length} offices worldwide
             </span>
             <button
-              onClick={() => navigate("contact")}
+              onClick={() => navigate("legal")}
               className="inline-flex items-center gap-1 hover:text-primary"
             >
               Privacy &amp; terms

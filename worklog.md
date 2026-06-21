@@ -420,3 +420,75 @@ The site previously teased case studies on the home page but had NO dedicated pa
 - Could add an admin/reporting view for individual assessment records with CSV export.
 - The home page hero could benefit from a more dynamic visual (e.g., an animated radar chart or a looping video background).
 - Next recurring review should consider: a privacy/terms page (footer link currently goes to contact), or a search/filter feature for the resources + work views.
+
+---
+Task ID: 10 (webDevReview cron round 4)
+Agent: main (orchestrator) — recurring webDevReview
+Task: QA assessment + 2 new features (Legal/Privacy view, Cmd+K command palette) + home hero gradient mesh polish.
+
+## Current project status assessment
+- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+- Prior rounds added: Insights dashboard, sector comparison, Resources/Articles view, Work/Case Studies view, animated counters, scroll progress bar, back-to-top, tier glow.
+- QA found NO bugs in existing codebase. All views render correctly.
+- The site now has 11 views + 7 API routes + a rich benchmark tool with full data capture.
+
+## Completed modifications this round
+
+### 1. NEW FEATURE: Legal / Privacy view (#/legal)
+Fixed a real UX gap: the footer "Privacy & terms" link previously navigated to the contact page (wrong). Built a proper legal page with three tabbed policies.
+
+**Files created/modified:**
+- `src/components/views/legal-view.tsx` (NEW, ~290 lines):
+  - Hero with "Privacy, terms & cookies" title, last-updated date, radial fade + grid background
+  - 3-tab interface using shadcn Tabs: Privacy Policy, Terms of Service, Cookie Policy
+  - **Privacy Policy** (8 sections): Who we are, What we collect, Why we collect it, Legal basis (GDPR), How long we keep it, Who we share it with, Your rights, International transfers
+  - **Terms of Service** (8 sections): About these terms, The benchmark tool, Your content, Our content, Acceptable use, Liability, Changes, Governing law
+  - **Cookie Policy** (4 sections): What cookies are, The cookies we use (with a 4-row table: name/purpose/duration/type), Managing cookies, Third-party services
+  - Reusable `LegalCard`, `LegalSection`, `LegalList` helper components
+  - Contact CTA card at the bottom with email + contact form buttons
+  - All content is genuine, plain-English legal text (not placeholder)
+- `src/lib/types.ts` (UPDATED): Added `legal` to ViewKey
+- `src/lib/store.ts` (UPDATED): Added `legal` to valid views list
+- `src/app/page.tsx` (UPDATED): Registered LegalView in router + hash sync
+- `src/components/site/footer.tsx` (UPDATED): Fixed "Privacy & terms" link to navigate to `legal` instead of `contact`
+
+### 2. NEW FEATURE: Cmd+K Command Palette (global search)
+A premium UX feature that ties the growing content together — users can search across all pages, services, articles, and case studies from anywhere.
+
+**Files created/modified:**
+- `src/components/site/command-palette.tsx` (NEW, ~260 lines):
+  - Triggered by Cmd/Ctrl+K (global keyboard listener) or the header search button
+  - Uses shadcn `CommandDialog` (built on cmdk) with fuzzy search
+  - Search index includes 4 groups: Navigate (10 views), Services (6), Articles (6), Case studies (5) = 27 searchable entries total
+  - Each entry has: icon, label, hint, keywords (for matching), and an action (navigate to view / article / case study)
+  - Selecting an article navigates to `#/resources/<slug>`, case study to `#/work/<slug>`
+  - Footer with keyboard hints (↵ to select, esc to close) + company name
+  - Group headings styled with uppercase tracking
+  - `navigateToHash` helper for sub-path navigation (avoids lint immutability rule)
+- `src/app/page.tsx` (UPDATED): Added `<CommandPalette />` to the layout
+- `src/components/site/header.tsx` (UPDATED): Added a search button (desktop: pill with "Search" + ⌘K kbd; mobile: icon-only) that dispatches a synthetic Cmd+K keydown to open the palette. Imported `Search` icon.
+
+### 3. STYLING POLISH
+- `src/components/views/home-view.tsx` (UPDATED): Added a gradient mesh background to the home hero — two soft colored blobs (emerald top-left at 30% opacity, amber right at 20% opacity, both blurred 3xl) that add depth behind the radial fade + grid. VLM-confirmed: "subtle gradient mesh with soft emerald green and amber blobs, adding depth without distraction."
+
+## Verification results
+- `bun run lint` → 0 errors, 0 warnings
+- All routes HTTP 200: /, #/about, #/services, #/work, #/contact, #/careers, #/resources, #/legal, #/benchmark-landing, #/benchmark-insights
+- agent-browser + VLM verified:
+  - **Legal view**: hero with title + last-updated date, 3 tabs (Privacy/Terms/Cookies), well-formatted legal content with headings + lists, tab switching works. VLM: "no visual bugs apparent"
+  - **Cookie policy table**: renders correctly with 4 rows (name/purpose/duration/type)
+  - **Footer link fixed**: "Privacy & terms" now navigates to #/legal (was #/contact)
+  - **Command palette**: opens on Cmd+K, shows search input + grouped results (Navigate/Services/Articles/Case studies), 27 searchable entries. VLM: "clean, well-organized, proper spacing, clear typography, no visual bugs"
+  - **Palette navigation**: selecting "Data as a product" article navigates to #/resources/data-as-a-product and loads the article reader
+  - **Header search button**: visible on desktop (pill with ⌘K) and mobile (icon), opens palette on click
+  - **Home hero gradient mesh**: emerald + amber blobs add depth. VLM-confirmed
+  - No console errors on any view (stale HMR cache errors are non-issues — dev server log shows only 200s)
+
+## Unresolved issues or risks + next-phase recommendations
+- The seeded test data (17+ assessments) is still in the DB — should be cleared before production.
+- Article and case study content is static in content.ts. A CMS or MDX authoring workflow could be added.
+- Could add a "team benchmark" feature (leader invites team, aggregate team view).
+- Could add an admin/reporting view for individual assessment records with CSV export.
+- The command palette could be enhanced with "recently viewed" or "popular" sections.
+- Could add a 404/not-found view for invalid hash routes (currently falls back to home).
+- Next recurring review should consider: a sitemap/robots route for SEO, or a "Compare" feature to benchmark multiple organisations side by side.
