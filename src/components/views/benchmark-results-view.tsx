@@ -1,0 +1,842 @@
+"use client";
+
+import * as React from "react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Printer,
+  RefreshCw,
+  Share2,
+  ShieldCheck,
+  TrendingUp,
+  AlertCircle,
+} from "lucide-react";
+import {
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Cell,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
+import { useNav } from "@/lib/store";
+import { DIMENSIONS, TIER_META, scoreToTier } from "@/lib/content";
+import type {
+  AssessmentResult,
+  BenchmarkStats,
+  Dimension,
+  MaturityTier,
+} from "@/lib/types";
+import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Icon } from "@/components/site/icon";
+import { cn } from "@/lib/utils";
+
+// Tier-specific recommendations (tailored copy).
+const TIER_RECOMMENDATIONS: Record<MaturityTier, string[]> = {
+  Nascent: [
+    "Resist the urge to buy tooling. Begin by writing down the strategy and getting the exec team to agree on it — explicitly.",
+    "Pick one core process, map it end-to-end, and instrument it. You cannot improve what you cannot see.",
+    "Establish a single source of truth for one core business entity (customer or product) before attempting anything broader.",
+  ],
+  Developing: [
+    "Your pockets of strong practice need a connective layer. Appoint owners for each dimension and a single forum where they meet.",
+    "Replace project-by-project improvement with a quarterly portfolio review tied to the strategy.",
+    "Move one AI pilot into a measured production system. Use it to build the muscle for governing models, not just building them.",
+  ],
+  Established: [
+    "Shift from efficient to adaptive: shorten the loop from decision to production, and make safe-to-fail the default for new bets.",
+    "Industrialise your data foundation as reusable products, not one-off pipelines.",
+    "Move from AI experiments to AI as a capability — a platform, with a portfolio of measured systems and clear ownership.",
+  ],
+  Leading: [
+    "Sustain the edge by treating the platform itself as a product — funded, versioned, and continuously improved.",
+    "Defend your position by deepening the moat around your differentiating capabilities, not by spreading thin.",
+    "Shape your market: open selective capabilities as services, set standards, and use your maturity to pull the sector forward.",
+  ],
+};
+
+const DIMENSION_INTERPRETATION: Record<Dimension, { high: string; mid: string; low: string }> = {
+  strategy: {
+    high: "Ambition is translated into a sequenced, fundable plan the organisation runs against.",
+    mid: "You have a strategy, but it is not consistently cascaded or measured against.",
+    low: "Strategy is implied at best — alignment on where to play and how to win is unclear.",
+  },
+  technology: {
+    high: "Your technology foundation is modern, API-first, and changes at the pace of the business.",
+    mid: "Your systems work, but integration is bespoke and change cycles are slower than they need to be.",
+    low: "Core systems are closed and slow to change — technology is a constraint, not an enabler.",
+  },
+  culture: {
+    high: "People, ways of working, and leadership behaviours sustain change rather than resist it.",
+    mid: "Culture supports change in pockets but isn't a deliberate lever for the leadership team.",
+    low: "Ways of working are siloed and change is resisted — culture is a brake on the strategy.",
+  },
+  data: {
+    high: "Data is governed, reusable, and AI is delivering measured business lift.",
+    mid: "Data is partially unified and self-serve is growing, but it is not yet a governed asset.",
+    low: "Data is fragmented across systems and decision-makers depend on others to answer routine questions.",
+  },
+  operations: {
+    high: "Operations are lean, observable, and improvement is a system rather than a campaign.",
+    mid: "Core processes are mapped and measured, but improvement is still project-led.",
+    low: "Operations are unmapped and reactive — improvement is ad hoc and rarely compounding.",
+  },
+};
+
+export function BenchmarkResultsView() {
+  const result = useNav((s) => s.result);
+  const navigate = useNav((s) => s.navigate);
+  const resetResponses = useNav((s) => s.resetResponses);
+  const startAssessment = useNav((s) => s.startAssessment);
+
+  if (!result) {
+    return <EmptyState onRestart={() => navigate("benchmark-landing")} />;
+  }
+
+  const handleRetake = () => {
+    resetResponses();
+    startAssessment();
+    navigate("benchmark-quiz");
+  };
+
+  return (
+    <ResultsBody
+      result={result}
+      onRetake={handleRetake}
+      onFollowUp={() => navigate("benchmark-followup")}
+      onShare={() => {
+        if (typeof navigator !== "undefined" && navigator.share) {
+          navigator
+            .share({
+              title: "My Digital Maturity Benchmark",
+              text: `I scored ${result.overall}/100 on the Meridian Digital Maturity Benchmark.`,
+              url: typeof window !== "undefined" ? window.location.href : "",
+            })
+            .catch(() => undefined);
+        } else if (typeof window !== "undefined") {
+          window.print();
+        }
+      }}
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Empty state
+// ---------------------------------------------------------------------------
+
+function EmptyState({ onRestart }: { onRestart: () => void }) {
+  return (
+    <div className="mx-auto flex min-h-[70vh] max-w-2xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6 lg:px-8">
+      <Reveal>
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <AlertCircle className="h-7 w-7" />
+        </div>
+        <h1 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+          You haven't completed the assessment yet.
+        </h1>
+        <p className="mt-4 text-balance text-base leading-relaxed text-muted-foreground">
+          Take the eight-minute Digital Maturity Benchmark to see your overall
+          score, tier, percentile, and a per-dimension breakdown.
+        </p>
+        <div className="mt-8">
+          <Button size="lg" onClick={onRestart} className="gap-2 rounded-full">
+            Start the assessment
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Body
+// ---------------------------------------------------------------------------
+
+function ResultsBody({
+  result,
+  onRetake,
+  onFollowUp,
+  onShare,
+}: {
+  result: AssessmentResult;
+  onRetake: () => void;
+  onFollowUp: () => void;
+  onShare: () => void;
+}) {
+  const [stats, setStats] = React.useState<BenchmarkStats | null>(null);
+  const [statsState, setStatsState] = React.useState<
+    "loading" | "loaded" | "empty" | "error"
+  >("loading");
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/benchmark/stats", { cache: "no-store" });
+        if (!res.ok) throw new Error("stats fetch failed");
+        const data = (await res.json()) as BenchmarkStats;
+        if (cancelled) return;
+        if (!data || data.totalAssessments === 0) {
+          setStatsState("empty");
+        } else {
+          setStats(data);
+          setStatsState("loaded");
+        }
+      } catch {
+        if (!cancelled) setStatsState("error");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const tierMeta = TIER_META[result.tier];
+  const percentileLabel =
+    result.percentile >= 50
+      ? `You're in the top ${100 - result.percentile}%`
+      : `Higher than ${result.percentile}% of organisations benchmarked`;
+
+  // Per-dimension enrichment.
+  const dimRows = DIMENSIONS.map((d) => {
+    const score = result.scores[d.key];
+    return {
+      meta: d,
+      score,
+      tier: scoreToTier(score),
+      tierMeta: TIER_META[scoreToTier(score)],
+      interp:
+        score >= 70
+          ? DIMENSION_INTERPRETATION[d.key].high
+          : score >= 40
+            ? DIMENSION_INTERPRETATION[d.key].mid
+            : DIMENSION_INTERPRETATION[d.key].low,
+    };
+  });
+
+  const sorted = [...dimRows].sort((a, b) => b.score - a.score);
+  const strengths = sorted.slice(0, 2);
+  const focus = sorted.slice(-2).reverse();
+
+  const radarData = DIMENSIONS.map((d) => ({
+    dimension: d.short,
+    score: result.scores[d.key],
+    benchmark:
+      stats && statsState === "loaded"
+        ? Math.round(stats.dimensionAverages[d.key] ?? 0)
+        : 0,
+  }));
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      {/* HERO SCORE CARD ---------------------------------------------- */}
+      <Reveal>
+        <Eyebrow>Your benchmark report</Eyebrow>
+        <div className="mt-5 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+          {/* Score */}
+          <Card className="relative overflow-hidden py-6">
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-1"
+              style={{ background: tierMeta.color }}
+            />
+            <CardContent className="px-6 sm:px-8">
+              <div className="flex flex-wrap items-center gap-3">
+                <Badge
+                  variant="secondary"
+                  className="gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+                  style={{
+                    background: `${tierMeta.color}1a`,
+                    color: tierMeta.color,
+                  }}
+                >
+                  <span
+                    className="size-1.5 rounded-full"
+                    style={{ background: tierMeta.color }}
+                  />
+                  {tierMeta.label} tier
+                  <span className="ml-1 font-mono text-[10px] opacity-70">
+                    {tierMeta.range}
+                  </span>
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  Completed {new Date(result.createdAt).toLocaleDateString(undefined, {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+
+              <div className="mt-6 flex items-end gap-3">
+                <span className="text-6xl font-semibold tracking-tight tabular-nums sm:text-7xl">
+                  {result.overall}
+                </span>
+                <span className="mb-2 text-2xl font-light text-muted-foreground">
+                  / 100
+                </span>
+              </div>
+              <p className="mt-2 text-sm font-medium text-foreground">
+                Overall digital maturity
+              </p>
+
+              <Separator className="my-6" />
+
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {tierMeta.summary}
+              </p>
+
+              <div className="mt-5 flex items-center gap-2 rounded-lg border border-border bg-secondary/30 p-3">
+                <TrendingUp className="h-4 w-4 shrink-0 text-primary" />
+                <p className="text-sm font-medium text-foreground">
+                  {percentileLabel}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Radar */}
+          <Card className="py-6">
+            <CardHeader className="px-6 sm:px-8">
+              <CardTitle className="text-lg">Your dimension profile</CardTitle>
+              <CardDescription>
+                The shape of your maturity, across all five dimensions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-2 sm:px-4">
+              <div className="h-[260px] w-full sm:h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart
+                    data={radarData}
+                    outerRadius="70%"
+                    margin={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                  >
+                    <PolarGrid stroke="oklch(0.89 0.012 120)" />
+                    <PolarAngleAxis
+                      dataKey="dimension"
+                      tick={{
+                        fill: "oklch(0.48 0.02 150)",
+                        fontSize: 12,
+                        fontWeight: 500,
+                      }}
+                    />
+                    <PolarRadiusAxis
+                      angle={90}
+                      domain={[0, 100]}
+                      tick={false}
+                      axisLine={false}
+                    />
+                    <Radar
+                      name="You"
+                      dataKey="score"
+                      stroke="oklch(0.38 0.06 162)"
+                      fill="oklch(0.38 0.06 162)"
+                      fillOpacity={0.28}
+                      strokeWidth={2}
+                    />
+                    {statsState === "loaded" && (
+                      <Radar
+                        name="Benchmark avg"
+                        dataKey="benchmark"
+                        stroke="oklch(0.72 0.13 75)"
+                        fill="oklch(0.72 0.13 75)"
+                        fillOpacity={0.1}
+                        strokeWidth={1.5}
+                        strokeDasharray="4 4"
+                      />
+                    )}
+                    <Tooltip
+                      contentStyle={{
+                        borderRadius: 8,
+                        border: "1px solid oklch(0.89 0.012 120)",
+                        fontSize: 12,
+                      }}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </Reveal>
+
+      {/* PEER COMPARISON ---------------------------------------------- */}
+      <Reveal delay={0.05}>
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+          <Card className="py-6">
+            <CardHeader className="px-6 sm:px-8">
+              <CardTitle className="text-lg">You vs the benchmark</CardTitle>
+              <CardDescription>
+                {statsState === "loaded"
+                  ? `Compared against ${stats.totalAssessments.toLocaleString()} completed benchmarks.`
+                  : statsState === "loading"
+                    ? "Loading benchmark data…"
+                    : "Benchmark data not yet available."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 sm:px-8">
+              {statsState === "loading" ? (
+                <Skeleton className="h-[160px] w-full" />
+              ) : statsState === "loaded" && stats ? (
+                <ComparisonBars
+                  you={result.overall}
+                  avg={Math.round(stats.averageOverall)}
+                />
+              ) : (
+                <div className="flex h-[160px] items-center justify-center rounded-lg border border-dashed bg-secondary/20 text-sm text-muted-foreground">
+                  {statsState === "empty"
+                    ? "Be among the first to set the benchmark."
+                    : "Comparison unavailable."}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="py-6">
+            <CardHeader className="px-6 sm:px-8">
+              <CardTitle className="text-lg">Tier distribution</CardTitle>
+              <CardDescription>
+                Where everyone who has benchmarked sits today.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 sm:px-8">
+              {statsState === "loading" ? (
+                <Skeleton className="h-[160px] w-full" />
+              ) : statsState === "loaded" && stats ? (
+                <TierDistribution
+                  distribution={stats.tierDistribution}
+                  you={result.tier}
+                />
+              ) : (
+                <div className="flex h-[160px] items-center justify-center rounded-lg border border-dashed bg-secondary/20 text-sm text-muted-foreground">
+                  No distribution data yet.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </Reveal>
+
+      {/* PER-DIMENSION BREAKDOWN -------------------------------------- */}
+      <Reveal delay={0.05}>
+        <div className="mt-14">
+          <SectionHeading
+            eyebrow="Per-dimension breakdown"
+            title="Where you lead, and where to focus."
+          />
+          <div className="mt-8 space-y-3">
+            {dimRows.map((row) => (
+              <DimensionRow key={row.meta.key} row={row} />
+            ))}
+          </div>
+        </div>
+      </Reveal>
+
+      {/* STRENGTHS & FOCUS ------------------------------------------- */}
+      <Reveal delay={0.05}>
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          <Card className="py-6">
+            <CardHeader className="px-6 sm:px-8">
+              <div className="flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <TrendingUp className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-base">Your strengths</CardTitle>
+              </div>
+              <CardDescription>
+                The dimensions where your organisation is most mature.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 sm:px-8">
+              <ul className="space-y-4">
+                {strengths.map((s) => (
+                  <li key={s.meta.key} className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        "flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10",
+                        s.meta.accent
+                      )}
+                    >
+                      <Icon name={s.meta.icon} className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold">{s.meta.label}</p>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] uppercase tracking-wider"
+                        >
+                          {s.tier}
+                        </Badge>
+                        <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
+                          {s.score}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {s.interp}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="py-6">
+            <CardHeader className="px-6 sm:px-8">
+              <div className="flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-md bg-amber-500/15 text-amber-700">
+                  <AlertCircle className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-base">Focus areas</CardTitle>
+              </div>
+              <CardDescription>
+                Where the next dollar of effort will move the dial most.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 sm:px-8">
+              <ul className="space-y-4">
+                {focus.map((s) => (
+                  <li key={s.meta.key} className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        "flex size-8 shrink-0 items-center justify-center rounded-md bg-muted",
+                        s.meta.accent
+                      )}
+                    >
+                      <Icon name={s.meta.icon} className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold">{s.meta.label}</p>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] uppercase tracking-wider"
+                        >
+                          {s.tier}
+                        </Badge>
+                        <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
+                          {s.score}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {s.interp}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      </Reveal>
+
+      {/* WHAT YOUR TIER MEANS ----------------------------------------- */}
+      <Reveal delay={0.05}>
+        <Card className="mt-14 py-6">
+          <CardHeader className="px-6 sm:px-8">
+            <div className="flex flex-wrap items-center gap-3">
+              <span
+                className="size-2.5 rounded-full"
+                style={{ background: tierMeta.color }}
+              />
+              <CardTitle className="text-xl">
+                What your tier means — and what to do next.
+              </CardTitle>
+            </div>
+            <CardDescription className="mt-1">
+              {tierMeta.label} tier · {tierMeta.range} · {result.overall}/100
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="px-6 sm:px-8">
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {tierMeta.summary}
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {TIER_RECOMMENDATIONS[result.tier].map((rec, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg border border-border bg-secondary/20 p-4"
+                >
+                  <span className="font-mono text-xs font-medium tracking-wider text-primary/80">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground">
+                    {rec}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </Reveal>
+
+      {/* CTA ---------------------------------------------------------- */}
+      <Reveal delay={0.05}>
+        <div className="mt-14 overflow-hidden rounded-2xl border border-border bg-primary text-primary-foreground">
+          <div className="grid gap-6 p-8 sm:p-10 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+            <div>
+              <Eyebrow className="text-primary-foreground/80">
+                Take the next step
+              </Eyebrow>
+              <h2 className="mt-4 text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
+                Get your tailored briefing.
+              </h2>
+              <p className="mt-3 max-w-xl text-balance text-sm leading-relaxed text-primary-foreground/85">
+                A 30-minute call with a Meridian partner to walk through your
+                results, pressure-test the read, and translate your focus areas
+                into a concrete 90-day plan.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={onFollowUp}
+                className="gap-2 rounded-full bg-background text-foreground hover:bg-background/90"
+              >
+                Request a briefing
+                <ArrowUpRight className="h-4 w-4" />
+              </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={onRetake}
+                  className="gap-1.5 rounded-full text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Retake
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={onShare}
+                  className="gap-1.5 rounded-full text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  Share
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* TRUST NOTE --------------------------------------------------- */}
+      <Reveal delay={0.05}>
+        <div className="mt-8 flex items-start gap-2 text-xs text-muted-foreground">
+          <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+          <span>
+            Your responses are stored securely and used only to compute your
+            benchmark and improve aggregated insights. Assessment ID{" "}
+            <span className="font-mono text-foreground/80">{result.id.slice(0, 8)}</span>
+            .
+          </span>
+        </div>
+      </Reveal>
+
+      {/* Print-only helpers */}
+      <div className="sr-only">
+        <button onClick={() => typeof window !== "undefined" && window.print()}>
+          <Printer className="h-4 w-4" />
+          Download report
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Dimension row
+// ---------------------------------------------------------------------------
+
+function DimensionRow({
+  row,
+}: {
+  row: {
+    meta: (typeof DIMENSIONS)[number];
+    score: number;
+    tier: MaturityTier;
+    interp: string;
+  };
+}) {
+  return (
+    <div className="grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-5 sm:p-5">
+      <div className="flex items-center gap-3 sm:min-w-[200px]">
+        <div
+          className={cn(
+            "flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/10",
+            row.meta.accent
+          )}
+        >
+          <Icon name={row.meta.icon} className="h-5 w-5" />
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">{row.meta.label}</p>
+          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            {row.tier}
+          </p>
+        </div>
+      </div>
+      <div className="min-w-0">
+        <Progress value={row.score} className="h-2" />
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          {row.interp}
+        </p>
+      </div>
+      <div className="flex items-center gap-2 sm:justify-end">
+        <span className="font-mono text-2xl font-semibold tabular-nums">
+          {row.score}
+        </span>
+        <span className="text-xs text-muted-foreground">/100</span>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Comparison bars (You vs benchmark average)
+// ---------------------------------------------------------------------------
+
+function ComparisonBars({ you, avg }: { you: number; avg: number }) {
+  const data = [
+    { name: "You", value: you },
+    { name: "Benchmark avg", value: avg },
+  ];
+  return (
+    <div className="h-[160px] w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          layout="vertical"
+          margin={{ top: 8, right: 24, bottom: 8, left: 8 }}
+        >
+          <CartesianGrid
+            horizontal={false}
+            stroke="oklch(0.89 0.012 120)"
+          />
+          <XAxis
+            type="number"
+            domain={[0, 100]}
+            tick={{ fill: "oklch(0.48 0.02 150)", fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            type="category"
+            dataKey="name"
+            tick={{ fill: "oklch(0.21 0.02 150)", fontSize: 12, fontWeight: 500 }}
+            axisLine={false}
+            tickLine={false}
+            width={110}
+          />
+          <Tooltip
+            cursor={{ fill: "oklch(0.95 0.01 120)" }}
+            contentStyle={{
+              borderRadius: 8,
+              border: "1px solid oklch(0.89 0.012 120)",
+              fontSize: 12,
+            }}
+          />
+          <Bar dataKey="value" radius={[4, 4, 4, 4]} barSize={28}>
+            {data.map((d, i) => (
+              <Cell
+                key={i}
+                fill={
+                  d.name === "You"
+                    ? "oklch(0.38 0.06 162)"
+                    : "oklch(0.72 0.13 75)"
+                }
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Tier distribution mini-chart
+// ---------------------------------------------------------------------------
+
+function TierDistribution({
+  distribution,
+  you,
+}: {
+  distribution: Record<MaturityTier, number>;
+  you: MaturityTier;
+}) {
+  const total =
+    distribution.Nascent +
+    distribution.Developing +
+    distribution.Established +
+    distribution.Leading;
+  const tiers: MaturityTier[] = [
+    "Nascent",
+    "Developing",
+    "Established",
+    "Leading",
+  ];
+  return (
+    <div className="space-y-3">
+      {tiers.map((t) => {
+        const count = distribution[t];
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+        const isYou = you === t;
+        return (
+          <div key={t} className="flex items-center gap-3">
+            <div className="flex w-28 items-center gap-2">
+              <span
+                className="size-2.5 rounded-full"
+                style={{ background: TIER_META[t].color }}
+              />
+              <span className="text-xs font-medium">{t}</span>
+            </div>
+            <div className="relative h-3 flex-1 overflow-hidden rounded-full bg-secondary">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${pct}%`,
+                  background: TIER_META[t].color,
+                }}
+              />
+            </div>
+            <span className="w-12 text-right font-mono text-xs tabular-nums text-muted-foreground">
+              {pct}%
+            </span>
+            {isYou && (
+              <Badge
+                variant="outline"
+                className="border-primary/40 text-[10px] font-medium text-primary"
+              >
+                You
+              </Badge>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}

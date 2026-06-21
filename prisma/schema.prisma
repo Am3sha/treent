@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Corporate site capture ----
+
+model ContactInquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String?
+  phone     String?
+  topic     String   @default("general") // general | services | partnership | press
+  message   String
+  status    String   @default("new") // new | contacted | closed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CareerApplication {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  roleSlug  String
+  roleTitle String
+  yearsExp  Int?
+  linkedin  String?
+  portfolio String?
+  message   String?
+  resume    String? // stored as text (filename / data url reference)
+  status    String   @default("new") // new | screening | interview | offer | rejected | hired
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("footer")
+  createdAt DateTime @default(now())
+}
+
+// ---- Benchmark / Assessment capture ----
+
+model Assessment {
+  id           String   @id @default(cuid())
+  // Respondent profile (captured at end of questionnaire)
+  respondentName  String?
+  respondentEmail String?
+  companyName     String?
+  companySize     String? // 1-10 | 11-50 | 51-200 | 201-1000 | 1000+
+  industry        String?
+  country         String?
+  role            String?
+  consentContact  Boolean  @default(false)
+  // Scoring (0-100 per dimension + overall)
+  overallScore    Float
+  strategyScore   Float
+  technologyScore Float
+  cultureScore    Float
+  dataScore       Float
+  operationsScore Float
+  // Anonymous benchmark tier (Nascent | Developing | Established | Leading)
+  tier            String
+  // Number of questions answered
+  questionCount   Int
+  durationSec     Int?
+  createdAt       DateTime @default(now())
+  responses       AssessmentResponse[]
+  followUps       AssessmentFollowUp[]
+}
+
+model AssessmentResponse {
+  id            String   @id @default(cuid())
+  assessment    Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  assessmentId  String
+  questionId    String
+  dimension     String // strategy | technology | culture | data | operations
+  // The answer value (1-5 Likert scale stored as text for SQLite)
+  value         Int
+  // Denormalised question text for historical record (so reports stay stable
+  // even if the live question set changes)
+  questionText  String
+  createdAt     DateTime @default(now())
+}
+
+model AssessmentFollowUp {
+  id           String   @id @default(cuid())
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  assessmentId String
+  name         String
+  email        String
+  company      String?
+  phone        String?
+  message      String?
+  // What the respondent is interested in
+  interest     String @default("consultation") // consultation | report | workshop | partnership
+  status       String @default("new")
+  createdAt    DateTime @default(now())
+}
