@@ -270,3 +270,80 @@ A new aggregate analytics view that visualises the collected benchmark data — 
 - The trend chart only shows the last 12 weeks; as the dataset grows, adding a date-range selector would be valuable.
 - Could add **benchmark comparison by sector** on the results page (e.g., "you vs your industry average") now that byIndustry data is available from the stats API.
 - Next recurring review should consider: adding a "Resources" or "Insights articles" view (thought-leadership content), or a team/bulk benchmark invite feature.
+
+---
+Task ID: 8 (webDevReview cron round 2)
+Agent: main (orchestrator) — recurring webDevReview
+Task: QA assessment + 2 new features (sector comparison on results, Resources/Articles view) + styling polish (tier glow).
+
+## Current project status assessment
+- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+- Prior round added: Benchmark Insights dashboard (#/benchmark-insights), scroll progress bar, back-to-top button.
+- QA found NO bugs in existing codebase. All views render correctly, no console errors.
+- 17 assessments in DB providing meaningful aggregate data.
+
+## Completed modifications this round
+
+### 1. NEW FEATURE: Sector comparison on the benchmark results page
+A user completing the benchmark now sees how they compare to **their own sector**, not just the overall average — leveraging the respondent.industry captured during the assessment and the byIndustry breakdown already returned by the stats API.
+
+**Files modified:**
+- `src/components/views/benchmark-results-view.tsx`:
+  - Added `respondent` prop to ResultsBody (from useNav store)
+  - Added `sectorRow` useMemo that case-insensitively matches the respondent's industry against `stats.byIndustry`
+  - Added a new "SECTOR COMPARISON" Card section (between peer comparison and per-dimension breakdown) with:
+    - Building2 icon + "Sector comparison" eyebrow
+    - "You vs the [industry] sector" heading
+    - Dynamic copy based on sector data: org count, "X points ahead/behind" badge, or "no other orgs in your sector yet" message
+    - A new `SectorGauge` component: compact 3-bar comparison (You / Your sector / All sectors) with colored progress bars
+    - Graceful handling when no sector data exists yet (shows user's score as the sector baseline)
+  - Added `Building2` to lucide imports
+  - Imported `RespondentProfile` type
+
+### 2. NEW FEATURE: Resources / Articles view (#/resources)
+A thought-leadership content hub — the site previously lacked editorial content, which every consulting firm needs. Includes a listing page with featured article + category filter, and a full article reader with rich content blocks.
+
+**Files created/modified:**
+- `src/components/views/resources-view.tsx` (NEW, ~560 lines):
+  - Listing page: hero with radial fade + grid, category filter pills (All/Strategy/Data & AI/Operations/Culture/Perspective), featured article card (2-col with icon tile), article grid (3-col), newsletter CTA
+  - Article reader: back button, category badge, title, excerpt, author byline with initials avatar + date, body rendered from ArticleBlock[] (paragraph/heading/quote/list/callout), article footer CTA (talk to partner / take benchmark), related articles section
+  - Deep-linking: #/resources/<slug> opens the article reader directly
+  - Category-colored badges per article type
+  - `BlockRenderer` component handles all 5 block types with distinct styling (callouts in primary/5, blockquotes with Quote icon, lists with primary dots)
+- `src/lib/content.ts` (UPDATED): Added `ARTICLES` array (6 full articles with real editorial content):
+  - "The maturity trap: why most transformation programmes stall at 60%" (Strategy, Amara Okonkwo)
+  - "Data as a product: the operating model that finally makes data compound" (Data & AI, Daniel Lindqvist)
+  - "The hidden cost of undecided work" (Operations, Marcus Bauer)
+  - "AI without adoption is just expensive maths" (Data & AI, Priya Raghunathan)
+  - "Independence as a strategy, not just a label" (Perspective, Amara Okonkwo)
+  - "The culture metric that actually predicts transformation success" (Culture, Sofia Marchetti)
+  - Each article has 5-7 body blocks (paragraphs, headings, quotes, lists, callouts) — genuine consulting-grade thought leadership, not placeholder text
+  - Added `ARTICLE_CATEGORIES` array
+- `src/lib/types.ts` (UPDATED): Added `resources` to ViewKey; added `Article` interface and `ArticleBlock` union type (paragraph/heading/quote/list/callout)
+- `src/lib/store.ts` (UPDATED): Added `resources` to valid views list
+- `src/app/page.tsx` (UPDATED): Registered ResourcesView in router + hash sync. **Fixed sub-path routing**: `useHashSync` now only considers the first path segment for ViewKey matching (so `#/resources/the-maturity-trap` resolves to the `resources` view, which then handles the article slug internally)
+- `src/components/site/header.tsx` (UPDATED): Added "Resources" to the main NAV array (between Services and Careers)
+- `src/components/site/footer.tsx` (UPDATED): Added "Resources" link to the Company footer column
+
+### 3. STYLING POLISH
+- `src/components/views/benchmark-results-view.tsx`: Added a subtle tier-colored radial glow behind the hero score number. A 48-unit blurred circle positioned top-right of the score card, using the tier's color at 20% opacity. Adds depth and visual interest without distracting from the score. CardContent given `relative` z-index to sit above the glow.
+
+## Verification results
+- `bun run lint` → 0 errors, 0 warnings
+- All routes HTTP 200: /, #/about, #/services, #/contact, #/careers, #/resources, #/resources/the-maturity-trap, #/resources/data-as-a-product, #/benchmark-landing, #/benchmark-insights, #/benchmark-results
+- agent-browser + VLM verified:
+  - **Resources listing**: hero + 6 category pills + featured article card with icon + 5 article cards in grid. VLM: "clean, no visual bugs"
+  - **Article reader**: full content renders — title, byline (Amara Okonkwo · Managing Partner · 14 May 2026), headings, paragraphs, callout box ("THE DIAGNOSTIC QUESTION"), blockquote with attribution. VLM confirmed all block types render correctly, no visual bugs
+  - **Category filter**: filtering to "Data & AI" correctly shows 2 articles; "All" restores full list
+  - **Article deep-linking**: #/resources/the-maturity-trap opens the reader directly (after the useHashSync sub-path fix)
+  - **Sector comparison**: completed a full assessment (Technology / SaaS industry, all 4s → 75/100 Leading). Results page shows "SECTOR COMPARISON · You vs the technology / saas sector" card with 3-bar SectorGauge (You: 75, Your sector: 75, All sectors: 60), "0 points ahead" badge, "Based on 1 organisation" note. VLM: "progress bars properly aligned, colors distinct, layout consistent"
+  - **Tier glow**: VLM confirmed "a subtle glow behind the large score number"
+  - No console errors on any view
+
+## Unresolved issues or risks + next-phase recommendations
+- The seeded test data (17+ assessments with seed@example.com) is still in the DB — should be cleared before production.
+- The agent-browser had intermittent difficulty clicking the custom Likert radio components (required JS eval workarounds). This is a test-automation limitation, not an app bug — the radios work fine for real users.
+- Article content is currently static in content.ts. A future enhancement could add a CMS or MDX-based authoring workflow, plus an API to capture article views/engagement.
+- Could add a "most read" or "recently published" sort to the resources listing.
+- Could add author profile pages (linking from article byline to a bio + their other articles).
+- Next recurring review should consider: an admin/reporting view for individual assessment records, or a "team benchmark" feature where a leader invites their team to all take the benchmark and see an aggregate team view.

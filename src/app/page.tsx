@@ -12,6 +12,7 @@ import { AboutView } from "@/components/views/about-view";
 import { ServicesView } from "@/components/views/services-view";
 import { ContactView } from "@/components/views/contact-view";
 import { CareersView } from "@/components/views/careers-view";
+import { ResourcesView } from "@/components/views/resources-view";
 import { BenchmarkLandingView } from "@/components/views/benchmark-landing-view";
 import { BenchmarkQuizView } from "@/components/views/benchmark-quiz-view";
 import { BenchmarkResultsView } from "@/components/views/benchmark-results-view";
@@ -24,6 +25,7 @@ const VIEWS: Record<ViewKey, React.ComponentType> = {
   services: ServicesView,
   contact: ContactView,
   careers: CareersView,
+  resources: ResourcesView,
   "benchmark-landing": BenchmarkLandingView,
   "benchmark-quiz": BenchmarkQuizView,
   "benchmark-results": BenchmarkResultsView,
@@ -36,20 +38,24 @@ function useHashSync() {
   React.useEffect(() => {
     // Sync from hash on mount
     const apply = () => {
-      const h = window.location.hash.replace(/^#\/?/, "") as ViewKey;
+      const raw = window.location.hash.replace(/^#\/?/, "");
+      // Only consider the first path segment for view routing (e.g. "resources"
+      // from "resources/the-maturity-trap"). Sub-paths are handled by the view.
+      const firstSegment = raw.split("/")[0] as ViewKey;
       const valid: ViewKey[] = [
         "home",
         "about",
         "services",
         "contact",
         "careers",
+        "resources",
         "benchmark-landing",
         "benchmark-quiz",
         "benchmark-results",
         "benchmark-followup",
         "benchmark-insights",
       ];
-      const v = valid.includes(h) ? h : "home";
+      const v = valid.includes(firstSegment) ? firstSegment : "home";
       if (useNav.getState().view !== v) {
         useNav.setState({ view: v });
       }

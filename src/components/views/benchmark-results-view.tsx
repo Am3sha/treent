@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   ArrowRight,
   ArrowUpRight,
+  Building2,
   Printer,
   RefreshCw,
   Share2,
@@ -33,6 +34,7 @@ import type {
   BenchmarkStats,
   Dimension,
   MaturityTier,
+  RespondentProfile,
 } from "@/lib/types";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
@@ -104,6 +106,7 @@ const DIMENSION_INTERPRETATION: Record<Dimension, { high: string; mid: string; l
 
 export function BenchmarkResultsView() {
   const result = useNav((s) => s.result);
+  const respondent = useNav((s) => s.respondent);
   const navigate = useNav((s) => s.navigate);
   const resetResponses = useNav((s) => s.resetResponses);
   const startAssessment = useNav((s) => s.startAssessment);
@@ -121,6 +124,7 @@ export function BenchmarkResultsView() {
   return (
     <ResultsBody
       result={result}
+      respondent={respondent}
       onRetake={handleRetake}
       onFollowUp={() => navigate("benchmark-followup")}
       onShare={() => {
@@ -175,11 +179,13 @@ function EmptyState({ onRestart }: { onRestart: () => void }) {
 
 function ResultsBody({
   result,
+  respondent,
   onRetake,
   onFollowUp,
   onShare,
 }: {
   result: AssessmentResult;
+  respondent: RespondentProfile | null;
   onRetake: () => void;
   onFollowUp: () => void;
   onShare: () => void;
@@ -239,6 +245,17 @@ function ResultsBody({
   const strengths = sorted.slice(0, 2);
   const focus = sorted.slice(-2).reverse();
 
+  // Sector comparison: find the respondent's industry in the byIndustry breakdown.
+  const respondentIndustry = respondent?.industry?.trim() || "";
+  const sectorRow = React.useMemo(() => {
+    if (!stats || statsState !== "loaded" || !respondentIndustry) return null;
+    // Match case-insensitively against the industry labels in the stats.
+    const match = stats.byIndustry.find(
+      (r) => r.label.toLowerCase() === respondentIndustry.toLowerCase()
+    );
+    return match ?? null;
+  }, [stats, statsState, respondentIndustry]);
+
   const radarData = DIMENSIONS.map((d) => ({
     dimension: d.short,
     score: result.scores[d.key],
@@ -260,7 +277,13 @@ function ResultsBody({
               className="pointer-events-none absolute inset-x-0 top-0 h-1"
               style={{ background: tierMeta.color }}
             />
-            <CardContent className="px-6 sm:px-8">
+            {/* Subtle tier-colored glow behind the score */}
+            <div
+              className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-20 blur-3xl"
+              style={{ background: tierMeta.color }}
+              aria-hidden
+            />
+            <CardContent className="relative px-6 sm:px-8">
               <div className="flex flex-wrap items-center gap-3">
                 <Badge
                   variant="secondary"
@@ -436,6 +459,87 @@ function ResultsBody({
           </Card>
         </div>
       </Reveal>
+
+      {/* SECTOR COMPARISON ------------------------------------------- */}
+      {respondentIndustry && (
+        <Reveal delay={0.05}>
+          <Card className="mt-6 overflow-hidden py-0">
+            <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-2">
+                  <div className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">
+                    <Building2 className="h-4 w-4" />
+                  </div>
+                  <span className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    Sector comparison
+                  </span>
+                </div>
+                <h3 className="mt-4 text-xl font-semibold tracking-tight">
+                  You vs the {respondentIndustry.toLowerCase()} sector
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {sectorRow ? (
+                    <>
+                      Based on {sectorRow.count}{" "}
+                      {sectorRow.count === 1 ? "organisation" : "organisations"} in
+                      your sector who have benchmarked so far.
+                    </>
+                  ) : (
+                    <>
+                      No other organisations in the {respondentIndustry.toLowerCase()}{" "}
+                      sector have benchmarked yet — you could be the reference point.
+                    </>
+                  )}
+                </p>
+                {sectorRow && (
+                  <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-3 py-1 text-xs">
+                    <span className="text-muted-foreground">Sector average:</span>
+                    <span className="font-semibold text-foreground">
+                      {sectorRow.average}/100
+                    </span>
+                    <span className="text-muted-foreground">·</span>
+                    <span
+                      className={
+                        result.overall >= sectorRow.average
+                          ? "font-medium text-primary"
+                          : "font-medium text-amber-700"
+                      }
+                    >
+                      {result.overall >= sectorRow.average
+                        ? `You're ${result.overall - sectorRow.average} points ahead`
+                        : `${sectorRow.average - result.overall} points behind`}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center justify-center border-t border-border/60 bg-secondary/20 p-6 sm:p-8 md:border-l md:border-t-0">
+                {statsState === "loading" ? (
+                  <Skeleton className="h-32 w-full max-w-[220px]" />
+                ) : sectorRow ? (
+                  <SectorGauge
+                    you={result.overall}
+                    sector={sectorRow.average}
+                    overallAvg={
+                      stats && statsState === "loaded"
+                        ? Math.round(stats.averageOverall)
+                        : 0
+                    }
+                  />
+                ) : (
+                  <div className="text-center">
+                    <p className="text-3xl font-semibold tracking-tight text-primary">
+                      {result.overall}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Your score, setting the sector baseline
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        </Reveal>
+      )}
 
       {/* PER-DIMENSION BREAKDOWN -------------------------------------- */}
       <Reveal delay={0.05}>
@@ -773,6 +877,79 @@ function ComparisonBars({ you, avg }: { you: number; avg: number }) {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sector gauge — a compact three-bar comparison (you / sector / overall)
+// ---------------------------------------------------------------------------
+
+function SectorGauge({
+  you,
+  sector,
+  overallAvg,
+}: {
+  you: number;
+  sector: number;
+  overallAvg: number;
+}) {
+  const rows = [
+    {
+      label: "You",
+      value: you,
+      color: "oklch(0.38 0.06 162)",
+      bold: true,
+    },
+    {
+      label: "Your sector",
+      value: sector,
+      color: "oklch(0.55 0.1 195)",
+      bold: false,
+    },
+    {
+      label: "All sectors",
+      value: overallAvg,
+      color: "oklch(0.72 0.13 75)",
+      bold: false,
+    },
+  ];
+  return (
+    <div className="w-full max-w-[240px] space-y-3">
+      {rows.map((r) => (
+        <div key={r.label}>
+          <div className="flex items-center justify-between text-xs">
+            <span
+              className={
+                r.bold
+                  ? "font-semibold text-foreground"
+                  : "text-muted-foreground"
+              }
+            >
+              {r.label}
+            </span>
+            <span
+              className={
+                r.bold
+                  ? "font-semibold text-foreground tabular-nums"
+                  : "text-muted-foreground tabular-nums"
+              }
+            >
+              {r.value}
+              <span className="text-muted-foreground">/100</span>
+            </span>
+          </div>
+          <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${r.value}%`,
+                backgroundColor: r.color,
+              }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

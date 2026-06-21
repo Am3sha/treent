@@ -21,6 +21,7 @@ const NAV: { label: string; view: ViewKey }[] = [
   { label: "Home", view: "home" },
   { label: "About", view: "about" },
   { label: "Services", view: "services" },
+  { label: "Resources", view: "resources" },
   { label: "Careers", view: "careers" },
   { label: "Contact", view: "contact" },
 ];

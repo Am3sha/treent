@@ -279,31 +279,189 @@ export const TESTIMONIALS: Testimonial[] = [
 
 export const CASE_STUDIES: CaseStudy[] = [
   {
+    slug: "asteria-financial-replatforming",
     title: "Replatforming a national insurer",
     client: "Asteria Financial",
     sector: "Financial Services",
+    duration: "14 months",
     result: "42% faster claims handling",
-    metric: "£38M annual savings",
+    metric: "£38M",
+    metricLabel: "annual savings",
     summary:
       "We rebuilt the claims platform on an event-driven architecture and retrained 600 handlers, cutting average settlement time from 11 days to 6.",
+    challenge: [
+      "A 20-year-old monolithic claims platform that could not scale beyond 2,000 claims per day without weekend batch runs.",
+      "Average settlement time of 11 days, with 18% of claims requiring manual rework due to data quality issues.",
+      "600 claims handlers trained on legacy workflows resistant to change, with morale at a five-year low.",
+      "A regulator-mandated deadline to demonstrate operational resilience within 18 months.",
+    ],
+    approach: [
+      "Diagnosed the claims journey end-to-end, identifying 14 handoffs and 6 data-quality root causes responsible for 80% of rework.",
+      "Designed an event-driven target architecture on AWS, decomposing the monolith into 11 domain services behind an API gateway.",
+      "Ran delivery in three embedded pods (platform, claims domain, data) shipping to production fortnightly from week six.",
+      "Built a parallel-run period of 10 weeks where old and new systems processed the same claims, building handler confidence before cutover.",
+      "Co-designed new operating model with team leads — handlers helped shape the new workflow rather than having it imposed.",
+    ],
+    outcomes: [
+      { label: "Settlement time", value: "11 → 6 days" },
+      { label: "Annual savings", value: "£38M" },
+      { label: "Manual rework", value: "18% → 4%" },
+      { label: "Handler NPS", value: "+34" },
+    ],
+    quote: {
+      text: "Meridian didn't hand us a deck — they sat with our teams for fourteen months and rebuilt how the business runs. The ROI was visible by quarter two.",
+      author: "Helena Voss",
+      title: "Chief Operating Officer, Asteria Financial",
+    },
+    services: ["Digital Transformation", "Data & AI", "Operations"],
+    icon: "Landmark",
   },
   {
+    slug: "tundra-ai-forecasting",
     title: "AI demand forecasting at scale",
     client: "Tundra Industrials",
     sector: "Manufacturing",
+    duration: "9 months",
     result: "28% inventory reduction",
-    metric: "€52M working capital freed",
+    metric: "€52M",
+    metricLabel: "working capital freed",
     summary:
       "A production-grade forecasting stack across 14 plants, reducing stockouts while releasing working capital.",
+    challenge: [
+      "14 plants across 7 countries, each running independent spreadsheets with no shared demand signal.",
+      "Inventory turns of 3.2 per year — half the sector benchmark — tying up €190M in working capital.",
+      "Stockout rates of 12% on critical SKUs, causing line stoppages costing €40,000 per hour.",
+      "Three previous ML pilots that never reached production; the data team had lost credibility with operations.",
+    ],
+    approach: [
+      "Built a unified data foundation on an Iceberg lakehouse, consolidating 14 plant ERP feeds into a single demand-signal model.",
+      "Developed hierarchical forecasting models (product-family-plant-SKU) using gradient-boosted trees with 14-day rolling horizons.",
+      "Deployed an MLOps pipeline with automated retraining weekly and drift detection on 12 input features.",
+      "Embedded two ML engineers in the S&OP team for 90 days, attending planning meetings and iterating on model outputs in context.",
+      "Designed a 'forecast action review' where planners override the model weekly, with overrides measured for accuracy over time.",
+    ],
+    outcomes: [
+      { label: "Inventory reduction", value: "28%" },
+      { label: "Working capital freed", value: "€52M" },
+      { label: "Stockout rate", value: "12% → 3%" },
+      { label: "Forecast accuracy", value: "+19pp" },
+    ],
+    quote: {
+      text: "The data foundation they built is still paying dividends three years on. Every new AI use-case stands on their original architecture.",
+      author: "Rahul Mehta",
+      title: "Group CDO, Tundra Industrials",
+    },
+    services: ["Data & AI", "Operations"],
+    icon: "Factory",
   },
   {
+    slug: "mersey-health-operational-reset",
     title: "Operational reset for a health system",
     client: "Mersey Health Partners",
     sector: "Public Sector",
+    duration: "12 months",
     result: "31% shorter waiting lists",
-    metric: "1.2M citizens served",
+    metric: "1.2M",
+    metricLabel: "citizens served",
     summary:
       "A year-long operational redesign that reallocated 180,000 clinical hours and cut elective waiting lists by a third.",
+    challenge: [
+      "Elective waiting lists at 78,000 — the highest in the region's history — with 22% of patients waiting over 18 weeks.",
+      "Clinical staff burnout at 41%, with agency spend of £14M per year covering gaps.",
+      "17 separate patient pathways with inconsistent triage, creating bottlenecks at referral-to-treatment handoffs.",
+      "Political pressure to show measurable improvement within a single financial year.",
+    ],
+    approach: [
+      "Mapped all 17 elective pathways end-to-end, identifying 43 bottlenecks and 11 pathways where demand exceeded capacity by design.",
+      "Redesigned triage using a clinical-lead model, routing 30% of referrals to alternative pathways within 48 hours.",
+      "Built a real-time capacity dashboard across 8 hospital sites, giving ops managers visibility they'd never had.",
+      "Ran 90-day improvement sprints on the 5 highest-impact pathways, with embedded Meridian ops engineers in each.",
+      "Established a sustained improvement system — weekly performance huddles, monthly system-wide review — that outlasted the engagement.",
+    ],
+    outcomes: [
+      { label: "Waiting list reduction", value: "31%" },
+      { label: "Clinical hours reallocated", value: "180,000" },
+      { label: "Agency spend", value: "−£6M" },
+      { label: "18-week breach rate", value: "22% → 8%" },
+    ],
+    quote: {
+      text: "Calm, rigorous, and refreshingly honest. They told us what not to do — which saved us more than any recommendation could.",
+      author: "Greta Lindholm",
+      title: "CEO, Mersey Health Partners",
+    },
+    services: ["Operations", "Strategy & Growth"],
+    icon: "HeartPulse",
+  },
+  {
+    slug: "northwind-supply-chain",
+    title: "Supply chain resilience for a logistics group",
+    client: "Northwind Logistics",
+    sector: "Logistics",
+    duration: "7 months",
+    result: "99.6% on-time delivery",
+    metric: "£12M",
+    metricLabel: "margin recovered",
+    summary:
+      "We redesigned the network planning model and deployed real-time control towers across 3 hubs, recovering margin lost to disruption and hitting a two-year on-time high.",
+    challenge: [
+      "On-time delivery at 91%, below the 96% contractual threshold for two top clients at risk of churn.",
+      "Three regional hubs operating on independent planning systems with no shared visibility of capacity or disruption.",
+      "Margin erosion of £14M over 18 months due to expedited freight and penalty payments.",
+      "A legacy TMS that could not model multi-leg routes or dynamic rerouting around disruption.",
+    ],
+    approach: [
+      "Consolidated the three planning systems into a single control-tower model with real-time GPS, weather, and port-data feeds.",
+      "Built a dynamic routing engine that recalculates multi-leg routes every 15 minutes against live disruption signals.",
+      "Redesigned the hub-and-spoke network, reducing average leg distance by 11% while increasing utilisation by 8%.",
+      "Trained 40 dispatchers on the new control-tower workflow, with a 6-week parallel-run before cutover.",
+      "Negotiated flexible capacity contracts with 3 carriers, giving 18% surge headroom without premium rates.",
+    ],
+    outcomes: [
+      { label: "On-time delivery", value: "91% → 99.6%" },
+      { label: "Margin recovered", value: "£12M" },
+      { label: "Expedited freight", value: "−63%" },
+      { label: "Client retention", value: "100%" },
+    ],
+    services: ["Operations", "Digital Transformation"],
+    icon: "Truck",
+  },
+  {
+    slug: "helios-esg-reporting",
+    title: "CSRD-ready ESG reporting for an energy group",
+    client: "Helios Energy",
+    sector: "Energy",
+    duration: "10 months",
+    result: "Audit-ready disclosures",
+    metric: "40%",
+    metricLabel: "reporting effort cut",
+    summary:
+      "We built the data architecture and governance to produce CSRD-compliant sustainability disclosures — and cut the reporting effort by 40% in the process.",
+    challenge: [
+      "CSRD compliance deadline in 14 months, with Scope 1-3 emissions data spread across 9 business units in 6 formats.",
+      "Previous year's ESG report took 5 months to compile, with 3 restatements after audit.",
+      "No single owner for sustainability data; finance, operations, and HSE each held fragments.",
+      "Board commitment to a credible decarbonisation pathway, not just compliance reporting.",
+    ],
+    approach: [
+      "Conducted a double-materiality assessment across 9 business units, prioritising 14 disclosure topics.",
+      "Designed a sustainability data architecture on the existing lakehouse, with automated ingestion from 12 source systems.",
+      "Implemented data quality controls with 4-eyes review on all material metrics, auditable to source documents.",
+      "Built a decarbonisation abatement cost curve, giving the board a ranked view of reduction options by cost and impact.",
+      "Trained 22 business-unit reporters on the new workflow, replacing quarterly email exchanges with a guided data-entry portal.",
+    ],
+    outcomes: [
+      { label: "Reporting cycle", value: "5mo → 6wk" },
+      { label: "Restatements", value: "3 → 0" },
+      { label: "Reporting effort", value: "−40%" },
+      { label: "Audit findings", value: "None" },
+    ],
+    quote: {
+      text: "For the first time, our sustainability reporting is defensible. The board can make capital decisions on real numbers.",
+      author: "Sofia Marchetti",
+      title: "Partner, Sustainability (engagement lead)",
+    },
+    services: ["Sustainability & ESG", "Data & AI"],
+    icon: "Zap",
   },
 ];
 
@@ -715,3 +873,333 @@ export const TIER_META: Record<
     range: "75 – 100",
   },
 };
+
+// ---------------------------------------------------------------------------
+// Resources / Articles (thought-leadership content)
+// ---------------------------------------------------------------------------
+
+import type { Article } from "./types";
+
+export const ARTICLES: Article[] = [
+  {
+    slug: "the-maturity-trap",
+    title: "The maturity trap: why most transformation programmes stall at 60%",
+    excerpt:
+      "Organisations don't fail at transformation because they lack ambition. They fail because they confuse activity for progress — and because the hardest 40% is the part nobody owns.",
+    category: "Strategy",
+    author: "Amara Okonkwo",
+    authorRole: "Managing Partner",
+    date: "2026-05-14",
+    readMinutes: 7,
+    icon: "Compass",
+    body: [
+      {
+        type: "paragraph",
+        text: "After a decade of transformation programmes, a pattern is clear. The first 60% of the work — the diagnosis, the strategy decks, the pilot, even the first wave of delivery — is the easy part. It is visible, measurable, and rewarding. The board sees motion. The consultants go home. The press release goes out.",
+      },
+      {
+        type: "paragraph",
+        text: "And then the programme stalls. Not dramatically, with a failure memo, but quietly. The second wave never quite lands. Adoption plateaus. The new platform runs alongside the old one. The metrics stop improving. Two years later, a new programme is launched to finish what the last one started.",
+      },
+      {
+        type: "heading",
+        text: "Why the last 40% is the hardest",
+      },
+      {
+        type: "paragraph",
+        text: "The first 60% is technical. The last 40% is political, behavioural, and structural. It requires decommissioning the old system — which means decommissioning the power structures built around it. It requires middle managers to give up control. It requires the organisation to admit that the new way is not just an addition but a replacement.",
+      },
+      {
+        type: "list",
+        items: [
+          "Decommissioning is unfunded. Budgets pay for the new thing, not for retiring the old.",
+          "Adoption is treated as a milestone, not a metric. It is declared complete at go-live, then never measured again.",
+          "The operating model is never redesigned. The new platform is asked to serve the old org chart.",
+          "No one owns the 40%. Project teams disband; business-as-usual teams never picked it up.",
+        ],
+      },
+      {
+        type: "callout",
+        title: "The diagnostic question",
+        text: "Ask any transformation programme: who, by name, is accountable for adoption 18 months after go-live? If the answer is 'the business' or 'the change team', the programme will stall at 60%.",
+      },
+      {
+        type: "heading",
+        text: "What actually works",
+      },
+      {
+        type: "paragraph",
+        text: "The programmes that get past 60% share three traits. First, they fund decommissioning explicitly — with a named budget, a named owner, and a hard date. Second, they measure adoption as a leading indicator, weekly, at the level of individual teams. Third, they redesign the operating model in parallel with the technology, so the new platform serves a structure built to use it.",
+      },
+      {
+        type: "quote",
+        text: "The technology is never the constraint. The constraint is the organisation's willingness to retire the behaviours the old technology rewarded.",
+        attribution: "Amara Okonkwo, Managing Partner",
+      },
+      {
+        type: "paragraph",
+        text: "If your programme is stalling, the answer is rarely more technology. It is almost always a conversation about ownership, decommissioning, and whether anyone is still measuring adoption. Start there.",
+      },
+    ],
+  },
+  {
+    slug: "data-as-a-product",
+    title: "Data as a product: the operating model that finally makes data compound",
+    excerpt:
+      "Most data teams spend 70% of their time answering the same questions slightly differently. The fix isn't another pipeline — it's treating data the way you'd treat any product.",
+    category: "Data & AI",
+    author: "Daniel Lindqvist",
+    authorRole: "Partner, Data & AI",
+    date: "2026-04-28",
+    readMinutes: 6,
+    icon: "BrainCircuit",
+    body: [
+      {
+        type: "paragraph",
+        text: "The data team is supposed to be a multiplier. Too often it is a bottleneck. The pattern is familiar: a dashboard is built for one team, then another team asks for 'the same thing but slightly different', and within a year the data team is maintaining 400 dashboards, half of which contradict each other.",
+      },
+      {
+        type: "heading",
+        text: "The problem isn't the pipelines",
+      },
+      {
+        type: "paragraph",
+        text: "Organisations keep trying to solve this with better infrastructure — a new lakehouse, a faster query engine, a sexier BI tool. None of it helps, because the problem is upstream. It is an operating-model problem dressed up as a technology problem.",
+      },
+      {
+        type: "callout",
+        title: "The principle",
+        text: "Treat every dataset the way you'd treat a product: with an owner, a set of users, a definition of quality, and a roadmap. If nobody owns it, nobody improves it.",
+      },
+      {
+        type: "heading",
+        text: "What 'data as a product' actually means",
+      },
+      {
+        type: "list",
+        items: [
+          "A named product owner accountable for the dataset's quality and usefulness — not a 'data steward' in name only.",
+          "Documented consumers. If you don't know who uses the data, you can't change it safely, so you never do.",
+          "Service-level expectations: freshness, accuracy, and uptime, treated the way you'd treat an external API.",
+          "A discovery layer so consumers can find and trust the product without emailing the owner.",
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "The shift sounds small. It is not. It moves the data team from a service desk — taking tickets, building one-offs — to a product organisation that builds reusable assets. The first six months are harder. The next two years are transformative.",
+      },
+      {
+        type: "quote",
+        text: "The best data teams I've worked with spend less than 20% of their time on ad-hoc requests. They got there by saying no to the requests and yes to the products.",
+        attribution: "Daniel Lindqvist, Partner, Data & AI",
+      },
+    ],
+  },
+  {
+    slug: "the-cost-of-undecided-work",
+    title: "The hidden cost of undecided work",
+    excerpt:
+      "The most expensive thing in your organisation isn't a failed project. It's the work that sits in limbo — half-approved, half-staffed, half-measured — draining capacity from everything around it.",
+    category: "Operations",
+    author: "Marcus Bauer",
+    authorRole: "Partner, Operations",
+    date: "2026-04-09",
+    readMinutes: 5,
+    icon: "Gauge",
+    body: [
+      {
+        type: "paragraph",
+        text: "Walk into any large organisation and ask a simple question: how many initiatives are currently 'in flight'? The answer is almost always a number that surprises leadership. Not because the work is secret, but because nobody counts the undecided work — the proposals that were nodded through in a meeting but never formally approved or killed.",
+      },
+      {
+        type: "heading",
+        text: "Why undecided work is the most expensive kind",
+      },
+      {
+        type: "paragraph",
+        text: "A decided 'no' frees up capacity immediately. A decided 'yes' allocates capacity deliberately. An undecided maybe does neither — but it still consumes the cognitive overhead of a team that has to keep it alive, prepare for it, and context-switch around it.",
+      },
+      {
+        type: "callout",
+        title: "The rule of thumb",
+        text: "Every undecided initiative costs roughly 15% of a team's capacity in overhead, even if no formal work has started. Five undecided initiatives and you've lost a person.",
+      },
+      {
+        type: "heading",
+        text: "The fix is governance, not process",
+      },
+      {
+        type: "paragraph",
+        text: "You don't need more process. You need a forum with the authority to say no, meeting on a fixed cadence, with a rule that any initiative not explicitly funded within 30 days is automatically killed. 'Killed by default' is the single most powerful operating lever we install with clients.",
+      },
+      {
+        type: "list",
+        items: [
+          "Maintain a single, visible list of every initiative and its status.",
+          "Require a named sponsor and a funding decision for anything consuming capacity.",
+          "Default to kill: undecided work dies unless explicitly saved.",
+          "Measure the backlog of undecided work as a leading indicator of organisational drag.",
+        ],
+      },
+      {
+        type: "quote",
+        text: "Saying no is a capability. Organisations that can't say no can't say yes and mean it.",
+        attribution: "Marcus Bauer, Partner, Operations",
+      },
+    ],
+  },
+  {
+    slug: "ai-without-adoption",
+    title: "AI without adoption is just expensive maths",
+    excerpt:
+      "The gap between a model that works in a notebook and a model that changes a business is enormous. Most organisations are stuck on the wrong side of it — and the reasons are rarely technical.",
+    category: "Data & AI",
+    author: "Priya Raghunathan",
+    authorRole: "Partner, Digital Transformation",
+    date: "2026-03-17",
+    readMinutes: 6,
+    icon: "Sparkles",
+    body: [
+      {
+        type: "paragraph",
+        text: "Every executive I speak to has an AI initiative. Most have several. Very few can point to one where the model is in production, used daily, and delivering a measured lift to the business. The pilots are everywhere. The production systems are rare.",
+      },
+      {
+        type: "heading",
+        text: "The pilot-to-production chasm",
+      },
+      {
+        type: "paragraph",
+        text: "A pilot succeeds because a small team optimises obsessively for a narrow use case. Production fails because the organisation optimises for nothing — the model is deployed, a dashboard is built, and everyone assumes adoption will follow. It doesn't.",
+      },
+      {
+        type: "callout",
+        title: "The adoption test",
+        text: "Before deploying any AI system, answer this: who, by name, will use the model's output to make a different decision than they would have made otherwise? If the answer is 'we're not sure', the model is not ready for production.",
+      },
+      {
+        type: "heading",
+        text: "What separates the systems that stick",
+      },
+      {
+        type: "list",
+        items: [
+          "A named user whose workflow is redesigned around the model — not bolted onto it.",
+          "A feedback loop where the user can correct the model, and the corrections are measured.",
+          "A baseline metric established before deployment, so lift is provable rather than asserted.",
+          "A sponsor who reviews adoption weekly for the first 90 days, not quarterly.",
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "The technology is the easy part. The hard part is treating the model as a colleague that needs onboarding, supervision, and performance review — because that is exactly what it is.",
+      },
+      {
+        type: "quote",
+        text: "A model that nobody uses has a perfect accuracy rate and zero business value. Adoption is the only metric that matters.",
+        attribution: "Priya Raghunathan, Partner, Digital Transformation",
+      },
+    ],
+  },
+  {
+    slug: "independence-as-a-strategy",
+    title: "Independence as a strategy, not just a label",
+    excerpt:
+      "Every consulting firm claims to be independent. Very few are willing to pay the price that real independence demands — which is why it remains one of the few durable differentiators.",
+    category: "Perspective",
+    author: "Amara Okonkwo",
+    authorRole: "Managing Partner",
+    date: "2026-02-20",
+    readMinutes: 4,
+    icon: "Scale",
+    body: [
+      {
+        type: "paragraph",
+        text: "Independence is the most overused word in consulting. Every firm claims it. Most mean, at best, that they are willing to tell a client something the client doesn't want to hear — occasionally. Real independence is structural, not behavioural. It is a set of choices about how the firm makes money, who it hires, and what it refuses to do.",
+      },
+      {
+        type: "heading",
+        text: "The three tests of real independence",
+      },
+      {
+        type: "list",
+        items: [
+          "No implementation royalties. If the firm profits from the technology it recommends, the recommendation is not independent.",
+          "No bench to fill. If the firm employs a large roster of juniors it must deploy to keep busy, the advice will bend toward using them.",
+          "A willingness to recommend doing nothing. The hardest independent advice is 'stop'. Firms that can't say it aren't independent.",
+        ],
+      },
+      {
+        type: "callout",
+        title: "The cost of independence",
+        text: "Real independence means turning down work — regularly, and often lucratively. It means smaller teams and longer engagements. It is a strategy that costs money in the short term and earns trust in the long term.",
+      },
+      {
+        type: "paragraph",
+        text: "We built Meridian on this principle because we'd seen the alternative. When a firm's revenue depends on the size of the build, the build is always too big. When a firm's revenue depends on the quality of the thinking, the thinking gets better.",
+      },
+      {
+        type: "quote",
+        text: "The most valuable thing a consultant can say is 'don't'. Most firms are not structured to let their consultants say it.",
+        attribution: "Amara Okonkwo, Managing Partner",
+      },
+    ],
+  },
+  {
+    slug: "the-culture-metric-that-matters",
+    title: "The culture metric that actually predicts transformation success",
+    excerpt:
+      "Engagement scores don't predict whether your transformation will land. But one specific cultural signal — whether people are rewarded for stopping bad work — predicts it almost perfectly.",
+    category: "Culture",
+    author: "Sofia Marchetti",
+    authorRole: "Partner, Sustainability",
+    date: "2026-01-29",
+    readMinutes: 5,
+    icon: "Users",
+    body: [
+      {
+        type: "paragraph",
+        text: "Organisations spend a fortune measuring culture. Engagement scores, pulse surveys, sentiment analysis. And yet, none of these metrics reliably predict whether a transformation programme will succeed. We looked at fifty programmes across a decade and found that almost none of the standard culture metrics correlated with outcomes.",
+      },
+      {
+        type: "heading",
+        text: "One metric stood out",
+      },
+      {
+        type: "paragraph",
+        text: "There was a single question that predicted transformation success with striking accuracy: 'In the last six months, has anyone in your team been recognised for stopping or cancelling work?' Programmes where the answer was yes succeeded at more than twice the rate of programmes where it was no.",
+      },
+      {
+        type: "callout",
+        title: "Why this metric works",
+        text: "Stopping bad work requires three things organisations struggle with: the psychological safety to speak up, the authority to act, and the honesty to admit something isn't working. A culture that can do this can do almost anything.",
+      },
+      {
+        type: "heading",
+        text: "How to build the muscle",
+      },
+      {
+        type: "list",
+        items: [
+          "Create a monthly 'kill list' review where teams nominate work to stop, and celebrate what gets killed.",
+          "Promote at least one person per year whose biggest contribution was stopping something.",
+          "Make 'what did we stop?' a standing question in every quarterly review, equal in weight to 'what did we start?'.",
+        ],
+      },
+      {
+        type: "quote",
+        text: "A culture that can only start things cannot finish them. The capacity to stop is the capacity to focus.",
+        attribution: "Sofia Marchetti, Partner, Sustainability",
+      },
+    ],
+  },
+];
+
+export const ARTICLE_CATEGORIES = [
+  "All",
+  "Strategy",
+  "Data & AI",
+  "Operations",
+  "Culture",
+  "Perspective",
+] as const;

@@ -13,6 +13,7 @@ const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }
     links: [
       { label: "About", view: "about" },
       { label: "Services", view: "services" },
+      { label: "Resources", view: "resources" },
       { label: "Careers", view: "careers" },
       { label: "Contact", view: "contact" },
     ],
