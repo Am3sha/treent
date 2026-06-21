@@ -200,7 +200,7 @@ export function ContactView() {
                       Message received
                     </h3>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-                      Thanks for reaching out. A member of the Meridian team
+                      Thanks for reaching out. A member of the Trennt team
                       will be in touch within one business day. If your enquiry
                       is urgent, please call us directly.
                     </p>

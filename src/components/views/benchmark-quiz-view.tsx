@@ -567,7 +567,7 @@ function DetailsStep({
             <Input
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-              placeholder="Meridian Industries"
+              placeholder="Trennt Industries"
               autoComplete="organization"
             />
           </Field>
@@ -628,7 +628,7 @@ function DetailsStep({
             className="mt-0.5"
           />
           <span className="text-sm leading-relaxed text-muted-foreground">
-            I agree to Meridian storing my responses to generate my benchmark
+            I agree to Trennt storing my responses to generate my benchmark
             and for aggregated, anonymised reporting. I may be contacted about
             my results.
           </span>

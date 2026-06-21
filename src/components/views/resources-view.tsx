@@ -113,7 +113,7 @@ export function ResourcesView() {
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Short, opinionated essays from Meridian partners — drawn from active
+              Short, opinionated essays from Trennt partners — drawn from active
               engagements, not recycled frameworks. We publish when we have something
               to say, not on a content calendar.
             </p>
@@ -242,7 +242,7 @@ export function ResourcesView() {
                   Get the next field note in your inbox.
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  The Meridian Quarterly — four issues a year, no filler. Unsubscribe anytime.
+                  The Trennt Quarterly — four issues a year, no filler. Unsubscribe anytime.
                 </p>
               </div>
               <Button

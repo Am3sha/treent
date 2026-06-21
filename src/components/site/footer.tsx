@@ -69,7 +69,7 @@ export function Footer() {
                 htmlFor="newsletter"
                 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground"
               >
-                The Meridian quarterly
+                The Trennt quarterly
               </label>
               <div className="mt-2 flex gap-2">
                 <input

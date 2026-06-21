@@ -131,8 +131,8 @@ export function BenchmarkResultsView() {
         if (typeof navigator !== "undefined" && navigator.share) {
           navigator
             .share({
-              title: "My Digital Maturity Benchmark",
-              text: `I scored ${result.overall}/100 on the Meridian Digital Maturity Benchmark.`,
+              title: "My Strategic Benchmark Assessment",
+              text: `I scored ${result.overall}/100 on the Trennt Strategic Benchmark Assessment.`,
               url: typeof window !== "undefined" ? window.location.href : "",
             })
             .catch(() => undefined);
@@ -159,7 +159,7 @@ function EmptyState({ onRestart }: { onRestart: () => void }) {
           You haven't completed the assessment yet.
         </h1>
         <p className="mt-4 text-balance text-base leading-relaxed text-muted-foreground">
-          Take the eight-minute Digital Maturity Benchmark to see your overall
+          Take the eight-minute Strategic Benchmark Assessment to see your overall
           score, tier, percentile, and a per-dimension breakdown.
         </p>
         <div className="mt-8">
@@ -320,7 +320,7 @@ function ResultsBody({
                 </span>
               </div>
               <p className="mt-2 text-sm font-medium text-foreground">
-                Overall digital maturity
+                Overall strategic maturity
               </p>
 
               <Separator className="my-6" />
@@ -707,7 +707,7 @@ function ResultsBody({
                 Get your tailored briefing.
               </h2>
               <p className="mt-3 max-w-xl text-balance text-sm leading-relaxed text-primary-foreground/85">
-                A 30-minute call with a Meridian partner to walk through your
+                A 30-minute call with a Trennt partner to walk through your
                 results, pressure-test the read, and translate your focus areas
                 into a concrete 90-day plan.
               </p>

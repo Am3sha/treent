@@ -93,7 +93,7 @@ export function CareersView() {
           <div className="grid items-center gap-12 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <Reveal>
-                <Eyebrow>Careers at Meridian</Eyebrow>
+                <Eyebrow>Careers at Trennt</Eyebrow>
               </Reveal>
               <Reveal delay={0.05}>
                 <h1
@@ -143,7 +143,7 @@ export function CareersView() {
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-primary" />
                     <span className="text-xs font-medium uppercase tracking-[0.18em] text-primary/80">
-                      Working at Meridian
+                      Working at Trennt
                     </span>
                   </div>
                   <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5">
@@ -333,7 +333,7 @@ export function CareersView() {
             />
             <Reveal delay={0.05}>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                Meridian is a partnership in the old sense: the people who own
+                Trennt is a partnership in the old sense: the people who own
                 the firm are the people who do the work. That shapes everything
                 — how we hire, how we promote, how we behave on engagements. We
                 are deliberately small, deliberately senior, and deliberately
@@ -660,7 +660,7 @@ function ApplicationDialog({
 
           <div className="space-y-2">
             <Label htmlFor="apply-message">
-              Why Meridian, and why this role?
+              Why Trennt, and why this role?
             </Label>
             <Textarea
               id="apply-message"

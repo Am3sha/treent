@@ -68,7 +68,7 @@ export function Header() {
         <button
           onClick={() => go("home")}
           className="flex items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label="Meridian Advisory — home"
+          aria-label="TRENNT Consulting Group — home"
         >
           <Logo />
         </button>
@@ -170,7 +170,7 @@ export function Header() {
                   onClick={() => go("benchmark-landing")}
                   className="flex items-center justify-between rounded-lg bg-primary px-4 py-3 text-left text-base font-medium text-primary-foreground"
                 >
-                  Digital Maturity Benchmark
+                  Strategic Benchmark Assessment
                   <ArrowUpRight className="h-4 w-4" />
                 </button>
               </nav>

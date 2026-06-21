@@ -20,7 +20,7 @@ export function Logo({
           aria-hidden="true"
         >
           <defs>
-            <linearGradient id="meridian-grad" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="trennt-grad" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="oklch(0.38 0.06 162)" />
               <stop offset="100%" stopColor="oklch(0.45 0.09 180)" />
             </linearGradient>
@@ -35,10 +35,10 @@ export function Logo({
             strokeWidth="1"
             fill="oklch(0.38 0.06 162 / 0.06)"
           />
-          {/* meridian arc */}
+          {/* trennt arc */}
           <path
             d="M6 24 Q20 4 34 24"
-            stroke="url(#meridian-grad)"
+            stroke="url(#trennt-grad)"
             strokeWidth="2.5"
             strokeLinecap="round"
             fill="none"
@@ -57,7 +57,7 @@ export function Logo({
       {withWordmark && (
         <span className="flex flex-col leading-none">
           <span className="font-semibold tracking-tight text-[15px] text-foreground">
-            Meridian
+            Trennt
           </span>
           <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             Advisory

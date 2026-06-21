@@ -47,7 +47,7 @@ const INTERESTS: {
     value: "consultation",
     label: "A 1:1 consultation",
     description:
-      "A 30-minute call with a Meridian partner to pressure-test your results and shape a 90-day plan.",
+      "A 30-minute call with a Trennt partner to pressure-test your results and shape a 90-day plan.",
     icon: Users,
   },
   {
@@ -61,14 +61,14 @@ const INTERESTS: {
     value: "workshop",
     label: "A team workshop",
     description:
-      "Run the benchmark across your leadership team and debrief together with a Meridian facilitator.",
+      "Run the benchmark across your leadership team and debrief together with a Trennt facilitator.",
     icon: Sparkles,
   },
   {
     value: "partnership",
     label: "A longer partnership",
     description:
-      "Embed Meridian to help close the gap between your current and target maturity, end to end.",
+      "Embed Trennt to help close the gap between your current and target maturity, end to end.",
     icon: Handshake,
   },
 ];
@@ -121,7 +121,7 @@ export function BenchmarkFollowupView() {
       setSubmitted(true);
       toast({
         title: "Request received",
-        description: "A Meridian partner will be in touch within two business days.",
+        description: "A Trennt partner will be in touch within two business days.",
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
@@ -255,7 +255,7 @@ export function BenchmarkFollowupView() {
                         <Input
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
-                          placeholder="Meridian Industries"
+                          placeholder="Trennt Industries"
                           autoComplete="organization"
                         />
                       </Field>
@@ -357,11 +357,11 @@ export function BenchmarkFollowupView() {
                       Reach us directly — we read every message.
                     </p>
                     <a
-                      href="mailto:hello@meridianadvisory.com"
+                      href="mailto:hello@trenntadvisory.com"
                       className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                     >
                       <Mail className="h-4 w-4" />
-                      hello@meridianadvisory.com
+                      hello@trenntadvisory.com
                     </a>
                     <a
                       href="tel:+442079460312"
@@ -393,7 +393,7 @@ function Confirmation({ onHome }: { onHome: () => void }) {
         </div>
         <Eyebrow className="mt-6 justify-center">Request received</Eyebrow>
         <h1 className="mt-3 text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-          Thanks — a Meridian partner will be in touch within two business days.
+          Thanks — a Trennt partner will be in touch within two business days.
         </h1>
         <p className="mt-4 text-balance text-base leading-relaxed text-muted-foreground">
           We'll review your benchmark and come prepared with a perspective on

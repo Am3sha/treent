@@ -13,13 +13,13 @@ import type {
 // ---------------------------------------------------------------------------
 
 export const COMPANY = {
-  name: "Meridian Advisory",
-  legalName: "Meridian Advisory Partners",
-  tagline: "Strategy, technology & data for the next horizon.",
+  name: "TRENNT Consulting Group",
+  legalName: "TRENNT Consulting Group Partners",
+  tagline: "Strategy, technology & data for the next standard.",
   description:
-    "Meridian Advisory is an independent consulting firm helping ambitious organisations turn strategy into measurable outcomes — across digital transformation, data & AI, and operational excellence.",
+    "TRENNT Consulting Group is an independent consulting firm helping world-leading organizations turn strategy into measurable outcomes — across digital transformation, data & AI, and operational excellence.",
   foundedYear: 2014,
-  email: "hello@meridianadvisory.com",
+  email: "hello@trenntadvisory.com",
   phone: "+44 20 7946 0312",
   address: "60 Holborn Viaduct, London EC1A 2BN, United Kingdom",
   offices: [
@@ -252,7 +252,7 @@ export const LEADERSHIP: TeamMember[] = [
 export const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "Meridian didn't hand us a deck — they sat with our teams for nine months and rebuilt how the business runs. The ROI was visible by quarter two.",
+      "Trennt didn't hand us a deck — they sat with our teams for nine months and rebuilt how the business runs. The ROI was visible by quarter two.",
     author: "Helena Voss",
     title: "Chief Operating Officer",
     company: "Northwind Logistics",
@@ -309,7 +309,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: "Handler NPS", value: "+34" },
     ],
     quote: {
-      text: "Meridian didn't hand us a deck — they sat with our teams for fourteen months and rebuilt how the business runs. The ROI was visible by quarter two.",
+      text: "Trennt didn't hand us a deck — they sat with our teams for fourteen months and rebuilt how the business runs. The ROI was visible by quarter two.",
       author: "Helena Voss",
       title: "Chief Operating Officer, Asteria Financial",
     },
@@ -375,7 +375,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Mapped all 17 elective pathways end-to-end, identifying 43 bottlenecks and 11 pathways where demand exceeded capacity by design.",
       "Redesigned triage using a clinical-lead model, routing 30% of referrals to alternative pathways within 48 hours.",
       "Built a real-time capacity dashboard across 8 hospital sites, giving ops managers visibility they'd never had.",
-      "Ran 90-day improvement sprints on the 5 highest-impact pathways, with embedded Meridian ops engineers in each.",
+      "Ran 90-day improvement sprints on the 5 highest-impact pathways, with embedded Trennt ops engineers in each.",
       "Established a sustained improvement system — weekly performance huddles, monthly system-wide review — that outlasted the engagement.",
     ],
     outcomes: [
@@ -1136,7 +1136,7 @@ export const ARTICLES: Article[] = [
       },
       {
         type: "paragraph",
-        text: "We built Meridian on this principle because we'd seen the alternative. When a firm's revenue depends on the size of the build, the build is always too big. When a firm's revenue depends on the quality of the thinking, the thinking gets better.",
+        text: "We built Trennt on this principle because we'd seen the alternative. When a firm's revenue depends on the size of the build, the build is always too big. When a firm's revenue depends on the quality of the thinking, the thinking gets better.",
       },
       {
         type: "quote",

@@ -1,4 +1,4 @@
-// POST /api/assessment — the core capture endpoint for the Digital Maturity Benchmark.
+// POST /api/assessment — the core capture endpoint for the Strategic Benchmark Assessment.
 // Validates the respondent's responses, computes authoritative scores server-side
 // (per-dimension + overall normalised to 0-100), determines the maturity tier, computes
 // a percentile against the existing benchmark dataset, and persists the Assessment +

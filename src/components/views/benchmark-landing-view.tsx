@@ -47,7 +47,7 @@ const OUTCOMES = [
     icon: Compass,
     title: "Your maturity tier",
     description:
-      "A clear Nascent → Leading rating, normalised from 15 evidence-based questions across the five dimensions of digital maturity.",
+      "A clear Nascent → Leading rating, normalised from 15 evidence-based questions across the five dimensions of strategic maturity.",
   },
   {
     icon: BarChart3,
@@ -86,7 +86,7 @@ const STEPS = [
     n: "03",
     title: "Decide what's next",
     description:
-      "Review your strengths and focus areas, then — if useful — request a tailored briefing with a Meridian partner.",
+      "Review your strengths and focus areas, then — if useful — request a tailored briefing with a Trennt partner.",
   },
 ];
 
@@ -105,7 +105,7 @@ const FAQ = [
   },
   {
     q: "Can my team take it too?",
-    a: "Absolutely — and we encourage it. Running the benchmark across a leadership team reveals where there is alignment and where there is divergence on digital maturity. Get in touch via the follow-up form and we will set up a cohort view for your organisation.",
+    a: "Absolutely — and we encourage it. Running the benchmark across a leadership team reveals where there is alignment and where there is divergence on strategic maturity. Get in touch via the follow-up form and we will set up a cohort view for your organisation.",
   },
 ];
 
@@ -156,7 +156,7 @@ export function BenchmarkLandingView() {
         <div className="pointer-events-none absolute inset-0 bg-grid mask-fade-b opacity-60" />
         <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-16 sm:px-6 sm:pt-24 lg:px-8 lg:pt-28">
           <Reveal>
-            <Eyebrow>The Meridian Benchmark</Eyebrow>
+            <Eyebrow>The Trennt Benchmark</Eyebrow>
           </Reveal>
           <Reveal delay={0.05}>
             <h1 className="mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
@@ -167,7 +167,7 @@ export function BenchmarkLandingView() {
           <Reveal delay={0.1}>
             <p className="mt-6 max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground">
               A fifteen-question diagnostic, grounded in five dimensions of
-              digital maturity. Eight minutes in, you get an honest score, a
+              strategic maturity. Eight minutes in, you get an honest score, a
               tier, a percentile against your peers, and a clear sense of where
               to focus next.
             </p>
@@ -304,7 +304,7 @@ export function BenchmarkLandingView() {
           <SectionHeading
             eyebrow="What you'll get"
             title="A genuine diagnostic, not a quiz."
-            description="You will leave with a defensible read on your digital maturity — and a clear point of view on what to do about it."
+            description="You will leave with a defensible read on your strategic maturity — and a clear point of view on what to do about it."
           />
         </Reveal>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -336,7 +336,7 @@ export function BenchmarkLandingView() {
           <Reveal>
             <SectionHeading
               eyebrow="What we measure"
-              title="Five dimensions of digital maturity."
+              title="Five dimensions of strategic maturity."
               description="Maturity is not one number — it is a shape. We assess the five dimensions that, in our experience, separate organisations that compound from those that stall."
             />
           </Reveal>
@@ -463,7 +463,7 @@ export function BenchmarkLandingView() {
                   We never share individual scores. You can request deletion at
                   any time by emailing{" "}
                   <span className="font-medium text-foreground">
-                    hello@meridianadvisory.com
+                    hello@trenntadvisory.com
                   </span>
                   .
                 </span>

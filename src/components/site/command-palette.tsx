@@ -116,11 +116,11 @@ export function CommandPalette() {
       careers: "Careers",
       contact: "Contact",
       legal: "Privacy & Terms",
-      "benchmark-landing": "Digital Maturity Benchmark",
+      "benchmark-landing": "Strategic Benchmark Assessment",
       "benchmark-insights": "Insights Dashboard",
     };
     const navHints: Record<string, string> = {
-      home: "The Meridian homepage",
+      home: "The Trennt homepage",
       about: "Who we are and what we stand for",
       services: "Our six practices",
       work: "Case studies and engagements",

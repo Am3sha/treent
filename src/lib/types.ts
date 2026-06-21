@@ -1,4 +1,4 @@
-// Shared types for the Meridian Advisory site + benchmark tool
+// Shared types for the TRENNT Consulting Group site + benchmark tool
 
 export type ViewKey =
   | "home"

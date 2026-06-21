@@ -89,7 +89,7 @@ export function LegalView() {
             <LegalCard>
               <LegalSection title="Who we are">
                 <p>
-                  {COMPANY.legalName} (&quot;Meridian&quot;, &quot;we&quot;,
+                  {COMPANY.legalName} (&quot;Trennt&quot;, &quot;we&quot;,
                   &quot;us&quot;) is a limited liability partnership registered
                   in England &amp; Wales. Our registered office is{" "}
                   {COMPANY.address}. You can reach us at{" "}
@@ -123,7 +123,7 @@ export function LegalView() {
                     "To respond to your enquiry, application, or follow-up request.",
                     "To compute and return your benchmark results and percentile.",
                     "To aggregate benchmark data into anonymised statistics shown on our Insights dashboard. Individual responses are never published — only aggregates of 5+ organisations.",
-                    "To send you the Meridian Quarterly if you subscribe (you can unsubscribe at any time).",
+                    "To send you the Trennt Quarterly if you subscribe (you can unsubscribe at any time).",
                     "To improve our website, services, and content.",
                   ]}
                 />
@@ -193,14 +193,14 @@ export function LegalView() {
               <LegalSection title="About these terms">
                 <p>
                   These terms govern your use of the {COMPANY.name} website at
-                  meridianadvisory.com. By using the site, you agree to them. If
+                  trenntadvisory.com. By using the site, you agree to them. If
                   you don&apos;t agree, please don&apos;t use the site.
                 </p>
               </LegalSection>
 
               <LegalSection title="The benchmark tool">
                 <p>
-                  Our Digital Maturity Benchmark is provided free of charge for
+                  Our Strategic Benchmark Assessment is provided free of charge for
                   informational and self-assessment purposes. It is not
                   professional advice, and we make no warranty as to its
                   accuracy or suitability for your situation. Your results are
@@ -313,7 +313,7 @@ export function LegalView() {
                       </tr>
                       <tr className="border-b border-border/50">
                         <td className="py-2 pr-4 font-mono text-xs text-foreground">
-                          meridian_anon
+                          trennt_anon
                         </td>
                         <td className="py-2 pr-4">Privacy-preserving analytics (no PII)</td>
                         <td className="py-2 pr-4">24 hours</td>

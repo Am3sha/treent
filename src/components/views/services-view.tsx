@@ -27,7 +27,7 @@ const ENGAGEMENT_MODEL = [
     label: "Delivery",
     duration: "3 – 18 months",
     detail:
-      "Small, embedded pods — typically 2–6 Meridian people plus client team members — shipping in weekly increments.",
+      "Small, embedded pods — typically 2–6 Trennt people plus client team members — shipping in weekly increments.",
   },
   {
     label: "Embed",
@@ -273,7 +273,7 @@ export function ServicesView() {
               {
                 label: "Team size",
                 value: "2 – 8",
-                sub: "Meridian practitioners, plus client team members embedded in pods.",
+                sub: "Trennt practitioners, plus client team members embedded in pods.",
               },
               {
                 label: "Governance",

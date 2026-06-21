@@ -203,7 +203,7 @@ export function AdminView() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `meridian-assessments-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `trennt-assessments-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -248,7 +248,7 @@ export function AdminView() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `meridian-responses-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `trennt-responses-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

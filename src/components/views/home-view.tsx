@@ -56,13 +56,13 @@ export function HomeView() {
                   className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl md:leading-[1.02]"
                 >
                   Strategy, technology &amp; data for the{" "}
-                  <span className="text-primary">next horizon.</span>
+                  <span className="text-primary">next standard.</span>
                 </h1>
               </Reveal>
               <Reveal delay={0.1}>
                 <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground text-balance">
-                  Meridian Advisory is an independent consulting firm helping
-                  ambitious organisations turn strategy into measurable outcomes
+                  TRENNT Consulting Group is an independent consulting firm helping
+                  world-leading organizations turn strategy into measurable outcomes
                   — across digital transformation, data &amp; AI, and operational
                   excellence.
                 </p>
@@ -74,7 +74,7 @@ export function HomeView() {
                     onClick={() => navigate("benchmark-landing")}
                     className="h-11 gap-2 rounded-full bg-primary px-6 text-primary-foreground shadow-sm hover:bg-primary/90"
                   >
-                    Take the Digital Maturity Benchmark
+                    Take the Strategic Benchmark Assessment
                     <ArrowUpRight className="h-4 w-4" />
                   </Button>
                   <Button
@@ -121,7 +121,7 @@ export function HomeView() {
                           <Icon name="Compass" className="h-4 w-4" />
                         </span>
                         <div className="text-sm font-medium">
-                          Digital Maturity Snapshot
+                          Strategic Maturity Snapshot
                         </div>
                       </div>
                       <Badge variant="secondary" className="rounded-full">
@@ -294,7 +294,7 @@ export function HomeView() {
               </Reveal>
               <Reveal delay={0.1}>
                 <p className="mt-5 max-w-2xl text-base leading-relaxed text-primary-foreground/85 md:text-lg text-balance">
-                  The Meridian Digital Maturity Benchmark is a free, structured
+                  The Trennt Strategic Benchmark Assessment is a free, structured
                   assessment across five dimensions. Answer fifteen questions,
                   get a calibrated score, a maturity tier, and a per-dimension
                   breakdown — benchmarked against our engagement dataset.
@@ -572,12 +572,12 @@ export function HomeView() {
             <div className="absolute inset-0 -z-10 bg-radial-fade opacity-80" aria-hidden />
             <div className="grid items-center gap-10 lg:grid-cols-2">
               <div>
-                <Eyebrow>Find your next horizon</Eyebrow>
+                <Eyebrow>Find your next standard</Eyebrow>
                 <h2
                   id="cta-heading"
                   className="mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl"
                 >
-                  Ready to find your next horizon?
+                  Ready to find your next standard?
                 </h2>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground text-balance">
                   Start with the free benchmark, or talk to us about an

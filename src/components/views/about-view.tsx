@@ -67,7 +67,7 @@ export function AboutView() {
           <div className="grid items-end gap-10 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <Reveal>
-                <Eyebrow>About Meridian Advisory</Eyebrow>
+                <Eyebrow>About TRENNT Consulting Group</Eyebrow>
               </Reveal>
               <Reveal delay={0.05}>
                 <h1
@@ -161,11 +161,11 @@ export function AboutView() {
             <Reveal>
               <div className="space-y-5 text-base leading-relaxed text-muted-foreground md:text-lg">
                 <p>
-                  Meridian was founded in {COMPANY.foundedYear} by a group of
+                  Trennt was founded in {COMPANY.foundedYear} by a group of
                   partners who had spent years inside the largest consultancies
                   and grown tired of the model: sprawling teams, generic
                   frameworks, and an incentive to extend the engagement. We
-                  started Meridian to do the opposite.
+                  started Trennt to do the opposite.
                 </p>
                 <p>
                   We are deliberately independent. We take no commissions on
@@ -198,7 +198,7 @@ export function AboutView() {
         className="border-y border-border/60 bg-secondary/40"
       >
         <h2 id="about-stats-heading" className="sr-only">
-          Meridian by the numbers
+          Trennt by the numbers
         </h2>
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
           <dl className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-10">

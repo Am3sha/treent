@@ -15,26 +15,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Meridian Advisory — Strategy, technology & data for the next horizon",
+  title: "TRENNT Consulting Group — Strategy, technology & data for the next standard",
   description:
-    "Meridian Advisory is an independent consulting firm helping ambitious organisations turn strategy into measurable outcomes — across digital transformation, data & AI, and operational excellence.",
+    "TRENNT Consulting Group is an independent consulting firm helping world-leading organizations turn strategy into measurable outcomes — across digital transformation, data & AI, and operational excellence.",
   keywords: [
     "strategy consulting",
     "digital transformation",
     "data and AI",
     "operational excellence",
-    "digital maturity assessment",
+    "strategic maturity assessment",
     "benchmark",
   ],
-  authors: [{ name: "Meridian Advisory" }],
+  authors: [{ name: "TRENNT Consulting Group" }],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },
   openGraph: {
-    title: "Meridian Advisory",
+    title: "TRENNT Consulting Group",
     description:
-      "Strategy, technology & data for the next horizon. Take our Digital Maturity Benchmark to see where you stand.",
-    siteName: "Meridian Advisory",
+      "Strategy, technology & data for the next standard. Take our Strategic Benchmark Assessment to see where you stand.",
+    siteName: "TRENNT Consulting Group",
     type: "website",
   },
 };
