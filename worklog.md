@@ -347,3 +347,76 @@ A thought-leadership content hub — the site previously lacked editorial conten
 - Could add a "most read" or "recently published" sort to the resources listing.
 - Could add author profile pages (linking from article byline to a bio + their other articles).
 - Next recurring review should consider: an admin/reporting view for individual assessment records, or a "team benchmark" feature where a leader invites their team to all take the benchmark and see an aggregate team view.
+
+---
+Task ID: 9 (webDevReview cron round 3)
+Agent: main (orchestrator) — recurring webDevReview
+Task: QA assessment + 2 new features (Case Studies/Work view, animated stat counters) + card hover polish.
+
+## Current project status assessment
+- Project STABLE and HEALTHY. Dev server HTTP 200 on all routes. Lint clean.
+- Prior rounds added: Insights dashboard, sector comparison on results, Resources/Articles view, scroll progress bar, back-to-top button, tier glow.
+- QA found NO bugs in existing codebase. All views render correctly.
+- The site now has 10 views + 7 API routes + a rich benchmark tool with full data capture.
+
+## Completed modifications this round
+
+### 1. NEW FEATURE: Case Studies / Work view (#/work)
+The site previously teased case studies on the home page but had NO dedicated page — a clear gap for a consulting firm. Built a full case studies hub with listing + detail reader.
+
+**Files created/modified:**
+- `src/components/views/work-view.tsx` (NEW, ~430 lines):
+  - Listing page: hero with radial fade + grid, sector filter pills (All/Financial Services/Manufacturing/Public Sector/Logistics/Energy), featured case study card (2-col with metric visual + outcome chips), case study grid (3-col), CTA band
+  - Case study reader: back button, sector badge + duration, title, summary, meta strip (client/sector/duration/services), 4-outcome metric grid, "The challenge" section (bullet points with amber dots), "Our approach" section (numbered steps with primary circles), highlighted quote block, footer CTA, related case studies section
+  - Deep-linking: #/work/<slug> opens the reader directly
+  - `CaseStudyCard` component with hover lift animation (`hover:-translate-y-1 hover:shadow-md`)
+- `src/lib/content.ts` (UPDATED): Expanded `CASE_STUDIES` from 3 to 5 full case studies, each with rich detail:
+  - Asteria Financial (Financial Services) — claims replatforming, £38M savings
+  - Tundra Industrials (Manufacturing) — AI demand forecasting, €52M working capital
+  - Mersey Health Partners (Public Sector) — operational reset, 31% shorter waiting lists
+  - Northwind Logistics (Logistics) — supply chain resilience, 99.6% on-time delivery
+  - Helios Energy (Energy) — CSRD-ready ESG reporting, 40% reporting effort cut
+  - Each has: slug, challenge[], approach[], outcomes[{label,value}], quote, services[], icon, duration, metric + metricLabel
+- `src/lib/types.ts` (UPDATED): Expanded `CaseStudy` interface with slug, duration, metricLabel, challenge[], approach[], outcomes[], quote, services[], icon; added `work` to ViewKey
+- `src/lib/store.ts` (UPDATED): Added `work` to valid views list
+- `src/app/page.tsx` (UPDATED): Registered WorkView in router + hash sync
+- `src/components/site/header.tsx` (UPDATED): Added "Work" to main NAV array (between Services and Resources)
+- `src/components/site/footer.tsx` (UPDATED): Added "Our Work" link to Company footer column
+- `src/components/views/home-view.tsx` (UPDATED):
+  - Case study cards now slice to 3 (from 5), show metricLabel, are clickable (navigate to work view), and have hover lift animation (`hover:-translate-y-1 hover:shadow-lg`)
+  - Added "View all engagements" CTA button below the case studies grid
+
+### 2. NEW FEATURE: Animated number counters on home page stats
+- `src/components/site/count-up.tsx` (NEW): Reusable `CountUp` component that:
+  - Parses a display string into prefix/number/suffix (handles "$4.2B", "11+", "94%", etc.)
+  - Animates from 0 to the target value using requestAnimationFrame with easeOutCubic
+  - Triggers when scrolled into view (framer-motion useInView, once: true)
+  - Preserves prefix/suffix throughout the animation
+- `src/components/views/home-view.tsx` (UPDATED): Stats band now uses `<CountUp value={s.value} />` instead of static `{s.value}` — the four stats (11+, 320+, $4.2B, 94%) animate up when scrolled into view
+
+### 3. STYLING POLISH
+- Card hover lifts: case study cards on both the home page and work page now use `hover:-translate-y-1 hover:shadow-lg` for a subtle lift effect on hover
+- Featured case study card uses `hover:shadow-lg` for a more prominent lift
+- Case study grid cards use `hover:-translate-y-1 hover:shadow-md` for a lighter lift
+
+## Verification results
+- `bun run lint` → 0 errors, 0 warnings
+- All routes HTTP 200: /, #/about, #/services, #/work, #/work/asteria-financial-replatforming, #/contact, #/careers, #/resources, #/benchmark-landing, #/benchmark-insights
+- agent-browser + VLM verified:
+  - **Work listing**: hero + 6 sector filter pills + featured case study card with £38M metric + outcome chips + 4 case study cards in grid. VLM: "no visual bugs detected"
+  - **Case study reader**: all sections render — title, client meta, 4 outcome metric cards, "The challenge" with bullets, "Our approach" with numbered steps, highlighted quote (Helena Voss), footer CTA, related case studies. VLM: "no visual bugs observed"
+  - **Sector filter**: filtering to "Energy" correctly shows only the Helios ESG case study; "All" restores full list
+  - **Deep-linking**: #/work/asteria-financial-replatforming opens the reader directly
+  - **Back button**: returns to the listing page
+  - **Animated counters**: home page stats (11+, 320+, $4.2B, 94%) render with correct prefix/suffix, animate when scrolled into view
+  - **Home page case studies**: 3 cards show metricLabel, are clickable to work view, have hover lift
+  - **"View all engagements" CTA**: present below the case studies grid, navigates to #/work
+  - No console errors on any view (stale HMR cache errors are non-issues — dev server log shows only 200s)
+
+## Unresolved issues or risks + next-phase recommendations
+- The seeded test data (17+ assessments) is still in the DB — should be cleared before production.
+- Article and case study content is static in content.ts. A future enhancement could add a CMS or MDX-based authoring workflow.
+- Could add a "team benchmark" feature where a leader invites their team to all take the benchmark and see an aggregate team view.
+- Could add an admin/reporting view for individual assessment records with CSV export.
+- The home page hero could benefit from a more dynamic visual (e.g., an animated radar chart or a looping video background).
+- Next recurring review should consider: a privacy/terms page (footer link currently goes to contact), or a search/filter feature for the resources + work views.

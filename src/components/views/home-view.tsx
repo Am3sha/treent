@@ -13,6 +13,7 @@ import {
   TESTIMONIALS,
 } from "@/lib/content";
 import { Icon } from "@/components/site/icon";
+import { CountUp } from "@/components/site/count-up";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -182,7 +183,7 @@ export function HomeView() {
                   <dd
                     className="text-4xl font-semibold tabular-nums tracking-tight text-primary md:text-5xl"
                   >
-                    {s.value}
+                    <CountUp value={s.value} />
                   </dd>
                   <p className="mt-2 text-sm font-medium text-foreground">
                     {s.label}

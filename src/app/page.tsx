@@ -13,6 +13,7 @@ import { ServicesView } from "@/components/views/services-view";
 import { ContactView } from "@/components/views/contact-view";
 import { CareersView } from "@/components/views/careers-view";
 import { ResourcesView } from "@/components/views/resources-view";
+import { WorkView } from "@/components/views/work-view";
 import { BenchmarkLandingView } from "@/components/views/benchmark-landing-view";
 import { BenchmarkQuizView } from "@/components/views/benchmark-quiz-view";
 import { BenchmarkResultsView } from "@/components/views/benchmark-results-view";
@@ -26,6 +27,7 @@ const VIEWS: Record<ViewKey, React.ComponentType> = {
   contact: ContactView,
   careers: CareersView,
   resources: ResourcesView,
+  work: WorkView,
   "benchmark-landing": BenchmarkLandingView,
   "benchmark-quiz": BenchmarkQuizView,
   "benchmark-results": BenchmarkResultsView,
@@ -49,6 +51,7 @@ function useHashSync() {
         "contact",
         "careers",
         "resources",
+        "work",
         "benchmark-landing",
         "benchmark-quiz",
         "benchmark-results",
