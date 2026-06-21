@@ -22,6 +22,7 @@ const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }
     links: [
       { label: "Overview", view: "benchmark-landing" },
       { label: "Take the assessment", view: "benchmark-quiz" },
+      { label: "Insights dashboard", view: "benchmark-insights" },
       { label: "Methodology", view: "benchmark-landing" },
     ],
   },

@@ -198,3 +198,75 @@ Stage Summary:
   - Results "Download report" uses window.print(); a true PDF export could be added.
   - Could add team/bulk benchmark invites.
   - The seeded test data (15 assessments with seed@example.com) should be cleared before production.
+
+---
+Task ID: 7 (webDevReview cron round 1)
+Agent: main (orchestrator) — recurring webDevReview
+Task: QA assessment + new feature (Benchmark Insights dashboard) + styling polish (scroll progress, back-to-top).
+
+## Current project status assessment
+- Project is STABLE and HEALTHY. Dev server returns HTTP 200 on all routes. Lint clean (0 errors, 0 warnings).
+- All 9 existing views render correctly (verified via agent-browser + VLM).
+- All 7 existing API routes return correct responses.
+- 16 assessments in DB (15 seeded + 1 from previous QA round), providing meaningful aggregate data.
+- No bugs or errors found in the existing codebase during QA.
+
+## Completed modifications this round
+
+### 1. NEW FEATURE: Benchmark Insights dashboard (`#/benchmark-insights`)
+A new aggregate analytics view that visualises the collected benchmark data — directly addressing the user's requirement that "responses and related benchmark data be collected and stored... so the data can be aggregated and used later for analysis and reporting." Previously this data only existed as a JSON API with no UI.
+
+**Files created/modified:**
+- `src/components/views/benchmark-insights-view.tsx` (NEW, ~840 lines) — full dashboard with:
+  - Hero section with radial fade + grid background
+  - KPI strip: total organisations, average maturity, leading-tier share, avg completion time
+  - Dimension profile: recharts RadarChart + horizontal BarChart with per-dimension average scores
+  - 5 dimension detail cards with score, progress bar, description
+  - Tier distribution: recharts donut PieChart + legend + count badges
+  - Submissions trend: recharts AreaChart (last 12 weeks)
+  - Industry breakdown: horizontal progress bars with score + count per industry
+  - Company size breakdown: vertical BarChart by headcount band
+  - Auto-generated insights summary: strongest dimension, biggest gap, maturity frontier
+  - CTA band with emerald background
+  - Loading skeleton, error state, and empty state all handled
+- `src/app/api/benchmark/stats/route.ts` (ENHANCED) — added 4 new aggregate breakdowns:
+  - `byIndustry`: top 10 industries with count + avg score (via groupBy)
+  - `byCompanySize`: fixed-order headcount bands with count + avg score
+  - `trend`: 12-week submission trend with count + avg score per week bucket
+  - `avgDurationSec`: average assessment completion time
+- `src/lib/types.ts` (UPDATED) — added `benchmark-insights` to ViewKey; extended BenchmarkStats with byIndustry, byCompanySize, trend, avgDurationSec fields
+- `src/lib/store.ts` (UPDATED) — added `benchmark-insights` to valid views list
+- `src/app/page.tsx` (UPDATED) — registered BenchmarkInsightsView in router + hash sync
+- `src/components/views/benchmark-landing-view.tsx` (UPDATED) — added "Explore the full insights dashboard" link below stats strip (appears when stats are loaded)
+- `src/components/site/footer.tsx` (UPDATED) — added "Insights dashboard" link in Benchmark column
+
+### 2. STYLING POLISH
+- `src/components/site/header.tsx` (ENHANCED) — added scroll progress indicator: a 2px emerald line at the bottom of the sticky header that fills proportionally to scroll position. Uses `oklch(0.38 0.06 162)` solid color (inline style to bypass Tailwind v4 gradient variable issues). Tracks scroll + resize.
+- `src/components/site/back-to-top.tsx` (NEW) — a floating "back to top" button (bottom-right) that appears after scrolling 600px. Smooth scroll-to-top on click. Fades in/out with translate-Y animation. Turns emerald on hover.
+- `src/app/page.tsx` (UPDATED) — added `<BackToTop />` to the layout.
+
+### 3. BUG FIX
+- Fixed a JSX parse error in benchmark-insights-view.tsx: the final ternary branch `stats ? (...)` was missing its `: null` else-branch, causing a build-breaking parse error.
+- Fixed a state-value mismatch in benchmark-landing-view.tsx: the "Explore insights" link condition checked `statsState === "ok"` but the actual state value is `"loaded"`. Corrected to `statsState === "loaded"`.
+
+## Verification results
+- `bun run lint` → 0 errors, 0 warnings
+- All routes HTTP 200: /, #/about, #/services, #/contact, #/careers, #/benchmark-landing, #/benchmark-insights
+- agent-browser + VLM verified:
+  - Insights dashboard: KPI cards render with live data (17 orgs, 58 avg, 35% Leading, 2m 51s avg)
+  - RadarChart, BarChart, PieChart (donut), AreaChart all render correctly with no visual bugs
+  - Industry breakdown + company-size bar chart render correctly
+  - VLM: "professional and polished, all charts rendering correctly, no major visual bugs"
+  - Landing page "Explore the full insights dashboard" link navigates to #/benchmark-insights ✓
+  - Footer "Insights dashboard" link registered ✓
+  - Scroll progress bar renders (2px emerald, 34% width at mid-scroll) ✓
+  - Back-to-top button appears after scroll, functional ✓
+  - No console errors on any view
+
+## Unresolved issues or risks + next-phase recommendations
+- The seeded test data (16 assessments with seed@example.com) is still in the DB — should be cleared before production. Low priority for dev.
+- The Insights dashboard is read-only (public aggregate view). A future enhancement could add an **admin-protected** detailed reporting view with individual assessment records, CSV export, and filtering.
+- The results page "Download report" still uses window.print() — a true PDF export (via the pdf skill) could be added.
+- The trend chart only shows the last 12 weeks; as the dataset grows, adding a date-range selector would be valuable.
+- Could add **benchmark comparison by sector** on the results page (e.g., "you vs your industry average") now that byIndustry data is available from the stats API.
+- Next recurring review should consider: adding a "Resources" or "Insights articles" view (thought-leadership content), or a team/bulk benchmark invite feature.

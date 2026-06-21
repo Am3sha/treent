@@ -30,12 +30,22 @@ export function Header() {
   const navigate = useNav((s) => s.navigate);
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
 
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   const go = (v: ViewKey) => {
@@ -147,6 +157,16 @@ export function Header() {
             </SheetContent>
           </Sheet>
         </div>
+      </div>
+      {/* Scroll progress indicator */}
+      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent">
+        <div
+          className="h-full transition-[width] duration-150 ease-out"
+          style={{
+            width: `${progress * 100}%`,
+            backgroundColor: "oklch(0.38 0.06 162)",
+          }}
+        />
       </div>
     </header>
   );

@@ -52,6 +52,7 @@ function readHashView(): ViewKey {
     "benchmark-quiz",
     "benchmark-results",
     "benchmark-followup",
+    "benchmark-insights",
   ];
   return valid.includes(h) ? h : DEFAULT_VIEW;
 }

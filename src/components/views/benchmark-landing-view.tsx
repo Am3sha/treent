@@ -285,6 +285,17 @@ export function BenchmarkLandingView() {
             sub="Nascent → Leading"
           />
         </div>
+        {statsState === "loaded" && (
+          <div className="mx-auto max-w-6xl px-4 pb-6 sm:px-6 lg:px-8">
+            <button
+              onClick={() => navigate("benchmark-insights")}
+              className="group inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+            >
+              Explore the full insights dashboard
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </button>
+          </div>
+        )}
       </section>
 
       {/* WHAT YOU'LL GET ---------------------------------------------- */}

@@ -9,7 +9,8 @@ export type ViewKey =
   | "benchmark-landing"
   | "benchmark-quiz"
   | "benchmark-results"
-  | "benchmark-followup";
+  | "benchmark-followup"
+  | "benchmark-insights";
 
 export type Dimension =
   | "strategy"
@@ -69,6 +70,10 @@ export interface BenchmarkStats {
   averageOverall: number;
   dimensionAverages: Record<Dimension, number>;
   tierDistribution: Record<MaturityTier, number>;
+  byIndustry: { label: string; count: number; average: number }[];
+  byCompanySize: { label: string; count: number; average: number }[];
+  trend: { weekStart: string; count: number; average: number }[];
+  avgDurationSec: number;
 }
 
 export interface ServiceItem {

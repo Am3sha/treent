@@ -4,6 +4,7 @@ import * as React from "react";
 import { useNav } from "@/lib/store";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
+import { BackToTop } from "@/components/site/back-to-top";
 import type { ViewKey } from "@/lib/types";
 
 import { HomeView } from "@/components/views/home-view";
@@ -15,6 +16,7 @@ import { BenchmarkLandingView } from "@/components/views/benchmark-landing-view"
 import { BenchmarkQuizView } from "@/components/views/benchmark-quiz-view";
 import { BenchmarkResultsView } from "@/components/views/benchmark-results-view";
 import { BenchmarkFollowupView } from "@/components/views/benchmark-followup-view";
+import { BenchmarkInsightsView } from "@/components/views/benchmark-insights-view";
 
 const VIEWS: Record<ViewKey, React.ComponentType> = {
   home: HomeView,
@@ -26,6 +28,7 @@ const VIEWS: Record<ViewKey, React.ComponentType> = {
   "benchmark-quiz": BenchmarkQuizView,
   "benchmark-results": BenchmarkResultsView,
   "benchmark-followup": BenchmarkFollowupView,
+  "benchmark-insights": BenchmarkInsightsView,
 };
 
 function useHashSync() {
@@ -44,6 +47,7 @@ function useHashSync() {
         "benchmark-quiz",
         "benchmark-results",
         "benchmark-followup",
+        "benchmark-insights",
       ];
       const v = valid.includes(h) ? h : "home";
       if (useNav.getState().view !== v) {
@@ -77,6 +81,7 @@ export default function Home() {
         </React.Suspense>
       </main>
       <Footer />
+      <BackToTop />
     </div>
   );
 }
