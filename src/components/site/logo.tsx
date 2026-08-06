@@ -55,13 +55,8 @@ export function Logo({
         </svg>
       </span>
       {withWordmark && (
-        <span className="flex flex-col leading-none">
-          <span className="font-semibold tracking-tight text-[15px] text-foreground">
-            TRENNT
-          </span>
-          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Consulting Group
-          </span>
+        <span className="font-semibold tracking-tight text-[15px] text-foreground">
+          TRENNT
         </span>
       )}
     </span>

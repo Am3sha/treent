@@ -6,6 +6,9 @@ import { Logo } from "./logo";
 import { useNav } from "@/lib/store";
 import { COMPANY } from "@/lib/content";
 import type { ViewKey } from "@/lib/types";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }[] = [
   {
@@ -13,8 +16,6 @@ const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }
     links: [
       { label: "About", view: "about" },
       { label: "Services", view: "services" },
-      { label: "Our Work", view: "work" },
-      { label: "Resources", view: "resources" },
       { label: "Careers", view: "careers" },
       { label: "Contact", view: "contact" },
     ],
@@ -25,30 +26,44 @@ const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }
       { label: "Overview", view: "benchmark-landing" },
       { label: "Take the assessment", view: "benchmark-quiz" },
       { label: "Insights dashboard", view: "benchmark-insights" },
-      { label: "Admin reporting", view: "admin" },
       { label: "Methodology", view: "benchmark-landing" },
     ],
   },
 ];
 
+const newsletterFormSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+});
+
+type NewsletterFormValues = z.infer<typeof newsletterFormSchema>;
+
 export function Footer() {
   const navigate = useNav((s) => s.navigate);
-  const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<"idle" | "loading" | "ok" | "err">("idle");
 
-  const subscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<NewsletterFormValues>({
+    resolver: zodResolver(newsletterFormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const subscribe = async (data: NewsletterFormValues) => {
     setStatus("loading");
     try {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: data.email }),
       });
       if (!res.ok) throw new Error("failed");
       setStatus("ok");
-      setEmail("");
+      reset();
     } catch {
       setStatus("err");
     }
@@ -64,7 +79,7 @@ export function Footer() {
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
               {COMPANY.description}
             </p>
-            <form onSubmit={subscribe} className="mt-6 max-w-sm">
+            <form onSubmit={handleSubmit(subscribe)} className="mt-6 max-w-sm">
               <label
                 htmlFor="newsletter"
                 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground"
@@ -75,9 +90,7 @@ export function Footer() {
                 <input
                   id="newsletter"
                   type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                   placeholder="you@company.com"
                   className="h-10 flex-1 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
@@ -89,6 +102,11 @@ export function Footer() {
                   {status === "loading" ? "…" : "Subscribe"}
                 </button>
               </div>
+              {errors.email && (
+                <p className="mt-2 text-xs text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
               {status === "ok" && (
                 <p className="mt-2 text-xs text-emerald-700 dark:text-emerald-400">
                   Thanks — you&apos;re on the list.

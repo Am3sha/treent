@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, X, ArrowUpRight, Search } from "lucide-react";
+import { Menu, X, ArrowUpRight, Search, ChevronDown } from "lucide-react";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -13,16 +13,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useNav } from "@/lib/store";
 import type { ViewKey } from "@/lib/types";
+import { SERVICES } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 const NAV: { label: string; view: ViewKey }[] = [
   { label: "Home", view: "home" },
   { label: "About", view: "about" },
-  { label: "Services", view: "services" },
-  { label: "Work", view: "work" },
-  { label: "Resources", view: "resources" },
   { label: "Careers", view: "careers" },
   { label: "Contact", view: "contact" },
 ];
@@ -94,6 +99,38 @@ export function Header() {
               </button>
             );
           })}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={cn(
+                  "relative flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  SERVICES.some(s => view === s.slug)
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Services
+                <ChevronDown className="h-4 w-4" />
+                {SERVICES.some(s => view === s.slug) && (
+                  <span className="absolute inset-x-3 -bottom-px h-px bg-primary/70" />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              {SERVICES.map((service) => (
+                <DropdownMenuItem
+                  key={service.slug}
+                  onClick={() => go(service.slug as ViewKey)}
+                >
+                  {service.title}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => go("framework-agreements")}>
+                Framework Agreements
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -165,6 +202,35 @@ export function Header() {
                     {view === item.view && <X className="h-4 w-4 rotate-45" />}
                   </button>
                 ))}
+                <div className="my-2 h-px bg-border" />
+                <div className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Services
+                </div>
+                {SERVICES.map((service) => (
+                  <button
+                    key={service.slug}
+                    onClick={() => go(service.slug as ViewKey)}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium transition-colors",
+                      view === service.slug
+                        ? "bg-primary/8 text-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    {service.title}
+                  </button>
+                ))}
+                <button
+                  onClick={() => go("framework-agreements")}
+                  className={cn(
+                    "flex items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium transition-colors",
+                    view === "framework-agreements"
+                      ? "bg-primary/8 text-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
+                  Framework Agreements
+                </button>
                 <div className="my-3 h-px bg-border" />
                 <button
                   onClick={() => go("benchmark-landing")}

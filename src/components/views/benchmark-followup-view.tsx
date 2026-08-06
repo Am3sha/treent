@@ -13,7 +13,6 @@ import {
   FileText,
   Handshake,
   Loader2,
-  AlertCircle,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
 import { Reveal, Eyebrow } from "@/components/site/reveal";
@@ -34,8 +33,22 @@ import {
 } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Interest = "consultation" | "report" | "workshop" | "partnership";
+
+const benchmarkFollowupFormSchema = z.object({
+  name: z.string().min(2, "Please enter your name"),
+  email: z.string().email("Please enter a valid email address"),
+  company: z.string().optional(),
+  phone: z.string().optional(),
+  message: z.string().optional(),
+  interest: z.enum(["consultation", "report", "workshop", "partnership"]),
+});
+
+type BenchmarkFollowupFormValues = z.infer<typeof benchmarkFollowupFormSchema>;
 
 const INTERESTS: {
   value: Interest;
@@ -73,7 +86,7 @@ const INTERESTS: {
   },
 ];
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
 export function BenchmarkFollowupView() {
   const result = useNav((s) => s.result);
@@ -81,33 +94,37 @@ export function BenchmarkFollowupView() {
   const navigate = useNav((s) => s.navigate);
   const { toast } = useToast();
 
-  const [name, setName] = React.useState(respondent?.name ?? "");
-  const [email, setEmail] = React.useState(respondent?.email ?? "");
-  const [company, setCompany] = React.useState(respondent?.company ?? "");
-  const [phone, setPhone] = React.useState("");
-  const [message, setMessage] = React.useState("");
-  const [interest, setInterest] = React.useState<Interest>("consultation");
-
   const [submitting, setSubmitting] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
 
-  const nameValid = name.trim().length >= 2;
-  const emailValid = EMAIL_RE.test(email.trim());
-  const canSubmit = nameValid && emailValid && !submitting;
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<BenchmarkFollowupFormValues>({
+    resolver: zodResolver(benchmarkFollowupFormSchema),
+    defaultValues: {
+      name: respondent?.name ?? "",
+      email: respondent?.email ?? "",
+      company: respondent?.company ?? "",
+      phone: "",
+      message: "",
+      interest: "consultation",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
+  const onSubmit = async (data: BenchmarkFollowupFormValues) => {
     setSubmitting(true);
     try {
       const payload = {
         assessmentId: result?.id ?? null,
-        name: name.trim(),
-        email: email.trim(),
-        company: company.trim() || null,
-        phone: phone.trim() || null,
-        message: message.trim() || null,
-        interest,
+        name: data.name.trim(),
+        email: data.email.trim(),
+        company: data.company?.trim() || null,
+        phone: data.phone?.trim() || null,
+        message: data.message?.trim() || null,
+        interest: data.interest,
       };
       const res = await fetch("/api/assessment/followup", {
         method: "POST",
@@ -179,90 +196,102 @@ export function BenchmarkFollowupView() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="px-6 sm:px-8">
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Interest selector */}
                     <div className="space-y-3">
                       <Label className="text-sm font-medium">
                         What would be most useful?
                       </Label>
-                      <RadioGroup
-                        value={interest}
-                        onValueChange={(v) => setInterest(v as Interest)}
-                        className="grid gap-2 sm:grid-cols-2"
-                      >
-                        {INTERESTS.map((opt) => {
-                          const checked = interest === opt.value;
-                          return (
-                            <label
-                              key={opt.value}
-                              htmlFor={`interest-${opt.value}`}
-                              className={cn(
-                                "flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition-all",
-                                "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1",
-                                checked
-                                  ? "border-primary bg-primary/5 shadow-sm"
-                                  : "border-border hover:border-primary/40 hover:bg-accent/30"
-                              )}
-                            >
-                              <RadioGroupItem
-                                value={opt.value}
-                                id={`interest-${opt.value}`}
-                                className="mt-0.5"
-                              />
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <opt.icon
-                                    className={cn(
-                                      "h-4 w-4",
-                                      checked
-                                        ? "text-primary"
-                                        : "text-muted-foreground"
-                                    )}
+                      <Controller
+                        name="interest"
+                        control={control}
+                        render={({ field }) => (
+                          <RadioGroup
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            className="grid gap-2 sm:grid-cols-2"
+                          >
+                            {INTERESTS.map((opt) => {
+                              const checked = field.value === opt.value;
+                              return (
+                                <label
+                                  key={opt.value}
+                                  htmlFor={`interest-${opt.value}`}
+                                  className={cn(
+                                    "flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition-all",
+                                    "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1",
+                                    checked
+                                      ? "border-primary bg-primary/5 shadow-sm"
+                                      : "border-border hover:border-primary/40 hover:bg-accent/30"
+                                  )}
+                                >
+                                  <RadioGroupItem
+                                    value={opt.value}
+                                    id={`interest-${opt.value}`}
+                                    className="mt-0.5"
                                   />
-                                  <span className="text-sm font-medium">
-                                    {opt.label}
-                                  </span>
-                                </div>
-                                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                                  {opt.description}
-                                </p>
-                              </div>
-                            </label>
-                          );
-                        })}
-                      </RadioGroup>
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <opt.icon
+                                        className={cn(
+                                          "h-4 w-4",
+                                          checked
+                                            ? "text-primary"
+                                            : "text-muted-foreground"
+                                        )}
+                                      />
+                                      <span className="text-sm font-medium">
+                                        {opt.label}
+                                      </span>
+                                    </div>
+                                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                                      {opt.description}
+                                    </p>
+                                  </div>
+                                </label>
+                              );
+                            })}
+                          </RadioGroup>
+                        )}
+                      />
                     </div>
 
                     <div className="grid gap-5 sm:grid-cols-2">
                       <Field label="Full name" required>
                         <Input
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          {...register("name")}
                           placeholder="Alex Morgan"
                           autoComplete="name"
                         />
+                        {errors.name && (
+                          <p className="text-xs text-destructive">
+                            {errors.name.message}
+                          </p>
+                        )}
                       </Field>
                       <Field label="Work email" required>
                         <Input
                           type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          {...register("email")}
                           placeholder="alex@yourcompany.com"
                           autoComplete="email"
                         />
+                        {errors.email && (
+                          <p className="text-xs text-destructive">
+                            {errors.email.message}
+                          </p>
+                        )}
                       </Field>
                       <Field label="Company">
                         <Input
-                          value={company}
-                          onChange={(e) => setCompany(e.target.value)}
+                          {...register("company")}
                           placeholder="Trennt Industries"
                           autoComplete="organization"
                         />
                       </Field>
                       <Field label="Phone (optional)">
                         <Input
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
+                          {...register("phone")}
                           placeholder="+44 20 7946 0312"
                           autoComplete="tel"
                         />
@@ -272,26 +301,12 @@ export function BenchmarkFollowupView() {
                         className="sm:col-span-2"
                       >
                         <Textarea
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
+                          {...register("message")}
                           placeholder="We're trying to figure out where to start with our data foundation…"
                           rows={4}
                         />
                       </Field>
                     </div>
-
-                    {!canSubmit && (name || email) && (
-                      <div className="flex items-start gap-2 text-xs text-muted-foreground">
-                        <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                        <span>
-                          {!nameValid
-                            ? "Please enter your name"
-                            : !emailValid
-                              ? "Please enter a valid email address"
-                              : ""}
-                        </span>
-                      </div>
-                    )}
 
                     <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-xs text-muted-foreground">
@@ -301,7 +316,7 @@ export function BenchmarkFollowupView() {
                       <Button
                         type="submit"
                         size="lg"
-                        disabled={!canSubmit}
+                        disabled={!isValid || submitting}
                         className="gap-2 sm:min-w-[180px]"
                       >
                         {submitting ? (

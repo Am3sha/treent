@@ -4,6 +4,7 @@
 // (the submit-time response carries it; the frontend uses that).
 
 import { db } from "@/lib/db";
+import { BENCHMARK_QUESTIONS } from "@/lib/content";
 
 export async function GET(
   _req: Request,
@@ -17,12 +18,19 @@ export async function GET(
 
     const assessment = await db.assessment.findUnique({
       where: { id },
-      include: { responses: true },
     });
 
     if (!assessment) {
       return Response.json({ ok: false, error: "not found" }, { status: 404 });
     }
+
+    // Transform responses JSON to array format for frontend
+    const responsesArray = BENCHMARK_QUESTIONS.map((q) => ({
+      questionId: q.id,
+      dimension: q.dimension,
+      value: (assessment.responses as Record<string, number>)?.[q.id] || 0,
+      questionText: q.prompt,
+    }));
 
     return Response.json(
       {
@@ -46,12 +54,7 @@ export async function GET(
           industry: assessment.industry,
           role: assessment.role,
         },
-        responses: assessment.responses.map((r) => ({
-          questionId: r.questionId,
-          dimension: r.dimension,
-          value: r.value,
-          questionText: r.questionText,
-        })),
+        responses: responsesArray,
       },
       { status: 200 }
     );

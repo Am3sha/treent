@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,26 +16,31 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TRENNT Consulting Group — Strategy, technology & data for the next standard",
+  title: "Trennt | Internal Audit Specialists",
   description:
-    "TRENNT Consulting Group is an independent consulting firm helping world-leading organizations turn strategy into measurable outcomes — across digital transformation, data & AI, and operational excellence.",
+    "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery. We support Boards, Audit Committees, and senior management by providing objective insight into the effectiveness of risk management, internal controls, and governance processes.",
   keywords: [
-    "strategy consulting",
-    "digital transformation",
-    "data and AI",
-    "operational excellence",
-    "strategic maturity assessment",
-    "benchmark",
+    "internal audit",
+    "internal audit outsourcing",
+    "internal audit co-sourcing",
+    "internal audit function establishment",
+    "internal audit transformation",
+    "quality assurance and improvement program",
+    "governance",
+    "risk management",
+    "internal controls",
+    "audit committee",
+    "IIA standards",
   ],
-  authors: [{ name: "TRENNT Consulting Group" }],
+  authors: [{ name: "Trennt" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
   },
   openGraph: {
-    title: "TRENNT Consulting Group",
+    title: "Trennt | Internal Audit Specialists",
     description:
-      "Strategy, technology & data for the next standard. Take our Strategic Benchmark Assessment to see where you stand.",
-    siteName: "TRENNT Consulting Group",
+      "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery.",
+    siteName: "Trennt",
     type: "website",
   },
 };
@@ -49,15 +55,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -1,15 +1,18 @@
 // GET /api/admin/assessments — returns paginated assessment records with responses
 // for the admin reporting view. Supports filtering by tier, industry, companySize.
 // Query params: ?tier=Leading&industry=Technology&companySize=201-1000&page=1&pageSize=20
-//
-// NOTE: In a production deployment this route MUST be behind authentication
-// (e.g. NextAuth admin role check). For this demo it is open — clearly marked.
 
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/auth";
 import { db } from "@/lib/db";
 
 const VALID_TIERS = ["Nascent", "Developing", "Established", "Leading"];
 
 export async function GET(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const url = new URL(req.url);
     const params = url.searchParams;
@@ -30,27 +33,24 @@ export async function GET(req: Request) {
     if (companySize) where.companySize = companySize;
 
     const [total, records] = await Promise.all([
-      db.assessment.count({ where }),
-      db.assessment.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        include: {
-          responses: {
-            orderBy: { questionId: "asc" },
-          },
-          followUps: {
-            select: {
-              id: true,
-              interest: true,
-              status: true,
-              createdAt: true,
-            },
+    db.assessment.count({ where }),
+    db.assessment.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      include: {
+        followUps: {
+          select: {
+            id: true,
+            interest: true,
+            status: true,
+            createdAt: true,
           },
         },
-      }),
-    ]);
+      },
+    }),
+  ]);
 
     // Also fetch distinct industries + company sizes for filter dropdowns
     const [industries, companySizes] = await Promise.all([
@@ -95,12 +95,7 @@ export async function GET(req: Request) {
         questionCount: r.questionCount,
         durationSec: r.durationSec,
         createdAt: r.createdAt.toISOString(),
-        responses: r.responses.map((resp) => ({
-          questionId: resp.questionId,
-          dimension: resp.dimension,
-          value: resp.value,
-          questionText: resp.questionText,
-        })),
+        responses: r.responses, // just return the JSON object directly
         followUps: r.followUps.map((f) => ({
           id: f.id,
           interest: f.interest,
@@ -120,6 +115,39 @@ export async function GET(req: Request) {
     });
   } catch (err) {
     console.error("[api/admin/assessments] error:", err);
+    return Response.json(
+      { ok: false, error: "internal error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
+  try {
+    const url = new URL(req.url);
+    const id = url.searchParams.get("id");
+    
+    if (!id) {
+      return Response.json({ error: "Missing id parameter" }, { status: 400 });
+    }
+
+    // Check if assessment exists
+    const existingAssessment = await db.assessment.findUnique({ where: { id } });
+    if (!existingAssessment) {
+      return Response.json({ error: "Assessment not found" }, { status: 404 });
+    }
+
+    // Delete the assessment (Prisma should handle cascading deletes if configured)
+    await db.assessment.delete({ where: { id } });
+
+    return Response.json({ success: true }, { status: 200 });
+  } catch (err) {
+    console.error("[api/admin/assessments DELETE] error:", err);
     return Response.json(
       { ok: false, error: "internal error" },
       { status: 500 }

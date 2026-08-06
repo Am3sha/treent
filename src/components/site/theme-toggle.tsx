@@ -5,10 +5,15 @@ import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function ThemeToggle() {
+const emptySubscribe = () => () => {};
+
+export function ThemeToggle({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   const isDark = mounted ? resolvedTheme === "dark" : false;
 
@@ -18,7 +23,7 @@ export function ThemeToggle() {
       size="icon"
       aria-label="Toggle colour theme"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="h-9 w-9 rounded-full border border-border/60 bg-background/60"
+      className={`h-9 w-9 rounded-full border border-border/60 bg-background/60 ${className}`}
     >
       {mounted ? (
         isDark ? (

@@ -11,33 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const ENGAGEMENT_MODEL = [
-  {
-    label: "Diagnosis",
-    duration: "2 – 6 weeks",
-    detail:
-      "A focused diagnostic that surfaces the constraints that actually matter, the value at stake, and the risks worth taking.",
-  },
-  {
-    label: "Design",
-    duration: "2 – 8 weeks",
-    detail:
-      "Target-state design, co-created with your people. Investment case, roadmap, and the decision gates between phases.",
-  },
-  {
-    label: "Delivery",
-    duration: "3 – 18 months",
-    detail:
-      "Small, embedded pods — typically 2–6 Trennt people plus client team members — shipping in weekly increments.",
-  },
-  {
-    label: "Embed",
-    duration: "Ongoing",
-    detail:
-      "Hand-over to your operating teams with playbooks, metrics, and a sustained-improvement system that runs without us.",
-  },
-];
-
 export function ServicesView() {
   const navigate = useNav((s) => s.navigate);
   const [activeSlug, setActiveSlug] = React.useState<string>(SERVICES[0]?.slug ?? "");
@@ -90,15 +63,15 @@ export function ServicesView() {
                 id="services-hero-heading"
                 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl md:leading-[1.02]"
               >
-                Six practices that, together, run a transformation end to end.
+                Comprehensive internal audit services tailored to your needs.
               </h1>
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance">
-                Strategy without delivery is theatre. Delivery without strategy
-                is busywork. We bring both under one operating model, so the
-                diagnosis sets the direction and the direction is what gets
-                built.
+                From outsourcing and co-sourcing to function establishment and
+                transformation, we provide a full range of internal audit services
+                designed to strengthen your governance, risk management, and
+                internal controls.
               </p>
             </Reveal>
           </div>
@@ -198,10 +171,10 @@ export function ServicesView() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => navigate("contact")}
+                          onClick={() => navigate(s.slug as any)}
                           className="gap-2 rounded-full"
                         >
-                          Discuss this engagement
+                          Learn more
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -211,7 +184,7 @@ export function ServicesView() {
                     <div className="grid gap-8 p-8 sm:grid-cols-2 lg:col-span-7 lg:p-10 [direction:ltr]">
                       <div>
                         <div className="text-xs font-medium uppercase tracking-[0.18em] text-primary/80">
-                          Outcomes
+                          Key benefits
                         </div>
                         <ul className="mt-4 space-y-3">
                           {s.outcomes.map((o) => (
@@ -227,7 +200,7 @@ export function ServicesView() {
                       </div>
                       <div>
                         <div className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                          Deliverables
+                          Key deliverables
                         </div>
                         <ul className="mt-4 space-y-3">
                           {s.deliverables.map((d) => (
@@ -254,17 +227,17 @@ export function ServicesView() {
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* METHODOLOGY BAND                                                    */}
+      {/* ENGAGEMENT PROCESS                                                  */}
       {/* ------------------------------------------------------------------ */}
       <section
-        aria-labelledby="methodology-heading"
+        aria-labelledby="engagement-process-heading"
         className="border-y border-border/60 bg-secondary/40"
       >
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
           <SectionHeading
-            eyebrow="How we work"
-            title="Diagnose, design, deliver, embed."
-            description="Every engagement moves through the same four phases. Value is tracked weekly against the original investment case — not discovered at the end."
+            eyebrow="Engagement process"
+            title="A structured, professional approach."
+            description="Every engagement follows our four-step process, ensuring clarity, alignment, and measurable outcomes from start to finish."
             className="max-w-2xl"
           />
           <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -293,74 +266,6 @@ export function ServicesView() {
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* ENGAGEMENT MODEL                                                    */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        aria-labelledby="engagement-heading"
-        className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8"
-      >
-        <SectionHeading
-          eyebrow="Engagement model"
-          title="What an engagement actually looks like."
-          description="Practical expectations on duration, team size, and how the work is run — so you can plan around it."
-          className="max-w-2xl"
-        />
-        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {ENGAGEMENT_MODEL.map((e, i) => (
-            <Reveal key={e.label} delay={i * 0.05}>
-              <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-6">
-                <div className="flex items-baseline justify-between">
-                  <h3 className="text-base font-semibold tracking-tight">
-                    {e.label}
-                  </h3>
-                  <span className="font-mono text-xs text-primary">
-                    {e.duration}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  {e.detail}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal delay={0.1}>
-          <div className="mt-8 grid gap-4 rounded-2xl border border-border/70 bg-secondary/40 p-6 sm:grid-cols-3 sm:p-8">
-            {[
-              {
-                label: "Team size",
-                value: "2 – 8",
-                sub: "Trennt practitioners, plus client team members embedded in pods.",
-              },
-              {
-                label: "Governance",
-                value: "Weekly",
-                sub: "Steering committee reviews value tracking dashboard against investment case.",
-              },
-              {
-                label: "Engagement length",
-                value: "6 wks – 18 mo",
-                sub: "From focused diagnostic to multi-phase transformation programmes.",
-              },
-            ].map((x) => (
-              <div key={x.label}>
-                <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  {x.label}
-                </div>
-                <div className="mt-1 text-2xl font-semibold tabular-nums text-primary">
-                  {x.value}
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {x.sub}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
       {/* CTA                                                                 */}
       {/* ------------------------------------------------------------------ */}
       <section
@@ -381,22 +286,22 @@ export function ServicesView() {
                     id="services-cta-heading"
                     className="mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl"
                   >
-                    Tell us where you want to be in twelve months.
+                    Ready to discuss your internal audit needs?
                   </h2>
                   <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground text-balance">
-                    The first conversation is always free. We&apos;ll pressure
-                    test the brief, suggest where to start, and tell you if
-                    we&apos;re not the right fit.
+                    We'd welcome the opportunity to understand your requirements
+                    and discuss how we can help. Contact us to schedule an initial
+                    conversation.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
                   <Button
                     size="lg"
-                    onClick={() => navigate("benchmark-landing")}
+                    onClick={() => navigate("framework-agreements")}
                     className="h-11 gap-2 rounded-full bg-primary px-6 text-primary-foreground shadow-sm hover:bg-primary/90"
                   >
-                    Take the benchmark
-                    <ArrowUpRight className="h-4 w-4" />
+                    Framework agreements
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                   <Button
                     size="lg"
@@ -404,8 +309,8 @@ export function ServicesView() {
                     onClick={() => navigate("contact")}
                     className="h-11 gap-2 rounded-full border-border/70 px-6 hover:bg-accent hover:text-accent-foreground"
                   >
-                    Talk to us
-                    <ArrowRight className="h-4 w-4" />
+                    Contact us
+                    <ArrowUpRight className="h-4 w-4" />
                   </Button>
                 </div>
               </div>

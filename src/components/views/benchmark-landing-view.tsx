@@ -235,7 +235,7 @@ export function BenchmarkLandingView() {
                 </span>
               ) : (
                 <span className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
-                  {stats.totalAssessments.toLocaleString()}
+                  {stats!.totalAssessments.toLocaleString()}
                 </span>
               )
             }
@@ -256,7 +256,7 @@ export function BenchmarkLandingView() {
                 </span>
               ) : (
                 <span className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
-                  {stats.averageOverall.toFixed(0)}
+                  {stats!.averageOverall.toFixed(0)}
                   <span className="text-base font-normal text-muted-foreground">
                     {" "}
                     / 100

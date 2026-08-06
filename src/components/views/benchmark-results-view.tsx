@@ -11,7 +11,9 @@ import {
   ShieldCheck,
   TrendingUp,
   AlertCircle,
+  FileText,
 } from "lucide-react";
+import { generatePDF } from "@/lib/pdf-generator";
 import {
   Radar,
   RadarChart,
@@ -28,7 +30,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useNav } from "@/lib/store";
-import { DIMENSIONS, TIER_META, scoreToTier } from "@/lib/content";
+import { DIMENSIONS, TIER_META, TIER_RECOMMENDATIONS, scoreToTier } from "@/lib/content";
 import type {
   AssessmentResult,
   BenchmarkStats,
@@ -52,29 +54,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Icon } from "@/components/site/icon";
 import { cn } from "@/lib/utils";
 
-// Tier-specific recommendations (tailored copy).
-const TIER_RECOMMENDATIONS: Record<MaturityTier, string[]> = {
-  Nascent: [
-    "Resist the urge to buy tooling. Begin by writing down the strategy and getting the exec team to agree on it — explicitly.",
-    "Pick one core process, map it end-to-end, and instrument it. You cannot improve what you cannot see.",
-    "Establish a single source of truth for one core business entity (customer or product) before attempting anything broader.",
-  ],
-  Developing: [
-    "Your pockets of strong practice need a connective layer. Appoint owners for each dimension and a single forum where they meet.",
-    "Replace project-by-project improvement with a quarterly portfolio review tied to the strategy.",
-    "Move one AI pilot into a measured production system. Use it to build the muscle for governing models, not just building them.",
-  ],
-  Established: [
-    "Shift from efficient to adaptive: shorten the loop from decision to production, and make safe-to-fail the default for new bets.",
-    "Industrialise your data foundation as reusable products, not one-off pipelines.",
-    "Move from AI experiments to AI as a capability — a platform, with a portfolio of measured systems and clear ownership.",
-  ],
-  Leading: [
-    "Sustain the edge by treating the platform itself as a product — funded, versioned, and continuously improved.",
-    "Defend your position by deepening the moat around your differentiating capabilities, not by spreading thin.",
-    "Shape your market: open selective capabilities as services, set standards, and use your maturity to pull the sector forward.",
-  ],
-};
 
 const DIMENSION_INTERPRETATION: Record<Dimension, { high: string; mid: string; low: string }> = {
   strategy: {
@@ -127,6 +106,9 @@ export function BenchmarkResultsView() {
       respondent={respondent}
       onRetake={handleRetake}
       onFollowUp={() => navigate("benchmark-followup")}
+      onDownloadPDF={(currentStats) =>
+        generatePDF(result, respondent, currentStats)
+      }
       onShare={() => {
         if (typeof navigator !== "undefined" && navigator.share) {
           navigator
@@ -182,14 +164,26 @@ function ResultsBody({
   respondent,
   onRetake,
   onFollowUp,
+  onDownloadPDF,
   onShare,
 }: {
   result: AssessmentResult;
   respondent: RespondentProfile | null;
   onRetake: () => void;
   onFollowUp: () => void;
+  onDownloadPDF: (stats: BenchmarkStats | null) => void;
   onShare: () => void;
 }) {
+  const [downloading, setDownloading] = React.useState(false);
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      await onDownloadPDF(stats);
+    } finally {
+      setDownloading(false);
+    }
+  };
   const [stats, setStats] = React.useState<BenchmarkStats | null>(null);
   const [statsState, setStatsState] = React.useState<
     "loading" | "loaded" | "empty" | "error"
@@ -302,13 +296,28 @@ function ResultsBody({
                     {tierMeta.range}
                   </span>
                 </Badge>
-                <span className="text-xs text-muted-foreground">
-                  Completed {new Date(result.createdAt).toLocaleDateString(undefined, {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground">
+                    Completed{" "}
+                    {new Date(result.createdAt).toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDownload}
+                    disabled={downloading}
+                    className="ml-auto h-8 gap-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    <FileText
+                      className={cn("h-3.5 w-3.5", downloading && "animate-pulse")}
+                    />
+                    {downloading ? "Preparing PDF..." : "Download PDF"}
+                  </Button>
+                </div>
               </div>
 
               <div className="mt-6 flex items-end gap-3">
@@ -411,7 +420,7 @@ function ResultsBody({
               <CardTitle className="text-lg">You vs the benchmark</CardTitle>
               <CardDescription>
                 {statsState === "loaded"
-                  ? `Compared against ${stats.totalAssessments.toLocaleString()} completed benchmarks.`
+                  ? `Compared against ${stats!.totalAssessments.toLocaleString()} completed benchmarks.`
                   : statsState === "loading"
                     ? "Loading benchmark data…"
                     : "Benchmark data not yet available."}
@@ -458,88 +467,90 @@ function ResultsBody({
             </CardContent>
           </Card>
         </div>
-      </Reveal>
+      </Reveal >
 
       {/* SECTOR COMPARISON ------------------------------------------- */}
-      {respondentIndustry && (
-        <Reveal delay={0.05}>
-          <Card className="mt-6 overflow-hidden py-0">
-            <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">
-                    <Building2 className="h-4 w-4" />
+      {
+        respondentIndustry && (
+          <Reveal delay={0.05}>
+            <Card className="mt-6 overflow-hidden py-0">
+              <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
+                <div className="p-6 sm:p-8">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">
+                      <Building2 className="h-4 w-4" />
+                    </div>
+                    <span className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                      Sector comparison
+                    </span>
                   </div>
-                  <span className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                    Sector comparison
-                  </span>
-                </div>
-                <h3 className="mt-4 text-xl font-semibold tracking-tight">
-                  You vs the {respondentIndustry.toLowerCase()} sector
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {sectorRow ? (
-                    <>
-                      Based on {sectorRow.count}{" "}
-                      {sectorRow.count === 1 ? "organisation" : "organisations"} in
-                      your sector who have benchmarked so far.
-                    </>
-                  ) : (
-                    <>
-                      No other organisations in the {respondentIndustry.toLowerCase()}{" "}
-                      sector have benchmarked yet — you could be the reference point.
-                    </>
+                  <h3 className="mt-4 text-xl font-semibold tracking-tight">
+                    You vs the {respondentIndustry.toLowerCase()} sector
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {sectorRow ? (
+                      <>
+                        Based on {sectorRow.count}{" "}
+                        {sectorRow.count === 1 ? "organisation" : "organisations"} in
+                        your sector who have benchmarked so far.
+                      </>
+                    ) : (
+                      <>
+                        No other organisations in the {respondentIndustry.toLowerCase()}{" "}
+                        sector have benchmarked yet — you could be the reference point.
+                      </>
+                    )}
+                  </p>
+                  {sectorRow && (
+                    <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-3 py-1 text-xs">
+                      <span className="text-muted-foreground">Sector average:</span>
+                      <span className="font-semibold text-foreground">
+                        {sectorRow.average}/100
+                      </span>
+                      <span className="text-muted-foreground">·</span>
+                      <span
+                        className={
+                          result.overall >= sectorRow.average
+                            ? "font-medium text-primary"
+                            : "font-medium text-amber-700"
+                        }
+                      >
+                        {result.overall >= sectorRow.average
+                          ? `You're ${result.overall - sectorRow.average} points ahead`
+                          : `${sectorRow.average - result.overall} points behind`}
+                      </span>
+                    </div>
                   )}
-                </p>
-                {sectorRow && (
-                  <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-3 py-1 text-xs">
-                    <span className="text-muted-foreground">Sector average:</span>
-                    <span className="font-semibold text-foreground">
-                      {sectorRow.average}/100
-                    </span>
-                    <span className="text-muted-foreground">·</span>
-                    <span
-                      className={
-                        result.overall >= sectorRow.average
-                          ? "font-medium text-primary"
-                          : "font-medium text-amber-700"
+                </div>
+                <div className="flex items-center justify-center border-t border-border/60 bg-secondary/20 p-6 sm:p-8 md:border-l md:border-t-0">
+                  {statsState === "loading" ? (
+                    <Skeleton className="h-32 w-full max-w-[220px]" />
+                  ) : sectorRow ? (
+                    <SectorGauge
+                      you={result.overall}
+                      sector={sectorRow.average}
+                      overallAvg={
+                        stats && statsState === "loaded"
+                          ? Math.round(stats.averageOverall)
+                          : 0
                       }
-                    >
-                      {result.overall >= sectorRow.average
-                        ? `You're ${result.overall - sectorRow.average} points ahead`
-                        : `${sectorRow.average - result.overall} points behind`}
-                    </span>
-                  </div>
-                )}
+                    />
+                  ) : (
+                    <div className="text-center">
+                      <p className="text-3xl font-semibold tracking-tight text-primary">
+                        {result.overall}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Your score, setting the sector baseline
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center justify-center border-t border-border/60 bg-secondary/20 p-6 sm:p-8 md:border-l md:border-t-0">
-                {statsState === "loading" ? (
-                  <Skeleton className="h-32 w-full max-w-[220px]" />
-                ) : sectorRow ? (
-                  <SectorGauge
-                    you={result.overall}
-                    sector={sectorRow.average}
-                    overallAvg={
-                      stats && statsState === "loaded"
-                        ? Math.round(stats.averageOverall)
-                        : 0
-                    }
-                  />
-                ) : (
-                  <div className="text-center">
-                    <p className="text-3xl font-semibold tracking-tight text-primary">
-                      {result.overall}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Your score, setting the sector baseline
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
-        </Reveal>
-      )}
+            </Card>
+          </Reveal>
+        )
+      }
 
       {/* PER-DIMENSION BREAKDOWN -------------------------------------- */}
       <Reveal delay={0.05}>
@@ -767,7 +778,7 @@ function ResultsBody({
           Download report
         </button>
       </div>
-    </div>
+    </div >
   );
 }
 

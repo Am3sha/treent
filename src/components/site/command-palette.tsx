@@ -33,8 +33,6 @@ import {
 } from "@/components/ui/command";
 import { useNav } from "@/lib/store";
 import {
-  ARTICLES,
-  CASE_STUDIES,
   SERVICES,
   COMPANY,
 } from "@/lib/content";
@@ -78,15 +76,7 @@ export function CommandPalette() {
     setOpen(false);
   };
 
-  const goArticle = (slug: string) => {
-    navigateToHash(`/resources/${slug}`);
-    setOpen(false);
-  };
 
-  const goCaseStudy = (slug: string) => {
-    navigateToHash(`/work/${slug}`);
-    setOpen(false);
-  };
 
   const goService = (view: ViewKey) => {
     navigate(view);
@@ -99,8 +89,6 @@ export function CommandPalette() {
       home: Home,
       about: Building2,
       services: Compass,
-      work: Briefcase,
-      resources: FileText,
       careers: Users,
       contact: Mail,
       legal: Scale,
@@ -111,8 +99,6 @@ export function CommandPalette() {
       home: "Home",
       about: "About",
       services: "Services",
-      work: "Our Work",
-      resources: "Resources",
       careers: "Careers",
       contact: "Contact",
       legal: "Privacy & Terms",
@@ -122,13 +108,11 @@ export function CommandPalette() {
     const navHints: Record<string, string> = {
       home: "The Trennt homepage",
       about: "Who we are and what we stand for",
-      services: "Our six practices",
-      work: "Case studies and engagements",
-      resources: "Field notes and articles",
+      services: "Our services",
       careers: "Open roles and culture",
       contact: "Get in touch",
       legal: "Privacy, terms & cookies",
-      "benchmark-landing": "Take the 8-minute assessment",
+      "benchmark-landing": "Take the assessment",
       "benchmark-insights": "Aggregate benchmark data",
     };
     const navEntries: SearchEntry[] = Object.entries(navLabels).map(
@@ -157,38 +141,11 @@ export function CommandPalette() {
       hint: s.tagline,
       group: "Services",
       icon: serviceIcons[s.icon] ?? Compass,
-      action: () => goService("services"),
+      action: () => goService(s.slug as ViewKey),
       keywords: `${s.tagline} ${s.description}`,
     }));
 
-    const articleEntries: SearchEntry[] = ARTICLES.map((a) => ({
-      id: `article-${a.slug}`,
-      label: a.title,
-      hint: `${a.category} · ${a.readMinutes} min read`,
-      group: "Articles",
-      icon: FileText,
-      action: () => goArticle(a.slug),
-      keywords: `${a.excerpt} ${a.author} ${a.category}`,
-    }));
-
-    const caseStudyIcons: Record<string, LucideIcon> = {
-      Landmark: Building2,
-      Factory: Workflow,
-      HeartPulse: Gauge,
-      Truck: Workflow,
-      Zap: BrainCircuit,
-    };
-    const caseStudyEntries: SearchEntry[] = CASE_STUDIES.map((c) => ({
-      id: `casestudy-${c.slug}`,
-      label: c.title,
-      hint: `${c.client} · ${c.sector}`,
-      group: "Case studies",
-      icon: caseStudyIcons[c.icon] ?? Briefcase,
-      action: () => goCaseStudy(c.slug),
-      keywords: `${c.client} ${c.sector} ${c.summary} ${c.services.join(" ")}`,
-    }));
-
-    return [...navEntries, ...serviceEntries, ...articleEntries, ...caseStudyEntries];
+    return [...navEntries, ...serviceEntries];
   })();
 
   // Group entries
@@ -203,7 +160,7 @@ export function CommandPalette() {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Search pages, services, articles, case studies…" />
+      <CommandInput placeholder="Search pages and services…" />
       <CommandList className="max-h-[420px]">
         <CommandEmpty>No results found.</CommandEmpty>
         {groups.map(([groupName, items]) => (

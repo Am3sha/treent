@@ -2,7 +2,7 @@
 // On duplicate email (P2002) returns 200 with alreadySubscribed:true instead of erroring.
 
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -30,7 +30,10 @@ export async function POST(req: Request) {
       return Response.json({ ok: true, id: created.id }, { status: 200 });
     } catch (err) {
       // Prisma unique-constraint violation code (P2002): email already subscribed.
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      if (
+        err instanceof PrismaClientKnownRequestError && 
+        (err as PrismaClientKnownRequestError & { code?: string }).code === "P2002"
+      ) {
         const existing = await db.newsletterSubscriber.findUnique({
           where: { email },
         });

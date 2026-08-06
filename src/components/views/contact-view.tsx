@@ -31,102 +31,88 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type Topic = "general" | "services" | "partnership" | "press";
-
-interface FormState {
-  name: string;
-  email: string;
-  company: string;
-  phone: string;
-  topic: Topic;
-  message: string;
-}
+type Topic = "general" | "services" | "framework" | "other";
 
 const TOPICS: { value: Topic; label: string; hint: string }[] = [
   { value: "general", label: "General enquiry", hint: "Anything else on your mind." },
   {
     value: "services",
     label: "Engagement enquiry",
-    hint: "Discuss a specific service or programme.",
+    hint: "Discuss a specific internal audit service.",
   },
   {
-    value: "partnership",
-    label: "Partnership",
-    hint: "Vendors, alliances, research collaboration.",
+    value: "framework",
+    label: "Framework agreement",
+    hint: "Discuss a framework agreement for ongoing services.",
   },
-  { value: "press", label: "Press & media", hint: "Comment, briefings, interviews." },
+  { value: "other", label: "Other", hint: "Other questions or requests." },
 ];
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const contactFormSchema = z.object({
+  name: z.string().min(1, "Please tell us your name."),
+  email: z.string().email("That doesn't look like a valid email."),
+  company: z.string().optional(),
+  phone: z.string().optional(),
+  topic: z.enum(["general", "services", "framework", "other"]),
+  message: z.string().min(20, "A sentence or two more would help us route this correctly."),
+});
+
+type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export function ContactView() {
   const navigate = useNav((s) => s.navigate);
   const { toast } = useToast();
-  const [form, setForm] = React.useState<FormState>({
-    name: "",
-    email: "",
-    company: "",
-    phone: "",
-    topic: "general",
-    message: "",
-  });
-  const [errors, setErrors] = React.useState<Partial<Record<keyof FormState, string>>>({});
   const [submitting, setSubmitting] = React.useState(false);
   const [done, setDone] = React.useState(false);
 
-  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm((s) => ({ ...s, [key]: value }));
-    if (errors[key]) setErrors((e) => ({ ...e, [key]: undefined }));
-  }
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      company: "",
+      phone: "",
+      topic: "general",
+      message: "",
+    },
+  });
 
-  function validate(): boolean {
-    const next: Partial<Record<keyof FormState, string>> = {};
-    if (!form.name.trim()) next.name = "Please tell us your name.";
-    if (!form.email.trim()) next.email = "An email is required so we can reply.";
-    else if (!EMAIL_RE.test(form.email)) next.email = "That doesn't look like a valid email.";
-    if (!form.message.trim()) next.message = "Please add a short message.";
-    else if (form.message.trim().length < 20)
-      next.message = "A sentence or two more would help us route this correctly.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  }
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!validate()) return;
+  const onSubmit = async (data: ContactFormValues) => {
     setSubmitting(true);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          company: form.company.trim() || undefined,
-          phone: form.phone.trim() || undefined,
-          topic: form.topic,
-          message: form.message.trim(),
+          name: data.name.trim(),
+          email: data.email.trim(),
+          company: data.company?.trim() || undefined,
+          phone: data.phone?.trim() || undefined,
+          topic: data.topic,
+          message: data.message.trim(),
         }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error || "Request failed");
       }
-      const data = (await res.json()) as { ok: true; id: string };
+      const result = (await res.json()) as { ok: true; id: string };
       setDone(true);
       toast({
         title: "Message received",
-        description: `Thanks, ${form.name.split(" ")[0]}. We'll be in touch within one business day. Reference ${data.id}.`,
+        description: `Thanks, ${data.name.split(" ")[0]}. We'll be in touch within one business day. Reference ${result.id}.`,
       });
-      setForm({
-        name: "",
-        email: "",
-        company: "",
-        phone: "",
-        topic: "general",
-        message: "",
-      });
+      reset();
     } catch (err) {
       toast({
         title: "Couldn't send your message",
@@ -139,7 +125,7 @@ export function ContactView() {
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col">
@@ -167,9 +153,7 @@ export function ContactView() {
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance">
-                Whether you have a defined brief or a half-formed hypothesis,
-                we&apos;re happy to spend an hour on it. No decks, no
-                obligation.
+                Whether you need internal audit outsourcing, co-sourcing, or support for your existing function, we&apos;re happy to discuss how we can help.
               </p>
             </Reveal>
           </div>
@@ -213,16 +197,16 @@ export function ContactView() {
                         Send another message
                       </Button>
                       <Button
-                        onClick={() => navigate("benchmark-landing")}
+                        onClick={() => navigate("home")}
                         className="gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                       >
-                        Take the benchmark
-                        <ArrowUpRight className="h-4 w-4" />
+                        Back to home
+                        <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={onSubmit} className="space-y-6" noValidate>
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
                     <div className="grid gap-5 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="name">
@@ -230,15 +214,14 @@ export function ContactView() {
                         </Label>
                         <Input
                           id="name"
-                          value={form.name}
-                          onChange={(e) => update("name", e.target.value)}
+                          {...register("name")}
                           placeholder="Jane Patel"
                           autoComplete="name"
                           aria-invalid={!!errors.name}
                         />
                         {errors.name && (
                           <p className="text-xs text-destructive">
-                            {errors.name}
+                            {errors.name.message}
                           </p>
                         )}
                       </div>
@@ -249,15 +232,14 @@ export function ContactView() {
                         <Input
                           id="email"
                           type="email"
-                          value={form.email}
-                          onChange={(e) => update("email", e.target.value)}
+                          {...register("email")}
                           placeholder="jane@company.com"
                           autoComplete="email"
                           aria-invalid={!!errors.email}
                         />
                         {errors.email && (
                           <p className="text-xs text-destructive">
-                            {errors.email}
+                            {errors.email.message}
                           </p>
                         )}
                       </div>
@@ -268,8 +250,7 @@ export function ContactView() {
                         <Label htmlFor="company">Company</Label>
                         <Input
                           id="company"
-                          value={form.company}
-                          onChange={(e) => update("company", e.target.value)}
+                          {...register("company")}
                           placeholder="Northwind Logistics"
                           autoComplete="organization"
                         />
@@ -278,8 +259,7 @@ export function ContactView() {
                         <Label htmlFor="phone">Phone</Label>
                         <Input
                           id="phone"
-                          value={form.phone}
-                          onChange={(e) => update("phone", e.target.value)}
+                          {...register("phone")}
                           placeholder="+44 20 7946 0312"
                           autoComplete="tel"
                         />
@@ -291,27 +271,30 @@ export function ContactView() {
                         What&apos;s this about?{" "}
                         <span className="text-destructive">*</span>
                       </Label>
-                      <Select
-                        value={form.topic}
-                        onValueChange={(v) => update("topic", v as Topic)}
-                      >
-                        <SelectTrigger
-                          id="topic"
-                          className="h-9 w-full"
-                          aria-label="Topic"
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TOPICS.map((t) => (
-                            <SelectItem key={t.value} value={t.value}>
-                              {t.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Controller
+                        name="topic"
+                        control={control}
+                        render={({ field }) => (
+                          <Select value={field.value} onValueChange={field.onChange}>
+                            <SelectTrigger
+                              id="topic"
+                              className="h-9 w-full"
+                              aria-label="Topic"
+                            >
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {TOPICS.map((t) => (
+                                <SelectItem key={t.value} value={t.value}>
+                                  {t.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
                       <p className="text-xs text-muted-foreground">
-                        {TOPICS.find((t) => t.value === form.topic)?.hint}
+                        {TOPICS.find((t) => t.value === control._formValues.topic)?.hint}
                       </p>
                     </div>
 
@@ -322,19 +305,18 @@ export function ContactView() {
                       </Label>
                       <Textarea
                         id="message"
-                        value={form.message}
-                        onChange={(e) => update("message", e.target.value)}
+                        {...register("message")}
                         placeholder="A sentence or two on what you're trying to change, and the question you'd like to start with."
                         className="min-h-32 resize-y"
                         aria-invalid={!!errors.message}
                       />
                       {errors.message ? (
                         <p className="text-xs text-destructive">
-                          {errors.message}
+                          {errors.message.message}
                         </p>
                       ) : (
                         <p className="text-xs text-muted-foreground">
-                          {form.message.length} characters
+                          {control._formValues.message?.length || 0} characters
                         </p>
                       )}
                     </div>

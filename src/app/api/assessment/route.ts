@@ -157,36 +157,35 @@ export async function POST(req: Request) {
     const tier = scoreToTier(overallScore);
     const questionCount = responses.length;
 
-    // ---- Persist Assessment + nested responses in one create ----
-    const created = await db.assessment.create({
-      data: {
-        respondentName,
-        respondentEmail,
-        companyName,
-        companySize,
-        industry,
-        country,
-        role,
-        consentContact,
-        overallScore,
-        strategyScore,
-        technologyScore,
-        cultureScore,
-        dataScore,
-        operationsScore,
-        tier,
-        questionCount,
-        durationSec,
-        responses: {
-          create: responses.map((r) => ({
-            questionId: r.questionId,
-            dimension: r.dimension,
-            value: r.value,
-            questionText: r.questionText,
-          })),
-        },
-      },
-    });
+    // ---- Build responses JSON object ----
+  const responsesJson: Record<string, number> = {}
+  for (const r of responses) {
+    responsesJson[r.questionId] = r.value
+  }
+  
+  // ---- Persist Assessment with JSON responses in one create ----
+  const created = await db.assessment.create({
+    data: {
+      respondentName,
+      respondentEmail,
+      companyName,
+      companySize,
+      industry,
+      country,
+      role,
+      consentContact,
+      overallScore,
+      strategyScore,
+      technologyScore,
+      cultureScore,
+      dataScore,
+      operationsScore,
+      tier,
+      questionCount,
+      durationSec,
+      responses: responsesJson,
+    },
+  });
 
     // ---- Percentile vs other assessments (excluding self) ----
     const totalOthers = await db.assessment.count({

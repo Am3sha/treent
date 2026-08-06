@@ -19,7 +19,6 @@ export function NotFoundView() {
     { label: "Services", hint: "What we do", view: "services" },
     { label: "Strategic Benchmark", hint: "Assess your maturity", view: "benchmark-landing" },
     { label: "Insights", hint: "Sector benchmarks", view: "benchmark-insights" },
-    { label: "Resources", hint: "Articles & thinking", view: "resources" },
     { label: "Contact", hint: "Talk to us", view: "contact" },
   ];
 

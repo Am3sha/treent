@@ -4,12 +4,15 @@ export type ViewKey =
   | "home"
   | "about"
   | "services"
+  | "internal-audit-outsourcing"
+  | "internal-audit-co-sourcing"
+  | "internal-audit-function-establishment"
+  | "internal-audit-transformation"
+  | "quality-assurance-and-improvement-program"
+  | "framework-agreements"
   | "contact"
   | "careers"
-  | "resources"
-  | "work"
   | "legal"
-  | "admin"
   | "benchmark-landing"
   | "benchmark-quiz"
   | "benchmark-results"
@@ -51,6 +54,7 @@ export interface AssessmentResult {
   percentile: number; // 0-100 position vs benchmark dataset
   questionCount: number;
   createdAt: string;
+  responses?: Record<string, number>;
 }
 
 export type MaturityTier =

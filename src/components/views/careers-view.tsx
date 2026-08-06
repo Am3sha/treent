@@ -36,6 +36,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const applicationFormSchema = z.object({
+  name: z.string().min(1, "Please tell us your name."),
+  email: z.string().email("That doesn't look like a valid email."),
+  phone: z.string().optional(),
+  yearsExp: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
+      "Enter a valid number of years."
+    ),
+  linkedin: z.string().optional(),
+  portfolio: z.string().optional(),
+  message: z.string().optional(),
+});
+
+type ApplicationFormValues = z.infer<typeof applicationFormSchema>;
 
 const CULTURE_STATS = [
   { value: "94%", label: "voluntary retention", sub: "Trailing three years" },
@@ -71,7 +92,7 @@ const CULTURE_VALUES = [
   },
 ];
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
 export function CareersView() {
   const navigate = useNav((s) => s.navigate);
@@ -472,22 +493,30 @@ function ApplicationDialog({
   onSubmitted: (name: string) => void;
   onError: (msg: string) => void;
 }) {
-  const [form, setForm] = React.useState({
-    name: "",
-    email: "",
-    phone: "",
-    yearsExp: "",
-    linkedin: "",
-    portfolio: "",
-    message: "",
-  });
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [submitting, setSubmitting] = React.useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ApplicationFormValues>({
+    resolver: zodResolver(applicationFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      yearsExp: "",
+      linkedin: "",
+      portfolio: "",
+      message: "",
+    },
+  });
 
   // Reset form whenever a new role is opened
   React.useEffect(() => {
     if (role) {
-      setForm({
+      reset({
         name: "",
         email: "",
         phone: "",
@@ -496,56 +525,36 @@ function ApplicationDialog({
         portfolio: "",
         message: "",
       });
-      setErrors({});
     }
-  }, [role]);
+  }, [role, reset]);
 
-  function update<K extends keyof typeof form>(key: K, value: string) {
-    setForm((s) => ({ ...s, [key]: value }));
-    if (errors[key]) setErrors((e) => ({ ...e, [key]: "" }));
-  }
-
-  function validate() {
-    const next: Record<string, string> = {};
-    if (!form.name.trim()) next.name = "Please tell us your name.";
-    if (!form.email.trim()) next.email = "An email is required.";
-    else if (!EMAIL_RE.test(form.email))
-      next.email = "That doesn't look like a valid email.";
-    if (form.yearsExp && (isNaN(Number(form.yearsExp)) || Number(form.yearsExp) < 0))
-      next.yearsExp = "Enter a number of years.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  }
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const onSubmit = async (data: ApplicationFormValues) => {
     if (!role) return;
-    if (!validate()) return;
     setSubmitting(true);
     try {
       const res = await fetch("/api/careers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim() || undefined,
+          name: data.name.trim(),
+          email: data.email.trim(),
+          phone: data.phone?.trim() || undefined,
           roleSlug: role.slug,
           roleTitle: role.title,
-          yearsExp: form.yearsExp ? Number(form.yearsExp) : undefined,
-          linkedin: form.linkedin.trim() || undefined,
-          portfolio: form.portfolio.trim() || undefined,
-          message: form.message.trim() || undefined,
+          yearsExp: data.yearsExp ? Number(data.yearsExp) : undefined,
+          linkedin: data.linkedin?.trim() || undefined,
+          portfolio: data.portfolio?.trim() || undefined,
+          message: data.message?.trim() || undefined,
         }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error || "Request failed");
       }
-      const data = (await res.json()) as { ok: true; id: string };
-      onSubmitted(form.name.trim().split(" ")[0]);
+      const result = (await res.json()) as { ok: true; id: string };
+      onSubmitted(data.name.trim().split(" ")[0]);
       // Use the id if you want; keep onSubmitted signature simple
-      void data;
+      void result;
     } catch (err) {
       onError(
         err instanceof Error
@@ -555,7 +564,7 @@ function ApplicationDialog({
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   return (
     <Dialog
@@ -574,7 +583,7 @@ function ApplicationDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="space-y-5" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="apply-name">
@@ -582,13 +591,12 @@ function ApplicationDialog({
               </Label>
               <Input
                 id="apply-name"
-                value={form.name}
-                onChange={(e) => update("name", e.target.value)}
+                {...register("name")}
                 autoComplete="name"
                 aria-invalid={!!errors.name}
               />
               {errors.name && (
-                <p className="text-xs text-destructive">{errors.name}</p>
+                <p className="text-xs text-destructive">{errors.name.message}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -598,13 +606,12 @@ function ApplicationDialog({
               <Input
                 id="apply-email"
                 type="email"
-                value={form.email}
-                onChange={(e) => update("email", e.target.value)}
+                {...register("email")}
                 autoComplete="email"
                 aria-invalid={!!errors.email}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email}</p>
+                <p className="text-xs text-destructive">{errors.email.message}</p>
               )}
             </div>
           </div>
@@ -614,8 +621,7 @@ function ApplicationDialog({
               <Label htmlFor="apply-phone">Phone</Label>
               <Input
                 id="apply-phone"
-                value={form.phone}
-                onChange={(e) => update("phone", e.target.value)}
+                {...register("phone")}
                 autoComplete="tel"
               />
             </div>
@@ -626,13 +632,12 @@ function ApplicationDialog({
                 type="number"
                 min={0}
                 max={50}
-                value={form.yearsExp}
-                onChange={(e) => update("yearsExp", e.target.value)}
+                {...register("yearsExp")}
                 placeholder="e.g. 7"
                 aria-invalid={!!errors.yearsExp}
               />
               {errors.yearsExp && (
-                <p className="text-xs text-destructive">{errors.yearsExp}</p>
+                <p className="text-xs text-destructive">{errors.yearsExp.message}</p>
               )}
             </div>
           </div>
@@ -642,8 +647,7 @@ function ApplicationDialog({
               <Label htmlFor="apply-linkedin">LinkedIn URL</Label>
               <Input
                 id="apply-linkedin"
-                value={form.linkedin}
-                onChange={(e) => update("linkedin", e.target.value)}
+                {...register("linkedin")}
                 placeholder="https://linkedin.com/in/…"
               />
             </div>
@@ -651,8 +655,7 @@ function ApplicationDialog({
               <Label htmlFor="apply-portfolio">Portfolio / GitHub</Label>
               <Input
                 id="apply-portfolio"
-                value={form.portfolio}
-                onChange={(e) => update("portfolio", e.target.value)}
+                {...register("portfolio")}
                 placeholder="https://…"
               />
             </div>
@@ -664,8 +667,7 @@ function ApplicationDialog({
             </Label>
             <Textarea
               id="apply-message"
-              value={form.message}
-              onChange={(e) => update("message", e.target.value)}
+              {...register("message")}
               placeholder="A few sentences on what you're looking for and what you'd bring."
               className="min-h-28 resize-y"
             />
