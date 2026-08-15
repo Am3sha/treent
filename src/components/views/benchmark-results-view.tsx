@@ -113,8 +113,8 @@ export function BenchmarkResultsView() {
         if (typeof navigator !== "undefined" && navigator.share) {
           navigator
             .share({
-              title: "My Strategic Benchmark Assessment",
-              text: `I scored ${result.overall}/100 on the Trennt Strategic Benchmark Assessment.`,
+              title: "My Internal Audit Maturity Benchmark",
+                text: `I scored ${result.overall}/100 on the Trennt Internal Audit Maturity Benchmark.`,
               url: typeof window !== "undefined" ? window.location.href : "",
             })
             .catch(() => undefined);
@@ -141,7 +141,7 @@ function EmptyState({ onRestart }: { onRestart: () => void }) {
           You haven't completed the assessment yet.
         </h1>
         <p className="mt-4 text-balance text-base leading-relaxed text-muted-foreground">
-          Take the eight-minute Strategic Benchmark Assessment to see your overall
+          Take the eight-minute Internal Audit Maturity Benchmark to see your overall
           score, tier, percentile, and a per-dimension breakdown.
         </p>
         <div className="mt-8">
@@ -178,6 +178,8 @@ function ResultsBody({
 
   const handleDownload = async () => {
     setDownloading(true);
+    // Yield to browser to let loading state paint before blocking PDF generation
+    await new Promise((r) => setTimeout(r, 0));
     try {
       await onDownloadPDF(stats);
     } finally {
@@ -195,7 +197,8 @@ function ResultsBody({
       try {
         const res = await fetch("/api/benchmark/stats", { cache: "no-store" });
         if (!res.ok) throw new Error("stats fetch failed");
-        const data = (await res.json()) as BenchmarkStats;
+        const response = (await res.json()) as { ok: boolean; data?: BenchmarkStats };
+        const data = response.data;
         if (cancelled) return;
         if (!data || data.totalAssessments === 0) {
           setStatsState("empty");
@@ -329,7 +332,7 @@ function ResultsBody({
                 </span>
               </div>
               <p className="mt-2 text-sm font-medium text-foreground">
-                Overall strategic maturity
+                Overall internal audit maturity
               </p>
 
               <Separator className="my-6" />

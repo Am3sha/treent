@@ -1,11 +1,9 @@
 import type {
   BenchmarkQuestion,
-  CaseStudy,
   CareerItem,
   DimensionMeta,
   ServiceItem,
   TeamMember,
-  Testimonial,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -15,13 +13,13 @@ import type {
 export const COMPANY = {
   name: "Trennt",
   legalName: "Trennt Partners",
-  tagline: "Exclusively Internal Audit.",
+  tagline: "Internal Audit. Delivered with Independence.",
   description:
-    "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery.",
+    "Trennt is a Saudi Arabia-based firm specialising exclusively in internal audit. We give Boards, Audit Committees, and executive management clear, objective insight into governance, risk management, and internal control effectiveness.",
   foundedYear: 2014,
-  email: "hello@trennt.com",
-  phone: "+44 20 7946 0312",
-  address: "Riyadh, Saudi Arabia",
+  email: "info@trennt.sa",
+  phone: "+966 50 123 4567",
+  address: `King Fahd Road, Tower 3\nSuite 1205, Riyadh 12271\nSaudi Arabia`,
   offices: [
     { city: "Riyadh", country: "Saudi Arabia", flag: "SA" },
   ],
@@ -33,16 +31,6 @@ export const COMPANY = {
 };
 
 // ---------------------------------------------------------------------------
-// Stats
-// ---------------------------------------------------------------------------
-
-export const STATS = [
-  { value: "11+", label: "years of practice", sub: "Founded 2014" },
-  { value: "320+", label: "engagements delivered", sub: "across sectors" },
-  { value: "94%", label: "repeat client rate", sub: "long-term partnerships" },
-];
-
-// ---------------------------------------------------------------------------
 // Services
 // ---------------------------------------------------------------------------
 
@@ -50,16 +38,16 @@ export const SERVICES: ServiceItem[] = [
   {
     slug: "internal-audit-outsourcing",
     title: "Internal Audit Outsourcing",
-    tagline: "End-to-end delivery of your internal audit function.",
+    tagline: "Trennt runs your internal audit function end to end.",
     description:
-      "End-to-end delivery of the organisation's internal audit function through an independent and risk-based approach.",
+      "Trennt can take responsibility for the organisation's internal audit activities through an independent, structured, and risk-focused delivery model.",
     icon: "Users",
     outcomes: [
-      "Risk-Based Audit Planning",
-      "Audit Plan Delivery",
-      "Audit Committee & Management Reporting",
-      "Follow-Up & Action Monitoring",
-      "Internal Audit Function Management",
+      "Risk Assessment & Annual Audit Planning",
+      "Execution of the Approved Audit Plan",
+      "Reporting to Management & Audit Committee",
+      "Issue Follow-Up and Action Tracking",
+      "Ongoing Management of Internal Audit Activities",
     ],
     deliverables: [
       "Annual risk-based audit plan",
@@ -71,16 +59,16 @@ export const SERVICES: ServiceItem[] = [
   {
     slug: "internal-audit-co-sourcing",
     title: "Internal Audit Co-Sourcing",
-    tagline: "Complement your existing internal audit function.",
+    tagline: "Additional capacity, specialist expertise, and seamless integration.",
     description:
-      "Delivery of selected internal audit engagements to complement the organisation's existing internal audit function.",
+      "Our co-sourcing model strengthens an existing internal audit function with targeted support, specialist expertise, and delivery capacity while preserving its overall structure.",
     icon: "Users2",
     outcomes: [
-      "Selected Internal Audit Engagements",
-      "Support for the Delivery of the Annual Audit Plan",
-      "Integration with the Existing Internal Audit Function",
-      "Audit Engagements Across Multiple Risk Areas",
-      "Delivery using the Organisation's Methodology or Trennt's Methodology",
+      "Targeted Internal Audit Assignments",
+      "Additional Support for the Annual Audit Plan",
+      "Collaboration with the Existing Internal Audit Team",
+      "Coverage Across Diverse Risk & Business Areas",
+      "Delivery Aligned with the Organisation's or Trennt's Methodology",
     ],
     deliverables: [
       "Co-sourced audit engagements",
@@ -91,17 +79,17 @@ export const SERVICES: ServiceItem[] = [
   {
     slug: "internal-audit-function-establishment",
     title: "Internal Audit Function Establishment",
-    tagline: "Design and implement a best-in-class internal audit function.",
+    tagline: "Establishing the foundations for a fully running function.",
     description:
-      "Design and implementation of an internal audit function aligned with governance requirements and the IIA Global Internal Audit Standards.",
+      "Trennt designs and puts in place internal audit functions aligned with governance expectations and the IIA Global Internal Audit Standards.",
     icon: "Building2",
     outcomes: [
-      "Governance Framework",
+      "Internal Audit Governance Structure",
       "Internal Audit Strategy",
       "Internal Audit Charter",
-      "Operating Model",
-      "Internal Audit Methodology",
-      "Function Implementation",
+      "Target Operating Model",
+      "Audit Methodology & Procedures",
+      "Function Implementation & Launch",
     ],
     deliverables: [
       "Internal audit charter",
@@ -113,17 +101,17 @@ export const SERVICES: ServiceItem[] = [
   {
     slug: "internal-audit-transformation",
     title: "Internal Audit Transformation",
-    tagline: "Enhance your existing internal audit function.",
+    tagline: "Turn an existing function into a more effective one.",
     description:
-      "Enhancement of existing internal audit functions to improve effectiveness and support evolving organisational needs.",
+      "A structured transformation journey for organisations seeking a more effective, relevant, and sustainable internal audit function.",
     icon: "RefreshCcw",
     outcomes: [
-      "Current State Assessment",
-      "Governance Framework Enhancement",
-      "Operating Model Enhancement",
-      "Internal Audit Methodology Enhancement",
-      "Capability Development",
-      "Transformation Roadmap",
+      "Current-State & Maturity Assessment",
+      "Governance Model Enhancement",
+      "Operating Model Optimisation",
+      "Methodology & Process Enhancement",
+      "Internal Audit Capability Development",
+      "Prioritised Transformation Roadmap",
     ],
     deliverables: [
       "Current state assessment report",
@@ -135,16 +123,16 @@ export const SERVICES: ServiceItem[] = [
   {
     slug: "quality-assurance-and-improvement-program",
     title: "Quality Assurance & Improvement Program (QAIP)",
-    tagline: "Independent assessment of your internal audit function.",
+    tagline: "Independent evidence of internal audit quality.",
     description:
-      "Independent assessment of the internal audit function to support continuous improvement and conformance with the IIA Global Internal Audit Standards.",
+      "Independent assessment and improvement support to help internal audit functions evaluate performance and strengthen alignment with the IIA Global Internal Audit Standards.",
     icon: "CheckCircle2",
     outcomes: [
       "Internal Quality Assessments",
-      "Standards Conformance",
-      "Quality Improvement Initiatives",
-      "External Assessment Readiness",
-      "Continuous Quality Monitoring",
+      "Assessment of Standards Conformance",
+      "Identification of Improvement Opportunities",
+      "Preparation for External Quality Assessments",
+      "Ongoing Quality & Performance Monitoring",
     ],
     deliverables: [
       "QAIP assessment report",
@@ -164,28 +152,28 @@ export const METHODOLOGY = [
     step: "01",
     title: "Initial Discussion",
     description:
-      "Understanding your organisation, your needs, and your expectations.",
+      "Clarifying the organisation's needs, priorities, and expectations.",
     icon: "MessageSquare",
   },
   {
     step: "02",
     title: "Engagement Scoping",
     description:
-      "Defining the scope, objectives, and deliverables of the engagement.",
+      "Agreeing the scope, objectives, deliverables, and resources required.",
     icon: "Scope",
   },
   {
     step: "03",
     title: "Engagement Agreement",
     description:
-      "Finalising the agreement and setting expectations for delivery.",
+      "Confirming the commercial terms and delivery arrangements.",
     icon: "FileText",
   },
   {
     step: "04",
     title: "Internal Audit Delivery",
     description:
-      "Executing the engagement in line with the agreed scope and methodology.",
+      "Delivering the agreed work, reporting, and follow-up activities.",
     icon: "CheckSquare",
   },
 ];
@@ -197,23 +185,13 @@ export const METHODOLOGY = [
 export const FRAMEWORK_AGREEMENTS = {
   title: "Framework Agreements",
   description:
-    "Framework Agreements are available for organisations that expect to engage Trennt for Internal Audit Outsourcing or Internal Audit Co-Sourcing over time.",
+    "A flexible model for ongoing internal audit support, covering future Internal Audit Outsourcing and Co-Sourcing engagements as needs arise.",
   includes: [
-    "Commercial Terms",
-    "Reporting Approach",
-    "Engagement Process",
+    "Commercial & Engagement Terms",
+    "Reporting & Communication Arrangements",
+    "Standard Engagement Process",
   ],
-  additional: "Additional engagements may be initiated under the Framework Agreement as required.",
-};
-
-// ---------------------------------------------------------------------------
-// Why Trennt
-// ---------------------------------------------------------------------------
-
-export const WHY_TRENNT = {
-  title: "Exclusively Internal Audit",
-  description:
-    "Trennt is dedicated exclusively to internal audit services. Our methodologies, deliverables, and professional capabilities are developed specifically for internal audit, supporting an objective and independent approach.",
+  additional: "Once the framework is in place, individual assignments can be initiated efficiently as organisational requirements emerge.",
 };
 
 // ---------------------------------------------------------------------------
@@ -228,22 +206,6 @@ export const LEADERSHIP: TeamMember[] = [
     initials: "SL",
   },
 ];
-
-// ---------------------------------------------------------------------------
-// Testimonials
-// ---------------------------------------------------------------------------
-
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    quote:
-      "Trennt's exclusive focus on internal audit brings a level of depth and objectivity that is hard to find.",
-    author: "Audit Committee Chair",
-    title: "Audit Committee Chair",
-    company: "Leading Organisation",
-  },
-];
-
-
 
 // ---------------------------------------------------------------------------
 // Careers
@@ -290,7 +252,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     label: "Strategy & Vision",
     short: "Strategy",
     description:
-      "How clearly ambition is translated into a sequenced, fundable plan the organisation can run.",
+      "Alignment of internal audit strategy with enterprise risk appetite and strategic objectives.",
     icon: "Compass",
     accent: "text-emerald-700",
   },
@@ -299,7 +261,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     label: "Technology & Architecture",
     short: "Technology",
     description:
-      "Whether your technology foundation is modern, API-first, and able to change at the pace of the business.",
+      "Maturity of IT general controls, audit tooling, and technology-enabled audit delivery.",
     icon: "Workflow",
     accent: "text-amber-700",
   },
@@ -308,7 +270,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     label: "Culture & Talent",
     short: "Culture",
     description:
-      "How well your people, ways of working, and leadership behaviours sustain change rather than resist it.",
+      "Audit team competency, independence posture, and stakeholder engagement across the organisation.",
     icon: "Users",
     accent: "text-teal-700",
   },
@@ -317,7 +279,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     label: "Data & AI",
     short: "Data",
     description:
-      "Whether data is treated as a governed, reusable asset — and whether AI is delivering measurable lift.",
+      "Data governance controls maturity and audit analytics capability deployment across audit cycles.",
     icon: "BrainCircuit",
     accent: "text-yellow-700",
   },
@@ -326,7 +288,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     label: "Operations & Delivery",
     short: "Operations",
     description:
-      "How lean, observable, and adaptable your core operations are — and whether improvement is a system, not a campaign.",
+      "Audit delivery methodology rigour, QAIP conformance, and issue remediation tracking.",
     icon: "Gauge",
     accent: "text-orange-700",
   },
@@ -536,28 +498,28 @@ export const TIER_META: Record<
   Nascent: {
     label: "Nascent",
     summary:
-      "Foundational practices are still forming. The biggest wins are in alignment and basics, not tooling.",
+      "Internal audit foundational practices are still forming. Prioritise charter clarity, risk-based audit planning basics, and governance alignment before investing in tooling or advanced methodologies.",
     color: "oklch(0.55 0.12 35)",
     range: "0 – 34",
   },
   Developing: {
     label: "Developing",
     summary:
-      "You have pockets of strong practice. The opportunity is to connect them into a system that compounds.",
+      "Pockets of strong internal audit practice exist. The priority is to connect them into a repeatable, risk-aligned system with formalised methodology, clear reporting cadence, and consistent quality assurance.",
     color: "oklch(0.72 0.13 75)",
     range: "35 – 54",
   },
   Established: {
     label: "Established",
     summary:
-      "A coherent, measured operating model. The next move is from efficient to adaptive — and from AI experiments to AI as a capability.",
+      "A coherent, risk-based internal audit operating model is in place. The next step is to mature from efficient assurance delivery to proactive, insight-driven audit — strengthening control environment oversight, QAIP conformance, and audit analytics capability.",
     color: "oklch(0.55 0.1 162)",
     range: "55 – 74",
   },
   Leading: {
     label: "Leading",
     summary:
-      "You are operating at the frontier. Focus shifts to sustaining the edge, defending the platform, and shaping your market.",
+      "Your internal audit function operates at the frontier of maturity. Focus shifts to sustaining excellence through continuous QAIP monitoring, advanced data-driven audit techniques, strategic audit committee advisory, and proactive risk foresight across the enterprise.",
     color: "oklch(0.52 0.1 195)",
     range: "75 – 100",
   },
@@ -565,25 +527,23 @@ export const TIER_META: Record<
 
 export const TIER_RECOMMENDATIONS: Record<import("./types").MaturityTier, string[]> = {
   Nascent: [
-    "Resist the urge to buy tooling. Begin by writing down the strategy and getting the exec team to agree on it — explicitly.",
-    "Pick one core process, map it end-to-end, and instrument it. You cannot improve what you cannot see.",
-    "Establish a single source of truth for one core business entity (customer or product) before attempting anything broader.",
+    "Prioritise foundational governance: formalise the Internal Audit Charter with clear mandate, independence, and reporting lines to the Audit Committee.",
+    "Develop a risk-based annual audit plan aligned to the organisation's key risk areas, with explicit resource allocation and timelines.",
+    "Document core internal audit methodology and working paper standards to ensure consistent, repeatable engagement delivery.",
   ],
   Developing: [
-    "Your pockets of strong practice need a connective layer. Appoint owners for each dimension and a single forum where they meet.",
-    "Replace project-by-project improvement with a quarterly portfolio review tied to the strategy.",
-    "Move one AI pilot into a measured production system. Use it to build the muscle for governing models, not just building them.",
+    "Strengthen the control environment: implement a Quality Assurance and Improvement Program (QAIP) with regular internal assessments and documented findings.",
+    "Formalise audit committee reporting cadence with structured reporting templates covering risk coverage, issues tracking, and remediation status.",
+    "Build foundational audit analytics capability: establish data access protocols and deploy basic analytical procedures across high-risk audit cycles.",
   ],
   Established: [
-    "Shift from efficient to adaptive: shorten the loop from decision to production, and make safe-to-fail the default for new bets.",
-    "Industrialise your data foundation as reusable products, not one-off pipelines.",
-    "Move from AI experiments to AI as a capability — a platform, with a portfolio of measured systems and clear ownership.",
+    "Advance QAIP maturity: prepare for external quality assessment readiness and ensure full conformance with the IIA Global Internal Audit Standards.",
+    "Mature IT general controls (ITGC) and audit tooling: integrate continuous auditing techniques and automated control testing for key financial and operational systems.",
+    "Elevate data governance controls and audit analytics: deploy advanced data analytics across the audit plan, with a measured portfolio of continuous audit scripts.",
   ],
   Leading: [
-    "Sustain the edge by treating the platform itself as a product — funded, versioned, and continuously improved.",
-    "Defend your position by deepening the moat around your differentiating capabilities, not by spreading thin.",
-    "Shape your market: open selective capabilities as services, set standards, and use your maturity to pull the sector forward.",
+    "Sustain the edge through proactive risk foresight: integrate horizon-scanning and emerging risk identification into strategic audit planning and audit committee advisory.",
+    "Formalise strategic audit committee advisory: position Internal Audit as a trusted strategic advisor beyond assurance, providing insights on governance, risk culture, and control optimisation.",
+    "Operationalise advanced, data-driven audit: leverage predictive analytics and continuous risk monitoring as default practice, with clear ownership and governance over models and data pipelines.",
   ],
 };
-
-

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminErrorState, AdminLoadingState } from "@/components/admin/admin-loading-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Dialog,
@@ -41,8 +41,8 @@ export default function AdminNewsletterPage() {
         if (!res.ok) {
           throw new Error("Failed to load subscribers");
         }
-        const data = await res.json();
-        setSubscribers(data);
+        const response = await res.json();
+        setSubscribers(response.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -92,10 +92,11 @@ export default function AdminNewsletterPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-center">
-        <p className="text-muted-foreground mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()}>Retry</Button>
-      </div>
+      <AdminErrorState
+        title="Unable to load subscribers"
+        description="We couldn't reach the database right now. Please try again in a moment."
+        onRetry={() => window.location.reload()}
+      />
     );
   }
 
@@ -116,7 +117,7 @@ export default function AdminNewsletterPage() {
         </Button>
       </div>
 
-      <Card className="border-border/60">
+      <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
         <CardHeader>
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <UserPlus className="h-4 w-4 text-muted-foreground" />
@@ -125,10 +126,8 @@ export default function AdminNewsletterPage() {
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-4 space-y-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 rounded-lg" />
-              ))}
+            <div className="p-4">
+              <AdminLoadingState rows={5} itemClassName="h-3 w-28" className="space-y-3" />
             </div>
           ) : subscribers.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -179,12 +178,12 @@ export default function AdminNewsletterPage() {
                                 This action cannot be undone. This will permanently delete the newsletter subscriber.
                               </DialogDescription>
                             </DialogHeader>
-                            <DialogFooter>
-                              <DialogClose asChild>
-                                <Button variant="ghost" onClick={() => setDeleteId(null)}>
-                                  Cancel
-                                </Button>
-                              </DialogClose>
+<DialogFooter>
+                               <DialogClose asChild>
+                                 <Button variant="ghost" onClick={() => { setDeleteId(null); toast({ title: "Cancelled", description: "Deletion cancelled.", variant: "default" }); }}>
+                                   Cancel
+                                 </Button>
+                               </DialogClose>
                               <Button
                                 variant="destructive"
                                 onClick={handleDelete}

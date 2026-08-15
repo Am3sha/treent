@@ -9,12 +9,12 @@ import { Reveal, Eyebrow } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { MaturityTier } from "@/lib/types";
+import type { Dimension, MaturityTier } from "@/lib/types";
 
-const QUICK_QUESTIONS = [
+const QUICK_QUESTIONS: { id: string; dimension: Dimension; prompt: string; labels: { value: number; label: string }[] }[] = [
   {
     id: "strat-1",
-    dimension: "Strategy",
+    dimension: "strategy",
     prompt:
       "Our leadership team has a shared, written view of where we will play and how we will win.",
     labels: [
@@ -27,7 +27,7 @@ const QUICK_QUESTIONS = [
   },
   {
     id: "tech-1",
-    dimension: "Technology",
+    dimension: "technology",
     prompt:
       "Our core systems expose well-documented APIs that other teams can build on without custom integration.",
     labels: [
@@ -40,7 +40,7 @@ const QUICK_QUESTIONS = [
   },
   {
     id: "data-1",
-    dimension: "Data & AI",
+    dimension: "data",
     prompt:
       "We can trust our core business data enough to automate decisions against it.",
     labels: [

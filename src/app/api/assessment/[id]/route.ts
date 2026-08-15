@@ -1,10 +1,10 @@
-// GET /api/assessment/[id] — fetch a single Assessment's full results, including
-// all individual responses. Returns 404 if not found.
+// GET /api/assessment/[id] — fetch a single Assessment's non-sensitive results.
+// This endpoint remains public for compatibility, but never returns respondent PII
+// or individual responses. Full records are available only through authenticated admin APIs.
 // NOTE: percentile was computed at submit time and is NOT persisted; it is omitted here
 // (the submit-time response carries it; the frontend uses that).
 
 import { db } from "@/lib/db";
-import { BENCHMARK_QUESTIONS } from "@/lib/content";
 
 export async function GET(
   _req: Request,
@@ -24,16 +24,8 @@ export async function GET(
       return Response.json({ ok: false, error: "not found" }, { status: 404 });
     }
 
-    // Transform responses JSON to array format for frontend
-    const responsesArray = BENCHMARK_QUESTIONS.map((q) => ({
-      questionId: q.id,
-      dimension: q.dimension,
-      value: (assessment.responses as Record<string, number>)?.[q.id] || 0,
-      questionText: q.prompt,
-    }));
-
     return Response.json(
-      {
+      { ok: true, data: {
         id: assessment.id,
         overall: assessment.overallScore,
         scores: {
@@ -47,15 +39,7 @@ export async function GET(
         questionCount: assessment.questionCount,
         durationSec: assessment.durationSec,
         createdAt: assessment.createdAt.toISOString(),
-        respondent: {
-          name: assessment.respondentName,
-          company: assessment.companyName,
-          companySize: assessment.companySize,
-          industry: assessment.industry,
-          role: assessment.role,
-        },
-        responses: responsesArray,
-      },
+      } },
       { status: 200 }
     );
   } catch (err) {

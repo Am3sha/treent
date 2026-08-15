@@ -1,4 +1,4 @@
-// POST /api/assessment — the core capture endpoint for the Strategic Benchmark Assessment.
+// POST /api/assessment — the core capture endpoint for the Internal Audit Maturity Benchmark.
 // Validates the respondent's responses, computes authoritative scores server-side
 // (per-dimension + overall normalised to 0-100), determines the maturity tier, computes
 // a percentile against the existing benchmark dataset, and persists the Assessment +
@@ -16,6 +16,14 @@
 //   assessments yet, percentile = 50 (neutral middle).
 
 import { db } from "@/lib/db";
+import { BENCHMARK_QUESTIONS } from "@/lib/content";
+import {
+  optionalSanitizedText,
+  protectPublicPost,
+  rejectOversizedBody,
+  sanitizeText,
+  validateTextLengths,
+} from "@/lib/request-security";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DIMENSIONS = ["strategy", "technology", "culture", "data", "operations"] as const;
@@ -41,6 +49,10 @@ interface IncomingResponse {
 }
 
 export async function POST(req: Request) {
+  const blocked = protectPublicPost(req, "assessment", 3);
+  if (blocked) return blocked;
+  const oversized = rejectOversizedBody(req, 64 * 1024);
+  if (oversized) return oversized;
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
@@ -51,6 +63,12 @@ export async function POST(req: Request) {
     if (responsesRaw.length === 0) {
       return Response.json({ ok: false, error: "responses must be a non-empty array" }, { status: 400 });
     }
+    if (responsesRaw.length !== BENCHMARK_QUESTIONS.length) {
+      return Response.json(
+        { ok: false, error: `responses must contain exactly ${BENCHMARK_QUESTIONS.length} questions` },
+        { status: 400 }
+      );
+    }
 
     // Validate + normalise each response.
     const responses: {
@@ -59,10 +77,12 @@ export async function POST(req: Request) {
       dimension: Dimension;
       questionText: string;
     }[] = [];
+    const canonicalQuestions = new Map(BENCHMARK_QUESTIONS.map((q) => [q.id, q]));
+    const seenQuestionIds = new Set<string>();
     for (let i = 0; i < responsesRaw.length; i++) {
       const r = responsesRaw[i];
-      const questionId = typeof r.questionId === "string" ? r.questionId.trim() : "";
-      const questionText = typeof r.questionText === "string" ? r.questionText.trim() : "";
+      const questionId = typeof r.questionId === "string" ? sanitizeText(r.questionId) : "";
+      const questionText = typeof r.questionText === "string" ? sanitizeText(r.questionText) : "";
       const dimension = typeof r.dimension === "string" ? r.dimension.trim() : "";
       const value =
         typeof r.value === "number"
@@ -71,14 +91,34 @@ export async function POST(req: Request) {
             ? Number(r.value)
             : NaN;
 
+      const responseTextError = validateTextLengths({ questionId, questionText, dimension }, {
+        questionId: 100,
+        questionText: 1000,
+        dimension: 50,
+      });
+      if (responseTextError) {
+        return Response.json({ ok: false, error: `responses[${i}].${responseTextError}` }, { status: 400 });
+      }
+
       if (!questionId) {
         return Response.json({ ok: false, error: `responses[${i}].questionId is required` }, { status: 400 });
       }
+      const canonicalQuestion = canonicalQuestions.get(questionId);
+      if (!canonicalQuestion) {
+        return Response.json({ ok: false, error: `responses[${i}].questionId is invalid` }, { status: 400 });
+      }
+      if (seenQuestionIds.has(questionId)) {
+        return Response.json({ ok: false, error: `responses[${i}].questionId is duplicated` }, { status: 400 });
+      }
+      seenQuestionIds.add(questionId);
       if (!questionText) {
         return Response.json({ ok: false, error: `responses[${i}].questionText is required` }, { status: 400 });
       }
       if (!DIM_SET.has(dimension)) {
         return Response.json({ ok: false, error: `responses[${i}].dimension is invalid` }, { status: 400 });
+      }
+      if (canonicalQuestion.dimension !== dimension) {
+        return Response.json({ ok: false, error: `responses[${i}].dimension does not match questionId` }, { status: 400 });
       }
       if (!Number.isFinite(value) || value < 1 || value > 5) {
         return Response.json({ ok: false, error: `responses[${i}].value must be 1-5` }, { status: 400 });
@@ -101,30 +141,31 @@ export async function POST(req: Request) {
     }
     const consentContact = respondent.consentContact === true;
 
-    const respondentName =
-      typeof respondent.name === "string" && respondent.name.trim().length > 0
-        ? respondent.name.trim()
-        : null;
-    const companyName =
-      typeof respondent.company === "string" && respondent.company.trim().length > 0
-        ? respondent.company.trim()
-        : null;
-    const companySize =
-      typeof respondent.companySize === "string" && respondent.companySize.trim().length > 0
-        ? respondent.companySize.trim()
-        : null;
-    const industry =
-      typeof respondent.industry === "string" && respondent.industry.trim().length > 0
-        ? respondent.industry.trim()
-        : null;
-    const country =
-      typeof respondent.country === "string" && respondent.country.trim().length > 0
-        ? respondent.country.trim()
-        : null;
-    const role =
-      typeof respondent.role === "string" && respondent.role.trim().length > 0
-        ? respondent.role.trim()
-        : null;
+    const respondentName = optionalSanitizedText(respondent.name);
+    const companyName = optionalSanitizedText(respondent.company);
+    const companySize = optionalSanitizedText(respondent.companySize);
+    const industry = optionalSanitizedText(respondent.industry);
+    const country = optionalSanitizedText(respondent.country);
+    const role = optionalSanitizedText(respondent.role);
+
+    const textError = validateTextLengths({
+      respondentName,
+      respondentEmail,
+      company: companyName,
+      companySize,
+      industry,
+      country,
+      role,
+    }, {
+      respondentName: 200,
+      respondentEmail: 320,
+      company: 200,
+      companySize: 100,
+      industry: 200,
+      country: 100,
+      role: 200,
+    });
+    if (textError) return Response.json({ ok: false, error: textError }, { status: 400 });
 
     const durationSec =
       typeof body.durationSec === "number" && Number.isFinite(body.durationSec) && body.durationSec >= 0
@@ -205,7 +246,7 @@ export async function POST(req: Request) {
     }
 
     return Response.json(
-      {
+      { ok: true, data: {
         id: created.id,
         overall: created.overallScore,
         scores: {
@@ -219,7 +260,7 @@ export async function POST(req: Request) {
         percentile,
         questionCount: created.questionCount,
         createdAt: created.createdAt.toISOString(),
-      },
+      } },
       { status: 200 }
     );
   } catch (err) {

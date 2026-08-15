@@ -82,9 +82,9 @@ export function BenchmarkInsightsView() {
       try {
         const res = await fetch("/api/benchmark/stats", { cache: "no-store" });
         if (!res.ok) throw new Error("failed");
-        const json = await res.json();
+        const json = (await res.json()) as { ok: boolean; data?: BenchmarkStats };
         if (!cancelled) {
-          setStats(json);
+          setStats(json.data ?? null);
           setError(false);
         }
       } catch {
@@ -138,13 +138,13 @@ export function BenchmarkInsightsView() {
           </Reveal>
           <Reveal delay={0.05}>
             <h1 className="mt-4 max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl md:leading-[1.02]">
-              The state of strategic maturity,{" "}
+              The state of internal audit maturity,{" "}
               <span className="text-primary">across our benchmark dataset.</span>
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Every assessment submitted to Trennt&apos;s Strategic Benchmark Assessment
+              Every assessment submitted to Trennt&apos;s Internal Audit Maturity Benchmark
               is captured and aggregated — here, anonymised, is what the data says about
               where organisations stand today. Updated in real time as new benchmarks are
               completed.
@@ -191,7 +191,7 @@ export function BenchmarkInsightsView() {
                 />
                 <KpiCard
                   icon={<Target className="h-4 w-4" />}
-                  label="Average strategic maturity score"
+                  label="Average internal audit maturity score"
                   value={`${stats.averageOverall}`}
                   sub="/ 100"
                   accent
@@ -222,7 +222,7 @@ export function BenchmarkInsightsView() {
               <SectionHeading
                 eyebrow="Where the market sits"
                 title="Maturity by dimension"
-                description="Average scores across the five dimensions of strategic maturity, computed from every benchmark in the dataset."
+                description="Average scores across the five dimensions of internal audit maturity, computed from every benchmark in the dataset."
               />
             </Reveal>
             <div className="mt-10 grid gap-6 lg:grid-cols-5">
@@ -511,7 +511,7 @@ export function BenchmarkInsightsView() {
               <SectionHeading
                 eyebrow="Segments"
                 title="Maturity by sector & scale"
-                description="Average strategic strategic maturity scores broken down by industry and organisation size — a view of where different segments of the market currently sit."
+                description="Average internal audit maturity scores broken down by industry and organisation size — a view of where different segments of the market currently sit."
               />
             </Reveal>
             <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -606,7 +606,7 @@ export function BenchmarkInsightsView() {
                     </ResponsiveContainer>
                   </div>
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Each bar shows the average strategic maturity score for organisations of that
+                    Each bar shows the average internal audit maturity score for organisations of that
                     headcount band.
                   </p>
                 </Card>
@@ -669,7 +669,7 @@ export function BenchmarkInsightsView() {
                         ((stats.tierDistribution.Leading ?? 0) /
                           Math.max(stats.totalAssessments, 1)) *
                           100
-                      )}% of organisations benchmark at the Leading tier — operating at the frontier of strategic maturity.`}
+                      )}% of organisations benchmark at the Leading tier — operating at the frontier of internal audit maturity.`}
                     />
                   </div>
                 </div>
@@ -826,7 +826,7 @@ function EmptyState({ onStart }: { onStart: () => void }) {
           No benchmarks yet
         </h2>
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          Once organisations start completing the Strategic Benchmark Assessment, aggregated
+          Once organisations start completing the Internal Audit Maturity Benchmark, aggregated
           insights will appear here. Be the first to contribute.
         </p>
         <Button onClick={onStart} className="mt-6 gap-1.5 rounded-full">

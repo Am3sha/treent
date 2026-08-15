@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { AdminErrorState, AdminLoadingState } from "@/components/admin/admin-loading-state";
 import { formatDate, formatDuration } from "@/lib/utils";
 
 interface DashboardStats {
@@ -59,11 +59,11 @@ export default function AdminDashboardPage() {
           signal: controller.signal,
         });
         if (!res.ok) {
-          throw new Error("Failed to load dashboard data");
+          throw new Error("Unable to load dashboard data right now");
         }
-        const data = await res.json();
+        const response = await res.json();
         if (isMounted) {
-          setStats(data);
+          setStats(response.data);
           setPreviousStats(null);
         }
       } catch (err) {
@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
           return;
         }
         if (isMounted) {
-          setError(err instanceof Error ? err.message : "An error occurred");
+          setError(err instanceof Error ? err.message : "Unable to load dashboard data right now");
         }
       } finally {
         if (isMounted) {
@@ -92,48 +92,47 @@ export default function AdminDashboardPage() {
     setError(null);
     setLoading(true);
     void fetch("/api/admin/dashboard-stats").then(async (res) => {
-      if (!res.ok) throw new Error("Failed to load dashboard data");
-      const data = await res.json();
-      setStats(data);
-    }).catch((err) => setError(err instanceof Error ? err.message : "An error occurred")).finally(() => setLoading(false));
+      if (!res.ok) throw new Error("Unable to load dashboard data right now");
+      const response = await res.json();
+      setStats(response.data);
+    }).catch(() => setError("Unable to load dashboard data right now. Please try refreshing in a moment.")).finally(() => setLoading(false));
   };
 
   // Always check loading first!
   if (loading) {
-    // If we have previous stats, keep them visible while loading new data
     const displayStats = previousStats || stats;
     if (displayStats) {
       return (
-        <div className="space-y-6 opacity-70">
+        <div className="space-y-6 opacity-80">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+              <span>Refreshing</span>
+            </div>
           </div>
         </div>
       );
     }
+
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-lg" />
-          ))}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+          <span>Loading dashboard</span>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-80 rounded-lg" />
-          ))}
-        </div>
+        <AdminLoadingState rows={7} itemClassName="h-5 w-20" className="space-y-6" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-center">
-        <p className="text-muted-foreground mb-4">{error}</p>
-        <Button onClick={handleRetry}>Retry</Button>
-      </div>
+      <AdminErrorState
+        title="Unable to load dashboard data"
+        description={error}
+        onRetry={handleRetry}
+      />
     );
   }
 
@@ -192,10 +191,10 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
         {kpiCards.map((card, i) => (
           <Link key={i} href={card.link} className="group">
-            <Card className="border-border/60 transition-all hover:border-primary/30 hover:shadow-sm">
+            <Card className="rounded-lg shadow-sm border-border/60 transition-all transform hover:scale-[1.01] hover:shadow-md">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 text-primary mb-2">
-                  {card.icon}
+                  <span className="text-[#0b6f61]">{card.icon}</span>
                   <span className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                     {card.title}
                   </span>
@@ -210,21 +209,21 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card className="border-border/60">
+        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
         <CardHeader>
           <CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Button asChild variant="secondary" className="justify-start">
+          <Button asChild variant="secondary" className="justify-start transition-transform hover:scale-105">
             <Link href="/admin/assessments">View Assessments</Link>
           </Button>
-          <Button asChild variant="secondary" className="justify-start">
+          <Button asChild variant="secondary" className="justify-start transition-transform hover:scale-105">
             <Link href="/admin/contact">View Contacts</Link>
           </Button>
-          <Button asChild variant="secondary" className="justify-start">
+          <Button asChild variant="secondary" className="justify-start transition-transform hover:scale-105">
             <Link href="/admin/careers">View Applications</Link>
           </Button>
-          <Button asChild variant="secondary" className="justify-start">
+          <Button asChild variant="secondary" className="justify-start transition-transform hover:scale-105">
             <Link href="/admin/newsletter">View Subscribers</Link>
           </Button>
         </CardContent>
@@ -233,7 +232,7 @@ export default function AdminDashboardPage() {
       {/* Recent Activity Grid */}
       <div className="grid gap-6 md:grid-cols-3">
         {/* Latest Assessments */}
-        <Card className="border-border/60">
+        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-sm font-medium">
               Latest Assessments
@@ -241,9 +240,10 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {stats?.latestAssessments.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No assessments yet.
-              </p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <FileText className="h-4 w-4" />
+                <span>No assessments yet.</span>
+              </div>
             ) : (
               stats?.latestAssessments.map((assessment) => (
                 <Link
@@ -266,7 +266,7 @@ export default function AdminDashboardPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <Badge variant="outline">{assessment.tier}</Badge>
+                      <Badge variant="outline" className="px-2 py-0.5">{assessment.tier}</Badge>
                       <p className="text-sm font-semibold mt-1">
                         {Math.round(assessment.overallScore)} / 100
                       </p>
@@ -279,7 +279,7 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Recent Contacts */}
-        <Card className="border-border/60">
+        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-sm font-medium">
               Recent Contacts
@@ -287,9 +287,10 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {stats?.recentContacts.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No contact inquiries yet.
-              </p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Mail className="h-4 w-4" />
+                <span>No contact inquiries yet.</span>
+              </div>
             ) : (
               stats?.recentContacts.map((contact) => (
                 <Link
@@ -309,7 +310,7 @@ export default function AdminDashboardPage() {
                         {formatDate(contact.createdAt)}
                       </p>
                     </div>
-                    <Badge variant="outline">{contact.topic}</Badge>
+                    <Badge variant="outline" className="px-2 py-0.5">{contact.topic}</Badge>
                   </div>
                 </Link>
               ))
@@ -318,7 +319,7 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Recent Applications */}
-        <Card className="border-border/60">
+        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-sm font-medium">
               Recent Applications
@@ -326,9 +327,10 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {stats?.recentCareers.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No career applications yet.
-              </p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Briefcase className="h-4 w-4" />
+                <span>No career applications yet.</span>
+              </div>
             ) : (
               stats?.recentCareers.map((app) => (
                 <Link
@@ -348,7 +350,7 @@ export default function AdminDashboardPage() {
                         {formatDate(app.createdAt)}
                       </p>
                     </div>
-                    <Badge variant="outline">{app.status}</Badge>
+                    <Badge variant="outline" className="px-2 py-0.5">{app.status}</Badge>
                   </div>
                 </Link>
               ))

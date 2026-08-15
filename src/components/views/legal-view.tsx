@@ -193,14 +193,14 @@ export function LegalView() {
               <LegalSection title="About these terms">
                 <p>
                   These terms govern your use of the {COMPANY.name} website at
-                  trennt.com. By using the site, you agree to them. If
+                  trennt.sa. By using the site, you agree to them. If
                   you don&apos;t agree, please don&apos;t use the site.
                 </p>
               </LegalSection>
 
               <LegalSection title="The benchmark tool">
                 <p>
-                  Our Strategic Benchmark Assessment is provided free of charge for
+                  Our Internal Audit Maturity Benchmark is provided free of charge for
                   informational and self-assessment purposes. It is not
                   professional advice, and we make no warranty as to its
                   accuracy or suitability for your situation. Your results are

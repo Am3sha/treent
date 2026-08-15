@@ -23,6 +23,9 @@ model ContactInquiry {
   status    String   @default("new") // new | contacted | closed
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([status])
 }
 
 model CareerApplication {
@@ -40,6 +43,9 @@ model CareerApplication {
   status    String   @default("new") // new | screening | interview | offer | rejected | hired
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([status])
 }
 
 model NewsletterSubscriber {
@@ -77,6 +83,13 @@ model Assessment {
   createdAt        DateTime              @default(now())
   responses        Json?                 @default("{}")
   followUps        AssessmentFollowUp[]
+
+  @@index([createdAt])
+  @@index([tier])
+  @@index([industry])
+  @@index([companySize])
+  @@index([country])
+  @@index([overallScore])
 }
 
 model AssessmentFollowUp {

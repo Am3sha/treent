@@ -1,6 +1,11 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
+import {
+  clearLoginFailures,
+  isLoginRateLimited,
+  recordLoginFailure,
+} from "@/lib/request-security";
 
 declare module "next-auth" {
   interface Session {
@@ -29,11 +34,16 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "admin@trennt.com" },
+        email: { label: "Email", type: "email", placeholder: "info@trennt.sa" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
     if (!credentials?.email || !credentials?.password) {
+      return null;
+    }
+
+    const email = String(credentials.email);
+    if (isLoginRateLimited(req, email)) {
       return null;
     }
 
@@ -41,17 +51,22 @@ export const authOptions: NextAuthOptions = {
     const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
 
     if (!adminEmail || !adminPasswordHash) {
+      recordLoginFailure(req, email);
       return null;
     }
 
-    if (credentials.email !== adminEmail) {
+    if (email !== adminEmail) {
+      recordLoginFailure(req, email);
       return null;
     }
 
-    const passwordMatch = await bcrypt.compare(credentials.password, adminPasswordHash);
+    const passwordMatch = await bcrypt.compare(String(credentials.password), adminPasswordHash);
     if (!passwordMatch) {
+      recordLoginFailure(req, email);
       return null;
     }
+
+    clearLoginFailures(req, email);
 
     return {
       id: "admin",
@@ -66,6 +81,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 8 * 60 * 60, // 8 hours
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {

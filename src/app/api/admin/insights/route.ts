@@ -7,7 +7,7 @@ import { prismaRetry } from "@/lib/prisma-retry";
 export async function GET() {
     const session = await getServerSession(authOptions);
     if (!session) {
-        return Response.json({ error: "Unauthorized" }, { status: 401 });
+        return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
     try {
@@ -72,16 +72,23 @@ export async function GET() {
                 _count: { _all: true },
                 _avg: { overallScore: true },
             }),
-            // For question heatmap, monthly trend, completion time trend, etc.
-            db.assessment.findMany({
-                select: {
-                    responses: true,
-                    createdAt: true,
-                    overallScore: true,
-                    durationSec: true,
-                    dataScore: true,
-                },
-            }),
+        // For question heatmap, monthly trend, completion time trend, etc.
+        // LIMIT to last 500 assessments for heatmap to avoid loading the entire
+        // dataset into memory. This is a known scaling trade-off: the heatmap
+        // reflects recent submissions rather than the full historical dataset.
+        // If full-dataset heatmap is needed, this should be moved to a raw SQL
+        // query using PostgreSQL JSON operators.
+        db.assessment.findMany({
+            orderBy: { createdAt: "desc" },
+            take: 500,
+            select: {
+                responses: true,
+                createdAt: true,
+                overallScore: true,
+                durationSec: true,
+                dataScore: true,
+            },
+        }),
             db.assessment.count({ where: { createdAt: { gte: oneWeekAgo } } }),
             db.assessment.count({ where: { createdAt: { gte: currentMonthStart } } }),
             db.assessment.count({ where: { createdAt: { gte: previousMonthStart, lte: previousMonthEnd } } }),
@@ -234,7 +241,7 @@ export async function GET() {
             .slice(0, 5);
 
         // 6. Final Assembly
-        return Response.json({
+        return Response.json({ ok: true, data: {
             totalAssessments: totalCount,
             averageScore: Math.round(scoreAggregates._avg.overallScore || 0),
             averageDuration: Math.round(scoreAggregates._avg.durationSec || 0),
@@ -283,10 +290,10 @@ export async function GET() {
             completionTimeTrend,
             aiAdoptionTrend,
             recentAssessments,
-        });
+        }});
         });
     } catch (error) {
         console.error("[Insights API Error]:", error);
-        return Response.json({ error: "Internal Server Error" }, { status: 500 });
+        return Response.json({ ok: false, error: "Internal Server Error" }, { status: 500 });
     }
 }

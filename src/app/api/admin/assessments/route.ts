@@ -11,7 +11,7 @@ const VALID_TIERS = ["Nascent", "Developing", "Established", "Leading"];
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
   try {
     const url = new URL(req.url);
@@ -68,7 +68,7 @@ export async function GET(req: Request) {
       }),
     ]);
 
-    return Response.json({
+    return Response.json({ ok: true, data: {
       total,
       page,
       pageSize,
@@ -112,7 +112,7 @@ export async function GET(req: Request) {
           .filter((c): c is string => !!c),
         tiers: VALID_TIERS,
       },
-    });
+    }});
   } catch (err) {
     console.error("[api/admin/assessments] error:", err);
     return Response.json(
@@ -125,7 +125,7 @@ export async function GET(req: Request) {
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
   
   try {
@@ -133,19 +133,27 @@ export async function DELETE(req: Request) {
     const id = url.searchParams.get("id");
     
     if (!id) {
-      return Response.json({ error: "Missing id parameter" }, { status: 400 });
+      return Response.json({ ok: false, error: "Missing id parameter" }, { status: 400 });
     }
 
     // Check if assessment exists
     const existingAssessment = await db.assessment.findUnique({ where: { id } });
     if (!existingAssessment) {
-      return Response.json({ error: "Assessment not found" }, { status: 404 });
+      return Response.json({ ok: false, error: "Assessment not found" }, { status: 404 });
     }
+
+    console.warn("[ADMIN AUDIT]", {
+      admin: session.user?.email ?? session.user?.id ?? "unknown",
+      action: "delete",
+      resource: "assessment",
+      id,
+      timestamp: new Date().toISOString(),
+    });
 
     // Delete the assessment (Prisma should handle cascading deletes if configured)
     await db.assessment.delete({ where: { id } });
 
-    return Response.json({ success: true }, { status: 200 });
+    return Response.json({ ok: true, data: { success: true } }, { status: 200 });
   } catch (err) {
     console.error("[api/admin/assessments DELETE] error:", err);
     return Response.json(

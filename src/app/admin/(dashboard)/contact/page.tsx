@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminErrorState, AdminLoadingState } from "@/components/admin/admin-loading-state";
 import {
   Dialog,
   DialogClose,
@@ -50,8 +50,8 @@ export default function AdminContactPage() {
         if (!res.ok) {
           throw new Error("Failed to load contacts");
         }
-        const data = await res.json();
-        setContacts(data);
+        const response = await res.json();
+        setContacts(response.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -91,10 +91,11 @@ export default function AdminContactPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-center">
-        <p className="text-muted-foreground mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()}>Retry</Button>
-      </div>
+      <AdminErrorState
+        title="Unable to load contact inquiries"
+        description="We couldn't reach the database right now. Please try again in a moment."
+        onRetry={() => window.location.reload()}
+      />
     );
   }
 
@@ -106,13 +107,9 @@ export default function AdminContactPage() {
       </div>
 
       {loading ? (
-        <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-lg" />
-          ))}
-        </div>
+        <AdminLoadingState rows={5} itemClassName="h-4 w-24" />
       ) : contacts.length === 0 ? (
-        <Card className="border-border/60">
+        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <Mail className="h-10 w-10 text-muted-foreground/40 mb-4" />
             <p className="text-sm text-muted-foreground">No contact inquiries yet.</p>
@@ -121,7 +118,7 @@ export default function AdminContactPage() {
       ) : (
         <div className="space-y-4">
           {contacts.map((contact) => (
-            <Card key={contact.id} className="border-border/60">
+            <Card key={contact.id} className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
               <CardHeader
                 className="cursor-pointer"
                 onClick={() => setExpandedId(expandedId === contact.id ? null : contact.id)}
@@ -148,7 +145,7 @@ export default function AdminContactPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline">{contact.topic}</Badge>
+                    <Badge variant="outline" className="px-2 py-0.5">{contact.topic}</Badge>
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button
@@ -170,12 +167,12 @@ export default function AdminContactPage() {
                             This action cannot be undone. This will permanently delete the contact inquiry.
                           </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter>
-                          <DialogClose asChild>
-                            <Button variant="ghost" onClick={() => setDeleteId(null)}>
-                              Cancel
-                            </Button>
-                          </DialogClose>
+<DialogFooter>
+                           <DialogClose asChild>
+                             <Button variant="ghost" onClick={() => { setDeleteId(null); toast({ title: "Cancelled", description: "Deletion cancelled.", variant: "default" }); }}>
+                               Cancel
+                             </Button>
+                           </DialogClose>
                           <Button
                             variant="destructive"
                             onClick={handleDelete}

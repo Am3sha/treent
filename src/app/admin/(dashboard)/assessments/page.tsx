@@ -35,7 +35,7 @@ import type { Dimension, MaturityTier } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminErrorState, AdminLoadingState } from "@/components/admin/admin-loading-state";
 import {
   Select,
   SelectContent,
@@ -121,9 +121,9 @@ export default function AdminAssessmentsPage() {
           signal: controller.signal,
         });
         if (!res.ok) throw new Error("fetch failed");
-        const json = (await res.json()) as AdminResponse;
+        const json = (await res.json()) as { ok: boolean; data: AdminResponse };
         if (!active) return;
-        setData(json);
+        setData(json.data);
         setError(false);
       } catch (error) {
         if (
@@ -392,9 +392,7 @@ export default function AdminAssessmentsPage() {
             />
           </>
         ) : (
-          Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-xl" />
-          ))
+          <AdminLoadingState rows={5} itemClassName="h-5 w-20" className="col-span-full grid grid-cols-2 gap-4 lg:grid-cols-5" />
         )}
       </div>
 
@@ -502,10 +500,8 @@ export default function AdminAssessmentsPage() {
             </Button>
           </div>
         ) : loading ? (
-          <div className="space-y-3 p-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full rounded-lg" />
-            ))}
+          <div className="p-4">
+            <AdminLoadingState rows={6} itemClassName="h-4 w-32" className="space-y-3" />
           </div>
         ) : data && data.records.length > 0 ? (
           <>
@@ -611,12 +607,12 @@ export default function AdminAssessmentsPage() {
                                   This action cannot be undone.
                                 </DialogDescription>
                               </DialogHeader>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button variant="ghost" onClick={() => setDeleteId(null)}>
-                                    Cancel
-                                  </Button>
-                                </DialogClose>
+<DialogFooter>
+                                 <DialogClose asChild>
+                                   <Button variant="ghost" onClick={() => { setDeleteId(null); toast({ title: "Cancelled", description: "Deletion cancelled.", variant: "default" }); }}>
+                                     Cancel
+                                   </Button>
+                                 </DialogClose>
                                 <Button
                                   variant="destructive"
                                   onClick={handleDelete}
@@ -782,6 +778,8 @@ function RecordDetail({ record }: { record: AdminRecord }) {
 
   const handleDownloadPDF = async () => {
     setDownloading(true);
+    // Yield to browser to let loading state paint before blocking PDF generation
+    await new Promise((r) => setTimeout(r, 0));
     try {
       // Map AdminRecord to the types expected by generatePDF
       const result = {

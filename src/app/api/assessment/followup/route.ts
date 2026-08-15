@@ -10,11 +10,16 @@
 // If a non-empty assessmentId is provided but doesn't exist, we also return 400.
 
 import { db } from "@/lib/db";
+import { optionalSanitizedText, protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengths } from "@/lib/request-security";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALID_INTERESTS = new Set(["consultation", "report", "workshop", "partnership"]);
 
 export async function POST(req: Request) {
+  const blocked = protectPublicPost(req, "assessment-followup", 5);
+  if (blocked) return blocked;
+  const oversized = rejectOversizedBody(req, 32 * 1024);
+  if (oversized) return oversized;
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
@@ -23,25 +28,27 @@ export async function POST(req: Request) {
 
     const assessmentId =
       typeof body.assessmentId === "string" ? body.assessmentId.trim() : "";
-    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const name = typeof body.name === "string" ? sanitizeText(body.name) : "";
     const email = typeof body.email === "string" ? body.email.trim() : "";
     const interest =
       typeof body.interest === "string" && VALID_INTERESTS.has(body.interest)
         ? body.interest
         : "";
 
-    const company =
-      typeof body.company === "string" && body.company.trim().length > 0
-        ? body.company.trim()
-        : null;
-    const phone =
-      typeof body.phone === "string" && body.phone.trim().length > 0
-        ? body.phone.trim()
-        : null;
-    const message =
-      typeof body.message === "string" && body.message.trim().length > 0
-        ? body.message.trim()
-        : null;
+    const company = optionalSanitizedText(body.company);
+    const phone = optionalSanitizedText(body.phone);
+    const message = optionalSanitizedText(body.message);
+
+    const textError = validateTextLengths({ assessmentId, name, email, company, phone, interest, message }, {
+      assessmentId: 100,
+      name: 200,
+      email: 320,
+      company: 200,
+      phone: 50,
+      interest: 50,
+      message: 5000,
+    });
+    if (textError) return Response.json({ ok: false, error: textError }, { status: 400 });
 
     if (!assessmentId) {
       return Response.json({ ok: false, error: "assessmentId required" }, { status: 400 });
@@ -74,7 +81,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return Response.json({ ok: true, id: created.id }, { status: 200 });
+    return Response.json({ ok: true, data: { id: created.id } }, { status: 200 });
   } catch (err) {
     console.error("[api/assessment/followup] error:", err);
     return Response.json({ ok: false, error: "internal error" }, { status: 500 });

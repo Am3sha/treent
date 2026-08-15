@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://trennt.com/sitemap.xml
+Sitemap: https://trennt.sa/sitemap.xml

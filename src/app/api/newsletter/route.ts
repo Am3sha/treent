@@ -3,10 +3,15 @@
 
 import { db } from "@/lib/db";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengths } from "@/lib/request-security";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: Request) {
+  const blocked = protectPublicPost(req, "newsletter", 5);
+  if (blocked) return blocked;
+  const oversized = rejectOversizedBody(req, 16 * 1024);
+  if (oversized) return oversized;
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
@@ -16,8 +21,11 @@ export async function POST(req: Request) {
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const source =
       typeof body.source === "string" && body.source.trim().length > 0
-        ? body.source.trim()
+        ? sanitizeText(body.source)
         : "footer";
+
+    const textError = validateTextLengths({ email, source }, { email: 320, source: 200 });
+    if (textError) return Response.json({ ok: false, error: textError }, { status: 400 });
 
     if (!email || !EMAIL_RE.test(email)) {
       return Response.json({ ok: false, error: "valid email is required" }, { status: 400 });
@@ -27,7 +35,7 @@ export async function POST(req: Request) {
       const created = await db.newsletterSubscriber.create({
         data: { email, source },
       });
-      return Response.json({ ok: true, id: created.id }, { status: 200 });
+      return Response.json({ ok: true, data: { id: created.id } }, { status: 200 });
     } catch (err) {
       // Prisma unique-constraint violation code (P2002): email already subscribed.
       if (
@@ -38,7 +46,7 @@ export async function POST(req: Request) {
           where: { email },
         });
         return Response.json(
-          { ok: true, alreadySubscribed: true, id: existing?.id ?? null },
+          { ok: true, data: { alreadySubscribed: true, id: existing?.id ?? null } },
           { status: 200 }
         );
       }

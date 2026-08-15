@@ -4,25 +4,48 @@ import * as React from "react";
 import { motion, useInView, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const variants: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0 },
-};
+const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+
+function useReducedMotion() {
+  const [reduced, setReduced] = React.useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener?.("change", handler);
+    return () => mq.removeEventListener?.("change", handler);
+  }, []);
+  return reduced;
+}
 
 export function Reveal({
   children,
   className,
   delay = 0,
   as = "div",
+  y = 16,
+  duration = 0.55,
 }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
   as?: "div" | "section" | "li" | "span";
+  y?: number;
+  duration?: number;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px 0px -60px 0px" });
+  const reduced = useReducedMotion();
   const Tag = motion[as] as typeof motion.div;
+
+  const variants: Variants = {
+    hidden: { opacity: 0, y: reduced ? 0 : y },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <Tag
       ref={ref}
@@ -30,10 +53,105 @@ export function Reveal({
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
       variants={variants}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
+      transition={{
+        duration: reduced ? 0 : duration,
+        ease: EASE_OUT,
+        delay: reduced ? 0 : delay,
+      }}
     >
       {children}
     </Tag>
+  );
+}
+
+export function RevealStagger({
+  children,
+  className,
+  stagger = 0.1,
+  delay = 0,
+  y = 12,
+  childDuration = 0.5,
+  as = "div",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  stagger?: number;
+  delay?: number;
+  y?: number;
+  childDuration?: number;
+  as?: "div" | "section" | "ul" | "div";
+}) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-60px 0px -60px 0px" });
+  const reduced = useReducedMotion();
+  const Tag = motion[as] as typeof motion.div;
+
+  const container: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduced ? 0 : stagger,
+        delayChildren: reduced ? 0 : delay,
+      },
+    },
+  };
+
+  const item: Variants = {
+    hidden: { opacity: 0, y: reduced ? 0 : y },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: reduced ? 0 : childDuration,
+        ease: EASE_OUT,
+      },
+    },
+  };
+
+  return (
+    <Tag
+      ref={ref}
+      className={className}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={container}
+    >
+      {React.Children.map(children, (child) => {
+        if (!React.isValidElement(child)) return child;
+        return (
+          <motion.div variants={item} key={(child as any).key ?? undefined}>
+            {child}
+          </motion.div>
+        );
+      })}
+    </Tag>
+  );
+}
+
+export function RevealItem({
+  children,
+  className,
+  y = 12,
+  duration = 0.5,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  y?: number;
+  duration?: number;
+}) {
+  const reduced = useReducedMotion();
+  const variants: Variants = {
+    hidden: { opacity: 0, y: reduced ? 0 : y },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: reduced ? 0 : duration, ease: EASE_OUT },
+    },
+  };
+  return (
+    <motion.div variants={variants} className={className}>
+      {children}
+    </motion.div>
   );
 }
 
@@ -90,3 +208,5 @@ export function SectionHeading({
     </div>
   );
 }
+
+export { EASE_OUT, useReducedMotion };

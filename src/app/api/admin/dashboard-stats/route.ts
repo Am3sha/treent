@@ -6,7 +6,7 @@ import { prismaRetry } from "@/lib/prisma-retry";
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -71,14 +71,14 @@ export async function GET() {
       // Leave as empty arrays
     }
 
-    return Response.json({
+    return Response.json({ ok: true, data: {
       ...countsAndKpis,
       latestAssessments,
       recentContacts,
       recentCareers,
-    });
+    }});
   } catch (error) {
     console.error("[Dashboard Stats] Critical error:", error);
-    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+    return Response.json({ ok: false, error: "Internal Server Error" }, { status: 500 });
   }
 }

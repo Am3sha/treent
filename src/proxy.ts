@@ -1,34 +1,39 @@
-import { withAuth } from "next-auth/middleware";
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default withAuth(
-  function proxy(req) {
-    const isLoginPage = req.nextUrl.pathname === "/admin/login";
-    const isLoggedIn = !!req.nextauth.token;
+export async function proxy(req: NextRequest) {
+  const { pathname, search } = req.nextUrl;
+  const isLoginPage = pathname === "/admin/login";
+  const isAdminPage = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isAdminApi = pathname.startsWith("/api/admin");
 
-    // If user is at /admin/login but already logged in, redirect to /admin
-    if (isLoginPage && isLoggedIn) {
-      return NextResponse.redirect(new URL("/admin", req.nextUrl.origin));
+  if (!isAdminPage && !isAdminApi) {
+    return NextResponse.next();
+  }
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if (isLoginPage) {
+    if (token) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+    return NextResponse.next();
+  }
+
+  if (!token) {
+    if (isAdminApi) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const isLoginPage = req.nextUrl.pathname === "/admin/login";
-        // Always allow access to login page
-        if (isLoginPage) return true;
-        // For all other /admin routes, require valid token
-        return !!token;
-      },
-    },
-    pages: {
-      signIn: "/admin/login",
-    },
+    const loginUrl = new URL("/admin/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
+    return NextResponse.redirect(loginUrl);
   }
-);
+
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

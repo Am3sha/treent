@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminErrorState, AdminLoadingState } from "@/components/admin/admin-loading-state";
 import { formatDuration } from "@/lib/utils";
 
 const COLORS = ["#002147", "#123A63", "#245380", "#366C9D", "#4885B9"];
@@ -117,8 +117,8 @@ export default function AdminInsightsPage() {
             try {
                 const res = await fetch("/api/admin/insights");
                 if (!res.ok) throw new Error("Failed to load insights");
-                const json = await res.json();
-                setData(json);
+                const response = await res.json();
+                setData(response.data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "An error occurred");
             } finally {
@@ -131,26 +131,22 @@ export default function AdminInsightsPage() {
     if (loading) {
         return (
             <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                        <Skeleton key={i} className="h-32 rounded-xl" />
-                    ))}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+                    <span>Loading insights</span>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <Skeleton className="h-80 rounded-xl" />
-                    <Skeleton className="h-80 rounded-xl" />
-                </div>
+                <AdminLoadingState rows={8} itemClassName="h-5 w-20" className="space-y-6" />
             </div>
         );
     }
 
     if (error || !data) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-                <AlertCircle className="h-10 w-10 text-destructive mb-4" />
-                <h2 className="text-xl font-semibold">Failed to load insights</h2>
-                <p className="text-muted-foreground mt-2">{error}</p>
-            </div>
+            <AdminErrorState
+                title="Unable to load insights"
+                description="We couldn't reach the database right now. Please try again in a moment."
+                onRetry={() => window.location.reload()}
+            />
         );
     }
 
@@ -214,7 +210,7 @@ export default function AdminInsightsPage() {
             {/* New widgets row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Highest Performing Dimension */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium flex items-center gap-2">
                             <Award className="h-4 w-4 text-green-500" />
@@ -236,7 +232,7 @@ export default function AdminInsightsPage() {
                 </Card>
 
                 {/* Lowest Performing Dimension */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium flex items-center gap-2">
                             <AlertTriangle className="h-4 w-4 text-destructive" />
@@ -258,7 +254,7 @@ export default function AdminInsightsPage() {
                 </Card>
 
                 {/* Average Completion Time Trend */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium flex items-center gap-2">
                             <Clock3 className="h-4 w-4" />
@@ -289,7 +285,7 @@ export default function AdminInsightsPage() {
             {/* Existing charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Dimension Averages */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium">Dimension Averages</CardTitle>
                         <CardDescription>Average performance across all 5 key dimensions.</CardDescription>
@@ -308,7 +304,7 @@ export default function AdminInsightsPage() {
                 </Card>
 
                 {/* Score Distribution */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium">Score Distribution</CardTitle>
                         <CardDescription>Percentage of organisations in each score bracket.</CardDescription>
@@ -329,7 +325,7 @@ export default function AdminInsightsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Tier Breakdown */}
-                <Card className="border-border/60 lg:col-span-1">
+                <Card className="rounded-lg shadow-sm border-border/60 lg:col-span-1 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium">Maturity Tiers</CardTitle>
                         <CardDescription>Breakdown of organisations by maturity level.</CardDescription>
@@ -359,7 +355,7 @@ export default function AdminInsightsPage() {
                 </Card>
 
                 {/* Top/Bottom Questions */}
-                <Card className="border-border/60 lg:col-span-2">
+                <Card className="rounded-lg shadow-sm border-border/60 lg:col-span-2 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium">Question Heatmap: Critical Weaknesses & Strengths</CardTitle>
                         <CardDescription>The questions where organisations score lowest (gaps) and highest (strengths).</CardDescription>
@@ -395,7 +391,7 @@ export default function AdminInsightsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Top Countries */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium flex items-center gap-2">
                             <MapPin className="h-4 w-4" />
@@ -430,7 +426,7 @@ export default function AdminInsightsPage() {
                 </Card>
 
                 {/* Top Industries */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium flex items-center gap-2">
                             <Building className="h-4 w-4" />
@@ -467,7 +463,7 @@ export default function AdminInsightsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Industry Benchmarks */}
-                <Card className="border-border/60">
+                <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-base font-medium">Industry Benchmarks</CardTitle>
                         <CardDescription>Average scores and participation by industry.</CardDescription>
@@ -504,7 +500,7 @@ export default function AdminInsightsPage() {
 
                 {/* Regional Reach and AI Adoption Trend */}
                 <div className="space-y-6">
-                    <Card className="border-border/60">
+                    <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                         <CardHeader>
                             <CardTitle className="text-base font-medium">Regional Reach</CardTitle>
                             <CardDescription>Assessment participation by country.</CardDescription>
@@ -523,7 +519,7 @@ export default function AdminInsightsPage() {
                     </Card>
 
                     {data.aiAdoptionTrend.length > 1 && (
-                        <Card className="border-border/60">
+                        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                             <CardHeader>
                                 <CardTitle className="text-base font-medium">AI Adoption Trend</CardTitle>
                                 <CardDescription>How AI adoption has evolved over time.</CardDescription>
@@ -543,7 +539,7 @@ export default function AdminInsightsPage() {
                     )}
 
                     {data.monthlyTrend.length > 1 && (
-                        <Card className="border-border/60">
+                        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                             <CardHeader>
                                 <CardTitle className="text-base font-medium">Monthly Trend</CardTitle>
                                 <CardDescription>How the benchmark is growing over time.</CardDescription>
@@ -566,7 +562,7 @@ export default function AdminInsightsPage() {
             </div>
 
             {/* Recent Activity */}
-            <Card className="border-border/60">
+            <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
                 <CardHeader>
                     <CardTitle className="text-base font-medium flex items-center gap-2">
                         <Activity className="h-4 w-4" />
@@ -624,7 +620,7 @@ export default function AdminInsightsPage() {
 
 function KpiCard({ icon, label, value, trendColor }: { icon: React.ReactNode; label: string; value: string; trendColor?: string }) {
     return (
-        <Card className="border-border/60">
+        <Card className="rounded-lg shadow-sm border-border/60 transition-all hover:shadow-md">
             <CardContent className="p-5">
                 <div className="flex items-center gap-2 text-primary mb-2">
                     {icon}

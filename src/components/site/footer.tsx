@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
 import { Linkedin, Twitter, Youtube, Mail, MapPin, ArrowUpRight } from "lucide-react";
 import { Logo } from "./logo";
 import { useNav } from "@/lib/store";
@@ -9,24 +10,34 @@ import type { ViewKey } from "@/lib/types";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Reveal, RevealStagger, RevealItem, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
 
 const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }[] = [
   {
-    heading: "Company",
+    heading: "Navigation",
     links: [
       { label: "About", view: "about" },
       { label: "Services", view: "services" },
-      { label: "Careers", view: "careers" },
       { label: "Contact", view: "contact" },
+    ],
+  },
+  {
+    heading: "Services",
+    links: [
+      { label: "Internal Audit Outsourcing", view: "internal-audit-outsourcing" },
+      { label: "Internal Audit Co-Sourcing", view: "internal-audit-co-sourcing" },
+      { label: "Function Establishment", view: "internal-audit-function-establishment" },
+      { label: "Internal Audit Transformation", view: "internal-audit-transformation" },
+      { label: "QAIP", view: "quality-assurance-and-improvement-program" },
+      { label: "Framework Agreements", view: "framework-agreements" },
     ],
   },
   {
     heading: "Benchmark",
     links: [
       { label: "Overview", view: "benchmark-landing" },
-      { label: "Take the assessment", view: "benchmark-quiz" },
-      { label: "Insights dashboard", view: "benchmark-insights" },
-      { label: "Methodology", view: "benchmark-landing" },
+      { label: "Start Assessment", view: "benchmark-quiz" },
+      { label: "Insights Dashboard", view: "benchmark-insights" },
     ],
   },
 ];
@@ -39,7 +50,8 @@ type NewsletterFormValues = z.infer<typeof newsletterFormSchema>;
 
 export function Footer() {
   const navigate = useNav((s) => s.navigate);
-  const [status, setStatus] = React.useState<"idle" | "loading" | "ok" | "err">("idle");
+  const [status, setStatus] = React.useState<"idle" | "loading" | "ok" | "already-subscribed" | "err">("idle");
+  const reduced = useReducedMotion();
 
   const {
     register,
@@ -61,158 +73,210 @@ export function Footer() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: data.email }),
       });
+      const result = (await res.json()) as { ok: boolean; data?: { alreadySubscribed?: boolean } };
       if (!res.ok) throw new Error("failed");
-      setStatus("ok");
+      setStatus(result.data?.alreadySubscribed ? "already-subscribed" : "ok");
       reset();
     } catch {
       setStatus("err");
     }
   };
 
+  const socialHover = reduced
+    ? {}
+    : {
+        backgroundColor: "#ADDFB3",
+        color: "#003D3C",
+        scale: 1.07,
+        y: -2,
+        borderColor: "rgba(173,223,179,0.6)",
+      };
+
   return (
-    <footer className="mt-auto border-t border-border/70 bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-12">
-          {/* Brand + newsletter */}
-          <div className="lg:col-span-5">
-            <Logo />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {COMPANY.description}
-            </p>
-            <form onSubmit={handleSubmit(subscribe)} className="mt-6 max-w-sm">
-              <label
-                htmlFor="newsletter"
-                className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground"
+    <footer className="mt-auto bg-[#003D3C] text-white">
+      <div className="section-shell pt-16 pb-7">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+          <Reveal y={12} duration={0.58} className="lg:col-span-4">
+            <div className="space-y-5">
+              <motion.div
+                initial={reduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.97 }}
+                whileInView={
+                  reduced
+                    ? {}
+                    : {
+                        opacity: 1,
+                        scale: 1,
+                        transition: {
+                          duration: 0.5,
+                          ease: EASE_OUT,
+                          delay: 0.1,
+                        },
+                      }
+                }
+                viewport={{ once: true, margin: "-60px 0px -60px 0px" }}
               >
-                The Trennt quarterly
-              </label>
-              <div className="mt-2 flex gap-2">
-                <input
-                  id="newsletter"
-                  type="email"
-                  {...register("email")}
-                  placeholder="you@company.com"
-                  className="h-10 flex-1 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                />
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-                >
-                  {status === "loading" ? "…" : "Subscribe"}
-                </button>
-              </div>
-              {errors.email && (
-                <p className="mt-2 text-xs text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
-              {status === "ok" && (
-                <p className="mt-2 text-xs text-emerald-700 dark:text-emerald-400">
-                  Thanks — you&apos;re on the list.
-                </p>
-              )}
-              {status === "err" && (
-                <p className="mt-2 text-xs text-destructive">
-                  Something went wrong. Please try again.
-                </p>
-              )}
-            </form>
-          </div>
+                <Logo variant="light" />
+              </motion.div>
+              <p className="max-w-sm text-[15px] leading-[1.6] text-white/65">
+                Trennt is an internal audit firm based in Saudi Arabia, dedicated
+                exclusively to internal audit delivery. We support Boards, Audit
+                Committees, and senior management with objective insight.
+              </p>
 
-          {/* Nav columns */}
-          <div className="grid grid-cols-2 gap-8 lg:col-span-4">
-            {FOOTER_NAV.map((col) => (
-              <div key={col.heading}>
-                <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  {col.heading}
-                </h3>
-                <ul className="mt-4 space-y-2.5">
-                  {col.links.map((l) => (
-                    <li key={l.label}>
-                      <button
-                        onClick={() => navigate(l.view)}
-                        className="text-sm text-foreground/80 transition-colors hover:text-primary"
-                      >
-                        {l.label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Contact */}
-          <div className="lg:col-span-3">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Get in touch
-            </h3>
-            <ul className="mt-4 space-y-3 text-sm">
-              <li className="flex items-start gap-2.5">
-                <Mail className="mt-0.5 h-4 w-4 text-primary" />
-                <a
-                  href={`mailto:${COMPANY.email}`}
-                  className="text-foreground/80 hover:text-primary"
+              <form onSubmit={handleSubmit(subscribe)} className="max-w-sm">
+                <label
+                  htmlFor="footer-newsletter"
+                  className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#ADDFB3]/80"
                 >
-                  {COMPANY.email}
-                </a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <MapPin className="mt-0.5 h-4 w-4 text-primary" />
-                <span className="text-foreground/80">{COMPANY.address}</span>
-              </li>
-            </ul>
-            <div className="mt-5 flex gap-2">
-              <a
-                href={COMPANY.social.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="LinkedIn"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-              >
-                <Linkedin className="h-4 w-4" />
-              </a>
-              <a
-                href={COMPANY.social.twitter}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Twitter / X"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-              >
-                <Twitter className="h-4 w-4" />
-              </a>
-              <a
-                href={COMPANY.social.youtube}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="YouTube"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-              >
-                <Youtube className="h-4 w-4" />
-              </a>
+                  The Trennt Quarterly
+                </label>
+                <div className="mt-2 flex flex-col gap-2.5">
+                  <div className="flex gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-sm focus-within:border-[#ADDFB3]/50 transition-all duration-300 ease-out">
+                    <input
+                      id="footer-newsletter"
+                      type="email"
+                      {...register("email")}
+                      placeholder="you@company.com"
+                      className="h-11 flex-1 rounded-full bg-transparent px-5 text-[14px] text-white placeholder:text-white/40 outline-none"
+                    />
+                    <motion.button
+                      type="submit"
+                      disabled={status === "loading"}
+                      whileHover={reduced || status === "loading" ? {} : { scale: 1.03, y: -1 }}
+                      whileTap={reduced || status === "loading" ? {} : { scale: 0.98 }}
+                      transition={{ duration: 0.2, ease: EASE_OUT }}
+                      className="mr-1.5 my-1.5 inline-flex h-[38px] items-center rounded-full bg-[#ADDFB3] px-5 text-[13px] font-semibold text-[#003D3C] transition-all duration-200 ease-out hover:bg-white hover:shadow-[0_4px_16px_-6px_rgba(173,223,179,0.7)] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
+                    >
+                      {status === "loading" ? "…" : "Subscribe"}
+                    </motion.button>
+                  </div>
+                  {errors.email && (
+                    <p className="text-[12px] text-[#FFB4B4]">
+                      {errors.email.message}
+                    </p>
+                  )}
+                  {status === "ok" && (
+                    <p className="text-[12px] text-[#ADDFB3]">
+                      Thank you — you&apos;re on the list.
+                    </p>
+                  )}
+                  {status === "already-subscribed" && (
+                    <p className="text-[12px] text-[#ADDFB3]">
+                      You&apos;re already subscribed to The Trennt Quarterly.
+                    </p>
+                  )}
+                  {status === "err" && (
+                    <p className="text-[12px] text-[#FFB4B4]">
+                      Something went wrong. Please try again.
+                    </p>
+                  )}
+                </div>
+              </form>
+
+              <div className="flex gap-2.5">
+                {[
+                  { icon: Linkedin, href: COMPANY.social.linkedin, label: "LinkedIn" },
+                  { icon: Twitter, href: COMPANY.social.twitter, label: "Twitter / X" },
+                  { icon: Youtube, href: COMPANY.social.youtube, label: "YouTube" },
+                ].map(({ icon: Icon, href, label }) => (
+                  <motion.a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={label}
+                    initial={{ opacity: 1, backgroundColor: "transparent", color: "rgba(255,255,255,0.65)", scale: 1, y: 0, borderColor: "rgba(255,255,255,0.15)" }}
+                    whileHover={socialHover}
+                    transition={{ duration: 0.23, ease: EASE_OUT }}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/65"
+                  >
+                    <Icon className="h-4 w-4" strokeWidth={1.8} />
+                  </motion.a>
+                ))}
+              </div>
             </div>
+          </Reveal>
+
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
+            {FOOTER_NAV.map((col, idx) => (
+              <Reveal
+                key={col.heading}
+                y={12}
+                duration={0.58}
+                delay={reduced ? 0 : 0.09 + idx * 0.09}
+              >
+                <div>
+                  <h3 className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#ADDFB3]/80">
+                    {col.heading}
+                  </h3>
+                  <ul className="mt-4 space-y-2.5">
+                    {col.links.map((l) => (
+                      <li key={l.label}>
+                        <button
+                          onClick={() => navigate(l.view)}
+                          className="group inline-flex items-center gap-1.5 text-[14px] text-white/75 transition-colors duration-200 ease-out hover:text-white"
+                        >
+                          <span className="hover-underline-grow">{l.label}</span>
+                          <ArrowUpRight className="h-3 w-3 opacity-0 -translate-x-1 transition-all duration-250 ease-out group-hover:opacity-100 group-hover:translate-x-0" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-border/60 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
-          <p>
-            © {new Date().getFullYear()} {COMPANY.legalName}. All rights reserved.
-          </p>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              {COMPANY.offices.length} offices worldwide
-            </span>
-            <button
-              onClick={() => navigate("legal")}
-              className="inline-flex items-center gap-1 hover:text-primary"
-            >
-              Privacy &amp; terms
-              <ArrowUpRight className="h-3 w-3" />
-            </button>
-            <span>Registered in England &amp; Wales</span>
-          </div>
+        <div className="mt-12 border-t border-white/10 pt-5">
+          <RevealStagger stagger={0.05} delay={reduced ? 0 : 0.42} y={10} childDuration={0.5}>
+            <div className="flex items-start gap-6">
+              <div className="flex flex-wrap flex-1 items-center gap-x-8 gap-y-3 text-[13px] text-white/55">
+                <div className="flex items-start gap-2.5">
+                  <Mail className="mt-0.5 h-4 w-4 text-[#ADDFB3]/70" strokeWidth={1.6} />
+                  <a
+                    href={`mailto:${COMPANY.email}`}
+                    className="transition-colors duration-200 ease-out hover:text-white hover-underline-grow"
+                  >
+                    {COMPANY.email}
+                  </a>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="mt-0.5 h-4 w-4 text-[#ADDFB3]/70" strokeWidth={1.6} />
+                  <span>{COMPANY.address}</span>
+                </div>
+              </div>
+              <motion.button
+                onClick={() => navigate("contact")}
+                whileHover={reduced ? {} : { scale: 1.025, y: -1 }}
+                whileTap={reduced ? {} : { scale: 0.99 }}
+                transition={{ duration: 0.22, ease: EASE_OUT }}
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-white/15 px-5 py-2.5 text-[13px] font-medium text-white transition-colors duration-250 ease-out hover:border-[#ADDFB3]/50 hover:bg-[#ADDFB3]/10 hover:text-[#ADDFB3] group"
+              >
+                Talk to TRENNT
+                <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-250 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.8} />
+              </motion.button>
+            </div>
+
+            <div className="mt-2.5 flex flex-col items-start justify-between gap-3 text-[12px] text-white/45 sm:flex-row sm:items-center">
+              <p>
+                © {new Date().getFullYear()} {COMPANY.legalName}. All rights reserved.
+              </p>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#ADDFB3]" />
+                  {COMPANY.offices.length} office{COMPANY.offices.length > 1 ? "s" : ""} — {COMPANY.offices.map((o) => o.city).join(", ")}
+                </span>
+                <button
+                  onClick={() => navigate("legal")}
+                  className="inline-flex items-center gap-1 transition-colors duration-200 ease-out hover:text-white group"
+                >
+                  <span className="hover-underline-grow">Privacy &amp; Terms</span>
+                  <ArrowUpRight className="h-3 w-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+              </div>
+            </div>
+          </RevealStagger>
         </div>
       </div>
     </footer>

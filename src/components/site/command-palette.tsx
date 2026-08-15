@@ -95,14 +95,14 @@ export function CommandPalette() {
       "benchmark-landing": Sparkles,
       "benchmark-insights": BarChart3,
     };
-    const navLabels: Record<string, string> = {
+      const navLabels: Record<string, string> = {
       home: "Home",
       about: "About",
       services: "Services",
       careers: "Careers",
       contact: "Contact",
       legal: "Privacy & Terms",
-      "benchmark-landing": "Strategic Benchmark Assessment",
+      "benchmark-landing": "Internal Audit Maturity Benchmark",
       "benchmark-insights": "Insights Dashboard",
     };
     const navHints: Record<string, string> = {

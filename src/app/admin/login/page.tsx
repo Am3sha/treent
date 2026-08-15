@@ -59,7 +59,7 @@ function LoginForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md border-border/60 shadow-sm">
+      <Card className="w-full max-w-md rounded-lg shadow-sm border-border/60">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-semibold tracking-tight">
             Admin Login
@@ -78,7 +78,7 @@ function LoginForm() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@trennt.com"
+                placeholder="info@trennt.sa"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

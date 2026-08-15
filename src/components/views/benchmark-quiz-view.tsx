@@ -154,7 +154,7 @@ export function BenchmarkQuizView() {
         throw new Error(errBody?.error || "Submission failed");
       }
       const resultJson = await res.json();
-      setResult(resultJson);
+      setResult(resultJson.data);
       setRespondent(profile);
       toast({
         title: "Benchmark submitted",

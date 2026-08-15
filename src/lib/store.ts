@@ -60,12 +60,13 @@ function readHashView(): ViewKey {
     "benchmark-results",
     "benchmark-followup",
     "benchmark-insights",
+    "not-found",
   ];
   return valid.includes(h) ? h : DEFAULT_VIEW;
 }
 
 export const useNav = create<NavState>((set, get) => ({
-  view: DEFAULT_VIEW,
+  view: readHashView(),
   responses: {},
   respondent: null,
   result: null,

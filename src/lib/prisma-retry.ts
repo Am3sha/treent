@@ -1,5 +1,10 @@
 type AsyncFunction<T> = () => Promise<T>;
 
+// Neon free-tier databases auto-suspend after inactivity and can take roughly 1-5 seconds to wake
+// on the next request. The current retry policy (2 retries with 300ms/700ms delays) is intentionally
+// conservative: it gives a cold-started database enough time to come back without adding a noticeable
+// delay to normal warm connections. If production becomes sensitive to this, a paid Neon plan or a
+// scheduled keep-alive ping is the proper infrastructure fix rather than a code-level workaround.
 export async function prismaRetry<T>(
   fn: AsyncFunction<T>,
   maxRetries = 2,

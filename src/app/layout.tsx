@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "Trennt | Internal Audit Specialists",
+    title: "Trennt ",
     description:
       "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery.",
     siteName: "Trennt",
@@ -59,7 +59,8 @@ export default function RootLayout({
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
-            enableSystem
+            forcedTheme="light"
+            enableSystem={false}
             disableTransitionOnChange
           >
             {children}

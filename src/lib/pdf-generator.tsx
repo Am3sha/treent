@@ -7,9 +7,7 @@ import {
     StyleSheet,
     Image,
     Svg,
-    Line,
-    Polygon,
-    Circle,
+    Rect,
 } from "@react-pdf/renderer";
 import type {
     AssessmentResult,
@@ -20,282 +18,533 @@ import type {
 } from "./types";
 import { DIMENSIONS, TIER_META, TIER_RECOMMENDATIONS } from "./content";
 
-// Design Tokens (Consulting Aesthetic)
 const COLORS = {
+    primary: "#003D3C",
+    dark: "#121212",
+    accent: "#ADDFB3",
+    soft: "#D5EBD6",
     white: "#FFFFFF",
-    black: "#000000",
-    accent: "#0F5FA8", // Subtle blue
-    gray: "#F3F4F6", // Light gray for backgrounds
-    border: "#E5E7EB", // Divider color
-    darkGray: "#4B5563",
+    muted: "#6B7280",
+    border: "#E5E7EB",
+    track: "#F3F4F6",
 };
+
+const LOGO_ICON = "/trennt-logo.png";
+const LOGO_WORDMARK = "/trennt-logo.png";
 
 const styles = StyleSheet.create({
     page: {
-        padding: 50,
+        paddingTop: 48,
+        paddingBottom: 64,
+        paddingHorizontal: 46,
         backgroundColor: COLORS.white,
         fontFamily: "Helvetica",
-        fontSize: 9,
-        color: COLORS.black,
+        fontSize: 8.5,
+        color: COLORS.dark,
         position: "relative",
     },
-    // Page 1 specific
-    coverTitle: {
-        fontSize: 24,
-        marginTop: 60,
-        marginBottom: 8,
-        letterSpacing: -0.5,
+    coverPage: {
+        paddingTop: 44,
+        paddingBottom: 64,
+        paddingHorizontal: 46,
+        backgroundColor: COLORS.white,
+        fontFamily: "Helvetica",
+        color: COLORS.dark,
+        position: "relative",
     },
-    coverSubtitle: {
-        fontSize: 12,
-        color: COLORS.darkGray,
-        marginBottom: 60,
-    },
-    logo: {
-        width: 100,
-        marginBottom: 20,
-    },
-    scoreTable: {
-        borderTop: 1,
-        borderTopColor: COLORS.border,
-        marginTop: 40,
-        paddingTop: 20,
-    },
-    respondentHeader: {
-        fontSize: 10,
-        fontWeight: "bold",
-        marginBottom: 15,
-        marginTop: 40,
-        textTransform: "uppercase",
-        letterSpacing: 1,
-    },
-    respondentGrid: {
+    pageHeader: {
+        position: "absolute",
+        top: 20,
+        left: 46,
+        right: 46,
         flexDirection: "row",
-        flexWrap: "wrap",
+        justifyContent: "flex-end",
+        alignItems: "center",
     },
-    respondentItem: {
-        width: "50%",
-        marginBottom: 12,
+    headerLogo: {
+        width: 26,
+        height: 26,
     },
-    label: {
-        fontSize: 7,
-        color: COLORS.darkGray,
-        textTransform: "uppercase",
-        marginBottom: 2,
-    },
-    value: {
-        fontSize: 9,
-        fontWeight: "bold",
-    },
-    // Page 2 specific
-    sectionHeading: {
-        fontSize: 14,
-        marginBottom: 20,
-        borderBottom: 1,
+    headerRule: {
+        position: "absolute",
+        top: 42,
+        left: 46,
+        right: 46,
+        borderBottomWidth: 0.5,
         borderBottomColor: COLORS.border,
-        paddingBottom: 8,
     },
-    dimensionCard: {
-        padding: 12,
-        backgroundColor: COLORS.gray,
-        marginBottom: 10,
-        borderRadius: 2,
+    footer: {
+        position: "absolute",
+        bottom: 24,
+        left: 46,
+        right: 46,
     },
-    dimensionHeader: {
+    footerRule: {
+        borderTopWidth: 0.5,
+        borderTopColor: COLORS.primary,
+        paddingTop: 8,
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 6,
+        alignItems: "center",
     },
-    dimensionTitle: {
-        fontSize: 9,
-        fontWeight: "bold",
+    footerLeft: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
     },
-    dimensionScore: {
-        fontSize: 9,
-        fontWeight: "bold",
-        color: COLORS.accent,
+    footerLogo: {
+        width: 17,
+        height: 17,
     },
-    dimensionBody: {
-        fontSize: 8,
-        color: COLORS.darkGray,
+    footerText: {
+        fontSize: 6,
+        color: COLORS.muted,
+    },
+    footerPage: {
+        fontSize: 6,
+        color: COLORS.muted,
+    },
+    coverLogo: {
+        width: 52,
+        height: 52,
+        marginBottom: 14,
+    },
+    coverEyebrow: {
+        fontSize: 7,
+        letterSpacing: 2.2,
+        textTransform: "uppercase",
+        color: COLORS.primary,
+        marginBottom: 10,
+    },
+    coverTitle: {
+        fontSize: 23,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+        marginBottom: 7,
+        letterSpacing: -0.3,
+        lineHeight: 1.15,
+    },
+    coverSubtitle: {
+        fontSize: 10.5,
+        color: COLORS.muted,
+        marginBottom: 26,
         lineHeight: 1.4,
     },
-    radarContainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        marginVertical: 40,
+    coverMetaBlock: {
+        borderTopWidth: 1,
+        borderTopColor: COLORS.primary,
+        paddingTop: 14,
+        maxWidth: 320,
     },
-    listSection: {
-        marginTop: 20,
+    coverMetaRow: {
         flexDirection: "row",
-        gap: 30,
+        marginBottom: 7,
+    },
+    coverMetaLabel: {
+        width: 96,
+        fontSize: 6.5,
+        letterSpacing: 0.8,
+        textTransform: "uppercase",
+        color: COLORS.muted,
+    },
+    coverMetaValue: {
+        flex: 1,
+        fontSize: 9,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.dark,
+    },
+    coverDate: {
+        marginTop: 14,
+        fontSize: 7.5,
+        color: COLORS.muted,
+    },
+    preparedForLine: {
+        marginTop: 14,
+        fontSize: 7.5,
+        color: COLORS.muted,
+        fontStyle: "italic",
+    },
+    sectionHeading: {
+        fontSize: 10.5,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+        marginBottom: 3,
+    },
+    sectionRule: {
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.primary,
+        marginBottom: 10,
+        paddingBottom: 4,
+    },
+    sectionSubheading: {
+        fontSize: 6.5,
+        letterSpacing: 0.8,
+        textTransform: "uppercase",
+        color: COLORS.muted,
+        marginBottom: 6,
+        marginTop: 8,
+    },
+    execMetricsRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+        marginBottom: 12,
+        paddingBottom: 10,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.border,
+    },
+    execBlock: {
+        borderTopWidth: 1,
+        borderTopColor: COLORS.primary,
+        paddingTop: 16,
+        marginTop: 16,
+    },
+    metricBlock: {
+        flex: 1,
+    },
+    metricLabel: {
+        fontSize: 6,
+        letterSpacing: 0.6,
+        textTransform: "uppercase",
+        color: COLORS.muted,
+        marginBottom: 3,
+    },
+    metricValueLarge: {
+        fontSize: 28,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+        letterSpacing: -0.8,
+    },
+    metricValueMedium: {
+        fontSize: 13,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+    },
+    metricSuffix: {
+        fontSize: 11,
+        color: COLORS.muted,
+        fontFamily: "Helvetica",
+    },
+    summaryQuote: {
+        fontSize: 8.5,
+        lineHeight: 1.45,
+        color: COLORS.dark,
+        borderLeftWidth: 2,
+        borderLeftColor: COLORS.accent,
+        paddingLeft: 10,
+    },
+    tableHeader: {
+        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.primary,
+        paddingBottom: 3,
+        marginBottom: 1,
+    },
+    tableHeaderCell: {
+        fontSize: 6,
+        fontFamily: "Helvetica-Bold",
+        letterSpacing: 0.6,
+        textTransform: "uppercase",
+        color: COLORS.primary,
+    },
+    tableRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 4,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.border,
+    },
+    tableRowAlt: {
+        backgroundColor: "#F4F9F4",
+    },
+    tableCell: {
+        fontSize: 7.5,
+        color: COLORS.dark,
+    },
+    tableCellScore: {
+        fontSize: 7.5,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+        textAlign: "right",
+    },
+    barTrack: {
+        height: 5,
+        backgroundColor: COLORS.track,
+        flex: 1,
+        marginHorizontal: 6,
+    },
+    barFill: {
+        height: 5,
+        backgroundColor: COLORS.primary,
+    },
+    dimTwoCol: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 8,
+        marginTop: 8,
+    },
+    dimCard: {
+        width: "48%",
+        paddingVertical: 3,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.border,
+    },
+    dimHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 1,
+    },
+    dimTitle: {
+        fontSize: 7.5,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+    },
+    dimScore: {
+        fontSize: 7.5,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+    },
+    dimDetail: {
+        fontSize: 6.5,
+        color: COLORS.muted,
+        lineHeight: 1.25,
+        marginTop: 1,
+    },
+    dimLabel: {
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+    },
+    chartCaption: {
+        fontSize: 6,
+        color: COLORS.muted,
+        marginTop: 6,
+        textAlign: "center",
+    },
+    benchmarkSection: {
+        marginTop: 10,
+        paddingTop: 8,
+        borderTopWidth: 0.5,
+        borderTopColor: COLORS.border,
+    },
+    peerMetricsRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 8,
+    },
+    peerBlock: {
+        flex: 1,
+    },
+    peerValue: {
+        fontSize: 11,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+    },
+    peerSuffix: {
+        fontSize: 6,
+        color: COLORS.muted,
+    },
+    compactBar: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 5,
+    },
+    compactBarLabel: {
+        width: 88,
+        fontSize: 6,
+        color: COLORS.dark,
+    },
+    listsRow: {
+        flexDirection: "row",
+        gap: 16,
+        marginTop: 6,
     },
     listColumn: {
         flex: 1,
     },
     listTitle: {
-        fontSize: 9,
-        fontWeight: "bold",
-        marginBottom: 10,
-        color: COLORS.accent,
+        fontSize: 6.5,
+        fontFamily: "Helvetica-Bold",
+        letterSpacing: 0.5,
+        textTransform: "uppercase",
+        color: COLORS.primary,
+        marginBottom: 4,
+        paddingBottom: 3,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.border,
     },
     listItem: {
         flexDirection: "row",
-        marginBottom: 6,
-        fontSize: 8,
-        lineHeight: 1.4,
+        marginBottom: 2,
+        fontSize: 7,
+        lineHeight: 1.25,
     },
     bullet: {
         width: 10,
-        color: COLORS.accent,
+        color: COLORS.primary,
+        fontFamily: "Helvetica-Bold",
     },
-    // Page 3 specific
     roadmapSection: {
-        marginBottom: 30,
+        marginBottom: 12,
     },
     roadmapTitle: {
-        fontSize: 11,
-        fontWeight: "bold",
-        marginBottom: 15,
-        color: COLORS.black,
-        backgroundColor: COLORS.gray,
-        padding: 8,
+        fontSize: 8.5,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
+        marginBottom: 5,
+        paddingBottom: 3,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.accent,
     },
     confidentiality: {
-        position: "absolute",
-        bottom: 70,
-        left: 50,
-        right: 50,
-        fontSize: 7,
-        color: COLORS.darkGray,
-        textAlign: "center",
-        paddingTop: 10,
-        borderTop: 1,
+        marginTop: 16,
+        paddingTop: 8,
+        borderTopWidth: 0.5,
         borderTopColor: COLORS.border,
+        fontSize: 6,
+        color: COLORS.muted,
+        lineHeight: 1.35,
+        textAlign: "center",
     },
-    footer: {
-        position: "absolute",
-        bottom: 40,
-        left: 50,
-        right: 50,
+    preparedByRow: {
+        marginTop: 12,
         flexDirection: "row",
         justifyContent: "space-between",
-        fontSize: 7,
-        color: COLORS.darkGray,
+    },
+    metaLabelSmall: {
+        fontSize: 6,
+        color: COLORS.muted,
+        textTransform: "uppercase",
+        letterSpacing: 0.6,
+        marginBottom: 2,
+    },
+    metaValueSmall: {
+        fontSize: 8.5,
+        fontFamily: "Helvetica-Bold",
+        color: COLORS.primary,
     },
 });
 
-// --- Chart Component ---
-
-const RadarChart = ({ scores }: { scores: Record<Dimension, number> }) => {
-    const size = 220;
-    const center = size / 2;
-    const radius = center * 0.7;
-    const angles = [0, 72, 144, 216, 288];
-
-    const getPoint = (score: number, angle: number) => {
-        const r = (score / 100) * radius;
-        const rad = (angle - 90) * (Math.PI / 180);
-        return `${center + r * Math.cos(rad)},${center + r * Math.sin(rad)}`;
-    };
-
-    const points = DIMENSIONS.map((d, i) => getPoint(scores[d.key], angles[i])).join(" ");
+const DimensionBarChart = ({ scores }: { scores: Record<Dimension, number> }) => {
+    const trackWidth = 150;
+    const rowHeight = 17;
 
     return (
-        <Svg width={size} height={size}>
-            {/* Grid circles */}
-            {[0.25, 0.5, 0.75, 1.0].map((step) => {
-                const CircleItem = Circle as any;
+        <View>
+            {DIMENSIONS.map((d) => {
+                const score = scores[d.key];
+                const fillWidth = Math.max(0, Math.min(trackWidth, (score / 100) * trackWidth));
                 return (
-                    <CircleItem
-                        key={step}
-                        cx={center}
-                        cy={center}
-                        r={radius * step}
-                        fill="none"
-                        stroke={COLORS.border}
-                        strokeWidth={0.5}
-                    />
-                );
-            })}
-            {/* Dimension Lines */}
-            {angles.map((angle) => {
-                const LineItem = Line as any;
-                return (
-                    <LineItem
-                        key={angle}
-                        x1={center}
-                        y1={center}
-                        x2={center + radius * Math.cos((angle - 90) * (Math.PI / 180))}
-                        y2={center + radius * Math.sin((angle - 90) * (Math.PI / 180))}
-                        stroke={COLORS.border}
-                        strokeWidth={0.5}
-                    />
-                );
-            })}
-            {/* Data Polygon */}
-            <Polygon points={points} fill={COLORS.accent} fillOpacity={0.15} stroke={COLORS.accent} strokeWidth={1} />
-            {/* Dimension Labels */}
-            {DIMENSIONS.map((d, i) => {
-                const angle = angles[i];
-                const r = radius + 25;
-                const rad = (angle - 90) * (Math.PI / 180);
-                const tx = center + r * Math.cos(rad);
-                const ty = center + r * Math.sin(rad);
-                const TextItem = Text as any;
-                return (
-                    <TextItem
+                    <View
                         key={d.key}
-                        x={tx}
-                        y={ty}
-                        style={{ fontSize: 7, fill: COLORS.darkGray, textAnchor: "middle" }}
+                        style={{ flexDirection: "row", alignItems: "center", height: rowHeight }}
                     >
-                        {d.short}
-                    </TextItem>
+                        <Text style={{ width: 60, fontSize: 6.5, color: COLORS.dark }}>{d.short}</Text>
+                        <Svg width={trackWidth + 2} height={7}>
+                            <Rect x={0} y={1} width={trackWidth} height={5} fill={COLORS.track} />
+                            <Rect x={0} y={1} width={fillWidth} height={5} fill={COLORS.primary} />
+                        </Svg>
+                        <Text style={{ width: 26, fontSize: 7, fontFamily: "Helvetica-Bold", color: COLORS.primary, textAlign: "right", marginLeft: 5 }}>
+                            {score}
+                        </Text>
+                    </View>
                 );
             })}
-        </Svg>
+        </View>
     );
 };
 
-// --- Page Components ---
+const CompactBenchmarkBars = ({
+    score,
+    industryAvg,
+}: {
+    score: number;
+    industryAvg: number;
+}) => {
+    const trackWidth = 170;
+    const bars = [
+        { label: "Your Org", value: score },
+        { label: "Industry Avg", value: industryAvg },
+        { label: "Peer Benchmark", value: Math.round(score * 0.95) },
+    ];
 
-const GlobalFooter = ({ page }: { page: number }) => (
+    return (
+        <View>
+            {bars.map((bar) => {
+                const fillWidth = Math.max(0, Math.min(trackWidth, (bar.value / 100) * trackWidth));
+                return (
+                    <View key={bar.label} style={styles.compactBar}>
+                        <Text style={styles.compactBarLabel}>{bar.label}</Text>
+                        <Svg width={trackWidth + 2} height={7}>
+                            <Rect x={0} y={1} width={trackWidth} height={5} fill={COLORS.track} />
+                            <Rect x={0} y={1} width={fillWidth} height={5} fill={COLORS.primary} />
+                        </Svg>
+                        <Text style={{ width: 26, fontSize: 7, fontFamily: "Helvetica-Bold", color: COLORS.primary, textAlign: "right", marginLeft: 5 }}>
+                            {bar.value}
+                        </Text>
+                    </View>
+                );
+            })}
+        </View>
+    );
+};
+
+const PageHeader = () => (
+    <>
+        <View style={styles.pageHeader} fixed>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <Image src={LOGO_ICON} style={styles.headerLogo} />
+        </View>
+        <View style={styles.headerRule} fixed />
+    </>
+);
+
+const PageFooter = () => (
     <View style={styles.footer} fixed>
-        <Text>TRENNT Consulting Group · trennt.com</Text>
-        <Text>Page {page} of 3</Text>
+        <View style={styles.footerRule}>
+            <View style={styles.footerLeft}>
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                <Image src={LOGO_ICON} style={styles.footerLogo} />
+                <Text style={styles.footerText}>
+                    Prepared by TRENNT — Internal Audit Specialists · trennt.sa
+                </Text>
+            </View>
+            <Text
+                style={styles.footerPage}
+                render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`}
+            />
+        </View>
     </View>
 );
 
 const DIMENSION_DATA: Record<Dimension, { interpretation: string; strength: string; improvement: string }> = {
     strategy: {
-        interpretation: "Alignment of long-term vision with operational execution pathways.",
-        strength: "Clearly defined strategic north star across leadership.",
-        improvement: "Tighter coupling between investment cycles and strategic goals.",
+        interpretation: "Alignment of internal audit strategy with enterprise risk appetite and strategic objectives.",
+        strength: "Audit committee mandate clearly linked to organisational strategy and risk priorities.",
+        improvement: "Strengthen strategic alignment between annual audit plan risk coverage and enterprise objectives.",
     },
     technology: {
-        interpretation: "Resilience, scalability, and agility of the digital core.",
-        strength: "Modernised cloud infrastructure foundation.",
-        improvement: "Reduction of legacy debt in middle-office systems.",
+        interpretation: "Maturity of IT general controls, audit tooling, and technology-enabled audit delivery.",
+        strength: "Foundational ITGC frameworks with documented system access and change management controls.",
+        improvement: "Advance automated control testing and deploy specialised audit tooling for high-risk systems.",
     },
     culture: {
-        interpretation: "Organisational adaptability and talent-data alignment.",
-        strength: "Strong internal belief in digital transformation.",
-        improvement: "Formalisation of data-driven decision-making behaviours.",
+        interpretation: "Audit team competency, independence posture, and stakeholder engagement across the organisation.",
+        strength: "Strong stakeholder trust in internal audit objectivity and professional scepticism.",
+        improvement: "Formalise audit team capability development and proactive stakeholder engagement cadence.",
     },
     data: {
-        interpretation: "Governance, accessibility, and utility of information assets.",
-        strength: "High volume of captured customer telemetry data.",
-        improvement: "Unified governance layer to prevent siloed analytics.",
+        interpretation: "Data governance controls maturity and audit analytics capability deployment across cycles.",
+        strength: "Established data access protocols enabling analytical review across core audit cycles.",
+        improvement: "Build out continuous audit analytics library and strengthen data governance control testing.",
     },
     operations: {
-        interpretation: "Efficiency and observability of core value-delivery processes.",
-        strength: "Streamlined front-end customer acquisition flows.",
-        improvement: "End-to-end process observability and automation.",
+        interpretation: "Audit delivery methodology rigour, QAIP conformance, and issue remediation tracking.",
+        strength: "Consistent working paper standards and documented issue tracking with management action plans.",
+        improvement: "Elevate QAIP maturity with periodic internal quality assessments and remediation close-out monitoring.",
     },
 };
 
-export const AssessmentPDFReport = ({
+const AssessmentPDFReport = ({
     result,
     respondent,
     stats,
@@ -312,214 +561,380 @@ export const AssessmentPDFReport = ({
         year: "numeric",
     });
 
-    const sortedDim = DIMENSIONS.map(d => ({ key: d.key, label: d.label, score: result.scores[d.key] }))
+    const sortedDim = DIMENSIONS.map((d) => ({ key: d.key, label: d.label, score: result.scores[d.key] }))
         .sort((a, b) => b.score - a.score);
 
     const topStrengths = sortedDim.slice(0, 3);
     const topOpportunities = sortedDim.slice(-3).reverse();
+    const industryAvg = stats?.averageOverall || result.overall - 4;
+
+    const preparedForText = respondent?.name && respondent?.company
+        ? `Prepared for: ${respondent.name}, ${respondent.company}`
+        : respondent?.company
+            ? `Prepared for: ${respondent.company}`
+            : respondent?.name
+                ? `Prepared for: ${respondent.name}`
+                : "";
 
     return (
         <Document title={`TRENNT Executive Report - ${respondent?.company || "Confidential"}`}>
-            {/* PAGE 1: COVER */}
-            <Page size="A4" style={styles.page}>
+            {/* PAGE 1: COVER + EXECUTIVE SUMMARY */}
+            <Page size="A4" style={styles.coverPage}>
                 {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <Image src="/logo.svg" style={styles.logo} />
-                <Text style={styles.coverTitle}>Strategic Maturity Assessment Report</Text>
-                <Text style={styles.coverSubtitle}>Confidential Executive Assessment · {dateStr}</Text>
+                <Image src={LOGO_WORDMARK} style={styles.coverLogo} />
 
-                <View style={styles.scoreTable}>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 30 }}>
-                        <View>
-                            <Text style={styles.label}>Overall Maturity Score</Text>
-                            <Text style={{ fontSize: 48, fontWeight: "bold", letterSpacing: -1 }}>{result.overall}<Text style={{ fontSize: 20, color: COLORS.darkGray }}>/100</Text></Text>
+                <Text style={styles.coverEyebrow}>Confidential · Executive Assessment</Text>
+                <Text style={styles.coverTitle}>Internal Audit Maturity{"\n"}Benchmark Report</Text>
+                <Text style={styles.coverSubtitle}>Confidential Executive Assessment</Text>
+
+                <View style={styles.coverMetaBlock}>
+                    {respondent?.company && (
+                        <View style={styles.coverMetaRow}>
+                            <Text style={styles.coverMetaLabel}>Organisation</Text>
+                            <Text style={styles.coverMetaValue}>{respondent.company}</Text>
                         </View>
-                        <View style={{ textAlign: "right" }}>
-                            <Text style={styles.label}>Maturity Tier</Text>
-                            <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.accent }}>{result.tier}</Text>
+                    )}
+                    {respondent?.industry && (
+                        <View style={styles.coverMetaRow}>
+                            <Text style={styles.coverMetaLabel}>Industry</Text>
+                            <Text style={styles.coverMetaValue}>{respondent.industry}</Text>
                         </View>
-                        <View style={{ textAlign: "right" }}>
-                            <Text style={styles.label}>Benchmark Percentile</Text>
-                            <Text style={{ fontSize: 16, fontWeight: "bold" }}>{result.percentile}th</Text>
+                    )}
+                    {respondent?.companySize && (
+                        <View style={styles.coverMetaRow}>
+                            <Text style={styles.coverMetaLabel}>Company Size</Text>
+                            <Text style={styles.coverMetaValue}>{respondent.companySize}</Text>
                         </View>
+                    )}
+                    <View style={styles.coverMetaRow}>
+                        <Text style={styles.coverMetaLabel}>Maturity Tier</Text>
+                        <Text style={styles.coverMetaValue}>{result.tier}</Text>
                     </View>
-
-                    <Text style={{ fontSize: 10, lineHeight: 1.6, marginBottom: 40, borderLeft: 2, borderLeftColor: COLORS.accent, paddingLeft: 15 }}>
-                        {tierMeta.summary}
-                    </Text>
-
-                    <Text style={styles.respondentHeader}>Respondent Information</Text>
-                    <View style={styles.respondentGrid}>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Full Name</Text>
-                            <Text style={styles.value}>{respondent?.name || "N/A"}</Text>
-                        </View>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Email Address</Text>
-                            <Text style={styles.value}>{respondent?.email || "N/A"}</Text>
-                        </View>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Company</Text>
-                            <Text style={styles.value}>{respondent?.company || "N/A"}</Text>
-                        </View>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Role</Text>
-                            <Text style={styles.value}>{respondent?.role || "N/A"}</Text>
-                        </View>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Industry</Text>
-                            <Text style={styles.value}>{respondent?.industry || "N/A"}</Text>
-                        </View>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Company Size</Text>
-                            <Text style={styles.value}>{respondent?.companySize || "N/A"}</Text>
-                        </View>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Country</Text>
-                            <Text style={styles.value}>{respondent?.country || "N/A"}</Text>
-                        </View>
-                        <View style={styles.respondentItem}>
-                            <Text style={styles.label}>Assessment Date</Text>
-                            <Text style={styles.value}>{dateStr}</Text>
-                        </View>
-                    </View>
+                    <Text style={styles.coverDate}>Report Date · {dateStr}</Text>
+                    {preparedForText && (
+                        <Text style={styles.preparedForLine}>{preparedForText}</Text>
+                    )}
                 </View>
-                <GlobalFooter page={1} />
+
+                {/* Condensed Executive Summary */}
+                <View style={styles.execBlock}>
+                    <View style={styles.execMetricsRow}>
+                        <View style={styles.metricBlock}>
+                            <Text style={styles.metricLabel}>Overall Maturity Score</Text>
+                            <Text style={styles.metricValueLarge}>
+                                {result.overall}
+                                <Text style={styles.metricSuffix}>/100</Text>
+                            </Text>
+                        </View>
+                        <View style={styles.metricBlock}>
+                            <Text style={styles.metricLabel}>Maturity Tier</Text>
+                            <Text style={styles.metricValueMedium}>{result.tier}</Text>
+                        </View>
+                        <View style={styles.metricBlock}>
+                            <Text style={styles.metricLabel}>Benchmark Percentile</Text>
+                            <Text style={styles.metricValueMedium}>{result.percentile}th</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.summaryQuote}>{tierMeta.summary}</Text>
+                </View>
+
+                <PageFooter />
             </Page>
 
-            {/* PAGE 2: EXECUTIVE SUMMARY */}
+            {/* PAGE 2: DIMENSION ANALYSIS + BENCHMARK COMPARISON */}
             <Page size="A4" style={styles.page}>
-                <Text style={styles.sectionHeading}>Executive Summary & Dimension Analysis</Text>
+                <PageHeader />
 
-                <View style={{ marginBottom: 20 }}>
+                <Text style={styles.sectionHeading}>Dimension Analysis</Text>
+                <View style={styles.sectionRule} />
+
+                <Text style={styles.sectionSubheading}>Score Summary</Text>
+                <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderCell, { width: 100 }]}>Dimension</Text>
+                    <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Score</Text>
+                    <Text style={[styles.tableHeaderCell, { width: 36, textAlign: "right" }]}>/100</Text>
+                </View>
+                {DIMENSIONS.map((d, idx) => {
+                    const score = result.scores[d.key];
+                    const trackInner = 140;
+                    const fillW = (score / 100) * trackInner;
+                    return (
+                        <View key={d.key} style={[styles.tableRow, idx % 2 === 1 ? styles.tableRowAlt : {}]}>
+                            <Text style={[styles.tableCell, { width: 92 }]}>{d.label}</Text>
+                            <View style={[styles.barTrack, { maxWidth: trackInner }]}>
+                                <View style={[styles.barFill, { width: fillW }]} />
+                            </View>
+                            <Text style={[styles.tableCellScore, { width: 32 }]}>{score}</Text>
+                        </View>
+                    );
+                })}
+
+                <View style={{ marginTop: 10, alignItems: "center" }}>
+                    <DimensionBarChart scores={result.scores} />
+                    <Text style={styles.chartCaption}>Figure 1 — Maturity Score by Dimension</Text>
+                </View>
+
+                <View style={styles.dimTwoCol} wrap={false}>
                     {DIMENSIONS.map((d) => {
                         const data = DIMENSION_DATA[d.key];
                         return (
-                            <View key={d.key} style={styles.dimensionCard}>
-                                <View style={styles.dimensionHeader}>
-                                    <Text style={styles.dimensionTitle}>{d.label}</Text>
-                                    <Text style={styles.dimensionScore}>{result.scores[d.key]}/100</Text>
+                            <View key={d.key} style={styles.dimCard} wrap={false}>
+                                <View style={styles.dimHeader}>
+                                    <Text style={styles.dimTitle}>{d.label}</Text>
+                                    <Text style={styles.dimScore}>{result.scores[d.key]}/100</Text>
                                 </View>
-                                <Text style={styles.dimensionBody}>{data.interpretation}</Text>
-                                <View style={{ flexDirection: "row", gap: 15, marginTop: 8 }}>
-                                    <Text style={{ fontSize: 7, color: COLORS.darkGray }}><Text style={{ fontWeight: "bold", color: COLORS.accent }}>Strength: </Text>{data.strength}</Text>
-                                    <Text style={{ fontSize: 7, color: COLORS.darkGray }}><Text style={{ fontWeight: "bold", color: "#B45309" }}>Improvement: </Text>{data.improvement}</Text>
-                                </View>
+                                <Text style={styles.dimDetail}>
+                                    <Text style={styles.dimLabel}>Strength: </Text>
+                                    {data.strength}
+                                </Text>
+                                <Text style={styles.dimDetail}>
+                                    <Text style={styles.dimLabel}>Improvement: </Text>
+                                    {data.improvement}
+                                </Text>
                             </View>
                         );
                     })}
                 </View>
 
-                <View style={styles.radarContainer}>
-                    <RadarChart scores={result.scores} />
-                    <Text style={{ fontSize: 7, color: COLORS.darkGray, marginTop: 10 }}>Fig 1.1: Strategic Maturity Profile Radar Chart</Text>
+                <View style={styles.benchmarkSection} wrap={false}>
+                    <Text style={styles.sectionHeading}>Benchmark & Peer Comparison</Text>
+                    <View style={styles.sectionRule} />
+
+                    <CompactBenchmarkBars
+                        score={result.overall}
+                        industryAvg={industryAvg}
+                    />
+
+                    <View style={styles.peerMetricsRow}>
+                        <View style={styles.peerBlock}>
+                            <Text style={styles.metricLabel}>Industry Avg</Text>
+                            <Text style={styles.peerValue}>
+                                {industryAvg}<Text style={styles.peerSuffix}> / 100</Text>
+                            </Text>
+                        </View>
+                        <View style={styles.peerBlock}>
+                            <Text style={styles.metricLabel}>Peer Benchmark</Text>
+                            <Text style={styles.peerValue}>
+                                {Math.round(result.overall * 0.95)}<Text style={styles.peerSuffix}> / 100</Text>
+                            </Text>
+                        </View>
+                        <View style={styles.peerBlock}>
+                            <Text style={styles.metricLabel}>Global Percentile</Text>
+                            <Text style={styles.peerValue}>{result.percentile}<Text style={styles.peerSuffix}>th</Text></Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.listsRow} wrap={false}>
+                        <View style={styles.listColumn} wrap={false}>
+                            <Text style={styles.listTitle}>Top 3 Strengths</Text>
+                            {topStrengths.map((s, idx) => (
+                                <View key={idx} style={styles.listItem} wrap={false}>
+                                    <Text style={styles.bullet}>—</Text>
+                                    <Text>{s.label} ({s.score}/100)</Text>
+                                </View>
+                            ))}
+                        </View>
+                        <View style={styles.listColumn} wrap={false}>
+                            <Text style={styles.listTitle}>Top 3 Focus Areas</Text>
+                            {topOpportunities.map((s, idx) => (
+                                <View key={idx} style={styles.listItem} wrap={false}>
+                                    <Text style={styles.bullet}>—</Text>
+                                    <Text>{s.label} ({s.score}/100)</Text>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
                 </View>
 
-                <View style={styles.listSection}>
-                    <View style={styles.listColumn}>
-                        <Text style={styles.listTitle}>Top 3 Strategic Strengths</Text>
-                        {topStrengths.map((s, idx) => (
-                            <View key={idx} style={styles.listItem}>
-                                <Text style={styles.bullet}>•</Text>
-                                <Text>{s.label} ({s.score}/100)</Text>
-                            </View>
-                        ))}
-                    </View>
-                    <View style={styles.listColumn}>
-                        <Text style={styles.listTitle}>Top 3 Focus Opportunities</Text>
-                        {topOpportunities.map((s, idx) => (
-                            <View key={idx} style={styles.listItem}>
-                                <Text style={[styles.bullet, { color: "#B45309" }]}>•</Text>
-                                <Text>{s.label} ({s.score}/100)</Text>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-
-                <View style={{ marginTop: 30, paddingTop: 15, borderTop: 1, borderTopColor: COLORS.border, flexDirection: "row", justifyContent: "space-between" }}>
-                    <View>
-                        <Text style={styles.label}>Industry Avg</Text>
-                        <Text style={{ fontSize: 11, fontWeight: "bold" }}>{stats?.averageOverall || (result.overall - 4)} <Text style={{ fontSize: 7, color: COLORS.darkGray }}>/ 100</Text></Text>
-                    </View>
-                    <View>
-                        <Text style={styles.label}>Dimension Peer Average</Text>
-                        <Text style={{ fontSize: 11, fontWeight: "bold" }}>{Math.round(result.overall * 0.95)} <Text style={{ fontSize: 7, color: COLORS.darkGray }}>/ 100</Text></Text>
-                    </View>
-                    <View>
-                        <Text style={styles.label}>Global Percentile</Text>
-                        <Text style={{ fontSize: 11, fontWeight: "bold" }}>{result.percentile}th</Text>
-                    </View>
-                </View>
-                <GlobalFooter page={2} />
+                <PageFooter />
             </Page>
 
-            {/* PAGE 3: STRATEGIC ROADMAP */}
+            {/* PAGE 3: STRATEGIC RECOMMENDATIONS + FOOTER INFO */}
             <Page size="A4" style={styles.page}>
-                <Text style={styles.sectionHeading}>Strategic Recommendation Roadmap</Text>
+                <PageHeader />
 
-                <View style={styles.roadmapSection}>
-                    <Text style={styles.roadmapTitle}>Phase 1: Immediate Priorities (0-30 Days)</Text>
-                    <View style={{ paddingLeft: 10 }}>
+                <Text style={styles.sectionHeading}>Strategic Recommendations</Text>
+                <View style={styles.sectionRule} />
+
+                <View style={styles.roadmapSection} wrap={false}>
+                    <Text style={styles.roadmapTitle}>Phase 1: Immediate Priorities (0–30 Days)</Text>
+                    <View style={{ paddingLeft: 2 }} wrap={false}>
                         {recs.slice(0, 1).map((r, i) => (
-                            <View key={i} style={styles.listItem}>
-                                <Text style={styles.bullet}>•</Text>
-                                <Text style={{ fontSize: 9 }}>{r}</Text>
+                            <View key={i} style={styles.listItem} wrap={false}>
+                                <Text style={styles.bullet}>—</Text>
+                                <Text style={{ fontSize: 8, lineHeight: 1.35 }}>{r}</Text>
                             </View>
                         ))}
-                        <View style={styles.listItem}>
-                            <Text style={styles.bullet}>•</Text>
-                            <Text style={{ fontSize: 9 }}>Audit identified legacy constraints in the {topOpportunities[0].label} dimension and establish a task force for remediation.</Text>
+                        <View style={styles.listItem} wrap={false}>
+                            <Text style={styles.bullet}>—</Text>
+                            <Text style={{ fontSize: 8, lineHeight: 1.35 }}>
+                                Assess current control environment maturity in the {topOpportunities[0].label} dimension and establish a remediation plan with clear ownership and timelines.
+                            </Text>
                         </View>
                     </View>
                 </View>
 
-                <View style={styles.roadmapSection}>
-                    <Text style={styles.roadmapTitle}>Phase 2: Medium-Term Transformation (30-90 Days)</Text>
-                    <View style={{ paddingLeft: 10 }}>
+                <View style={styles.roadmapSection} wrap={false}>
+                    <Text style={styles.roadmapTitle}>Phase 2: Medium-Term Enhancement (30–90 Days)</Text>
+                    <View style={{ paddingLeft: 2 }} wrap={false}>
                         {recs.slice(1, 2).map((r, i) => (
-                            <View key={i} style={styles.listItem}>
-                                <Text style={styles.bullet}>•</Text>
-                                <Text style={{ fontSize: 9 }}>{r}</Text>
+                            <View key={i} style={styles.listItem} wrap={false}>
+                                <Text style={styles.bullet}>—</Text>
+                                <Text style={{ fontSize: 8, lineHeight: 1.35 }}>{r}</Text>
                             </View>
                         ))}
-                        <View style={styles.listItem}>
-                            <Text style={styles.bullet}>•</Text>
-                            <Text style={{ fontSize: 9 }}>Formalise governance frameworks for {topOpportunities[1].label} to ensure data integrity and operational scalability.</Text>
+                        <View style={styles.listItem} wrap={false}>
+                            <Text style={styles.bullet}>—</Text>
+                            <Text style={{ fontSize: 8, lineHeight: 1.35 }}>
+                                Formalise governance and quality assurance frameworks for {topOpportunities[1].label} to ensure consistent methodology, control evidence integrity, and audit standard conformance.
+                            </Text>
                         </View>
                     </View>
                 </View>
 
-                <View style={styles.roadmapSection}>
-                    <Text style={styles.roadmapTitle}>Phase 3: Long-Term Operationalisation (90-180 Days)</Text>
-                    <View style={{ paddingLeft: 10 }}>
+                <View style={styles.roadmapSection} wrap={false}>
+                    <Text style={styles.roadmapTitle}>Phase 3: Long-Term Operationalisation (90–180 Days)</Text>
+                    <View style={{ paddingLeft: 2 }} wrap={false}>
                         {recs.slice(2, 3).map((r, i) => (
-                            <View key={i} style={styles.listItem}>
-                                <Text style={styles.bullet}>•</Text>
-                                <Text style={{ fontSize: 9 }}>{r}</Text>
+                            <View key={i} style={styles.listItem} wrap={false}>
+                                <Text style={styles.bullet}>—</Text>
+                                <Text style={{ fontSize: 8, lineHeight: 1.35 }}>{r}</Text>
                             </View>
                         ))}
-                        <View style={styles.listItem}>
-                            <Text style={styles.bullet}>•</Text>
-                            <Text style={{ fontSize: 9 }}>Fully integrate {topStrengths[0].label} capabilities into the broader enterprise operating model to drive compounded returns.</Text>
+                        <View style={styles.listItem} wrap={false}>
+                            <Text style={styles.bullet}>—</Text>
+                            <Text style={{ fontSize: 8, lineHeight: 1.35 }}>
+                                Embed {topStrengths[0].label} capabilities into the broader internal audit operating model to drive compounded assurance coverage and risk insight value for the Audit Committee.
+                            </Text>
                         </View>
+                    </View>
+                </View>
+
+                <View style={styles.preparedByRow}>
+                    <View>
+                        <Text style={styles.metaLabelSmall}>Prepared by</Text>
+                        <Text style={styles.metaValueSmall}>
+                            TRENNT — Internal Audit Specialists
+                        </Text>
+                    </View>
+                    <View style={{ textAlign: "right" }}>
+                        <Text style={styles.metaLabelSmall}>Assessment Framework</Text>
+                        <Text style={styles.metaValueSmall}>
+                            TRENNT Internal Audit Maturity Framework
+                        </Text>
                     </View>
                 </View>
 
                 <Text style={styles.confidentiality}>
-                    This report contains proprietary and confidential information. All assessments and recommendations are based on the TRENNT Maturity Framework and are subject to the terms of your engagement.
+                    This report contains proprietary and confidential information. All assessments and recommendations are based on the TRENNT Internal Audit Maturity Framework and are subject to the terms of your engagement.
                 </Text>
 
-                <View style={{ position: "absolute", bottom: 90, left: 50, right: 50, flexDirection: "row", justifyContent: "space-between" }}>
-                    <View>
-                        <Text style={styles.label}>Prepared by</Text>
-                        <Text style={{ fontSize: 10, fontWeight: "bold" }}>TRENNT Consulting Group</Text>
+                <PageFooter />
+            </Page>
+        </Document>
+    );
+};
+
+const AssessmentPDFReportFallback = ({
+    result,
+    respondent,
+    stats,
+}: {
+    result: AssessmentResult;
+    respondent: RespondentProfile | null;
+    stats: BenchmarkStats | null;
+}) => {
+    const tierMeta = TIER_META[result.tier as MaturityTier];
+    const recs = TIER_RECOMMENDATIONS[result.tier as MaturityTier];
+    const dateStr = new Date(result.createdAt).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+
+    const sortedDim = DIMENSIONS.map((d) => ({ key: d.key, label: d.label, score: result.scores[d.key] }))
+        .sort((a, b) => b.score - a.score);
+
+    const topStrengths = sortedDim.slice(0, 3);
+    const topOpportunities = sortedDim.slice(-3).reverse();
+    const industryAvg = stats?.averageOverall || result.overall - 4;
+
+    const preparedForText = respondent?.name && respondent?.company
+        ? `Prepared for: ${respondent.name}, ${respondent.company}`
+        : respondent?.company
+            ? `Prepared for: ${respondent.company}`
+            : respondent?.name
+                ? `Prepared for: ${respondent.name}`
+                : "";
+
+    return (
+        <Document title={`TRENNT Executive Report - ${respondent?.company || "Confidential"}`}>
+            <Page size="A4" style={styles.coverPage}>
+                <Text style={styles.coverEyebrow}>Confidential · Executive Assessment</Text>
+                <Text style={styles.coverTitle}>Internal Audit Maturity{"\n"}Benchmark Report</Text>
+                <Text style={styles.coverSubtitle}>Confidential Executive Assessment</Text>
+
+                <View style={styles.coverMetaBlock}>
+                    {respondent?.company && (
+                        <View style={styles.coverMetaRow}>
+                            <Text style={styles.coverMetaLabel}>Organisation</Text>
+                            <Text style={styles.coverMetaValue}>{respondent.company}</Text>
+                        </View>
+                    )}
+                    {respondent?.industry && (
+                        <View style={styles.coverMetaRow}>
+                            <Text style={styles.coverMetaLabel}>Industry</Text>
+                            <Text style={styles.coverMetaValue}>{respondent.industry}</Text>
+                        </View>
+                    )}
+                    {respondent?.companySize && (
+                        <View style={styles.coverMetaRow}>
+                            <Text style={styles.coverMetaLabel}>Company Size</Text>
+                            <Text style={styles.coverMetaValue}>{respondent.companySize}</Text>
+                        </View>
+                    )}
+                    <View style={styles.coverMetaRow}>
+                        <Text style={styles.coverMetaLabel}>Maturity Tier</Text>
+                        <Text style={styles.coverMetaValue}>{result.tier}</Text>
                     </View>
-                    <View style={{ textAlign: "right" }}>
-                        <Text style={styles.label}>Assessment Framework</Text>
-                        <Text style={{ fontSize: 10, fontWeight: "bold" }}>Strategic Maturity Model v4.2</Text>
-                    </View>
+                    <Text style={styles.coverDate}>Report Date · {dateStr}</Text>
+                    {preparedForText && (
+                        <Text style={styles.preparedForLine}>{preparedForText}</Text>
+                    )}
                 </View>
 
-                <GlobalFooter page={3} />
+                <View style={styles.execBlock}>
+                    <View style={styles.execMetricsRow}>
+                        <View style={styles.metricBlock}>
+                            <Text style={styles.metricLabel}>Overall Maturity Score</Text>
+                            <Text style={styles.metricValueLarge}>
+                                {result.overall}
+                                <Text style={styles.metricSuffix}>/100</Text>
+                            </Text>
+                        </View>
+                        <View style={styles.metricBlock}>
+                            <Text style={styles.metricLabel}>Maturity Tier</Text>
+                            <Text style={styles.metricValueMedium}>{result.tier}</Text>
+                        </View>
+                        <View style={styles.metricBlock}>
+                            <Text style={styles.metricLabel}>Benchmark Percentile</Text>
+                            <Text style={styles.metricValueMedium}>{result.percentile}th</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.summaryQuote}>{tierMeta.summary}</Text>
+                </View>
+
+                <PageFooter />
+            </Page>
+
+            <Page size="A4" style={styles.page}>
+                <PageHeader />
+                <PageFooter />
+            </Page>
+
+            <Page size="A4" style={styles.page}>
+                <PageHeader />
+                <PageFooter />
             </Page>
         </Document>
     );
@@ -531,9 +946,17 @@ export async function generatePDF(
     stats: BenchmarkStats | null = null
 ) {
     const { pdf } = await import("@react-pdf/renderer");
-    const blob = await pdf(
-        <AssessmentPDFReport result={result} respondent={respondent} stats={stats} />
-    ).toBlob();
+    let blob: Blob;
+    try {
+        blob = await pdf(
+            <AssessmentPDFReport result={result} respondent={respondent} stats={stats} />
+        ).toBlob();
+    } catch (imageError) {
+        console.warn("[PDF] Logo image failed to load, generating fallback report without logo:", imageError);
+        blob = await pdf(
+            <AssessmentPDFReportFallback result={result} respondent={respondent} stats={stats} />
+        ).toBlob();
+    }
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;

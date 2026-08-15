@@ -17,7 +17,7 @@ export function NotFoundView() {
   const suggestions: { label: string; hint: string; view: Parameters<typeof navigate>[0] }[] = [
     { label: "Home", hint: "Start here", view: "home" },
     { label: "Services", hint: "What we do", view: "services" },
-    { label: "Strategic Benchmark", hint: "Assess your maturity", view: "benchmark-landing" },
+    { label: "Internal Audit Maturity Benchmark", hint: "Assess your maturity", view: "benchmark-landing" },
     { label: "Insights", hint: "Sector benchmarks", view: "benchmark-insights" },
     { label: "Contact", hint: "Talk to us", view: "contact" },
   ];

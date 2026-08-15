@@ -18,7 +18,7 @@ export async function GET() {
 
     if (totalAssessments === 0) {
       return Response.json(
-        {
+        { ok: true, data: {
           totalAssessments: 0,
           averageOverall: 0,
           dimensionAverages: {
@@ -33,7 +33,7 @@ export async function GET() {
           byCompanySize: [],
           trend: [],
           avgDurationSec: 0,
-        },
+        } },
         { status: 200 }
       );
     }
@@ -96,52 +96,47 @@ export async function GET() {
     }).filter((r) => r.count > 0);
 
     // Submission trend: last 12 weeks (count + avg score per week bucket).
-    // For SQLite we compute buckets in JS from createdAt to avoid dialect-specific date SQL.
-    const allAssessments = await db.assessment.findMany({
-      select: { overallScore: true, createdAt: true },
-      orderBy: { createdAt: "asc" },
-    });
+    // Computed in PostgreSQL using date_trunc for efficiency.
+    interface TrendRow {
+      weekStart: string;
+      count: number;
+      average: number;
+    }
+    const trendRows = await db.$queryRaw<TrendRow[]>`
+      SELECT
+        TO_CHAR(DATE_TRUNC('week', "createdAt"), 'YYYY-MM-DD') AS "weekStart",
+        COUNT(*)::int AS "count",
+        COALESCE(ROUND(AVG("overallScore"))::int, 0) AS "average"
+      FROM "Assessment"
+      WHERE "createdAt" > NOW() - INTERVAL '12 weeks'
+      GROUP BY DATE_TRUNC('week', "createdAt")
+      ORDER BY DATE_TRUNC('week', "createdAt") ASC
+    `;
+    // Fill in any missing weeks (buckets with zero submissions) so the chart
+    // always shows a continuous 12-week range.
+    const trendMap = new Map(trendRows.map((r) => [r.weekStart, r]));
     const now = Date.now();
     const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-    const buckets: { weekStart: string; count: number; average: number; sum: number }[] = [];
+    const trend: { weekStart: string; count: number; average: number }[] = [];
     for (let i = 11; i >= 0; i--) {
-      const start = now - i * WEEK_MS;
-      const startDay = new Date(start);
-      // align to Monday
-      const day = startDay.getUTCDay();
+      const start = new Date(now - i * WEEK_MS);
+      const day = start.getUTCDay();
       const offset = day === 0 ? 6 : day - 1;
-      startDay.setUTCDate(startDay.getUTCDate() - offset);
-      startDay.setUTCHours(0, 0, 0, 0);
-      buckets.push({
-        weekStart: startDay.toISOString().slice(0, 10),
-        count: 0,
-        sum: 0,
-        average: 0,
+      start.setUTCDate(start.getUTCDate() - offset);
+      start.setUTCHours(0, 0, 0, 0);
+      const key = start.toISOString().slice(0, 10);
+      const row = trendMap.get(key);
+      trend.push({
+        weekStart: key,
+        count: row?.count ?? 0,
+        average: row?.average ?? 0,
       });
     }
-    for (const a of allAssessments) {
-      const t = a.createdAt.getTime();
-      // find the bucket this falls into
-      for (let i = 0; i < buckets.length; i++) {
-        const bucketStart = new Date(buckets[i].weekStart).getTime();
-        const bucketEnd = bucketStart + WEEK_MS;
-        if (t >= bucketStart && t < bucketEnd) {
-          buckets[i].count += 1;
-          buckets[i].sum += a.overallScore;
-          break;
-        }
-      }
-    }
-    const trend = buckets.map((b) => ({
-      weekStart: b.weekStart,
-      count: b.count,
-      average: b.count > 0 ? Math.round(b.sum / b.count) : 0,
-    }));
 
     const r = (n: number | null) => (n == null ? 0 : Math.round(n));
 
     return Response.json(
-      {
+      { ok: true, data: {
         totalAssessments,
         averageOverall: r(agg._avg.overallScore),
         dimensionAverages: {
@@ -156,7 +151,7 @@ export async function GET() {
         byCompanySize,
         trend,
         avgDurationSec: r(agg._avg.durationSec),
-      },
+      } },
       { status: 200 }
     );
   } catch (err) {

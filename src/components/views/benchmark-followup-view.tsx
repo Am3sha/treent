@@ -292,7 +292,7 @@ export function BenchmarkFollowupView() {
                       <Field label="Phone (optional)">
                         <Input
                           {...register("phone")}
-                          placeholder="+44 20 7946 0312"
+                          placeholder="+966 50 123 4567"
                           autoComplete="tel"
                         />
                       </Field>
@@ -372,18 +372,18 @@ export function BenchmarkFollowupView() {
                       Reach us directly — we read every message.
                     </p>
                     <a
-                      href="mailto:hello@trennt.com"
+                      href="mailto:info@trennt.sa"
                       className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                     >
                       <Mail className="h-4 w-4" />
-                      hello@trennt.com
+                      info@trennt.sa
                     </a>
                     <a
                       href="tel:+442079460312"
                       className="mt-2 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
                     >
                       <Phone className="h-3.5 w-3.5" />
-                      +44 20 7946 0312
+                      +966 50 123 4567
                     </a>
                   </CardContent>
                 </Card>

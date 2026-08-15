@@ -45,9 +45,9 @@ import { cn } from "@/lib/utils";
 const OUTCOMES = [
   {
     icon: Compass,
-    title: "Your strategic maturity tier",
+    title: "Your internal audit maturity tier",
     description:
-      "A clear Nascent → Leading rating, normalised from 15 evidence-based questions across the five dimensions of strategic maturity.",
+      "A clear Nascent → Leading rating, normalised from 15 evidence-based questions across the five dimensions of internal audit maturity.",
   },
   {
     icon: BarChart3,
@@ -80,7 +80,7 @@ const STEPS = [
     n: "02",
     title: "Get your score & tier",
     description:
-      "We normalise your answers to a 0–100 strategic maturity score, place you in one of four tiers, and compute your percentile vs the cohort.",
+      "We normalise your answers to a 0–100 internal audit maturity score, place you in one of four tiers, and compute your percentile vs the cohort.",
   },
   {
     n: "03",
@@ -101,11 +101,11 @@ const FAQ = [
   },
   {
     q: "What do I get at the end?",
-    a: "A full results report: your overall strategic maturity score, tier, percentile against the cohort, a per-dimension radar profile, identified strengths and focus areas, and a short set of recommendations calibrated to your tier. You can request a 1:1 follow-up from the results page.",
+    a: "A full results report: your overall internal audit maturity score, tier, percentile against the cohort, a per-dimension radar profile, identified strengths and focus areas, and a short set of recommendations calibrated to your tier. You can request a 1:1 follow-up from the results page.",
   },
   {
     q: "Can my team take it too?",
-    a: "Absolutely — and we encourage it. Running the benchmark across a leadership team reveals where there is alignment and where there is divergence on strategic maturity. Get in touch via the follow-up form and we will set up a cohort view for your organisation.",
+    a: "Absolutely — and we encourage it. Running the benchmark across a leadership team reveals where there is alignment and where there is divergence on internal audit maturity. Get in touch via the follow-up form and we will set up a cohort view for your organisation.",
   },
 ];
 
@@ -125,7 +125,8 @@ export function BenchmarkLandingView() {
       try {
         const res = await fetch("/api/benchmark/stats", { cache: "no-store" });
         if (!res.ok) throw new Error("stats fetch failed");
-        const data = (await res.json()) as BenchmarkStats;
+        const response = (await res.json()) as { ok: boolean; data?: BenchmarkStats };
+        const data = response.data;
         if (cancelled) return;
         if (!data || data.totalAssessments === 0) {
           setStatsState("empty");
@@ -160,14 +161,14 @@ export function BenchmarkLandingView() {
           </Reveal>
           <Reveal delay={0.05}>
             <h1 className="mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
-              How strategically mature is your organisation,{" "}
+              How mature is your internal audit function,{" "}
               <span className="text-primary">really?</span>
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-6 max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground">
               A fifteen-question diagnostic, grounded in five dimensions of
-              strategic maturity. Eight minutes in, you get an honest score, a
+              internal audit maturity. Eight minutes in, you get an honest score, a
               tier, a percentile against your peers, and a clear sense of where
               to focus next.
             </p>
@@ -246,7 +247,7 @@ export function BenchmarkLandingView() {
             }
           />
           <StatCell
-            label="Average strategic maturity score"
+            label="Average internal audit maturity score"
             value={
               statsState === "loading" ? (
                 <Skeleton className="h-9 w-24" />
@@ -302,10 +303,10 @@ export function BenchmarkLandingView() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <Reveal>
           <SectionHeading
-            eyebrow="What you'll get"
-            title="A genuine diagnostic, not a quiz."
-            description="You will leave with a defensible read on your strategic maturity — and a clear point of view on what to do about it."
-          />
+              eyebrow="What you'll get"
+              title="A genuine diagnostic, not a quiz."
+              description="You will leave with a defensible read on your internal audit maturity — and a clear point of view on what to do about it."
+            />
         </Reveal>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {OUTCOMES.map((o, i) => (
@@ -336,7 +337,7 @@ export function BenchmarkLandingView() {
           <Reveal>
             <SectionHeading
               eyebrow="What we measure"
-              title="Five dimensions of strategic maturity."
+              title="Five dimensions of internal audit maturity."
               description="Maturity is not one number — it is a shape. We assess the five dimensions that, in our experience, separate organisations that compound from those that stall."
             />
           </Reveal>
@@ -425,7 +426,7 @@ export function BenchmarkLandingView() {
             <div className="mt-8 space-y-5 text-base leading-relaxed text-muted-foreground">
               <p>
                 Each of the fifteen statements uses a 1–5 Likert scale. Your
-                answers are normalised to a 0–100 strategic maturity score per dimension
+                answers are normalised to a 0–100 internal audit maturity score per dimension
                 (where 1 maps to 0 and 5 maps to 100), and a weighted overall
                 score is computed across all five. The overall score places you
                 in one of four tiers — Nascent, Developing, Established, or
@@ -463,7 +464,7 @@ export function BenchmarkLandingView() {
                   We never share individual scores. You can request deletion at
                   any time by emailing{" "}
                   <span className="font-medium text-foreground">
-                    hello@trennt.com
+                    info@trennt.sa
                   </span>
                   .
                 </span>

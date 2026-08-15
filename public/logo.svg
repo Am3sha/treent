@@ -1,32 +1,24 @@
-<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="trennt-grad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="oklch(0.38 0.06 162)" />
-      <stop offset="100%" stopColor="oklch(0.45 0.09 180)" />
-    </linearGradient>
-  </defs>
-  <rect
-    x="1"
-    y="1"
-    width="38"
-    height="38"
-    rx="11"
-    stroke="oklch(0.38 0.06 162 / 0.35)"
-    strokeWidth="1"
-    fill="oklch(0.38 0.06 162 / 0.06)"
-  />
-  <path
-    d="M6 24 Q20 4 34 24"
-    stroke="url(#trennt-grad)"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    fill="none"
-  />
-  <path
-    d="M6 26 H34"
-    stroke="oklch(0.72 0.13 75)"
-    strokeWidth="2"
-    strokeLinecap="round"
-  />
-  <circle cx="20" cy="9.5" r="2.6" fill="oklch(0.72 0.13 75)" />
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="663.000000pt" height="603.000000pt" viewBox="0 0 663.000000 603.000000"
+ preserveAspectRatio="xMidYMid meet">
+<metadata>
+Created by potrace 1.16, written by Peter Selinger 2001-2019
+</metadata>
+<g transform="translate(0.000000,603.000000) scale(0.100000,-0.100000)"
+fill="#003D3C" stroke="none">
+<path d="M285 5812 c-16 -11 -39 -29 -50 -42 -20 -22 -20 -38 -23 -869 l-2
+-848 23 -34 c49 -73 -20 -69 1056 -69 944 0 966 0 1006 20 54 26 85 80 85 148
+0 62 58 -18 -594 807 -274 347 -531 662 -571 701 -52 50 -100 85 -162 117
+-144 74 -171 79 -473 84 -248 4 -267 3 -295 -15z M4585 5824 c-108 -22 -138
+-30 -190 -51 -82 -34 -180 -101 -241 -165 -55 -56 -1113 -1388 -1132 -1425
+-18 -33 -14 -114 7 -153 10 -20 36 -44 61 -57 l43 -23 1590 0 1589 0 38 21
+c20 11 45 35 56 52 18 31 19 63 19 867 0 817 0 836 -20 868 -11 19 -37 42 -57
+53 -36 18 -70 19 -890 18 -469 -1 -862 -3 -873 -5z M2783 3600 c-23 -12 -52
+-37 -63 -55 -20 -32 -20 -43 -20 -1640 0 -1794 -6 -1641 70 -1684 37 -21 44
+-21 865 -21 916 0 873 -3 915 65 20 32 20 47 20 911 0 990 3 941 -77 1102 -35
+73 -63 111 -122 172 -58 60 -1129 919 -1414 1134 -51 39 -117 45 -174 16z"/>
+</g>
 </svg>

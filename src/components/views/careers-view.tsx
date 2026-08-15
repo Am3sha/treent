@@ -551,10 +551,10 @@ function ApplicationDialog({
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error || "Request failed");
       }
-      const result = (await res.json()) as { ok: true; id: string };
+      const result = (await res.json()) as { ok: true; data: { id: string } };
       onSubmitted(data.name.trim().split(" ")[0]);
       // Use the id if you want; keep onSubmitted signature simple
-      void result;
+      void result.data.id;
     } catch (err) {
       onError(
         err instanceof Error
@@ -709,4 +709,3 @@ function ApplicationDialog({
     </Dialog>
   );
 }
-
