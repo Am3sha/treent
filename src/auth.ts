@@ -49,8 +49,8 @@ export const authOptions: NextAuthOptions = {
       return null;
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL?.trim();
-    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH?.trim();
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().replace(/^["']|["']$/g, "");
+    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH?.trim().replace(/^["']|["']$/g, "");
 
     console.log("[auth] ADMIN_EMAIL exists:", !!adminEmail, "value:", adminEmail);
     console.log("[auth] ADMIN_PASSWORD_HASH exists:", !!adminPasswordHash, "length:", adminPasswordHash?.length, "prefix:", adminPasswordHash?.slice(0, 7));

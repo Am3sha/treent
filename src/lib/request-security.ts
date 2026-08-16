@@ -115,8 +115,9 @@ export function clearLoginFailures(
 }
 
 function allowedOrigins(): string[] {
-  const configured = process.env.ALLOWED_FORM_ORIGINS?.split(",")
-    .map((origin) => origin.trim())
+  const raw = process.env.ALLOWED_FORM_ORIGINS;
+  const configured = raw?.split(",")
+    .map((origin) => origin.trim().replace(/^["']|["']$/g, ""))
     .filter(Boolean) ?? [];
   const defaults = ["https://trennt.sa", "https://www.trennt.sa"];
 
@@ -124,17 +125,35 @@ function allowedOrigins(): string[] {
     defaults.push("http://localhost", "https://localhost", "http://127.0.0.1", "https://127.0.0.1");
   }
 
-  return [...new Set([...defaults, ...configured])];
+  const result = [...new Set([...defaults, ...configured])];
+  console.log("[origin] ALLOWED_FORM_ORIGINS raw:", JSON.stringify(raw));
+  console.log("[origin] defaults:", defaults);
+  console.log("[origin] configured:", configured);
+  console.log("[origin] final allowed origins:", result);
+  return result;
 }
 
 function hasAllowedOrigin(request: Request): boolean {
-  const source = request.headers.get("origin") ?? request.headers.get("referer");
-  if (!source) return false;
+  const originHeader = request.headers.get("origin");
+  const refererHeader = request.headers.get("referer");
+  const source = originHeader ?? refererHeader;
+  console.log("[origin] origin header:", JSON.stringify(originHeader));
+  console.log("[origin] referer header:", JSON.stringify(refererHeader));
+  console.log("[origin] source used:", JSON.stringify(source));
+  if (!source) {
+    console.log("[origin] no origin/referer header — blocking");
+    return false;
+  }
 
   try {
     const origin = new URL(source).origin;
-    return allowedOrigins().some((allowed) => origin === allowed || origin.startsWith(`${allowed}:`));
+    const allowed = allowedOrigins();
+    const matched = allowed.some((allowedOrigin) => origin === allowedOrigin || origin.startsWith(`${allowedOrigin}:`));
+    console.log("[origin] parsed origin:", origin);
+    console.log("[origin] matched:", matched);
+    return matched;
   } catch {
+    console.log("[origin] failed to parse source as URL");
     return false;
   }
 }
