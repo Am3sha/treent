@@ -39,28 +39,43 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
     if (!credentials?.email || !credentials?.password) {
+      console.log("[auth] missing credentials");
       return null;
     }
 
     const email = String(credentials.email);
     if (isLoginRateLimited(req, email)) {
+      console.log("[auth] rate limited:", email);
       return null;
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+    const adminEmail = process.env.ADMIN_EMAIL?.trim();
+    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH?.trim();
+
+    console.log("[auth] ADMIN_EMAIL exists:", !!adminEmail, "value:", adminEmail);
+    console.log("[auth] ADMIN_PASSWORD_HASH exists:", !!adminPasswordHash, "length:", adminPasswordHash?.length, "prefix:", adminPasswordHash?.slice(0, 7));
+    console.log("[auth] input email raw:", JSON.stringify(email));
+    console.log("[auth] input email trimmed:", JSON.stringify(email.trim()));
+    console.log("[auth] input email lowered:", JSON.stringify(email.trim().toLowerCase()));
 
     if (!adminEmail || !adminPasswordHash) {
+      console.log("[auth] missing env vars");
       recordLoginFailure(req, email);
       return null;
     }
 
-    if (email !== adminEmail) {
+    const normalizedInput = email.trim().toLowerCase();
+    const normalizedAdmin = adminEmail.trim().toLowerCase();
+    console.log("[auth] normalized input vs admin:", normalizedInput === normalizedAdmin);
+
+    if (normalizedInput !== normalizedAdmin) {
+      console.log("[auth] email mismatch raw:", email, "vs", adminEmail);
       recordLoginFailure(req, email);
       return null;
     }
 
     const passwordMatch = await bcrypt.compare(String(credentials.password), adminPasswordHash);
+    console.log("[auth] bcrypt match:", passwordMatch);
     if (!passwordMatch) {
       recordLoginFailure(req, email);
       return null;
