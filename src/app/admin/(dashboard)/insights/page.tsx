@@ -16,6 +16,7 @@ import {
     LineChart,
     Line,
 } from "recharts";
+import { TooltipValueType } from "recharts";
 import {
     TrendingUp,
     TrendingDown,
@@ -269,7 +270,7 @@ export default function AdminInsightsPage() {
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                     <XAxis dataKey="month" fontSize={10} />
                                     <YAxis fontSize={10} />
-                                    <Tooltip formatter={(value: number) => formatDuration(value)} />
+                                    <Tooltip formatter={(value: TooltipValueType | undefined) => formatDuration(typeof value === "number" ? value : 0)} />
                                     <Line type="monotone" dataKey="avgDuration" stroke="#002147" strokeWidth={2} />
                                 </LineChart>
                             </ResponsiveContainer>

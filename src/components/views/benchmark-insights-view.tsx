@@ -33,6 +33,7 @@ import {
   PolarRadiusAxis,
   Radar,
 } from "recharts";
+import { TooltipValueType } from "recharts";
 import { useNav } from "@/lib/store";
 import { DIMENSIONS, TIER_META } from "@/lib/content";
 import type { BenchmarkStats, MaturityTier } from "@/lib/types";
@@ -302,7 +303,7 @@ export function BenchmarkInsightsView() {
                             border: "1px solid oklch(0.89 0.012 120)",
                             fontSize: 12,
                           }}
-                          formatter={(v: number) => [`${v} / 100`, "Average"]}
+                          formatter={(v: TooltipValueType | undefined) => [`${typeof v === "number" ? v : 0} / 100`, "Average"]}
                         />
                         <Bar dataKey="average" radius={[0, 6, 6, 0]} barSize={28}>
                           {dimensionData.map((_, i) => (
@@ -593,7 +594,7 @@ export function BenchmarkInsightsView() {
                             border: "1px solid oklch(0.89 0.012 120)",
                             fontSize: 12,
                           }}
-                          formatter={(v: number) => [`${v} / 100`, "Average"]}
+                          formatter={(v: TooltipValueType | undefined) => [`${typeof v === "number" ? v : 0} / 100`, "Average"]}
                           labelFormatter={(l) => `Size: ${l}`}
                         />
                         <Bar
