@@ -15,6 +15,8 @@
 //   percentile = (lowerOrEqualOthers / totalOthers) * 100, rounded. If there are no other
 //   assessments yet, percentile = 50 (neutral middle).
 
+import { COMPANY_SIZES } from "@/lib/benchmark-constants";
+import type { CompanySize } from "@/lib/benchmark-constants";
 import { db } from "@/lib/db";
 import { BENCHMARK_QUESTIONS } from "@/lib/content";
 import {
@@ -144,6 +146,13 @@ export async function POST(req: Request) {
     const respondentName = optionalSanitizedText(respondent.name);
     const companyName = optionalSanitizedText(respondent.company);
     const companySize = optionalSanitizedText(respondent.companySize);
+    if (companySize && !COMPANY_SIZES.includes(companySize as CompanySize)) {
+      return Response.json(
+        { ok: false, error: "Invalid companySize" },
+        { status: 400 }
+      );
+    }
+    const companySizeTyped = companySize ? (companySize as CompanySize) : undefined;
     const industry = optionalSanitizedText(respondent.industry);
     const country = optionalSanitizedText(respondent.country);
     const role = optionalSanitizedText(respondent.role);
@@ -210,7 +219,7 @@ export async function POST(req: Request) {
       respondentName,
       respondentEmail,
       companyName,
-      companySize,
+      companySize: companySizeTyped,
       industry,
       country,
       role,
@@ -229,19 +238,21 @@ export async function POST(req: Request) {
   });
 
     // ---- Percentile vs other assessments (excluding self) ----
-    const totalOthers = await db.assessment.count({
-      where: { id: { not: created.id } },
-    });
-    let percentile: number;
-    if (totalOthers === 0) {
-      percentile = 50;
-    } else {
-      const lowerOrEqualOthers = await db.assessment.count({
+    const [totalOthers, lowerOrEqualOthers] = await Promise.all([
+      db.assessment.count({
+        where: { id: { not: created.id } },
+      }),
+      db.assessment.count({
         where: {
           id: { not: created.id },
           overallScore: { lte: overallScore },
         },
-      });
+      }),
+    ]);
+    let percentile: number;
+    if (totalOthers === 0) {
+      percentile = 50;
+    } else {
       percentile = Math.round((lowerOrEqualOthers / totalOthers) * 100);
     }
 

@@ -14,7 +14,7 @@ export function Logo({
   return (
     <span className={cn("inline-flex items-center", className)}>
       <Image
-        src={variant === "light" ? "/trennt-logo.png" : "/logo.svg"}
+        src={variant === "light" ? "/trennt-logo.webp" : "/logo.svg"}
         alt="TRENNT"
         width={200}
         height={40}

@@ -33,14 +33,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Icon } from "@/components/site/icon";
 import { cn } from "@/lib/utils";
+import { COMPANY_SIZES, COMPANY_SIZE_LABELS } from "@/lib/benchmark-constants";
 
-const COMPANY_SIZES = [
-  "1 – 10",
-  "11 – 50",
-  "51 – 200",
-  "201 – 1,000",
-  "1,000+",
-];
+
 
 const INDUSTRIES = [
   "Financial services",
@@ -176,7 +171,7 @@ export function BenchmarkQuizView() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-secondary/20">
       {/* PROGRESS HEADER ------------------------------------------------ */}
-      <div className="sticky top-16 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
+      <div className="sticky top-[88px] z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
         <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">
@@ -579,7 +574,7 @@ function DetailsStep({
               <SelectContent>
                 {COMPANY_SIZES.map((s) => (
                   <SelectItem key={s} value={s}>
-                    {s}
+                    {COMPANY_SIZE_LABELS[s]}
                   </SelectItem>
                 ))}
               </SelectContent>

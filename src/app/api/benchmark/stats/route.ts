@@ -4,6 +4,7 @@
 // breakdowns by industry and company size, and a submission trend over the last 12 weeks.
 // Averages are rounded to integers for a clean readout. Empty dataset returns zeros.
 
+import { COMPANY_SIZES } from "@/lib/benchmark-constants";
 import { db } from "@/lib/db";
 
 type Tier = "Nascent" | "Developing" | "Established" | "Leading";
@@ -14,7 +15,58 @@ function emptyTierDist(): Record<Tier, number> {
 
 export async function GET() {
   try {
-    const totalAssessments = await db.assessment.count();
+    interface TrendRow {
+      weekStart: string;
+      count: number;
+      average: number;
+    }
+
+    const [
+      totalAssessments,
+      agg,
+      grouped,
+      byIndustryRows,
+      byCompanySizeRows,
+      trendRows,
+    ] = await Promise.all([
+      db.assessment.count(),
+      db.assessment.aggregate({
+        _avg: {
+          overallScore: true,
+          strategyScore: true,
+          technologyScore: true,
+          cultureScore: true,
+          dataScore: true,
+          operationsScore: true,
+          durationSec: true,
+        },
+      }),
+      db.assessment.groupBy({
+        by: ["tier"],
+        _count: { _all: true },
+      }),
+      db.assessment.groupBy({
+        by: ["industry"],
+        _count: { _all: true },
+        _avg: { overallScore: true },
+        orderBy: { _count: { industry: "desc" } },
+      }),
+      db.assessment.groupBy({
+        by: ["companySize"],
+        _count: { _all: true },
+        _avg: { overallScore: true },
+      }),
+      db.$queryRaw<TrendRow[]>`
+        SELECT
+          TO_CHAR(DATE_TRUNC('week', "createdAt"), 'YYYY-MM-DD') AS "weekStart",
+          COUNT(*)::int AS "count",
+          COALESCE(ROUND(AVG("overallScore"))::int, 0) AS "average"
+        FROM "Assessment"
+        WHERE "createdAt" > NOW() - INTERVAL '12 weeks'
+        GROUP BY DATE_TRUNC('week', "createdAt")
+        ORDER BY DATE_TRUNC('week', "createdAt") ASC
+      `,
+    ]);
 
     if (totalAssessments === 0) {
       return Response.json(
@@ -38,24 +90,6 @@ export async function GET() {
       );
     }
 
-    // Prisma aggregate: avg of each score column.
-    const agg = await db.assessment.aggregate({
-      _avg: {
-        overallScore: true,
-        strategyScore: true,
-        technologyScore: true,
-        cultureScore: true,
-        dataScore: true,
-        operationsScore: true,
-        durationSec: true,
-      },
-    });
-
-    // Tier distribution via groupBy.
-    const grouped = await db.assessment.groupBy({
-      by: ["tier"],
-      _count: { _all: true },
-    });
     const tierDistribution = emptyTierDist();
     for (const g of grouped) {
       if (g.tier in tierDistribution) {
@@ -63,13 +97,6 @@ export async function GET() {
       }
     }
 
-    // Breakdown by industry (avg overall + count per industry).
-    const byIndustryRows = await db.assessment.groupBy({
-      by: ["industry"],
-      _count: { _all: true },
-      _avg: { overallScore: true },
-      orderBy: { _count: { industry: "desc" } },
-    });
     const byIndustry = byIndustryRows
       .filter((r) => r.industry && r.industry.trim().length > 0)
       .slice(0, 10)
@@ -79,14 +106,7 @@ export async function GET() {
         average: Math.round(r._avg.overallScore ?? 0),
       }));
 
-    // Breakdown by company size, in a fixed display order.
-    const SIZE_ORDER = ["1-10", "11-50", "51-200", "201-1000", "1000+"];
-    const byCompanySizeRows = await db.assessment.groupBy({
-      by: ["companySize"],
-      _count: { _all: true },
-      _avg: { overallScore: true },
-    });
-    const byCompanySize = SIZE_ORDER.map((size) => {
+        const byCompanySize = COMPANY_SIZES.map((size) => {
       const row = byCompanySizeRows.find((r) => r.companySize === size);
       return {
         label: size,
@@ -95,25 +115,6 @@ export async function GET() {
       };
     }).filter((r) => r.count > 0);
 
-    // Submission trend: last 12 weeks (count + avg score per week bucket).
-    // Computed in PostgreSQL using date_trunc for efficiency.
-    interface TrendRow {
-      weekStart: string;
-      count: number;
-      average: number;
-    }
-    const trendRows = await db.$queryRaw<TrendRow[]>`
-      SELECT
-        TO_CHAR(DATE_TRUNC('week', "createdAt"), 'YYYY-MM-DD') AS "weekStart",
-        COUNT(*)::int AS "count",
-        COALESCE(ROUND(AVG("overallScore"))::int, 0) AS "average"
-      FROM "Assessment"
-      WHERE "createdAt" > NOW() - INTERVAL '12 weeks'
-      GROUP BY DATE_TRUNC('week', "createdAt")
-      ORDER BY DATE_TRUNC('week', "createdAt") ASC
-    `;
-    // Fill in any missing weeks (buckets with zero submissions) so the chart
-    // always shows a continuous 12-week range.
     const trendMap = new Map(trendRows.map((r) => [r.weekStart, r]));
     const now = Date.now();
     const WEEK_MS = 7 * 24 * 60 * 60 * 1000;

@@ -192,7 +192,7 @@ export function BenchmarkFollowupView() {
                   <CardDescription>
                     {result
                       ? `We'll reference your benchmark (tier: ${result.tier}, score ${result.overall}/100) when we reach out.`
-                      : "You don't need to have completed the benchmark — we're happy to talk."}
+                      : "Fill in the form below and we will reach out to you as soon as possible."}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="px-6 sm:px-8">

@@ -185,3 +185,17 @@ export function optionalSanitizedText(value: unknown): string | null {
   const sanitized = sanitizeText(value);
   return sanitized || null;
 }
+
+/**
+ * Normalizes a phone number to digits, spaces, dashes, parentheses, leading plus.
+ * Returns null only if non-string; otherwise returns a sanitized, whitespace-trimmed phone string.
+ * Rejects any input that contains disallowed characters after normalizing.
+ */
+export function sanitizePhone(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const cleaned = trimmed.replace(/[^\d+\s\-()]/g, "");
+  if (cleaned.length !== trimmed.length) return null;
+  return cleaned.replace(/\s+/g, " ").trim();
+}

@@ -105,4 +105,7 @@ model AssessmentFollowUp {
   interest     String @default("consultation") // consultation | report | workshop | partnership
   status       String @default("new")
   createdAt    DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
 }

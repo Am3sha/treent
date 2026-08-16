@@ -3,22 +3,18 @@
 import * as React from "react";
 import {
   ArrowRight,
-  ArrowUpRight,
   CheckCircle2,
   Clock,
-  Linkedin,
   Mail,
   MapPin,
   MessageSquare,
   Phone,
-  Twitter,
-  Youtube,
   Loader2,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { COMPANY } from "@/lib/content";
-import { Reveal, RevealStagger } from "@/components/site/reveal";
+import { Reveal, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,11 +28,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 type Topic = "general" | "services" | "framework" | "other";
 
@@ -59,18 +53,60 @@ const contactFormSchema = z.object({
   name: z.string().min(1, "Please tell us your name."),
   email: z.string().email("That doesn't look like a valid email."),
   company: z.string().optional(),
-  phone: z.string().optional(),
+  phone: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^[+]?[\d\s\-()]{6,30}$/.test(val),
+      "Phone can only include digits, +, spaces, dashes, and parentheses."
+    ),
   topic: z.enum(["general", "services", "framework", "other"]),
   message: z.string().min(20, "A sentence or two more would help us route this correctly."),
 });
 
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
+const FORM_FIELD_VARIANTS: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: EASE_OUT,
+      delay: 0.08 + i * 0.07,
+    },
+  }),
+};
+
+const ICON_ROW_VARIANTS: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.55,
+      ease: EASE_OUT,
+      delay: 0.1 + i * 0.1,
+    },
+  }),
+};
+
+const CHECKMARK_DRAW = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: { duration: 0.5, ease: EASE_OUT, delay: 0.2 },
+  },
+};
+
 export function ContactView() {
   const navigate = useNav((s) => s.navigate);
   const { toast } = useToast();
   const [submitting, setSubmitting] = React.useState(false);
   const [done, setDone] = React.useState(false);
+  const reduced = useReducedMotion();
 
   const {
     control,
@@ -89,6 +125,9 @@ export function ContactView() {
       message: "",
     },
   });
+
+  const watchedMessage = useWatch({ control, name: "message" });
+  const charCount = watchedMessage?.length || 0;
 
   const onSubmit = async (data: ContactFormValues) => {
     setSubmitting(true);
@@ -130,6 +169,14 @@ export function ContactView() {
     }
   };
 
+  const iconBounce: { scale: number; y: number; transition: { type: "spring"; stiffness: number; damping: number } } | Record<string, never> = reduced
+    ? {}
+    : {
+        scale: 1.15,
+        y: -2,
+        transition: { type: "spring" as const, stiffness: 400, damping: 17 },
+      };
+
   return (
     <div className="flex flex-col">
       {/* ------------------------------------------------------------------ */}
@@ -147,19 +194,25 @@ export function ContactView() {
                 Contact
               </div>
             </Reveal>
-            <Reveal y={14} duration={0.55} delay={0.05}>
-              <h1
-                id="contact-hero-heading"
-                className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
-              >
-                Get in touch.
-              </h1>
-            </Reveal>
-            <Reveal y={14} duration={0.55} delay={0.1}>
-              <p className="mt-5 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80">
-                Whether you need internal audit outsourcing, co-sourcing, or support for your existing function, we&apos;re happy to discuss how we can help.
-              </p>
-            </Reveal>
+
+            <motion.h1
+              id="contact-hero-heading"
+              className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
+              initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.7, ease: EASE_OUT, delay: 0.06 }}
+            >
+              {"Get in touch."}
+            </motion.h1>
+
+            <motion.p
+              className="mt-5 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80"
+              initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE_OUT, delay: 0.18 }}
+            >
+              Whether you need internal audit outsourcing, co-sourcing, or support for your existing function, we&apos;re happy to discuss how we can help.
+            </motion.p>
           </div>
         </div>
       </section>
@@ -177,7 +230,12 @@ export function ContactView() {
             <h2 id="contact-form-heading" className="sr-only">
               Contact form
             </h2>
-            <Reveal y={14} duration={0.55}>
+
+            <motion.div
+              initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE_OUT, delay: 0.25 }}
+            >
               <Card className="rounded-[16px] border border-gray-200 bg-white p-6 sm:p-8 md:p-10 shadow-sm">
                 <AnimatePresence mode="wait">
                   {done ? (
@@ -189,8 +247,34 @@ export function ContactView() {
                       transition={{ duration: 0.4, ease: EASE_OUT }}
                       className="flex flex-col items-center py-12 text-center"
                     >
-                      <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#EEF4F2] text-[#003D3C]">
-                        <CheckCircle2 className="h-7 w-7 stroke-[2]" />
+                      <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#EEF4F2] text-[#003D3C] overflow-hidden">
+                        <motion.svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-7 w-7"
+                          initial="hidden"
+                          animate="visible"
+                          variants={{
+                            visible: {
+                              transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+                            },
+                          }}
+                        >
+                          <motion.circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                            variants={CHECKMARK_DRAW}
+                          />
+                          <motion.path
+                            d="M8 12.5l2.5 2.5L16 9.5"
+                            variants={CHECKMARK_DRAW}
+                          />
+                        </motion.svg>
                       </span>
                       <h3 className="mt-6 text-[22px] font-bold text-[#121212]">
                         Message received
@@ -220,15 +304,14 @@ export function ContactView() {
                   ) : (
                     <motion.form
                       key="form"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
+                      initial="hidden"
+                      animate="visible"
                       onSubmit={handleSubmit(onSubmit)}
                       className="space-y-6"
                       noValidate
                     >
                       <div className="grid gap-5 sm:grid-cols-2">
-                        <div className="space-y-2">
+                        <motion.div custom={0} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                           <Label htmlFor="name" className="text-[13px] font-semibold text-[#121212]">
                             Full name <span className="text-destructive">*</span>
                           </Label>
@@ -238,15 +321,15 @@ export function ContactView() {
                             placeholder="Jane Patel"
                             autoComplete="name"
                             aria-invalid={!!errors.name}
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-200 focus:border-[#003D3C] focus:ring-1 focus:ring-[#003D3C]"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
                           {errors.name && (
                             <p className="text-xs font-medium text-destructive">
                               {errors.name.message}
                             </p>
                           )}
-                        </div>
-                        <div className="space-y-2">
+                        </motion.div>
+                        <motion.div custom={1} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                           <Label htmlFor="email" className="text-[13px] font-semibold text-[#121212]">
                             Work email <span className="text-destructive">*</span>
                           </Label>
@@ -257,40 +340,47 @@ export function ContactView() {
                             placeholder="jane@company.com"
                             autoComplete="email"
                             aria-invalid={!!errors.email}
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-200 focus:border-[#003D3C] focus:ring-1 focus:ring-[#003D3C]"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
                           {errors.email && (
                             <p className="text-xs font-medium text-destructive">
                               {errors.email.message}
                             </p>
                           )}
-                        </div>
+                        </motion.div>
                       </div>
 
                       <div className="grid gap-5 sm:grid-cols-2">
-                        <div className="space-y-2">
+                        <motion.div custom={2} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                           <Label htmlFor="company" className="text-[13px] font-semibold text-[#121212]">Company</Label>
                           <Input
                             id="company"
                             {...register("company")}
                             placeholder="Northwind Logistics"
                             autoComplete="organization"
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-200 focus:border-[#003D3C] focus:ring-1 focus:ring-[#003D3C]"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
-                        </div>
-                        <div className="space-y-2">
+                        </motion.div>
+                        <motion.div custom={3} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                           <Label htmlFor="phone" className="text-[13px] font-semibold text-[#121212]">Phone</Label>
                           <Input
                             id="phone"
                             {...register("phone")}
-                            placeholder="+966 50 000 0000"
+                            placeholder="+966 50 123 4567"
                             autoComplete="tel"
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-200 focus:border-[#003D3C] focus:ring-1 focus:ring-[#003D3C]"
+                            inputMode="tel"
+                            pattern="[+\d\s\-()]*"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
-                        </div>
+                          {errors.phone && (
+                            <p className="text-xs font-medium text-destructive">
+                              {errors.phone.message}
+                            </p>
+                          )}
+                        </motion.div>
                       </div>
 
-                      <div className="space-y-2">
+                      <motion.div custom={4} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                         <Label htmlFor="topic" className="text-[13px] font-semibold text-[#121212]">
                           What&apos;s this about?{" "}
                           <span className="text-destructive">*</span>
@@ -302,7 +392,7 @@ export function ContactView() {
                             <Select value={field.value} onValueChange={field.onChange}>
                               <SelectTrigger
                                 id="topic"
-                                className="h-11 w-full rounded-[8px] border-gray-200 text-[14px] transition-all duration-200 focus:border-[#003D3C] focus:ring-1 focus:ring-[#003D3C]"
+                                className="h-11 w-full rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                                 aria-label="Topic"
                               >
                                 <SelectValue />
@@ -320,9 +410,9 @@ export function ContactView() {
                         <p className="text-xs text-gray-500">
                           {TOPICS.find((t) => t.value === control._formValues.topic)?.hint}
                         </p>
-                      </div>
+                      </motion.div>
 
-                      <div className="space-y-2">
+                      <motion.div custom={5} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                         <Label htmlFor="message" className="text-[13px] font-semibold text-[#121212]">
                           How can we help?{" "}
                           <span className="text-destructive">*</span>
@@ -331,7 +421,7 @@ export function ContactView() {
                           id="message"
                           {...register("message")}
                           placeholder="A sentence or two on what you're trying to change, and the question you'd like to start with."
-                          className="min-h-36 resize-y rounded-[8px] border-gray-200 text-[14px] transition-all duration-200 focus:border-[#003D3C] focus:ring-1 focus:ring-[#003D3C]"
+                          className="min-h-36 resize-y rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           aria-invalid={!!errors.message}
                         />
                         {errors.message ? (
@@ -339,192 +429,172 @@ export function ContactView() {
                             {errors.message.message}
                           </p>
                         ) : (
-                          <p className="text-xs text-gray-400">
-                            {control._formValues.message?.length || 0} characters
-                          </p>
+                          <motion.p
+                            key={charCount}
+                            initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0.5, y: 0 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={reduced ? { duration: 0 } : { duration: 0.25, ease: EASE_OUT }}
+                            className="text-xs text-gray-400 tabular-nums"
+                          >
+                            {charCount} characters
+                          </motion.p>
                         )}
-                      </div>
+                      </motion.div>
 
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-2">
-                        <p className="text-xs text-gray-500 max-w-xs">
-                          We respond within one business day. Your details are
-                          never shared.
-                        </p>
-                        <Button
-                          type="submit"
-                          disabled={submitting}
-                          className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-7 text-[14px] font-semibold text-[#003D3C] shadow-none transition-all duration-200 hover:bg-[#c2e8c4] hover:scale-[1.02] active:scale-[0.98]"
+                      <motion.div
+                        custom={6}
+                        variants={FORM_FIELD_VARIANTS}
+                        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-2"
+                      >
+                        <div className="space-y-1">
+                          <p className="text-xs text-gray-500 max-w-xs">
+                            We respond within one business day. Your details are
+                            never shared.
+                          </p>
+                          <p className="text-[11px] text-gray-400 max-w-xs">
+                            Exclusively internal audit. Serving Boards and Audit Committees across Saudi Arabia.
+                          </p>
+                        </div>
+                        <motion.div
+                          whileHover={reduced || submitting ? {} : { scale: 1.02, y: -1 }}
+                          whileTap={reduced || submitting ? {} : { scale: 0.98 }}
+                          transition={{ duration: 0.2, ease: EASE_OUT }}
                         >
-                          {submitting ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Sending…
-                            </>
-                          ) : (
-                            <>
-                              Send message
-                              <ArrowRight className="h-4 w-4 text-[#003D3C]" />
-                            </>
-                          )}
-                        </Button>
-                      </div>
+                          <Button
+                            type="submit"
+                            disabled={submitting}
+                            className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-7 text-[14px] font-semibold text-[#003D3C] shadow-none transition-all duration-300 ease-out hover:bg-[#c2e8c4] hover:shadow-[0_6px_20px_-8px_rgba(173,223,179,0.9)] disabled:opacity-60 disabled:hover:scale-100 disabled:hover:shadow-none"
+                          >
+                            {submitting ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Sending…
+                              </>
+                            ) : (
+                              <>
+                                Send message
+                                <ArrowRight className="h-4 w-4 text-[#003D3C]" />
+                              </>
+                            )}
+                          </Button>
+                        </motion.div>
+                      </motion.div>
                     </motion.form>
                   )}
                 </AnimatePresence>
               </Card>
-            </Reveal>
+            </motion.div>
           </div>
 
           {/* ASIDE */}
           <aside className="lg:col-span-5 lg:pl-4">
-            <RevealStagger stagger={0.08} delay={0.1} y={14} childDuration={0.5} className="space-y-6">
+            <Reveal y={12} duration={0.55} delay={0.12}>
               <Card className="rounded-[16px] border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
                 <h3 className="text-[17px] font-bold text-[#121212]">
                   Direct contact
                 </h3>
-                <ul className="mt-6 space-y-4 text-[14px]">
-                  <li className="flex items-start gap-3.5">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]">
-                      <Mail className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
-                        Email
-                      </div>
-                      <a
-                        href={`mailto:${COMPANY.email}`}
-                        className="font-medium text-[#121212] transition-colors hover:text-[#003D3C]"
+                <ul className="mt-6 space-y-5 text-[14px]">
+                  {[
+                    {
+                      icon: Mail,
+                      label: "Email",
+                      value: COMPANY.email,
+                      href: `mailto:${COMPANY.email}`,
+                    },
+                    {
+                      icon: Phone,
+                      label: "Phone",
+                      value: COMPANY.phone,
+                      href: `tel:${COMPANY.phone.replace(/\s/g, "")}`,
+                    },
+                    {
+                      icon: MapPin,
+                      label: "Headquarters",
+                      value: COMPANY.address,
+                      isMultiline: true,
+                    },
+                    {
+                      icon: Clock,
+                      label: "Response time",
+                      value: "Within one business day, Mon–Fri",
+                    },
+                  ].map((item, i) => {
+                    const Icon = item.icon;
+                    const content = (
+                      <>
+                        <motion.span
+                          whileHover={iconBounce}
+                          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]"
+                        >
+                          <Icon className="h-4 w-4" />
+                        </motion.span>
+                        <div>
+                          <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
+                            {item.label}
+                          </div>
+                          <div className={item.isMultiline ? "font-medium text-[#121212] leading-relaxed break-words whitespace-pre-line" : "font-medium text-[#121212]"}>
+                            {item.value}
+                          </div>
+                        </div>
+                      </>
+                    );
+
+                    return (
+                      <motion.li
+                        key={item.label}
+                        custom={i}
+                        variants={ICON_ROW_VARIANTS}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-40px 0px -40px 0px" }}
+                        whileHover={reduced ? {} : { x: 3 }}
+                        transition={{ duration: 0.2, ease: EASE_OUT }}
+                        className="flex items-start gap-3.5"
                       >
-                        {COMPANY.email}
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3.5">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]">
-                      <Phone className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
-                        Phone
-                      </div>
-                      <a
-                        href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}
-                        className="font-medium text-[#121212] transition-colors hover:text-[#003D3C]"
-                      >
-                        {COMPANY.phone}
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3.5">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]">
-                      <MapPin className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
-                        Headquarters
-                      </div>
-                      <div className="font-medium text-[#121212]">
-                        {COMPANY.address}
-                      </div>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3.5">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]">
-                      <Clock className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
-                        Response time
-                      </div>
-                      <div className="font-medium text-[#121212]">
-                        Within one business day, Mon–Fri
-                      </div>
-                    </div>
-                  </li>
+                        {item.href ? (
+                          <a
+                            href={item.href}
+                            className="flex items-start gap-3.5 group w-full"
+                          >
+                            <motion.span
+                              whileHover={iconBounce}
+                              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]"
+                            >
+                              <Icon className="h-4 w-4" />
+                            </motion.span>
+                            <div>
+                              <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
+                                {item.label}
+                              </div>
+                              <div className="font-medium text-[#121212] transition-colors duration-200 group-hover:text-[#003D3C]">
+                                {item.value}
+                              </div>
+                            </div>
+                          </a>
+                        ) : (
+                          content
+                        )}
+                      </motion.li>
+                    );
+                  })}
                 </ul>
               </Card>
+            </Reveal>
 
-              <Card className="rounded-[16px] border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
-                <h3 className="text-[17px] font-bold text-[#121212]">
-                  Our offices
-                </h3>
-                <ul className="mt-5 space-y-3.5 text-[14px]">
-                  {COMPANY.offices.map((o) => (
-                    <li
-                      key={o.city}
-                      className="flex items-center justify-between border-b border-gray-100 pb-3 last:border-b-0 last:pb-0"
-                    >
-                      <span className="font-semibold text-[#121212]">
-                        {o.city}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {o.country}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-
-              <Card className="rounded-[16px] border border-gray-200 bg-[#F8F9FA] p-6 sm:p-8 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-[#003D3C]" />
-                  <h3 className="text-[17px] font-bold text-[#121212]">
-                    Prefer to talk first?
-                  </h3>
+            <Reveal y={12} duration={0.55} delay={0.24}>
+              <div className="mt-6 flex items-start gap-3 rounded-[12px] border border-[#EEF4F2] bg-[#FAFCFA] p-5">
+                <MessageSquare className="mt-0.5 h-4 w-4 text-[#003D3C] shrink-0" />
+                <div>
+                  <h4 className="text-[13px] font-bold text-[#121212]">
+                    Prefer to reach us directly?
+                  </h4>
+                  <p className="mt-1 text-[12px] leading-relaxed text-gray-500">
+                    Skip the form and email or call us using the details above —
+                    a partner reads every enquiry personally.
+                  </p>
                 </div>
-                <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
-                  Connect with us on social, or skip the form and email a
-                  partner directly — we read everything that comes in.
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2.5">
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 rounded-[8px] border-gray-200 text-[#003D3C] hover:bg-gray-100"
-                  >
-                    <a
-                      href={COMPANY.social.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Linkedin className="h-3.5 w-3.5 text-[#003D3C]" />
-                      LinkedIn
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 rounded-[8px] border-gray-200 text-[#003D3C] hover:bg-gray-100"
-                  >
-                    <a
-                      href={COMPANY.social.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Twitter className="h-3.5 w-3.5 text-[#003D3C]" />
-                      Twitter / X
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 rounded-[8px] border-gray-200 text-[#003D3C] hover:bg-gray-100"
-                  >
-                    <a
-                      href={COMPANY.social.youtube}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Youtube className="h-3.5 w-3.5 text-[#003D3C]" />
-                      YouTube
-                    </a>
-                  </Button>
-                </div>
-              </Card>
-            </RevealStagger>
+              </div>
+            </Reveal>
           </aside>
         </div>
       </section>

@@ -2,11 +2,12 @@
 // Validates name/email/message, defaults topic to "general", persists to ContactInquiry.
 
 import { db } from "@/lib/db";
-import { optionalSanitizedText, protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengths } from "@/lib/request-security";
+import { optionalSanitizedText, protectPublicPost, rejectOversizedBody, sanitizePhone, sanitizeText, validateTextLengths } from "@/lib/request-security";
 
 const VALID_TOPICS = new Set(["general", "services", "framework", "other"]);
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^[+]?[\d\s\-()]{6,30}$/;
 
 export async function POST(req: Request) {
   const blocked = protectPublicPost(req, "contact", 5);
@@ -23,7 +24,8 @@ export async function POST(req: Request) {
     const email = typeof body.email === "string" ? body.email.trim() : "";
     const message = typeof body.message === "string" ? sanitizeText(body.message) : "";
     const company = optionalSanitizedText(body.company);
-    const phone = optionalSanitizedText(body.phone);
+    const phoneRaw = sanitizePhone(body.phone);
+    const phone = phoneRaw;
     const topic =
       typeof body.topic === "string" && VALID_TOPICS.has(body.topic)
         ? body.topic
@@ -37,6 +39,9 @@ export async function POST(req: Request) {
     }
     if (!email || !EMAIL_RE.test(email)) {
       return Response.json({ ok: false, error: "valid email is required" }, { status: 400 });
+    }
+    if (phone !== null && !PHONE_RE.test(phone)) {
+      return Response.json({ ok: false, error: "phone must contain only digits, +, -, spaces, and parentheses" }, { status: 400 });
     }
     if (!message) {
       return Response.json({ ok: false, error: "message is required" }, { status: 400 });

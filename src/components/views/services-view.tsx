@@ -347,7 +347,7 @@ export function ServicesView() {
       {/* ------------------------------------------------------------------ */}
       {/* STICKY TAB SELECTOR WITH LAYOUT-ID INDICATOR                        */}
       {/* ------------------------------------------------------------------ */}
-      <div className="sticky top-0 z-30 border-b border-gray-200/80 bg-white/90 backdrop-blur-md shadow-2xs">
+      <div className="sticky top-[88px] z-30 border-b border-gray-200/80 bg-white/90 backdrop-blur-md shadow-2xs">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal y={8} duration={0.45} delay={0.02}>
             <nav

@@ -318,13 +318,13 @@ export function HomeView() {
               variants={heroImageContainer}
               className="relative lg:col-span-6 xl:col-span-6 lg:mt-0"
             >
-              <div className="relative mx-auto max-w-[500px] lg:max-w-none">
+              <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
                 <motion.div
                   style={{ y: heroImgY, scale: heroImgScale }}
                   className="overflow-hidden rounded-t-[36px] border border-white/10 shadow-2xl"
                 >
                   <Image
-                    src="/trennt-hero-01.jpg"
+                    src="/trennt-hero-01.webp"
                     alt="TRENNT Executive Specialist"
                     width={500}
                     height={580}
@@ -340,7 +340,7 @@ export function HomeView() {
                   initial="hidden"
                   animate="visible"
                   variants={statCard1}
-                  className="absolute -left-6 top-8 z-20 w-[240px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212]"
+                  className="absolute left-2 top-8 z-20 w-[220px] sm:w-[240px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-6"
                 >
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Internal Audit
@@ -366,7 +366,7 @@ export function HomeView() {
                   initial="hidden"
                   animate="visible"
                   variants={statCard2}
-                  className="absolute -left-8 bottom-12 z-20 w-[230px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212]"
+                  className="absolute left-2 bottom-10 z-20 w-[210px] sm:w-[230px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-8"
                 >
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Internal Controls
@@ -397,7 +397,7 @@ export function HomeView() {
                   initial="hidden"
                   animate="visible"
                   variants={statCard3}
-                  className="absolute -right-4 bottom-6 z-20 w-[235px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212]"
+                  className="absolute right-2 bottom-4 z-20 w-[210px] sm:w-[235px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-right-4"
                 >
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Governance Assessment
@@ -514,7 +514,7 @@ export function HomeView() {
             <Reveal y={16} duration={0.6} delay={0.1} className="lg:col-span-7">
               <div className="overflow-hidden rounded-[24px] shadow-lg group">
                 <Image
-                  src="/trennt-hero-02.jpg"
+                  src="/trennt-hero-02.webp"
                   alt="TRENNT Internal Audit Specialists reviewing document"
                   width={800}
                   height={480}
