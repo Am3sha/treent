@@ -714,6 +714,93 @@ export const TIER_RECOMMENDATIONS: Record<import("./types").MaturityTier, string
   ],
 };
 
+
+/**
+ * Recommendation text bank + service CTA mapping (Part 6).
+ * Score bands: low = 0-40%, mid = 41-70%, high = 71-100%.
+ * Each entry maps a domain + score band to pre-written recommendation text
+ * and the most relevant TRENNT service page slug (null when no CTA is needed).
+ */
+export const DOMAIN_RECOMMENDATIONS: Record<
+  import("./types").Dimension,
+  {
+    low: { text: string; ctaService: string | null };
+    mid: { text: string; ctaService: string | null };
+    high: { text: string; ctaService: string | null };
+  }
+> = {
+  governance: {
+    low: {
+      text: "Your internal audit function's governance foundation needs attention. Formalise the Internal Audit Charter with a clear mandate and reporting line to the Audit Committee, and ensure the Chief Audit Executive is independently evaluated and positioned to raise issues without restriction.",
+      ctaService: "internal-audit-function-establishment",
+    },
+    mid: {
+      text: "Governance is forming but not yet fully embedded. Tighten independence safeguards, formalise the CAE's evaluation and access to the Audit Committee, and document escalation procedures so findings consistently reach the right level of leadership.",
+      ctaService: "internal-audit-transformation",
+    },
+    high: {
+      text: "Governance and operating-model maturity is strong. Continue reinforcing independence and charter currency, and consider extending your model toward more strategic advisory engagement with the Audit Committee.",
+      ctaService: null,
+    },
+  },
+  risk: {
+    low: {
+      text: "Risk-based audit planning is not yet driving your audit plan. Develop a structured annual risk assessment tied to the organisation's key risks, and build the discipline to rebalance coverage as risks evolve rather than auditing on a fixed rotation.",
+      ctaService: "internal-audit-transformation",
+    },
+    mid: {
+      text: "Your risk assessment exists but could be more dynamic. Introduce emerging-risk monitoring, strengthen coordination with management's risk function, and ensure the annual plan is explicitly derived from documented risk prioritisation.",
+      ctaService: "internal-audit-transformation",
+    },
+    high: {
+      text: "Risk assessment and planning maturity is strong. Sustain this through continuous risk monitoring, horizon-scanning for emerging risks, and ensuring audit committee reporting stays tightly linked to the current risk profile.",
+      ctaService: null,
+    },
+  },
+  execution: {
+    low: {
+      text: "Engagement execution lacks consistency. Standardise your audit methodology and working-paper requirements, enforce supervisory review on every engagement, and establish a documented quality-control process so delivery quality does not depend on individual auditors.",
+      ctaService: "internal-audit-function-establishment",
+    },
+    mid: {
+      text: "Delivery is improving but not yet uniform. Embed documented engagement-level risk assessments, enforce consistent supervisory review, and align audit findings directly with strategic objectives so reports influence decision-making.",
+      ctaService: "internal-audit-transformation",
+    },
+    high: {
+      text: "Execution maturity is strong. Consider introducing continuous auditing and automated control testing for key systems to extend coverage without proportionally increasing effort.",
+      ctaService: null,
+    },
+  },
+  reporting: {
+    low: {
+      text: "Reporting timeliness and follow-up discipline need attention. Define report turnaround targets, introduce structured management-action tracking with due dates, and set escalation criteria so overdue actions are visible to the Audit Committee.",
+      ctaService: "internal-audit-transformation",
+    },
+    mid: {
+      text: "Reporting is functional but could drive more impact. Strengthen action follow-up discipline, add clear performance measures to your audit reporting cycle, and ensure escalation paths are exercised in practice, not just documented.",
+      ctaService: "internal-audit-transformation",
+    },
+    high: {
+      text: "Reporting and impact maturity is strong. Keep sharpening the connection between audit findings and strategic outcomes, and continue measuring the function's value through agreed performance indicators.",
+      ctaService: null,
+    },
+  },
+  capability: {
+    low: {
+      text: "Team capability and quality assurance are the priority gap. Establish a competency framework, invest in structured professional development, and put a Quality Assurance and Improvement Program in place to lift delivery quality systematically.",
+      ctaService: "quality-assurance-and-improvement-program",
+    },
+    mid: {
+      text: "Capability is developing. Formalise competency assessments, deepen specialist expertise in your highest-risk areas, and mature your QAIP with regular internal assessments and documented improvement actions.",
+      ctaService: "quality-assurance-and-improvement-program",
+    },
+    high: {
+      text: "Capability and quality assurance maturity is strong. Prepare for external quality assessment readiness and continue investing in advanced skills such as audit analytics and emerging-risk expertise.",
+      ctaService: null,
+    },
+  },
+};
+
 export function computeResult(answers: AnswerRecord[]) {
   return {
     overall: Math.round(calculateOverallScore(answers)),

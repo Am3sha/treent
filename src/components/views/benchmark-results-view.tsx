@@ -30,7 +30,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useNav } from "@/lib/store";
-import { DIMENSIONS, TIER_META, TIER_RECOMMENDATIONS, scoreToTier } from "@/lib/content";
+import { DIMENSIONS, TIER_META, TIER_RECOMMENDATIONS, scoreToTier, DOMAIN_RECOMMENDATIONS } from "@/lib/content";
 import type {
   AssessmentResult,
   BenchmarkStats,
@@ -122,6 +122,7 @@ export function BenchmarkResultsView() {
           window.print();
         }
       }}
+      onOpenService={(slug) => navigate("services")}
     />
   );
 }
@@ -159,6 +160,69 @@ function EmptyState({ onRestart }: { onRestart: () => void }) {
 // Body
 // ---------------------------------------------------------------------------
 
+/** Recommendation band for the text bank: low = 0-40, mid = 41-70, high = 71-100 */
+function getBand(score: number): "low" | "mid" | "high" {
+  if (score <= 40) return "low";
+  if (score <= 70) return "mid";
+  return "high";
+}
+
+function PriorityFocusCard({
+  item,
+  band,
+  onOpenService,
+}: {
+  item: { meta: import("@/lib/types").DimensionMeta; score: number; tier: string; interp: string };
+  band: "low" | "mid" | "high";
+  onOpenService: (slug: string) => void;
+}) {
+  const rec = DOMAIN_RECOMMENDATIONS[item.meta.key]?.[band] ?? null;
+  return (
+    <div className="space-y-3">
+      <div className="flex items-start gap-3">
+        <div
+          className={cn(
+            "flex size-8 shrink-0 items-center justify-center rounded-md bg-muted",
+            item.meta.accent
+          )}
+        >
+          <Icon name={item.meta.icon} className="h-4 w-4" />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold">{item.meta.label}</p>
+            <Badge
+              variant="outline"
+              className="text-[10px] uppercase tracking-wider"
+            >
+              {item.tier}
+            </Badge>
+            <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
+              {item.score}
+            </span>
+          </div>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            {rec?.text ?? item.interp}
+          </p>
+        </div>
+      </div>
+      {rec?.ctaService && (
+        <div className="flex justify-end">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onOpenService(rec.ctaService!)}
+            className="gap-1.5 rounded-full text-xs"
+          >
+            Explore related service
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ResultsBody({
   result,
   respondent,
@@ -166,6 +230,7 @@ function ResultsBody({
   onFollowUp,
   onDownloadPDF,
   onShare,
+  onOpenService,
 }: {
   result: AssessmentResult;
   respondent: RespondentProfile | null;
@@ -173,6 +238,7 @@ function ResultsBody({
   onFollowUp: () => void;
   onDownloadPDF: (stats: BenchmarkStats | null) => void;
   onShare: () => void;
+  onOpenService: (slug: string) => void;
 }) {
   const [downloading, setDownloading] = React.useState(false);
 
@@ -573,6 +639,7 @@ function ResultsBody({
       {/* STRENGTHS & FOCUS ------------------------------------------- */}
       <Reveal delay={0.05}>
         <div className="mt-14 grid gap-6 md:grid-cols-2">
+          {/* Top strengths */}
           <Card className="py-6">
             <CardHeader className="px-6 sm:px-8">
               <div className="flex items-center gap-2">
@@ -582,88 +649,78 @@ function ResultsBody({
                 <CardTitle className="text-base">Your strengths</CardTitle>
               </div>
               <CardDescription>
-                The dimensions where your organisation is most mature.
+                The domains where your organisation is most mature.
               </CardDescription>
             </CardHeader>
             <CardContent className="px-6 sm:px-8">
-              <ul className="space-y-4">
-                {strengths.map((s) => (
-                  <li key={s.meta.key} className="flex items-start gap-3">
-                    <div
-                      className={cn(
-                        "flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10",
-                        s.meta.accent
-                      )}
-                    >
-                      <Icon name={s.meta.icon} className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold">{s.meta.label}</p>
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] uppercase tracking-wider"
+              {strengths.length > 0 && strengths[0].meta.key === focus[0]?.meta.key ? (
+                <p className="text-sm text-muted-foreground">
+                  Every domain scored in the same range — there is no single
+                  standout strength this time. Keep sustaining this across the
+                  whole function.
+                </p>
+              ) : (
+                <ul className="space-y-4">
+                  {strengths.map((s) => {
+                    const rec =
+                      DOMAIN_RECOMMENDATIONS[s.meta.key]?.[getBand(s.score)] ??
+                      null;
+                    return (
+                      <li key={s.meta.key} className="flex items-start gap-3">
+                        <div
+                          className={cn(
+                            "flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10",
+                            s.meta.accent
+                          )}
                         >
-                          {s.tier}
-                        </Badge>
-                        <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
-                          {s.score}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        {s.interp}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                          <Icon name={s.meta.icon} className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold">{s.meta.label}</p>
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] uppercase tracking-wider"
+                            >
+                              {s.tier}
+                            </Badge>
+                            <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
+                              {s.score}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                            {rec ? rec.text : s.interp}
+                          </p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </CardContent>
           </Card>
 
+          {/* Priority focus */}
           <Card className="py-6">
             <CardHeader className="px-6 sm:px-8">
               <div className="flex items-center gap-2">
                 <div className="flex size-8 items-center justify-center rounded-md bg-amber-500/15 text-amber-700">
                   <AlertCircle className="h-4 w-4" />
                 </div>
-                <CardTitle className="text-base">Focus areas</CardTitle>
+                <CardTitle className="text-base">Priority focus area</CardTitle>
               </div>
               <CardDescription>
                 Where the next dollar of effort will move the dial most.
               </CardDescription>
             </CardHeader>
             <CardContent className="px-6 sm:px-8">
-              <ul className="space-y-4">
-                {focus.map((s) => (
-                  <li key={s.meta.key} className="flex items-start gap-3">
-                    <div
-                      className={cn(
-                        "flex size-8 shrink-0 items-center justify-center rounded-md bg-muted",
-                        s.meta.accent
-                      )}
-                    >
-                      <Icon name={s.meta.icon} className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold">{s.meta.label}</p>
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] uppercase tracking-wider"
-                        >
-                          {s.tier}
-                        </Badge>
-                        <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
-                          {s.score}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        {s.interp}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {focus.length > 0 && (
+                <PriorityFocusCard
+                  item={focus[0]}
+                  band={getBand(focus[0].score)}
+                  onOpenService={onOpenService}
+                />
+              )}
             </CardContent>
           </Card>
         </div>
