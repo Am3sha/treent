@@ -92,7 +92,7 @@ export default function AdminDashboardClient({
               width={120}
               height={32}
               priority
-              className="h-8 w-auto object-contain"
+              style={{ height: "32px", width: "auto", objectFit: "contain" }}
             />
             <Button
               variant="ghost"
