@@ -38,11 +38,11 @@ export async function GET() {
                 _avg: {
                     overallScore: true,
                     durationSec: true,
-                    strategyScore: true,
-                    technologyScore: true,
-                    cultureScore: true,
-                    dataScore: true,
-                    operationsScore: true,
+                    governanceScore: true,
+                    riskScore: true,
+                    executionScore: true,
+                    reportingScore: true,
+                    capabilityScore: true,
                 },
             }),
             db.assessment.groupBy({
@@ -55,11 +55,11 @@ export async function GET() {
                 _count: { _all: true },
                 _avg: {
                     overallScore: true,
-                    strategyScore: true,
-                    technologyScore: true,
-                    cultureScore: true,
-                    dataScore: true,
-                    operationsScore: true,
+                    governanceScore: true,
+                    riskScore: true,
+                    executionScore: true,
+                    reportingScore: true,
+                    capabilityScore: true,
                 },
             }),
             db.assessment.groupBy({
@@ -82,11 +82,12 @@ export async function GET() {
             orderBy: { createdAt: "desc" },
             take: 500,
             select: {
-                responses: true,
+                id: true,
                 createdAt: true,
                 overallScore: true,
                 durationSec: true,
-                dataScore: true,
+                reportingScore: true,
+                answers: true,
             },
         }),
             db.assessment.count({ where: { createdAt: { gte: oneWeekAgo } } }),
@@ -106,6 +107,8 @@ export async function GET() {
                 },
             }),
         ]);
+
+            const sa = scoreAggregates._avg ?? { overallScore: 0, durationSec: 0, governanceScore: 0, riskScore: 0, executionScore: 0, reportingScore: 0, capabilityScore: 0 };
 
         const assessments = assessmentsForHeatmap;
 
@@ -151,7 +154,7 @@ export async function GET() {
             }
             
             if (!aiAdoptionTrendMap[month]) aiAdoptionTrendMap[month] = { aiScores: [] };
-            aiAdoptionTrendMap[month].aiScores.push(a.dataScore);
+            aiAdoptionTrendMap[month].aiScores.push(a.reportingScore);
         });
 
         const monthlyTrend = Object.entries(monthlyMap)
@@ -179,12 +182,11 @@ export async function GET() {
         // 4. Question Heatmap
         const questionStats: Record<string, number[]> = {};
         assessments.forEach((a) => {
-            const responses = a.responses as Record<string, number>;
-            if (!responses) return;
-            Object.entries(responses).forEach(([qId, val]) => {
+            for (const ans of (a.answers ?? [])) {
+                const qId = String(ans.questionId);
                 if (!questionStats[qId]) questionStats[qId] = [];
-                questionStats[qId].push(val);
-            });
+                questionStats[qId].push(ans.score);
+            }
         });
 
         const questionHeatmap = Object.entries(questionStats)
@@ -209,11 +211,11 @@ export async function GET() {
             : 0;
 
         const dimensionAvgScores = {
-            strategy: Math.round(scoreAggregates._avg.strategyScore || 0),
-            technology: Math.round(scoreAggregates._avg.technologyScore || 0),
-            culture: Math.round(scoreAggregates._avg.cultureScore || 0),
-            data: Math.round(scoreAggregates._avg.dataScore || 0),
-            operations: Math.round(scoreAggregates._avg.operationsScore || 0),
+            governance: Math.round(sa.governanceScore || 0),
+            risk: Math.round(sa.riskScore || 0),
+            execution: Math.round(sa.executionScore || 0),
+            reporting: Math.round(sa.reportingScore || 0),
+            capability: Math.round(sa.capabilityScore || 0),
         };
 
         const dimensions = Object.entries(dimensionAvgScores);
@@ -225,7 +227,7 @@ export async function GET() {
             .map(g => ({
                 country: g.country || "Unknown",
                 count: g._count._all,
-                avgScore: Math.round(g._avg.overallScore || 0),
+                avgScore: Math.round((g._avg?.overallScore ?? 0)),
             }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
@@ -235,7 +237,7 @@ export async function GET() {
             .map(g => ({
                 industry: g.industry || "Unknown",
                 count: g._count._all,
-                avgScore: Math.round(g._avg.overallScore || 0),
+                avgScore: Math.round((g._avg?.overallScore ?? 0)),
             }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
@@ -243,30 +245,30 @@ export async function GET() {
         // 6. Final Assembly
         return Response.json({ ok: true, data: {
             totalAssessments: totalCount,
-            averageScore: Math.round(scoreAggregates._avg.overallScore || 0),
-            averageDuration: Math.round(scoreAggregates._avg.durationSec || 0),
+            averageScore: Math.round(sa.overallScore || 0),
+            averageDuration: Math.round(sa.durationSec || 0),
             completionRate: totalCount > 0 ? 100 : 0,
             scoreDistribution,
             tierBreakdown: tierGroups.map((g) => ({
                 tier: g.tier,
                 count: g._count._all,
                 percentage: totalCount ? Math.round((g._count._all / totalCount) * 100) : 0,
-                avgScore: Math.round(g._avg.overallScore || 0),
+                avgScore: Math.round((g._avg?.overallScore ?? 0)),
             })),
             industryBenchmark: industryGroups.map((g) => ({
                 industry: g.industry || "Unknown",
                 count: g._count._all,
-                avgScore: Math.round(g._avg.overallScore || 0),
-                avgStrategyScore: Math.round(g._avg.strategyScore || 0),
-                avgTechnologyScore: Math.round(g._avg.technologyScore || 0),
-                avgCultureScore: Math.round(g._avg.cultureScore || 0),
-                avgDataScore: Math.round(g._avg.dataScore || 0),
-                avgOperationsScore: Math.round(g._avg.operationsScore || 0),
+                avgScore: Math.round((g._avg?.overallScore ?? 0)),
+                avgGovernanceScore: Math.round((g._avg?.governanceScore ?? 0)),
+                avgRiskScore: Math.round((g._avg?.riskScore ?? 0)),
+                avgExecutionScore: Math.round((g._avg?.executionScore ?? 0)),
+                avgReportingScore: Math.round((g._avg?.reportingScore ?? 0)),
+                avgCapabilityScore: Math.round((g._avg?.capabilityScore ?? 0)),
             })),
             sizeBenchmark: sizeGroups.map((g) => ({
                 size: g.companySize || "Unknown",
                 count: g._count._all,
-                avgScore: Math.round(g._avg.overallScore || 0),
+                avgScore: Math.round((g._avg?.overallScore ?? 0)),
             })),
             countryBreakdown: countryGroups.map((g) => ({
                 country: g.country || "Unknown",
@@ -276,7 +278,7 @@ export async function GET() {
             questionHeatmap,
             topQuestions: [...questionHeatmap].reverse().slice(0, 5),
             bottomQuestions: [...questionHeatmap].slice(0, 5),
-            aiAdoptionScore: Math.round(scoreAggregates._avg.dataScore || 0),
+            aiAdoptionScore: Math.round(sa.reportingScore || 0),
             monthlyTrend,
             // New metrics
             assessmentsThisWeek,

@@ -25,15 +25,15 @@ export async function GET(
     }
 
     return Response.json(
-      { ok: true, data: {
+      { ok: true, reporting: {
         id: assessment.id,
         overall: assessment.overallScore,
         scores: {
-          strategy: assessment.strategyScore,
-          technology: assessment.technologyScore,
-          culture: assessment.cultureScore,
-          data: assessment.dataScore,
-          operations: assessment.operationsScore,
+          governance: assessment.governanceScore,
+          risk: assessment.riskScore,
+          execution: assessment.executionScore,
+          reporting: assessment.reportingScore,
+          capability: assessment.capabilityScore,
         },
         tier: assessment.tier,
         questionCount: assessment.questionCount,

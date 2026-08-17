@@ -23,7 +23,6 @@ model ContactInquiry {
   status    String   @default("new") // new | contacted | closed
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([createdAt])
   @@index([status])
 }
@@ -38,12 +37,11 @@ model CareerApplication {
   yearsExp  Int?
   linkedin  String?
   portfolio String?
-  message   String?
   resume    String? // stored as text (filename / data url reference)
+  message   String?
   status    String   @default("new") // new | screening | interview | offer | rejected | hired
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([createdAt])
   @@index([status])
 }
@@ -58,7 +56,7 @@ model NewsletterSubscriber {
 // ---- Benchmark / Assessment capture ----
 
 model Assessment {
-  id               String                @id @default(cuid())
+  id               String   @id @default(cuid())
   // Respondent profile (captured at end of questionnaire)
   respondentName   String?
   respondentEmail  String?
@@ -67,29 +65,42 @@ model Assessment {
   industry         String?
   country          String?
   role             String?
-  consentContact   Boolean               @default(false)
-  // Scoring (0-100 per dimension + overall)
+  consentContact   Boolean  @default(false)
+  // Scoring (0-100 per domain + overall), overall = earned/78*100
   overallScore     Float
-  strategyScore    Float
-  technologyScore  Float
-  cultureScore     Float
-  dataScore        Float
-  operationsScore  Float
-  // Anonymous benchmark tier (Nascent | Developing | Established | Leading)
+  governanceScore  Float
+  riskScore        Float
+  executionScore   Float
+  reportingScore   Float
+  capabilityScore  Float
+  // Anonymous maturity tier (initial | developing | defined | established | advanced)
   tier             String
   // Number of questions answered
   questionCount    Int
   durationSec      Int?
-  createdAt        DateTime              @default(now())
-  responses        Json?                 @default("{}")
+  createdAt        DateTime @default(now())
+  answers          AssessmentAnswer[]
   followUps        AssessmentFollowUp[]
-
   @@index([createdAt])
   @@index([tier])
   @@index([industry])
   @@index([companySize])
   @@index([country])
   @@index([overallScore])
+}
+
+model AssessmentAnswer {
+  id             String   @id @default(cuid())
+  assessment     Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  assessmentId   String
+  questionId     Int
+  domain         String
+  selectedOption String
+  score          Int
+  createdAt      DateTime @default(now())
+  @@index([assessmentId])
+  @@index([questionId])
+  @@index([domain])
 }
 
 model AssessmentFollowUp {
@@ -102,10 +113,9 @@ model AssessmentFollowUp {
   phone        String?
   message      String?
   // What the respondent is interested in
-  interest     String @default("consultation") // consultation | report | workshop | partnership
-  status       String @default("new")
+  interest     String   @default("consultation") // consultation | report | workshop | partnership
+  status       String   @default("new")
   createdAt    DateTime @default(now())
-
   @@index([status])
   @@index([createdAt])
 }

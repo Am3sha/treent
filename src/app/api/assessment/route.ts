@@ -28,15 +28,15 @@ import {
 } from "@/lib/request-security";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const DIMENSIONS = ["strategy", "technology", "culture", "data", "operations"] as const;
+const DIMENSIONS = ["governance", "risk", "execution", "reporting", "capability"] as const;
 type Dimension = (typeof DIMENSIONS)[number];
 const DIM_SET = new Set<string>(DIMENSIONS);
 
-function scoreToTier(score: number): "Nascent" | "Developing" | "Established" | "Leading" {
-  if (score < 35) return "Nascent";
-  if (score < 55) return "Developing";
-  if (score < 75) return "Established";
-  return "Leading";
+function scoreToTier(score: number): "initial" | "developing" | "defined" | "established" | "advanced" {
+  if (score < 21) return "initial";
+  if (score < 41) return "developing";
+  if (score < 61) return "defined";
+  return "established";
 }
 
 function clamp(n: number, lo: number, hi: number): number {
@@ -183,11 +183,11 @@ export async function POST(req: Request) {
 
     // ---- Compute scores server-side (authoritative) ----
     const byDim: Record<Dimension, number[]> = {
-      strategy: [],
-      technology: [],
-      culture: [],
-      data: [],
-      operations: [],
+      governance: [],
+      risk: [],
+      execution: [],
+      reporting: [],
+      capability: [],
     };
     const allValues: number[] = [];
     for (const r of responses) {
@@ -198,11 +198,11 @@ export async function POST(req: Request) {
     const dimAvg = (arr: number[]) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0);
     const norm = (avg: number) => clamp(Math.round(((avg - 1) / 4) * 100), 0, 100);
 
-    const strategyScore = norm(dimAvg(byDim.strategy));
-    const technologyScore = norm(dimAvg(byDim.technology));
-    const cultureScore = norm(dimAvg(byDim.culture));
-    const dataScore = norm(dimAvg(byDim.data));
-    const operationsScore = norm(dimAvg(byDim.operations));
+    const governanceScore = norm(dimAvg(byDim.governance));
+    const riskScore = norm(dimAvg(byDim.risk));
+    const executionScore = norm(dimAvg(byDim.execution));
+    const reportingScore = norm(dimAvg(byDim.reporting));
+    const capabilityScore = norm(dimAvg(byDim.capability));
     const overallScore = norm(dimAvg(allValues));
     const tier = scoreToTier(overallScore);
     const questionCount = responses.length;
@@ -225,15 +225,15 @@ export async function POST(req: Request) {
       role,
       consentContact,
       overallScore,
-      strategyScore,
-      technologyScore,
-      cultureScore,
-      dataScore,
-      operationsScore,
+      governanceScore,
+      riskScore,
+      executionScore,
+      reportingScore,
+      capabilityScore,
       tier,
       questionCount,
       durationSec,
-      responses: responsesJson,
+      answers: undefined,
     },
   });
 
@@ -257,15 +257,15 @@ export async function POST(req: Request) {
     }
 
     return Response.json(
-      { ok: true, data: {
+      { ok: true, reporting: {
         id: created.id,
         overall: created.overallScore,
         scores: {
-          strategy: created.strategyScore,
-          technology: created.technologyScore,
-          culture: created.cultureScore,
-          data: created.dataScore,
-          operations: created.operationsScore,
+          governance: created.governanceScore,
+          risk: created.riskScore,
+          execution: created.executionScore,
+          reporting: created.reportingScore,
+          capability: created.capabilityScore,
         },
         tier: created.tier,
         percentile,

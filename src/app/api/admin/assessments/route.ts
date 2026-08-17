@@ -73,7 +73,7 @@ export async function GET(req: Request) {
       page,
       pageSize,
       totalPages: Math.ceil(total / pageSize),
-      records: records.map((r) => ({
+      records: await Promise.all(records.map(async (r) => ({
         id: r.id,
         respondentName: r.respondentName,
         respondentEmail: r.respondentEmail,
@@ -85,24 +85,24 @@ export async function GET(req: Request) {
         consentContact: r.consentContact,
         overallScore: Math.round(r.overallScore),
         scores: {
-          strategy: Math.round(r.strategyScore),
-          technology: Math.round(r.technologyScore),
-          culture: Math.round(r.cultureScore),
-          data: Math.round(r.dataScore),
-          operations: Math.round(r.operationsScore),
+          governance: Math.round(r.governanceScore),
+          risk: Math.round(r.riskScore),
+          execution: Math.round(r.executionScore),
+          reporting: Math.round(r.reportingScore),
+          capability: Math.round(r.capabilityScore),
         },
         tier: r.tier,
         questionCount: r.questionCount,
         durationSec: r.durationSec,
         createdAt: r.createdAt.toISOString(),
-        responses: r.responses, // just return the JSON object directly
+        answers: await db.assessmentAnswer.findMany({ where: { assessmentId: r.id } }),
         followUps: r.followUps.map((f) => ({
           id: f.id,
           interest: f.interest,
           status: f.status,
           createdAt: f.createdAt.toISOString(),
         })),
-      })),
+      }))),
       filters: {
         industries: industries
           .map((i) => i.industry)
