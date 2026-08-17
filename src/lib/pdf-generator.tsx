@@ -456,16 +456,16 @@ const DimensionBarChart = ({ scores }: { scores: Record<Dimension, number> }) =>
 const CompactBenchmarkBars = ({
     score,
     industryAvg,
+    globalAvg,
 }: {
     score: number;
-    industryAvg: number;
+    industryAvg: number | null;
+    globalAvg: number | null;
 }) => {
     const trackWidth = 170;
-    const bars = [
-        { label: "Your Org", value: score },
-        { label: "Industry Avg", value: industryAvg },
-        { label: "Peer Benchmark", value: Math.round(score * 0.95) },
-    ];
+    const bars = [{ label: "Your Org", value: score }];
+    if (industryAvg !== null) bars.push({ label: "Industry Avg", value: industryAvg });
+    if (globalAvg !== null) bars.push({ label: "Global Avg", value: globalAvg });
 
     return (
         <View>
@@ -544,6 +544,21 @@ const DIMENSION_DATA: Record<Dimension, { interpretation: string; strength: stri
     },
 };
 
+const computeComparison = (
+  result: AssessmentResult,
+  respondent: RespondentProfile | null,
+  stats: BenchmarkStats | null
+) => {
+  const total = stats?.totalAssessments ?? 0;
+  let industryAvg: number | null = null;
+  if (respondent?.industry && stats && total > 0) {
+    const needle = respondent.industry.trim().toLowerCase();
+    const match = stats.byIndustry.find((r) => r.label.toLowerCase() === needle);
+    industryAvg = match ? match.average : stats.averageOverall;
+  }
+  const globalAvg: number | null = total > 0 ? stats!.averageOverall : null;
+  return { industryAvg, globalAvg, total };
+};
 const AssessmentPDFReport = ({
     result,
     respondent,
@@ -566,7 +581,7 @@ const AssessmentPDFReport = ({
 
     const topStrengths = sortedDim.slice(0, 3);
     const topOpportunities = sortedDim.slice(-3).reverse();
-    const industryAvg = stats?.averageOverall || result.overall - 4;
+    const { industryAvg, globalAvg } = computeComparison(result, respondent, stats);
 
     const preparedForText = respondent?.name && respondent?.company
         ? `Prepared for: ${respondent.name}, ${respondent.company}`
@@ -703,6 +718,7 @@ const AssessmentPDFReport = ({
                     <CompactBenchmarkBars
                         score={result.overall}
                         industryAvg={industryAvg}
+                        globalAvg={globalAvg}
                     />
 
                     <View style={styles.peerMetricsRow}>
@@ -713,9 +729,9 @@ const AssessmentPDFReport = ({
                             </Text>
                         </View>
                         <View style={styles.peerBlock}>
-                            <Text style={styles.metricLabel}>Peer Benchmark</Text>
+                            <Text style={styles.metricLabel}>Benchmarked Organisations</Text>
                             <Text style={styles.peerValue}>
-                                {Math.round(result.overall * 0.95)}<Text style={styles.peerSuffix}> / 100</Text>
+                                {(stats?.totalAssessments ?? 0)}<Text style={styles.peerSuffix}> total</Text>
                             </Text>
                         </View>
                         <View style={styles.peerBlock}>
@@ -857,7 +873,7 @@ const AssessmentPDFReportFallback = ({
 
     const topStrengths = sortedDim.slice(0, 3);
     const topOpportunities = sortedDim.slice(-3).reverse();
-    const industryAvg = stats?.averageOverall || result.overall - 4;
+    const { industryAvg, globalAvg } = computeComparison(result, respondent, stats);
 
     const preparedForText = respondent?.name && respondent?.company
         ? `Prepared for: ${respondent.name}, ${respondent.company}`
