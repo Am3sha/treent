@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
 import { db } from "@/lib/db";
 
-const VALID_TIERS = ["Nascent", "Developing", "Established", "Leading"];
+const VALID_TIERS = ["initial", "developing", "defined", "established", "advanced"];
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
@@ -95,7 +95,9 @@ export async function GET(req: Request) {
         questionCount: r.questionCount,
         durationSec: r.durationSec,
         createdAt: r.createdAt.toISOString(),
-        answers: await db.assessmentAnswer.findMany({ where: { assessmentId: r.id } }),
+        responses: Object.fromEntries(
+          (await db.assessmentAnswer.findMany({ where: { assessmentId: r.id } })).map((a) => [a.questionId, { option: a.selectedOption || "", score: a.score }]),
+        ),
         followUps: r.followUps.map((f) => ({
           id: f.id,
           interest: f.interest,

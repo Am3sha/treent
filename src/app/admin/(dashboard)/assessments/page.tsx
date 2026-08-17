@@ -61,7 +61,7 @@ interface AdminRecord {
   questionCount: number;
   durationSec: number | null;
   createdAt: string;
-  responses: Record<string, number> | null;
+  responses: Record<string, { option: string; score: number }> | null;
   followUps: {
     id: string;
     interest: string;
@@ -84,10 +84,10 @@ interface AdminResponse {
 }
 
 const TIER_COLORS: Record<string, string> = {
-  Nascent: "bg-orange-500/10 text-orange-700 border-orange-500/20",
-  Developing: "bg-amber-500/10 text-amber-700 border-amber-500/20",
-  Established: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
-  Leading: "bg-teal-500/10 text-teal-700 border-teal-500/20",
+  initial: "bg-orange-500/10 text-orange-700 border-orange-500/20",
+  developing: "bg-amber-500/10 text-amber-700 border-amber-500/20",
+  established: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
+  advanced: "bg-teal-500/10 text-teal-700 border-teal-500/20",
 };
 
 export default function AdminAssessmentsPage() {
@@ -257,7 +257,8 @@ export default function AdminAssessmentsPage() {
       "Question ID",
       "Dimension",
       "Question",
-      "Response Value (1-5)",
+      "Selected Option",
+      "Score",
     ];
     const rows: (string | number)[][] = [];
     for (const r of data.records) {
@@ -274,7 +275,7 @@ export default function AdminAssessmentsPage() {
           q.id,
           q.dimension,
           q.prompt,
-          value,
+          value.option || "-",
         ]);
       }
     }
@@ -375,7 +376,7 @@ export default function AdminAssessmentsPage() {
             />
             <KpiCard
               icon={<CheckCircle2 className="h-4 w-4" />}
-              label="Leading tier"
+              label="Advanced tier"
               value={`${stats.leadingPct}%`}
               sub={`${stats.leadingCount} orgs`}
             />
@@ -904,7 +905,7 @@ function RecordDetail({ record }: { record: AdminRecord }) {
                   {q.prompt}
                 </p>
                 <span className="shrink-0 text-sm font-semibold tabular-nums text-primary">
-                  {value} / 5
+                  {value.option || "-"} ({value.score})
                 </span>
               </div>
             );
