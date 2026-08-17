@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Dimension, MaturityTier } from "@/lib/types";
 
-// 3-question teaser drawn from the client-approved benchmark set.
+// 5-question teaser drawn from the client-approved benchmark set — one per domain.
 // Score: A=3, B=2, C=1, D=0 → 0-100 provisional read.
 const QUICK_QUESTIONS: { id: string; dimension: Dimension; prompt: string; options: { letter: string; label: string; score: number }[] }[] = (() => {
   const pick = (ids: string[]) =>
@@ -19,7 +19,7 @@ const QUICK_QUESTIONS: { id: string; dimension: Dimension; prompt: string; optio
       .map((id) => BENCHMARK_QUESTIONS.find((q) => q.id === id))
       .filter((q): q is NonNullable<typeof q> => Boolean(q));
   return [
-    ...pick(["gov-1", "risk-6", "exec-11"]),
+    ...pick(["gov-1", "risk-6", "exec-11", "rep-17", "cap-22"]),
   ];
 })();
 
@@ -31,7 +31,7 @@ export function QuickBenchmark() {
   const answeredCount = Object.keys(answers).length;
   const allAnswered = answeredCount === QUICK_QUESTIONS.length;
 
-  // Calculate provisional score (A=3, B=2, C=1, D=0; normalise against max 9)
+  // Calculate provisional score (A=3, B=2, C=1, D=0; normalise against max 15 — 5 questions × 3)
   const provisionalScore = React.useMemo(() => {
     if (answeredCount === 0) return 0;
     let sum = 0;
@@ -42,7 +42,7 @@ export function QuickBenchmark() {
         if (opt) sum += opt.score;
       }
     }
-    return Math.round((sum / 9) * 100);
+    return Math.round((sum / 15) * 100);
   }, [answers, answeredCount]);
 
   const tier: MaturityTier = scoreToTier(provisionalScore);
@@ -70,7 +70,7 @@ export function QuickBenchmark() {
               Not sure you need the full assessment?
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground text-balance">
-              Answer three questions. Get a provisional read on your strategic
+              Answer five questions. Get a provisional read on your strategic
               maturity — then decide if you want the full picture.
             </p>
           </div>
@@ -216,7 +216,7 @@ export function QuickBenchmark() {
                   </div>
 
                   {/* Dimension breakdown */}
-                  <div className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-3">
+                  <div className="mx-auto mt-8 grid max-w-md grid-cols-5 gap-3">
                     {QUICK_QUESTIONS.map((q) => {
                       const letter = answers[q.id];
                       const opt = letter ? q.options.find((o) => o.letter === letter) : undefined;
