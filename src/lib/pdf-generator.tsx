@@ -663,26 +663,10 @@ const AssessmentPDFReport = ({
                 <Text style={styles.sectionHeading}>Dimension Analysis</Text>
                 <View style={styles.sectionRule} />
 
-                <Text style={styles.sectionSubheading}>Score Summary</Text>
-                <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderCell, { width: 100 }]}>Dimension</Text>
-                    <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Score</Text>
-                    <Text style={[styles.tableHeaderCell, { width: 36, textAlign: "right" }]}>/100</Text>
+                <View style={{ marginTop: 6, marginBottom: 4, alignItems: "center" }}>
+                    <DimensionBarChart scores={result.scores} />
+                    <Text style={styles.chartCaption}>Figure 1 — Maturity Score by Dimension</Text>
                 </View>
-                {DIMENSIONS.map((d, idx) => {
-                    const score = result.scores[d.key];
-                    const trackInner = 140;
-                    const fillW = (score / 100) * trackInner;
-                    return (
-                        <View key={d.key} style={[styles.tableRow, idx % 2 === 1 ? styles.tableRowAlt : {}]}>
-                            <Text style={[styles.tableCell, { width: 92 }]}>{d.label}</Text>
-                            <View style={[styles.barTrack, { maxWidth: trackInner }]}>
-                                <View style={[styles.barFill, { width: fillW }]} />
-                            </View>
-                            <Text style={[styles.tableCellScore, { width: 32 }]}>{score}</Text>
-                        </View>
-                    );
-                })}
 
                 <View style={{ marginTop: 10, alignItems: "center" }}>
                     <DimensionBarChart scores={result.scores} />
