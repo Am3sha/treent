@@ -489,7 +489,7 @@ function ResultsBody({
               <CardTitle className="text-lg">You vs the benchmark</CardTitle>
               <CardDescription>
                 {statsState === "loaded"
-                  ? `Compared against ${stats!.totalAssessments.toLocaleString()} completed benchmarks.`
+                  ? `Compared against ${stats!.totalAssessments.toLocaleString()} completed benchmark${stats!.totalAssessments === 1 ? "" : "s"}.`
                   : statsState === "loading"
                     ? "Loading benchmark data…"
                     : "Benchmark data not yet available."}
@@ -561,7 +561,7 @@ function ResultsBody({
                       <>
                         Based on {sectorRow.count}{" "}
                         {sectorRow.count === 1 ? "organisation" : "organisations"} in
-                        your sector who have benchmarked so far.
+                        your sector who {sectorRow.count === 1 ? "has" : "have"} benchmarked so far.
                       </>
                     ) : (
                       <>
