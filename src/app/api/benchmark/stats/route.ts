@@ -7,10 +7,10 @@
 import { COMPANY_SIZES } from "@/lib/benchmark-constants";
 import { db } from "@/lib/db";
 
-type Tier = "Nascent" | "Developing" | "Established" | "Leading";
+type Tier = "initial" | "developing" | "defined" | "established" | "advanced";
 
 function emptyTierDist(): Record<Tier, number> {
-  return { Nascent: 0, Developing: 0, Established: 0, Leading: 0 };
+  return { initial: 0, developing: 0, defined: 0, established: 0, advanced: 0 };
 }
 
 export async function GET() {

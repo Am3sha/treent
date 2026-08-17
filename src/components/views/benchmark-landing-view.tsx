@@ -47,7 +47,7 @@ const OUTCOMES = [
     icon: Compass,
     title: "Your internal audit maturity tier",
     description:
-      "A clear Nascent → Leading rating, normalised from 15 evidence-based questions across the five dimensions of internal audit maturity.",
+      "A clear Initial \u2192 Advanced rating, normalised from 26 evidence-based questions across the five domains of internal audit maturity.",
   },
   {
     icon: BarChart3,
@@ -72,7 +72,7 @@ const OUTCOMES = [
 const STEPS = [
   {
     n: "01",
-    title: "Answer 15 questions",
+    title: "Answer 26 questions",
     description:
       "Fifteen sharp statements across five dimensions, on a 1–5 scale. Roughly eight minutes; no jargon, no homework required.",
   },
@@ -80,7 +80,7 @@ const STEPS = [
     n: "02",
     title: "Get your score & tier",
     description:
-      "We normalise your answers to a 0–100 internal audit maturity score, place you in one of four tiers, and compute your percentile vs the cohort.",
+      "We normalise your answers to a 0–100 internal audit maturity score, place you in one of five tiers, and compute your percentile vs the cohort.",
   },
   {
     n: "03",
@@ -283,7 +283,7 @@ export function BenchmarkLandingView() {
                 4
               </span>
             }
-            sub="Nascent → Leading"
+            sub="Initial \u2192 Advanced"
           />
         </div>
         {statsState === "loaded" && (
@@ -429,8 +429,7 @@ export function BenchmarkLandingView() {
                 answers are normalised to a 0–100 internal audit maturity score per dimension
                 (where 1 maps to 0 and 5 maps to 100), and a weighted overall
                 score is computed across all five. The overall score places you
-                in one of four tiers — Nascent, Developing, Established, or
-                Leading — with bespoke recommendations for each.
+                in one of five tiers — Initial, Developing, Defined, Established, or Advanced — with bespoke recommendations for each.
               </p>
               <p>
                 Your percentile is computed against every other completed

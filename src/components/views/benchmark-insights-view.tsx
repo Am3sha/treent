@@ -200,7 +200,7 @@ export function BenchmarkInsightsView() {
                 />
                 <KpiCard
                   icon={<Activity className="h-4 w-4" />}
-                  label="Leading-tier share"
+                  label="Advanced-tier share"
                   value={`${Math.round(
                     ((stats.tierDistribution.Leading ?? 0) /
                       Math.max(stats.totalAssessments, 1)) *

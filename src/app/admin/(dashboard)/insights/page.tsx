@@ -43,10 +43,11 @@ import { formatDuration } from "@/lib/utils";
 
 const COLORS = ["#002147", "#123A63", "#245380", "#366C9D", "#4885B9"];
 const TIER_COLORS: Record<string, string> = {
-    Nascent: "#f97316",
-    Developing: "#f59e0b",
-    Established: "#10b981",
-    Leading: "#0d9488",
+    initial: "#f87171",
+    developing: "#f59e0b",
+    defined: "#a78bfa",
+    established: "#10b981",
+    advanced: "#0d9488",
 };
 
 interface QuestionStat {
@@ -62,11 +63,11 @@ interface IndustryBenchmark {
     industry: string;
     count: number;
     avgScore: number;
-    avgStrategyScore: number;
-    avgTechnologyScore: number;
-    avgCultureScore: number;
-    avgDataScore: number;
-    avgOperationsScore: number;
+    avgGovernanceScore: number;
+    avgRiskScore: number;
+    avgExecutionScore: number;
+    avgReportingScore: number;
+    avgCapabilityScore: number;
 }
 
 interface RecentAssessment {
@@ -477,8 +478,11 @@ export default function AdminInsightsPage() {
                                         <th className="py-2 font-medium">Industry</th>
                                         <th className="py-2 text-center font-medium">Count</th>
                                         <th className="py-2 text-right font-medium">Avg Score</th>
-                                        <th className="py-2 text-right font-medium">Strategy</th>
-                                        <th className="py-2 text-right font-medium">Tech</th>
+                                        <th className="py-2 text-right font-medium">Gov</th>
+                                        <th className="py-2 text-right font-medium">Risk</th>
+                                        <th className="py-2 text-right font-medium">Exec</th>
+                                        <th className="py-2 text-right font-medium">Rep</th>
+                                        <th className="py-2 text-right font-medium">Cap</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/40">
@@ -489,8 +493,11 @@ export default function AdminInsightsPage() {
                                             <td className={`py-2 text-right font-semibold ${row.avgScore < 40 ? 'text-destructive' : row.avgScore > 60 ? 'text-primary' : 'text-amber-600'}`}>
                                                 {row.avgScore}
                                             </td>
-                                            <td className="py-2 text-right text-muted-foreground">{row.avgStrategyScore}</td>
-                                            <td className="py-2 text-right text-muted-foreground">{row.avgTechnologyScore}</td>
+                                            <td className="py-2 text-right text-muted-foreground">{row.avgGovernanceScore}</td>
+                                            <td className="py-2 text-right text-muted-foreground">{row.avgRiskScore}</td>
+                                            <td className="py-2 text-right text-muted-foreground">{row.avgExecutionScore}</td>
+                                            <td className="py-2 text-right text-muted-foreground">{row.avgReportingScore}</td>
+                                            <td className="py-2 text-right text-muted-foreground">{row.avgCapabilityScore}</td>
                                         </tr>
                                     ))}
                                 </tbody>
