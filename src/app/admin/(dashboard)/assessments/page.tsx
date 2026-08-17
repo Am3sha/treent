@@ -207,11 +207,11 @@ export default function AdminAssessmentsPage() {
       "Role",
       "Overall Score",
       "Tier",
-      "Strategy",
-      "Technology",
-      "Culture",
-      "Data",
-      "Operations",
+      "Governance",
+      "Risk",
+      "Execution",
+      "Reporting",
+      "Capability",
       "Question Count",
       "Duration (sec)",
       "Consent Contact",
@@ -229,11 +229,11 @@ export default function AdminAssessmentsPage() {
       r.role,
       r.overallScore,
       r.tier,
-      r.scores.strategy,
-      r.scores.technology,
-      r.scores.culture,
-      r.scores.data,
-      r.scores.operations,
+      r.scores.governance,
+      r.scores.risk,
+      r.scores.execution,
+      r.scores.reporting,
+      r.scores.capability,
       r.questionCount,
       r.durationSec,
       r.consentContact ? "yes" : "no",
@@ -332,7 +332,7 @@ export default function AdminAssessmentsPage() {
               records.length
           )
         : 0;
-    const leadingCount = records.filter((r) => r.tier === "Leading").length;
+    const leadingCount = records.filter((r) => r.tier === "advanced").length;
     const avgDuration =
       records.length > 0
         ? Math.round(

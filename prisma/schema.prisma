@@ -93,7 +93,7 @@ model AssessmentAnswer {
   id             String   @id @default(cuid())
   assessment     Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
   assessmentId   String
-  questionId     Int
+  questionId     String
   domain         String
   selectedOption String
   score          Int

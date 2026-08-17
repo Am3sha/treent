@@ -56,30 +56,30 @@ import { cn } from "@/lib/utils";
 
 
 const DIMENSION_INTERPRETATION: Record<Dimension, { high: string; mid: string; low: string }> = {
-  strategy: {
-    high: "Ambition is translated into a sequenced, fundable plan the organisation runs against.",
-    mid: "You have a strategy, but it is not consistently cascaded or measured against.",
-    low: "Strategy is implied at best — alignment on where to play and how to win is unclear.",
+  governance: {
+    high: "Internal audit reports to and is evaluated by the Audit Committee or Board — independence is structurally protected.",
+    mid: "Audit has a charter and a governing relationship, but reporting lines or evaluation practice could be strengthened.",
+    low: "Reporting lines and charter governance place audit under management influence, weakening independence.",
   },
-  technology: {
-    high: "Your technology foundation is modern, API-first, and changes at the pace of the business.",
-    mid: "Your systems work, but integration is bespoke and change cycles are slower than they need to be.",
-    low: "Core systems are closed and slow to change — technology is a constraint, not an enabler.",
+  risk: {
+    high: "The audit plan is driven by a continuously updated, independently developed risk assessment.",
+    mid: "Risk assessment exists and is refreshed periodically, with some consideration of emerging risks.",
+    low: "Planning is schedule-driven or relies on management's risk input without an independent audit risk assessment.",
   },
-  culture: {
-    high: "People, ways of working, and leadership behaviours sustain change rather than resist it.",
-    mid: "Culture supports change in pockets but isn't a deliberate lever for the leadership team.",
-    low: "Ways of working are siloed and change is resisted — culture is a brake on the strategy.",
+  execution: {
+    high: "Methodology is standardised, engagements are risk-based, and supervisory review is documented and consistent.",
+    mid: "Delivery is generally consistent, but scope-setting, review depth, or deadline discipline varies by engagement.",
+    low: "Delivery quality depends on individual auditors — no standard methodology or formal review discipline.",
   },
-  data: {
-    high: "Data is governed, reusable, and AI is delivering measured business lift.",
-    mid: "Data is partially unified and self-serve is growing, but it is not yet a governed asset.",
-    low: "Data is fragmented across systems and decision-makers depend on others to answer routine questions.",
+  reporting: {
+    high: "Reports are issued on time, actions are tracked to defined due dates, and performance is measured end to end.",
+    mid: "Reporting is usually timely, but follow-up discipline and escalation criteria are informal.",
+    low: "Reports are frequently delayed and overdue actions are not tracked or escalated systematically.",
   },
-  operations: {
-    high: "Operations are lean, observable, and improvement is a system rather than a campaign.",
-    mid: "Core processes are mapped and measured, but improvement is still project-led.",
-    low: "Operations are unmapped and reactive — improvement is ad hoc and rarely compounding.",
+  capability: {
+    high: "Competency gaps are assessed formally, development is structured, and a full QAIP including external assessment is in place.",
+    mid: "Training and internal assessments happen, but capability management is periodic rather than systematic.",
+    low: "No structured competency assessment, development plan, or quality assurance program exists.",
   },
 };
 
@@ -980,15 +980,17 @@ function TierDistribution({
   you: MaturityTier;
 }) {
   const total =
-    distribution.Nascent +
-    distribution.Developing +
-    distribution.Established +
-    distribution.Leading;
+    distribution.initial +
+    distribution.developing +
+    distribution.defined +
+    distribution.established +
+    distribution.advanced;
   const tiers: MaturityTier[] = [
-    "Nascent",
-    "Developing",
-    "Established",
-    "Leading",
+    "initial",
+    "developing",
+    "defined",
+    "established",
+    "advanced",
   ];
   return (
     <div className="space-y-3">

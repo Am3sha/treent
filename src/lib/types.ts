@@ -20,12 +20,14 @@ export type ViewKey =
   | "benchmark-insights"
   | "not-found";
 
+// Note: the canonical question set + all score math live in
+// src/lib/benchmark-scoring.ts (client-approved 26 questions, A=3/B=2/C=1/D=0).
 export type Dimension =
-  | "strategy"
-  | "technology"
-  | "culture"
-  | "data"
-  | "operations";
+  | "governance"
+  | "risk"
+  | "execution"
+  | "reporting"
+  | "capability";
 
 export interface DimensionMeta {
   key: Dimension;
@@ -36,14 +38,27 @@ export interface DimensionMeta {
   accent: string; // tailwind text color class for accents
 }
 
+export interface BenchmarkOption {
+  letter: "A" | "B" | "C" | "D";
+  label: string;
+  score: number; // A=3, B=2, C=1, D=0
+}
+
 export interface BenchmarkQuestion {
   id: string;
+  number: number; // 1..26
   dimension: Dimension;
   prompt: string;
   help?: string;
-  // 1-5 Likert; labels shown under the scale
-  labels: { value: number; label: string }[];
-  reverse?: boolean; // if true, higher value = lower maturity (handled in scoring)
+  // Multiple-choice options; Q1 has 3 options (A/B/C), all others 4 (A/B/C/D).
+  options: BenchmarkOption[];
+}
+
+export interface AssessmentAnswerRecord {
+  questionId: string;
+  domain: Dimension;
+  selectedOption: string; // "A" | "B" | "C" | "D"
+  score: number;
 }
 
 export interface AssessmentResult {
@@ -54,14 +69,15 @@ export interface AssessmentResult {
   percentile: number; // 0-100 position vs benchmark dataset
   questionCount: number;
   createdAt: string;
-  responses?: Record<string, number>;
+  answers?: AssessmentAnswerRecord[];
 }
 
 export type MaturityTier =
-  | "Nascent"
-  | "Developing"
-  | "Established"
-  | "Leading";
+  | "initial"
+  | "developing"
+  | "defined"
+  | "established"
+  | "advanced";
 
 export interface RespondentProfile {
   name: string;
@@ -78,7 +94,7 @@ export interface BenchmarkStats {
   totalAssessments: number;
   averageOverall: number;
   dimensionAverages: Record<Dimension, number>;
-  tierDistribution: Record<MaturityTier, number>;
+  tierDistribution: Record<string, number>;
   byIndustry: { label: string; count: number; average: number }[];
   byCompanySize: { label: string; count: number; average: number }[];
   trend: { weekStart: string; count: number; average: number }[];

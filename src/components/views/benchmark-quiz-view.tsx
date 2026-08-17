@@ -128,10 +128,10 @@ export function BenchmarkQuizView() {
     setSubmitting(true);
     try {
       const payload = {
-        responses: BENCHMARK_QUESTIONS.map((q) => ({
+        answers: BENCHMARK_QUESTIONS.map((q) => ({
           questionId: q.id,
-          value: responses[q.id],
-          dimension: q.dimension,
+          selectedOption: responses[q.id],
+          domain: q.dimension,
           questionText: q.prompt,
         })),
         respondent: profile,
@@ -260,7 +260,7 @@ export function BenchmarkQuizView() {
               >
                 {stepComplete
                   ? "All set — continue when ready"
-                  : "Answer all statements to continue"}
+                  : "Answer all questions to continue"}
               </span>
             )}
           </div>
@@ -296,8 +296,8 @@ function DimensionStep({
 }: {
   dimension: (typeof DIMENSIONS)[number];
   questions: BenchmarkQuestion[];
-  responses: Record<string, number>;
-  onRespond: (id: string, value: number) => void;
+  responses: Record<string, string>;
+  onRespond: (id: string, letter: string) => void;
 }) {
   return (
     <div>
@@ -346,8 +346,8 @@ function QuestionCard({
 }: {
   question: BenchmarkQuestion;
   index: number;
-  value: number | undefined;
-  onRespond: (v: number) => void;
+  value: string | undefined;
+  onRespond: (v: string) => void;
 }) {
   const answered = value !== undefined;
   return (
@@ -379,7 +379,7 @@ function QuestionCard({
           )}
 
           <LikertScale
-            labels={question.labels}
+            options={question.options}
             value={value}
             onChange={onRespond}
           />
@@ -390,59 +390,51 @@ function QuestionCard({
 }
 
 function LikertScale({
-  labels,
+  options,
   value,
   onChange,
 }: {
-  labels: { value: number; label: string }[];
-  value: number | undefined;
-  onChange: (v: number) => void;
+  options: { letter: string; label: string }[];
+  value: string | undefined;
+  onChange: (v: string) => void;
 }) {
   return (
     <div className="mt-5">
       <div
         role="radiogroup"
         aria-label="Choose the response that best matches your organisation"
-        className="grid grid-cols-1 gap-2 sm:grid-cols-5"
+        className="grid grid-cols-1 gap-2 sm:grid-cols-2"
       >
-        {labels.map((opt) => {
-          const selected = value === opt.value;
+        {options.map((opt) => {
+          const selected = value === opt.letter;
           return (
             <button
-              key={opt.value}
+              key={opt.letter}
               type="button"
               role="radio"
               aria-checked={selected}
-              onClick={() => onChange(opt.value)}
+              onClick={() => onChange(opt.letter)}
               className={cn(
-                "group flex min-h-[68px] flex-col items-start justify-between gap-2 rounded-lg border p-3 text-left transition-all sm:flex-col sm:items-start sm:gap-3",
+                "group flex min-h-[60px] flex-col items-start justify-between gap-2 rounded-lg border p-3 text-left transition-all sm:flex-row sm:items-start sm:gap-3",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                 selected
                   ? "border-primary bg-primary text-primary-foreground shadow-sm"
                   : "border-border bg-background hover:border-primary/40 hover:bg-accent/40"
               )}
             >
-              <div className="flex w-full items-center justify-between sm:flex-col sm:items-start sm:gap-2">
-                <span
-                  className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
-                    selected
-                      ? "bg-primary-foreground/20 text-primary-foreground"
-                      : "bg-muted text-foreground"
-                  )}
-                >
-                  {opt.value}
-                </span>
-                {selected && (
-                  <Check
-                    className="h-4 w-4 text-primary-foreground sm:hidden"
-                    aria-hidden
-                  />
-                )}
-              </div>
               <span
                 className={cn(
-                  "text-xs leading-snug sm:text-sm",
+                  "flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
+                  selected
+                    ? "bg-primary-foreground/20 text-primary-foreground"
+                    : "bg-muted text-foreground"
+                )}
+              >
+                {opt.letter}
+              </span>
+              <span
+                className={cn(
+                  "text-xs leading-snug sm:text-sm sm:flex-1",
                   selected
                     ? "text-primary-foreground"
                     : "text-muted-foreground"
@@ -450,13 +442,15 @@ function LikertScale({
               >
                 {opt.label}
               </span>
+              {selected && (
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-foreground" aria-hidden />
+              )}
             </button>
           );
         })}
       </div>
-      <div className="mt-2 flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground/70">
-        <span>Less mature</span>
-        <span>More mature</span>
+      <div className="mt-2 text-[11px] uppercase tracking-wider text-muted-foreground/70">
+        Pick the single option that best describes your organisation today.
       </div>
     </div>
   );
@@ -699,7 +693,7 @@ function Field({
 // Helpers
 // ---------------------------------------------------------------------------
 
-function countUnanswered(responses: Record<string, number>): number {
+function countUnanswered(responses: Record<string, string>): number {
   let n = 0;
   for (const q of BENCHMARK_QUESTIONS) {
     if (responses[q.id] === undefined) n++;

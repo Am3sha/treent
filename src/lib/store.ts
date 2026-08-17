@@ -8,22 +8,18 @@ import type {
   RespondentProfile,
   ViewKey,
 } from "./types";
-import {
-  BENCHMARK_QUESTIONS,
-  DIMENSIONS,
-  scoreToTier,
-} from "./content";
+import { BENCHMARK_QUESTIONS, computeResult } from "./content";
 
 interface NavState {
   view: ViewKey;
-  // assessment session
-  responses: Record<string, number>; // questionId -> value
+  // assessment session — questionId -> selected option letter ("A"/"B"/"C"/"D")
+  responses: Record<string, string>;
   respondent: RespondentProfile | null;
   result: AssessmentResult | null;
   startedAt: number | null;
   setView: (view: ViewKey) => void;
   navigate: (view: ViewKey) => void;
-  setResponse: (questionId: string, value: number) => void;
+  setResponse: (questionId: string, optionLetter: string) => void;
   resetResponses: () => void;
   setRespondent: (r: RespondentProfile) => void;
   setResult: (r: AssessmentResult) => void;
@@ -33,6 +29,7 @@ interface NavState {
     overall: number;
     scores: Record<Dimension, number>;
     tier: MaturityTier;
+    band: "low" | "mid" | "high";
     questionCount: number;
   } | null;
 }
@@ -82,8 +79,8 @@ export const useNav = create<NavState>((set, get) => ({
 
   navigate: (view) => get().setView(view),
 
-  setResponse: (questionId, value) =>
-    set((s) => ({ responses: { ...s.responses, [questionId]: value } })),
+  setResponse: (questionId, optionLetter) =>
+    set((s) => ({ responses: { ...s.responses, [questionId]: optionLetter } })),
 
   resetResponses: () => set({ responses: {}, result: null, startedAt: null }),
 
@@ -96,35 +93,26 @@ export const useNav = create<NavState>((set, get) => ({
 
   computeLocalScores: () => {
     const responses = get().responses;
-    const byDimension: Record<Dimension, { sum: number; count: number }> = {
-      strategy: { sum: 0, count: 0 },
-      technology: { sum: 0, count: 0 },
-      culture: { sum: 0, count: 0 },
-      data: { sum: 0, count: 0 },
-      operations: { sum: 0, count: 0 },
+    const answers = BENCHMARK_QUESTIONS.filter(
+      (q) => typeof responses[q.id] === "string",
+    ).map((q) => {
+      const letter = responses[q.id];
+      const opt = q.options.find((o) => o.letter === letter);
+      return {
+        questionId: q.id,
+        domain: q.dimension,
+        selectedOption: letter ?? "",
+        score: opt?.score ?? 0,
+      };
+    });
+    if (answers.length === 0) return null;
+    const r = computeResult(answers);
+    return {
+      overall: r.overall,
+      scores: r.scores as Record<Dimension, number>,
+      tier: r.tier as MaturityTier,
+      band: r.band,
+      questionCount: answers.length,
     };
-    let answered = 0;
-    for (const q of BENCHMARK_QUESTIONS) {
-      const v = responses[q.id];
-      if (typeof v === "number") {
-        byDimension[q.dimension].sum += v;
-        byDimension[q.dimension].count += 1;
-        answered += 1;
-      }
-    }
-    if (answered === 0) return null;
-    const scores = {} as Record<Dimension, number>;
-    let totalSum = 0;
-    let totalWeight = 0;
-    for (const d of DIMENSIONS) {
-      const { sum, count } = byDimension[d.key];
-      // normalise 1-5 scale to 0-100
-      const dimScore = count > 0 ? Math.round(((sum / count) - 1) / 4 * 100) : 0;
-      scores[d.key] = dimScore;
-      totalSum += dimScore * count;
-      totalWeight += count;
-    }
-    const overall = totalWeight > 0 ? Math.round(totalSum / totalWeight) : 0;
-    return { overall, scores, tier: scoreToTier(overall), questionCount: answered };
   },
 }));

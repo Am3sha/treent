@@ -246,304 +246,481 @@ export const PERKS = [
 // Benchmark: dimensions + questions (unchanged)
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Benchmark: domains + client-approved 26 questions
+// Canonical question set and score math live in benchmark-scoring.ts.
+// ---------------------------------------------------------------------------
+
 export const DIMENSIONS: DimensionMeta[] = [
   {
-    key: "strategy",
-    label: "Strategy & Vision",
-    short: "Strategy",
+    key: "governance",
+    label: "Governance & Operating Model",
+    short: "Governance",
     description:
-      "Alignment of internal audit strategy with enterprise risk appetite and strategic objectives.",
-    icon: "Compass",
+      "Reporting lines, charter approval, CAE evaluation, and independence of the internal audit function.",
+    icon: "ShieldCheck",
     accent: "text-emerald-700",
   },
   {
-    key: "technology",
-    label: "Technology & Architecture",
-    short: "Technology",
+    key: "risk",
+    label: "Risk Assessment & Planning",
+    short: "Risk",
     description:
-      "Maturity of IT general controls, audit tooling, and technology-enabled audit delivery.",
-    icon: "Workflow",
+      "Maturity of the audit risk assessment, treatment of emerging risks, and audit plan coordination.",
+    icon: "Target",
     accent: "text-amber-700",
   },
   {
-    key: "culture",
-    label: "Culture & Talent",
-    short: "Culture",
+    key: "execution",
+    label: "Audit Execution & Strategic Alignment",
+    short: "Execution",
     description:
-      "Audit team competency, independence posture, and stakeholder engagement across the organisation.",
-    icon: "Users",
+      "Methodology rigour, supervisory review, delivery consistency, and alignment with organisational strategy.",
+    icon: "Workflow",
     accent: "text-teal-700",
   },
   {
-    key: "data",
-    label: "Data & AI",
-    short: "Data",
+    key: "reporting",
+    label: "Reporting & Impact",
+    short: "Reporting",
     description:
-      "Data governance controls maturity and audit analytics capability deployment across audit cycles.",
-    icon: "BrainCircuit",
-    accent: "text-yellow-700",
+      "Timeliness of reporting, follow-up of management actions, escalation, and audit performance measurement.",
+    icon: "FileChartColumn",
+    accent: "text-blue-700",
   },
   {
-    key: "operations",
-    label: "Operations & Delivery",
-    short: "Operations",
+    key: "capability",
+    label: "Capability & Continuous Improvement",
+    short: "Capability",
     description:
-      "Audit delivery methodology rigour, QAIP conformance, and issue remediation tracking.",
-    icon: "Gauge",
+      "Specialist expertise, competency assessment, professional development, and quality assurance (QAIP).",
+    icon: "GraduationCap",
     accent: "text-orange-700",
   },
 ];
 
 export const BENCHMARK_QUESTIONS: BenchmarkQuestion[] = [
-  // Strategy
+  // DOMAIN 1: Governance & Operating Model (Q1-Q5, max 15)
   {
-    id: "strat-1",
-    dimension: "strategy",
-    prompt: "Our leadership team has a shared, written view of where we will play and how we will win over the next 3 years.",
-    help: "Consider whether the strategy is documented, agreed across the exec, and stable quarter to quarter.",
-    labels: [
-      { value: 1, label: "No shared view" },
-      { value: 2, label: "Implied, not written" },
-      { value: 3, label: "Written, debated" },
-      { value: 4, label: "Written & cascaded" },
-      { value: 5, label: "Living & measured" },
+    id: "gov-1",
+    number: 1,
+    dimension: "governance",
+    prompt: "Who does the CAE report to?",
+    options: [
+      { letter: "A", label: "Audit Committee, Board, or highest governing body", score: 3 },
+      { letter: "B", label: "CEO", score: 2 },
+      { letter: "C", label: "Other Management", score: 1 },
     ],
   },
   {
-    id: "strat-2",
-    dimension: "strategy",
-    prompt: "Major investments are explicitly ranked against the strategy, with clear go / no-go decision gates.",
-    labels: [
-      { value: 1, label: "Ad hoc" },
-      { value: 2, label: "Informal ranking" },
-      { value: 3, label: "Periodic reviews" },
-      { value: 4, label: "Gated portfolio" },
-      { value: 5, label: "Real-time capital allocation" },
+    id: "gov-2",
+    number: 2,
+    dimension: "governance",
+    prompt: "Who approves the audit plan?",
+    options: [
+      { letter: "A", label: "Audit Committee, Board, or highest governing body", score: 3 },
+      { letter: "B", label: "Governing body with CEO input", score: 2 },
+      { letter: "C", label: "CEO", score: 1 },
+      { letter: "D", label: "Other Management", score: 0 },
     ],
   },
   {
-    id: "strat-3",
-    dimension: "strategy",
-    prompt: "We can articulate, in one sentence, the two or three capabilities that genuinely differentiate us.",
-    labels: [
-      { value: 1, label: "Unclear" },
-      { value: 2, label: "Listed, not debated" },
-      { value: 3, label: "Debated" },
-      { value: 4, label: "Invested in" },
-      { value: 5, label: "Measured & defended" },
-    ],
-  },
-  // Technology
-  {
-    id: "tech-1",
-    dimension: "technology",
-    prompt: "Our core systems expose well-documented APIs that other teams can build on without custom integration projects.",
-    labels: [
-      { value: 1, label: "Closed systems" },
-      { value: 2, label: "Point-to-point" },
-      { value: 3, label: "Some APIs" },
-      { value: 4, label: "API-first" },
-      { value: 5, label: "Platform ecosystem" },
+    id: "gov-3",
+    number: 3,
+    dimension: "governance",
+    prompt: "Who evaluates the CAE's performance?",
+    options: [
+      { letter: "A", label: "Audit Committee, Board, or highest governing body", score: 3 },
+      { letter: "B", label: "Governing body with CEO input", score: 2 },
+      { letter: "C", label: "CEO with governing body oversight", score: 1 },
+      { letter: "D", label: "Other Management", score: 0 },
     ],
   },
   {
-    id: "tech-2",
-    dimension: "technology",
-    prompt: "We can ship a meaningful change to production within a week of deciding to do it.",
-    labels: [
-      { value: 1, label: "Months+" },
-      { value: 2, label: "Weeks" },
-      { value: 3, label: "Two weeks" },
-      { value: 4, label: "Days" },
-      { value: 5, label: "Hours" },
+    id: "gov-4",
+    number: 4,
+    dimension: "governance",
+    prompt: "Who approves the Internal Audit charter?",
+    options: [
+      { letter: "A", label: "Audit Committee, Board, or highest governing body", score: 3 },
+      { letter: "B", label: "Governing body with CEO input", score: 2 },
+      { letter: "C", label: "CEO", score: 1 },
+      { letter: "D", label: "Other Management", score: 0 },
     ],
   },
   {
-    id: "tech-3",
-    dimension: "technology",
-    prompt: "Our technology debt is tracked as a portfolio, with a deliberate paydown plan — not an ambient complaint.",
-    labels: [
-      { value: 1, label: "Ignored" },
-      { value: 2, label: "Complained about" },
-      { value: 3, label: "Tracked" },
-      { value: 4, label: "Funded paydown" },
-      { value: 5, label: "Structurally managed" },
+    id: "gov-5",
+    number: 5,
+    dimension: "governance",
+    prompt: "How often is the Internal Audit charter reviewed?",
+    options: [
+      { letter: "A", label: "Annually and when significant changes occur", score: 3 },
+      { letter: "B", label: "Annually", score: 2 },
+      { letter: "C", label: "Occasionally", score: 1 },
+      { letter: "D", label: "Rarely or never", score: 0 },
     ],
   },
-  // Culture
+  // DOMAIN 2: Risk Assessment & Planning (Q6-Q10, max 15)
   {
-    id: "cult-1",
-    dimension: "culture",
-    prompt: "Cross-functional teams routinely form around outcomes, rather than handing work across departmental silos.",
-    labels: [
-      { value: 1, label: "Siloed" },
-      { value: 2, label: "Coordinated" },
-      { value: 3, label: "Some squads" },
-      { value: 4, label: "Outcome teams" },
-      { value: 5, label: "Teal / networked" },
-    ],
-  },
-  {
-    id: "cult-2",
-    dimension: "culture",
-    prompt: "Leadership actively rewards people for stopping bad work, not only for shipping new work.",
-    labels: [
-      { value: 1, label: "Never" },
-      { value: 2, label: "Rarely" },
-      { value: 3, label: "Sometimes" },
-      { value: 4, label: "Often" },
-      { value: 5, label: "Systematically" },
+    id: "risk-6",
+    number: 6,
+    dimension: "risk",
+    prompt: "How is the Internal Audit risk assessment updated?",
+    options: [
+      { letter: "A", label: "Continuously as risks change", score: 3 },
+      { letter: "B", label: "Periodically during the year", score: 2 },
+      { letter: "C", label: "Annually", score: 1 },
+      { letter: "D", label: "No formal risk assessment", score: 0 },
     ],
   },
   {
-    id: "cult-3",
-    dimension: "culture",
-    prompt: "Our people have protected time to learn and experiment — and it is genuinely used, not aspirational.",
-    labels: [
-      { value: 1, label: "None" },
-      { value: 2, label: "Aspirational" },
-      { value: 3, label: "Occasional" },
-      { value: 4, label: "Scheduled" },
-      { value: 5, label: "Embedded" },
-    ],
-  },
-  // Data
-  {
-    id: "data-1",
-    dimension: "data",
-    prompt: "We have a single, governed source of truth for our core business entities (customer, product, employee).",
-    labels: [
-      { value: 1, label: "No" },
-      { value: 2, label: "Fragmented" },
-      { value: 3, label: "Partially unified" },
-      { value: 4, label: "Governed" },
-      { value: 5, label: "Reusable products" },
+    id: "risk-7",
+    number: 7,
+    dimension: "risk",
+    prompt: "How are emerging risks addressed?",
+    options: [
+      { letter: "A", label: "Included promptly in audit planning", score: 3 },
+      { letter: "B", label: "Regularly assessed", score: 2 },
+      { letter: "C", label: "Considered when needed", score: 1 },
+      { letter: "D", label: "Rarely considered", score: 0 },
     ],
   },
   {
-    id: "data-2",
-    dimension: "data",
-    prompt: "Decision-makers can answer their own routine questions from self-serve analytics within minutes.",
-    labels: [
-      { value: 1, label: "Via IT, days" },
-      { value: 2, label: "Via BI team" },
-      { value: 3, label: "Some self-serve" },
-      { value: 4, label: "Mostly self-serve" },
-      { value: 5, label: "Self-serve by default" },
+    id: "risk-8",
+    number: 8,
+    dimension: "risk",
+    prompt: "How is the Internal Audit risk assessment developed?",
+    options: [
+      { letter: "A", label: "Internal Audit performs an independent risk assessment using multiple relevant risk inputs", score: 3 },
+      { letter: "B", label: "Internal Audit performs its own risk assessment with consideration of ERM information", score: 2 },
+      { letter: "C", label: "Internal Audit primarily relies on the organization's ERM or Management risk assessment", score: 1 },
+      { letter: "D", label: "No formal risk assessment is performed", score: 0 },
     ],
   },
   {
-    id: "data-3",
-    dimension: "data",
-    prompt: "We have at least one AI/ML system in production whose business lift is measured monthly.",
-    labels: [
-      { value: 1, label: "None" },
-      { value: 2, label: "Pilots only" },
-      { value: 3, label: "One in prod" },
-      { value: 4, label: "Several, measured" },
-      { value: 5, label: "AI as a capability" },
-    ],
-  },
-  // Operations
-  {
-    id: "ops-1",
-    dimension: "operations",
-    prompt: "Our core processes are mapped, measured, and improved as a system — not project by project.",
-    labels: [
-      { value: 1, label: "Unmapped" },
-      { value: 2, label: "Mapped" },
-      { value: 3, label: "Measured" },
-      { value: 4, label: "Continuously improved" },
-      { value: 5, label: "Self-optimising" },
+    id: "risk-9",
+    number: 9,
+    dimension: "risk",
+    prompt: "How often is the audit plan reviewed?",
+    options: [
+      { letter: "A", label: "Throughout the year", score: 3 },
+      { letter: "B", label: "Quarterly", score: 2 },
+      { letter: "C", label: "Annually", score: 1 },
+      { letter: "D", label: "Only when required", score: 0 },
     ],
   },
   {
-    id: "ops-2",
-    dimension: "operations",
-    prompt: "Routine, repetitive work is automated wherever it makes economic sense — and the savings are reinvested.",
-    labels: [
-      { value: 1, label: "Manual" },
-      { value: 2, label: "Some scripts" },
-      { value: 3, label: "Targeted automation" },
-      { value: 4, label: "Broad automation" },
-      { value: 5, label: "Automation-first" },
+    id: "risk-10",
+    number: 10,
+    dimension: "risk",
+    prompt: "How does Internal Audit coordinate its plan with other assurance providers?",
+    options: [
+      { letter: "A", label: "Through structured coordination and reliance where appropriate", score: 3 },
+      { letter: "B", label: "Through regular coordination", score: 2 },
+      { letter: "C", label: "Informally when needed", score: 1 },
+      { letter: "D", label: "No coordination", score: 0 },
+    ],
+  },
+  // DOMAIN 3: Audit Execution & Strategic Alignment (Q11-Q16, max 18)
+  {
+    id: "exec-11",
+    number: 11,
+    dimension: "execution",
+    prompt: "How consistently are audit programs followed?",
+    options: [
+      { letter: "A", label: "Always", score: 3 },
+      { letter: "B", label: "Usually", score: 2 },
+      { letter: "C", label: "Sometimes", score: 1 },
+      { letter: "D", label: "Rarely", score: 0 },
     ],
   },
   {
-    id: "ops-3",
-    dimension: "operations",
-    prompt: "We can clearly see, in near real-time, how the operation is performing against its service and cost commitments.",
-    labels: [
-      { value: 1, label: "Monthly reports" },
-      { value: 2, label: "Weekly dashboards" },
-      { value: 3, label: "Daily" },
-      { value: 4, label: "Hourly" },
-      { value: 5, label: "Live control tower" },
+    id: "exec-12",
+    number: 12,
+    dimension: "execution",
+    prompt: "How are engagement objectives and scope determined?",
+    options: [
+      { letter: "A", label: "Based on a documented engagement-level risk assessment", score: 3 },
+      { letter: "B", label: "Based on identified risks and prior audit knowledge", score: 2 },
+      { letter: "C", label: "Primarily based on a standard or previous audit scope", score: 1 },
+      { letter: "D", label: "Primarily based on auditor judgment", score: 0 },
+    ],
+  },
+  {
+    id: "exec-13",
+    number: 13,
+    dimension: "execution",
+    prompt: "How is audit work reviewed and supervised?",
+    options: [
+      { letter: "A", label: "Through a defined and documented supervisory review process", score: 3 },
+      { letter: "B", label: "Through regular Manager or CAE review", score: 2 },
+      { letter: "C", label: "Review practices vary by engagement", score: 1 },
+      { letter: "D", label: "No formal review process", score: 0 },
+    ],
+  },
+  {
+    id: "exec-14",
+    number: 14,
+    dimension: "execution",
+    prompt: "How is consistency maintained across audits?",
+    options: [
+      { letter: "A", label: "Standardized methodology", score: 3 },
+      { letter: "B", label: "Mostly consistent", score: 2 },
+      { letter: "C", label: "Depends on the auditor", score: 1 },
+      { letter: "D", label: "No defined approach", score: 0 },
+    ],
+  },
+  {
+    id: "exec-15",
+    number: 15,
+    dimension: "execution",
+    prompt: "How are audit deadlines managed?",
+    options: [
+      { letter: "A", label: "Consistently achieved", score: 3 },
+      { letter: "B", label: "Usually achieved", score: 2 },
+      { letter: "C", label: "Frequently delayed", score: 1 },
+      { letter: "D", label: "Regularly delayed", score: 0 },
+    ],
+  },
+  {
+    id: "exec-16",
+    number: 16,
+    dimension: "execution",
+    prompt: "How is Internal Audit aligned with the organization's strategy and objectives?",
+    options: [
+      { letter: "A", label: "Audit priorities are continuously aligned with strategy, objectives, and changing risks", score: 3 },
+      { letter: "B", label: "Audit planning considers the organization's strategy and objectives", score: 2 },
+      { letter: "C", label: "Strategy is considered informally or when relevant", score: 1 },
+      { letter: "D", label: "Little or no consideration of organizational strategy", score: 0 },
+    ],
+  },
+  // DOMAIN 4: Reporting & Impact (Q17-Q21, max 15)
+  {
+    id: "rep-17",
+    number: 17,
+    dimension: "reporting",
+    prompt: "How are agreed management actions followed up?",
+    options: [
+      { letter: "A", label: "Based on defined action due dates", score: 3 },
+      { letter: "B", label: "Quarterly", score: 2 },
+      { letter: "C", label: "Annually", score: 1 },
+      { letter: "D", label: "Irregularly or rarely", score: 0 },
+    ],
+  },
+  {
+    id: "rep-18",
+    number: 18,
+    dimension: "reporting",
+    prompt: "How timely are audit reports issued?",
+    options: [
+      { letter: "A", label: "Consistently on time", score: 3 },
+      { letter: "B", label: "Usually on time", score: 2 },
+      { letter: "C", label: "Frequently delayed", score: 1 },
+      { letter: "D", label: "Significantly delayed", score: 0 },
+    ],
+  },
+  {
+    id: "rep-19",
+    number: 19,
+    dimension: "reporting",
+    prompt: "How are significant audit issues escalated?",
+    options: [
+      { letter: "A", label: "Based on defined escalation criteria", score: 3 },
+      { letter: "B", label: "Through an established escalation process", score: 2 },
+      { letter: "C", label: "Based on individual judgment", score: 1 },
+      { letter: "D", label: "No defined escalation process", score: 0 },
+    ],
+  },
+  {
+    id: "rep-20",
+    number: 20,
+    dimension: "reporting",
+    prompt: "How are overdue management actions handled?",
+    options: [
+      { letter: "A", label: "Tracked and escalated based on defined criteria", score: 3 },
+      { letter: "B", label: "Regularly tracked and reported", score: 2 },
+      { letter: "C", label: "Followed up periodically", score: 1 },
+      { letter: "D", label: "No consistent follow-up", score: 0 },
+    ],
+  },
+  {
+    id: "rep-21",
+    number: 21,
+    dimension: "reporting",
+    prompt: "How does Internal Audit measure its performance?",
+    options: [
+      { letter: "A", label: "Defined performance measures covering quality, delivery, and stakeholder value", score: 3 },
+      { letter: "B", label: "Defined operational performance measures", score: 2 },
+      { letter: "C", label: "Mainly completion of the audit plan", score: 1 },
+      { letter: "D", label: "No formal performance measures", score: 0 },
+    ],
+  },
+  // DOMAIN 5: Capability & Continuous Improvement (Q22-Q26, max 15)
+  {
+    id: "cap-22",
+    number: 22,
+    dimension: "capability",
+    prompt: "How is the Internal Audit methodology maintained and improved?",
+    options: [
+      { letter: "A", label: "Regularly reviewed and updated based on changes, quality results, and leading practices", score: 3 },
+      { letter: "B", label: "Periodically reviewed and updated", score: 2 },
+      { letter: "C", label: "Updated mainly when issues or major changes arise", score: 1 },
+      { letter: "D", label: "Rarely or never reviewed", score: 0 },
+    ],
+  },
+  {
+    id: "cap-23",
+    number: 23,
+    dimension: "capability",
+    prompt: "How does Internal Audit obtain specialist expertise when needed?",
+    options: [
+      { letter: "A", label: "Through appropriate internal or external specialists based on the required expertise", score: 3 },
+      { letter: "B", label: "Through available specialists when possible", score: 2 },
+      { letter: "C", label: "Primarily through the existing audit team", score: 1 },
+      { letter: "D", label: "Specialist expertise is generally unavailable", score: 0 },
+    ],
+  },
+  {
+    id: "cap-24",
+    number: 24,
+    dimension: "capability",
+    prompt: "How are Internal Audit competency gaps identified?",
+    options: [
+      { letter: "A", label: "Through a structured competency assessment", score: 3 },
+      { letter: "B", label: "Through periodic performance reviews", score: 2 },
+      { letter: "C", label: "Informally by management", score: 1 },
+      { letter: "D", label: "No defined assessment", score: 0 },
+    ],
+  },
+  {
+    id: "cap-25",
+    number: 25,
+    dimension: "capability",
+    prompt: "How is professional development managed?",
+    options: [
+      { letter: "A", label: "Through structured development plans linked to competency gaps", score: 3 },
+      { letter: "B", label: "Through regular training and professional development", score: 2 },
+      { letter: "C", label: "Through training when needs arise", score: 1 },
+      { letter: "D", label: "No defined development approach", score: 0 },
+    ],
+  },
+  {
+    id: "cap-26",
+    number: 26,
+    dimension: "capability",
+    prompt: "How is the quality of Internal Audit evaluated?",
+    options: [
+      { letter: "A", label: "Through a QAIP including ongoing monitoring, internal assessments, and external assessment", score: 3 },
+      { letter: "B", label: "Through periodic internal quality assessments", score: 2 },
+      { letter: "C", label: "Mainly through engagement-level reviews", score: 1 },
+      { letter: "D", label: "No formal quality assessment process", score: 0 },
     ],
   },
 ];
+// Scoring helpers — delegate to the single source of truth in benchmark-scoring.ts
+import {
+  calculateDomainScore,
+  calculateOverallScore,
+  getMaturityLevel,
+  getRecommendationBand,
+  DOMAIN_ORDER,
+  MATURITY_LEVELS,
+  type AnswerRecord,
+} from "./benchmark-scoring";
 
-// Scoring helpers
+
+export {
+  calculateDomainScore,
+  calculateOverallScore,
+  getMaturityLevel,
+  getRecommendationBand,
+  DOMAIN_ORDER,
+  DOMAIN_MAX_POINTS,
+  TOTAL_MAX_POINTS,
+  MATURITY_LEVELS,
+  type AnswerRecord,
+} from "./benchmark-scoring";
+
 export function scoreToTier(score: number): import("./types").MaturityTier {
-  if (score < 35) return "Nascent";
-  if (score < 55) return "Developing";
-  if (score < 75) return "Established";
-  return "Leading";
+  return getMaturityLevel(score).level;
 }
 
 export const TIER_META: Record<
   import("./types").MaturityTier,
   { label: string; summary: string; color: string; range: string }
 > = {
-  Nascent: {
-    label: "Nascent",
+  initial: {
+    label: "Initial",
     summary:
       "Internal audit foundational practices are still forming. Prioritise charter clarity, risk-based audit planning basics, and governance alignment before investing in tooling or advanced methodologies.",
     color: "oklch(0.55 0.12 35)",
-    range: "0 – 34",
+    range: "0 – 20",
   },
-  Developing: {
+  developing: {
     label: "Developing",
     summary:
       "Pockets of strong internal audit practice exist. The priority is to connect them into a repeatable, risk-aligned system with formalised methodology, clear reporting cadence, and consistent quality assurance.",
     color: "oklch(0.72 0.13 75)",
-    range: "35 – 54",
+    range: "21 – 40",
   },
-  Established: {
+  defined: {
+    label: "Defined",
+    summary:
+      "Core processes are defined and repeatable. The focus now is consistency: embedding a standard methodology, formalising QAIP elements, and tightening follow-up discipline across engagements.",
+    color: "oklch(0.6 0.12 250)",
+    range: "41 – 60",
+  },
+  established: {
     label: "Established",
     summary:
-      "A coherent, risk-based internal audit operating model is in place. The next step is to mature from efficient assurance delivery to proactive, insight-driven audit — strengthening control environment oversight, QAIP conformance, and audit analytics capability.",
+      "A coherent, risk-based internal audit operating model is in place. The next step is to mature from efficient assurance delivery to proactive, insight-driven audit — strengthening control environment oversight and audit analytics capability.",
     color: "oklch(0.55 0.1 162)",
-    range: "55 – 74",
+    range: "61 – 80",
   },
-  Leading: {
-    label: "Leading",
+  advanced: {
+    label: "Advanced",
     summary:
       "Your internal audit function operates at the frontier of maturity. Focus shifts to sustaining excellence through continuous QAIP monitoring, advanced data-driven audit techniques, strategic audit committee advisory, and proactive risk foresight across the enterprise.",
     color: "oklch(0.52 0.1 195)",
-    range: "75 – 100",
+    range: "81 – 100",
   },
 };
 
 export const TIER_RECOMMENDATIONS: Record<import("./types").MaturityTier, string[]> = {
-  Nascent: [
+  initial: [
     "Prioritise foundational governance: formalise the Internal Audit Charter with clear mandate, independence, and reporting lines to the Audit Committee.",
     "Develop a risk-based annual audit plan aligned to the organisation's key risk areas, with explicit resource allocation and timelines.",
     "Document core internal audit methodology and working paper standards to ensure consistent, repeatable engagement delivery.",
   ],
-  Developing: [
+  developing: [
     "Strengthen the control environment: implement a Quality Assurance and Improvement Program (QAIP) with regular internal assessments and documented findings.",
     "Formalise audit committee reporting cadence with structured reporting templates covering risk coverage, issues tracking, and remediation status.",
     "Build foundational audit analytics capability: establish data access protocols and deploy basic analytical procedures across high-risk audit cycles.",
   ],
-  Established: [
-    "Advance QAIP maturity: prepare for external quality assessment readiness and ensure full conformance with the IIA Global Internal Audit Standards.",
-    "Mature IT general controls (ITGC) and audit tooling: integrate continuous auditing techniques and automated control testing for key financial and operational systems.",
-    "Elevate data governance controls and audit analytics: deploy advanced data analytics across the audit plan, with a measured portfolio of continuous audit scripts.",
+  defined: [
+    "Standardise engagement delivery: enforce documented engagement-level risk assessments, supervisory review, and consistent methodology across all audits.",
+    "Formalise action follow-up discipline: define due dates, escalation criteria, and regular overdue-action reporting to the Audit Committee.",
+    "Introduce structured competency assessments to identify and close capability gaps in the audit team.",
   ],
-  Leading: [
+  established: [
+    "Advance QAIP maturity: prepare for external quality assessment readiness and ensure full conformance with the IIA Global Internal Audit Standards.",
+    "Integrate continuous auditing techniques and automated control testing for key financial and operational systems.",
+    "Elevate audit analytics: deploy advanced data analytics across the audit plan, with a measured portfolio of continuous audit scripts.",
+  ],
+  advanced: [
     "Sustain the edge through proactive risk foresight: integrate horizon-scanning and emerging risk identification into strategic audit planning and audit committee advisory.",
     "Formalise strategic audit committee advisory: position Internal Audit as a trusted strategic advisor beyond assurance, providing insights on governance, risk culture, and control optimisation.",
     "Operationalise advanced, data-driven audit: leverage predictive analytics and continuous risk monitoring as default practice, with clear ownership and governance over models and data pipelines.",
   ],
 };
+
+export function computeResult(answers: AnswerRecord[]) {
+  return {
+    overall: Math.round(calculateOverallScore(answers)),
+    scores: Object.fromEntries(
+      DOMAIN_ORDER.map((d) => [d, Math.round(calculateDomainScore(answers, d))]),
+    ),
+    tier: getMaturityLevel(calculateOverallScore(answers)).level,
+    band: getRecommendationBand(calculateOverallScore(answers)),
+  };
+}

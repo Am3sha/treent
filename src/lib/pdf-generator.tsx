@@ -517,30 +517,30 @@ const PageFooter = () => (
 );
 
 const DIMENSION_DATA: Record<Dimension, { interpretation: string; strength: string; improvement: string }> = {
-    strategy: {
-        interpretation: "Alignment of internal audit strategy with enterprise risk appetite and strategic objectives.",
-        strength: "Audit committee mandate clearly linked to organisational strategy and risk priorities.",
-        improvement: "Strengthen strategic alignment between annual audit plan risk coverage and enterprise objectives.",
+    governance: {
+        interpretation: "Reporting lines, charter approval, CAE evaluation, and independence of the internal audit function.",
+        strength: "Clear reporting line to the Audit Committee or Board, with a formally approved and regularly reviewed charter.",
+        improvement: "Strengthen independence safeguards and formalise governing-body evaluation of the CAE.",
     },
-    technology: {
-        interpretation: "Maturity of IT general controls, audit tooling, and technology-enabled audit delivery.",
-        strength: "Foundational ITGC frameworks with documented system access and change management controls.",
-        improvement: "Advance automated control testing and deploy specialised audit tooling for high-risk systems.",
+    risk: {
+        interpretation: "Maturity of the audit risk assessment, treatment of emerging risks, and audit plan coordination.",
+        strength: "Independently developed, risk-based audit planning aligned to the organisation's key risks.",
+        improvement: "Update the risk assessment continuously and strengthen coordination with other assurance providers.",
     },
-    culture: {
-        interpretation: "Audit team competency, independence posture, and stakeholder engagement across the organisation.",
-        strength: "Strong stakeholder trust in internal audit objectivity and professional scepticism.",
-        improvement: "Formalise audit team capability development and proactive stakeholder engagement cadence.",
+    execution: {
+        interpretation: "Methodology rigour, supervisory review, delivery consistency, and alignment with organisational strategy.",
+        strength: "Risk-based scope setting, documented supervisory review, and consistent delivery against deadlines.",
+        improvement: "Standardise engagement methodology and deepen engagement-level risk assessments.",
     },
-    data: {
-        interpretation: "Data governance controls maturity and audit analytics capability deployment across cycles.",
-        strength: "Established data access protocols enabling analytical review across core audit cycles.",
-        improvement: "Build out continuous audit analytics library and strengthen data governance control testing.",
+    reporting: {
+        interpretation: "Timeliness of reporting, follow-up of management actions, escalation, and audit performance measurement.",
+        strength: "On-time reporting with action tracking against defined due dates and clear escalation criteria.",
+        improvement: "Formalise follow-up discipline and define audit performance measures beyond plan completion.",
     },
-    operations: {
-        interpretation: "Audit delivery methodology rigour, QAIP conformance, and issue remediation tracking.",
-        strength: "Consistent working paper standards and documented issue tracking with management action plans.",
-        improvement: "Elevate QAIP maturity with periodic internal quality assessments and remediation close-out monitoring.",
+    capability: {
+        interpretation: "Specialist expertise, competency assessment, professional development, and quality assurance (QAIP).",
+        strength: "Structured competency assessment with development plans linked to identified gaps.",
+        improvement: "Mature the QAIP toward external assessment readiness and expand specialist expertise access.",
     },
 };
 

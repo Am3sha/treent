@@ -4,68 +4,45 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, RotateCcw, Sparkles, Check } from "lucide-react";
 import { useNav } from "@/lib/store";
-import { scoreToTier, TIER_META } from "@/lib/content";
+import { BENCHMARK_QUESTIONS, scoreToTier, TIER_META } from "@/lib/content";
 import { Reveal, Eyebrow } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Dimension, MaturityTier } from "@/lib/types";
 
-const QUICK_QUESTIONS: { id: string; dimension: Dimension; prompt: string; labels: { value: number; label: string }[] }[] = [
-  {
-    id: "strat-1",
-    dimension: "strategy",
-    prompt:
-      "Our leadership team has a shared, written view of where we will play and how we will win.",
-    labels: [
-      { value: 1, label: "No shared view" },
-      { value: 2, label: "Implied" },
-      { value: 3, label: "Written" },
-      { value: 4, label: "Cascaded" },
-      { value: 5, label: "Living & measured" },
-    ],
-  },
-  {
-    id: "tech-1",
-    dimension: "technology",
-    prompt:
-      "Our core systems expose well-documented APIs that other teams can build on without custom integration.",
-    labels: [
-      { value: 1, label: "Closed" },
-      { value: 2, label: "Point-to-point" },
-      { value: 3, label: "Some APIs" },
-      { value: 4, label: "API-first" },
-      { value: 5, label: "Platform" },
-    ],
-  },
-  {
-    id: "data-1",
-    dimension: "data",
-    prompt:
-      "We can trust our core business data enough to automate decisions against it.",
-    labels: [
-      { value: 1, label: "Don't trust" },
-      { value: 2, label: "Manual checks" },
-      { value: 3, label: "Mostly clean" },
-      { value: 4, label: "Trusted" },
-      { value: 5, label: "Automated" },
-    ],
-  },
-];
+// 3-question teaser drawn from the client-approved benchmark set.
+// Score: A=3, B=2, C=1, D=0 → 0-100 provisional read.
+const QUICK_QUESTIONS: { id: string; dimension: Dimension; prompt: string; options: { letter: string; label: string; score: number }[] }[] = (() => {
+  const pick = (ids: string[]) =>
+    ids
+      .map((id) => BENCHMARK_QUESTIONS.find((q) => q.id === id))
+      .filter((q): q is NonNullable<typeof q> => Boolean(q));
+  return [
+    ...pick(["gov-1", "risk-6", "exec-11"]),
+  ];
+})();
 
 export function QuickBenchmark() {
   const navigate = useNav((s) => s.navigate);
-  const [answers, setAnswers] = React.useState<Record<string, number>>({});
+  const [answers, setAnswers] = React.useState<Record<string, string>>({});
   const [submitted, setSubmitted] = React.useState(false);
 
   const answeredCount = Object.keys(answers).length;
   const allAnswered = answeredCount === QUICK_QUESTIONS.length;
 
-  // Calculate provisional score (normalise 1-5 to 0-100)
+  // Calculate provisional score (A=3, B=2, C=1, D=0; normalise against max 9)
   const provisionalScore = React.useMemo(() => {
     if (answeredCount === 0) return 0;
-    const sum = Object.values(answers).reduce((a, b) => a + b, 0);
-    return Math.round(((sum / answeredCount - 1) / 4) * 100);
+    let sum = 0;
+    for (const q of QUICK_QUESTIONS) {
+      const letter = answers[q.id];
+      if (letter) {
+        const opt = q.options.find((o) => o.letter === letter);
+        if (opt) sum += opt.score;
+      }
+    }
+    return Math.round((sum / 9) * 100);
   }, [answers, answeredCount]);
 
   const tier: MaturityTier = scoreToTier(provisionalScore);
@@ -145,15 +122,15 @@ export function QuickBenchmark() {
                               {q.prompt}
                             </p>
                             <div className="mt-3 flex flex-wrap gap-2">
-                              {q.labels.map((opt) => {
-                                const selected = answers[q.id] === opt.value;
+                              {q.options.map((opt) => {
+                                const selected = answers[q.id] === opt.letter;
                                 return (
                                   <button
-                                    key={opt.value}
+                                    key={opt.letter}
                                     onClick={() =>
                                       setAnswers((prev) => ({
                                         ...prev,
-                                        [q.id]: opt.value,
+                                        [q.id]: opt.letter,
                                       }))
                                     }
                                     className={cn(
@@ -179,8 +156,8 @@ export function QuickBenchmark() {
 
                   <div className="mt-6 flex flex-col items-center justify-between gap-3 sm:flex-row">
                     <p className="text-xs text-muted-foreground">
-                      This is a preview — the full assessment covers 5 dimensions
-                      across 15 questions.
+                      This is a preview — the full assessment covers 5 domains
+                      across 26 questions.
                     </p>
                     <Button
                       onClick={() => setSubmitted(true)}
@@ -241,15 +218,24 @@ export function QuickBenchmark() {
                   {/* Dimension breakdown */}
                   <div className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-3">
                     {QUICK_QUESTIONS.map((q) => {
-                      const v = answers[q.id] || 0;
-                      const pct = Math.round(((v - 1) / 4) * 100);
+                      const letter = answers[q.id];
+                      const opt = letter ? q.options.find((o) => o.letter === letter) : undefined;
+                      const pct = opt ? Math.round((opt.score / 3) * 100) : 0;
                       return (
                         <div
                           key={q.id}
                           className="rounded-xl border border-border/60 bg-background/50 p-3"
                         >
                           <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                            {q.dimension}
+                            {q.dimension === "governance"
+                              ? "Governance"
+                              : q.dimension === "risk"
+                                ? "Risk"
+                                : q.dimension === "execution"
+                                  ? "Execution"
+                                  : q.dimension === "reporting"
+                                    ? "Reporting"
+                                    : "Capability"}
                           </div>
                           <div className="mt-1 text-xl font-semibold tabular-nums text-foreground">
                             {pct}
@@ -294,8 +280,8 @@ export function QuickBenchmark() {
                     </Button>
                   </motion.div>
                   <p className="mt-4 text-xs text-muted-foreground">
-                    The full assessment adds Culture &amp; Talent and Operations,
-                    plus a cohort percentile and per-dimension radar chart.
+                    The full assessment covers all 5 audit capability domains,
+                    plus a cohort percentile and per-domain radar chart.
                   </p>
                 </motion.div>
               )}

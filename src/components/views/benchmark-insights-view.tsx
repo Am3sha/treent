@@ -45,10 +45,11 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const TIER_COLORS: Record<MaturityTier, string> = {
-  Nascent: "oklch(0.55 0.12 35)",
-  Developing: "oklch(0.72 0.13 75)",
-  Established: "oklch(0.55 0.1 162)",
-  Leading: "oklch(0.52 0.1 195)",
+  initial: "oklch(0.55 0.12 35)",
+  defined: "oklch(0.62 0.1 260)",
+  developing: "oklch(0.72 0.13 75)",
+  established: "oklch(0.55 0.1 162)",
+  advanced: "oklch(0.52 0.1 195)",
 };
 
 const DIMENSION_COLORS = [
@@ -110,7 +111,7 @@ export function BenchmarkInsightsView() {
 
   const tierData = React.useMemo(() => {
     if (!stats) return [];
-    return (["Nascent", "Developing", "Established", "Leading"] as MaturityTier[]).map(
+    return (["initial", "developing", "defined", "established", "advanced"] as MaturityTier[]).map(
       (t) => ({
         name: t,
         value: stats.tierDistribution[t] ?? 0,
@@ -408,7 +409,7 @@ export function BenchmarkInsightsView() {
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-3">
                       {(
-                        ["Nascent", "Developing", "Established", "Leading"] as MaturityTier[]
+                        ["initial", "developing", "defined", "established", "advanced"] as MaturityTier[]
                       ).map((t) => (
                         <div
                           key={t}
