@@ -38,46 +38,37 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        console.log("[auth] authorize entered");
+        console.error("[auth] authorize entered");
         if (!credentials?.email || !credentials?.password) {
-          console.log("[auth] missing credentials");
+          console.error("[auth] missing credentials");
           return null;
         }
 
         const email = String(credentials.email);
         if (isLoginRateLimited(req, email)) {
-          console.log("[auth] rate limited");
+          console.error("[auth] rate limited");
           return null;
         }
 
         const adminEmail = process.env.ADMIN_EMAIL?.trim().replace(/^["']|["']$/g, "");
         const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH?.trim().replace(/^["']|["']$/g, "");
 
-        console.log("[auth] ADMIN_EMAIL exists:", !!adminEmail);
-        console.log("[auth] configured admin email:", adminEmail);
-        console.log("[auth] ADMIN_PASSWORD_HASH exists:", !!adminPasswordHash);
-        console.log("[auth] hash length:", adminPasswordHash?.length);
-        console.log("[auth] hash prefix:", adminPasswordHash?.slice(0, 7));
 
         if (!adminEmail || !adminPasswordHash) {
-          console.log("[auth] missing env vars");
           recordLoginFailure(req, email);
           return null;
         }
 
         const normalizedInput = email.trim().toLowerCase();
         const normalizedAdmin = adminEmail.trim().toLowerCase();
-        console.log("[auth] normalized input email:", normalizedInput);
-        console.log("[auth] email comparison passed:", normalizedInput === normalizedAdmin);
 
         if (normalizedInput !== normalizedAdmin) {
-          console.log("[auth] email mismatch");
+          console.error("[auth] email mismatch");
           recordLoginFailure(req, email);
           return null;
         }
 
         const passwordMatch = await bcrypt.compare(String(credentials.password), adminPasswordHash);
-        console.log("[auth] bcrypt comparison passed:", passwordMatch);
         if (!passwordMatch) {
           recordLoginFailure(req, email);
           return null;

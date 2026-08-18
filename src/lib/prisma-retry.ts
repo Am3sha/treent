@@ -35,12 +35,12 @@ export async function prismaRetry<T>(
       }
       
       const delay = delays[attempt];
-      console.log(`[Prisma Retry] Retry ${attempt + 1}/${maxRetries} in ${delay}ms...`);
+      console.warn(`[Prisma Retry] Retry ${attempt + 1}/${maxRetries} in ${delay}ms...`);
       
       // Wait before retrying
       await new Promise(resolve => setTimeout(resolve, delay));
       
-      console.log(`[Prisma Retry] Retry ${attempt + 1}/${maxRetries} executing...`);
+      console.warn(`[Prisma Retry] Retry ${attempt + 1}/${maxRetries} executing...`);
     }
   }
   

@@ -141,7 +141,7 @@ function hasAllowedOrigin(request: Request): boolean {
   console.log("[origin] referer header:", JSON.stringify(refererHeader));
   console.log("[origin] source used:", JSON.stringify(source));
   if (!source) {
-    console.log("[origin] no origin/referer header — blocking");
+    console.warn("[origin] no origin/referer header — blocking");
     return false;
   }
 
@@ -153,7 +153,7 @@ function hasAllowedOrigin(request: Request): boolean {
     console.log("[origin] matched:", matched);
     return matched;
   } catch {
-    console.log("[origin] failed to parse source as URL");
+    console.warn("[origin] failed to parse source as URL");
     return false;
   }
 }

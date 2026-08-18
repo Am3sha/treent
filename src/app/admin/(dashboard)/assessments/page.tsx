@@ -787,7 +787,7 @@ function RecordDetail({ record }: { record: AdminRecord }) {
         id: record.id,
         overall: record.overallScore,
         scores: record.scores,
-        tier: record.tier as any,
+        tier: record.tier,
         percentile: 0, // We don't have percentile stored, use 0
         questionCount: record.questionCount,
         createdAt: record.createdAt,
@@ -804,7 +804,7 @@ function RecordDetail({ record }: { record: AdminRecord }) {
         consentContact: record.consentContact,
       } : null;
 
-      await generatePDF(result as any, respondent as any, null);
+      await generatePDF(result, respondent, null);
     } finally {
       setDownloading(false);
     }
