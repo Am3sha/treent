@@ -78,6 +78,11 @@ export function BenchmarkQuizView() {
 
   const [step, setStep] = React.useState(0); // 0 = details, 1..5 = dimension steps
   const [submitting, setSubmitting] = React.useState(false);
+  // Track that the user has completed all 26 questions. DetailsStep is
+  // re-mounted (AnimatePresence wait mode) when returning from the last
+  // question step, so this flag — not just answeredCount — determines the
+  // final-submission mode of the details form.
+  const [doneWithQuestions, setDoneWithQuestions] = React.useState(false);
 
   // Start a fresh assessment if there are no responses and no startedAt.
   React.useEffect(() => {
@@ -121,6 +126,7 @@ export function BenchmarkQuizView() {
     }
     if (step === STEPS.length) {
       // All 26 questions answered — return to details for the final submit.
+      setDoneWithQuestions(true);
       setStep(0);
       return;
     }
@@ -135,7 +141,7 @@ export function BenchmarkQuizView() {
     if (isDetailsStep) {
       // Coming back from the details form: go to the last question step so
       // the user can review answers before submitting.
-      setStep(answeredCount >= TOTAL_QUESTIONS ? STEPS.length : 0);
+      setStep(doneWithQuestions && answeredCount >= TOTAL_QUESTIONS ? STEPS.length : 0);
       return;
     }
     setStep((s) => Math.max(s - 1, 0));
@@ -255,6 +261,7 @@ export function BenchmarkQuizView() {
                 resultExists={!!result}
                 submitting={submitting}
                 answeredCount={answeredCount}
+                finalMode={doneWithQuestions}
                 onSubmit={handleSubmit}
                 onAdvanceToQuestions={advanceFromDetails}
                 onGoToResults={() => navigate("benchmark-results")}
@@ -300,7 +307,7 @@ export function BenchmarkQuizView() {
             </Button>
           ) : (
             <span className="text-sm text-muted-foreground">
-              {answeredCount >= TOTAL_QUESTIONS
+              {doneWithQuestions
                 ? "Get your results on the form above"
                 : "Submit on the form above"}
             </span>
@@ -492,6 +499,7 @@ function DetailsStep({
   resultExists,
   submitting,
   answeredCount,
+  finalMode,
   onSubmit,
   onAdvanceToQuestions,
   onGoToResults,
@@ -500,6 +508,7 @@ function DetailsStep({
   resultExists: boolean;
   submitting: boolean;
   answeredCount: number;
+  finalMode: boolean;
   onSubmit: (p: RespondentProfile) => void;
   onAdvanceToQuestions?: () => void;
   onGoToResults: () => void;
@@ -518,9 +527,56 @@ function DetailsStep({
   const nameValid = name.trim().length >= 2;
   const emailValid = EMAIL_RE.test(email.trim());
   const profileReady = nameValid && emailValid && consent && !submitting;
-  const questionsDone = answeredCount >= TOTAL_QUESTIONS;
   // Details appears twice: first visit (before questions) only advances,
   // final visit (after all questions) performs the real submission.
+  // `finalMode` is set by the parent when the user reaches the end of the
+  // question steps — it must NOT rely solely on answeredCount, because this
+  // component is re-mounted by AnimatePresence when returning from the last
+  // question step.
+  const questionsDone = finalMode && answeredCount >= TOTAL_QUESTIONS;
+  // Persist the typed draft to the nav store so a re-mount (AnimatePresence
+  // wait mode) can restore it in final mode. Only while no real result exists
+  // — never overwrite the submitted respondent profile.
+  const setRespondent = useNav((s) => s.setRespondent);
+  const resultExistsNow = resultExists;
+  React.useEffect(() => {
+    if (resultExistsNow) return;
+    setRespondent({
+      name,
+      email,
+      company,
+      companySize,
+      industry,
+      country,
+      role,
+      consentContact: consent,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, email, company, companySize, industry, country, role, consent]);
+  // Re-hydrate local fields when a store draft becomes available (remounts).
+  const hydrateKey = JSON.stringify({
+    name: initial?.name ?? null,
+    email: initial?.email ?? null,
+    company: initial?.company ?? null,
+    companySize: initial?.companySize ?? null,
+    industry: initial?.industry ?? null,
+    country: initial?.country ?? null,
+    role: initial?.role ?? null,
+    consent: initial?.consentContact ?? null,
+  });
+  React.useEffect(() => {
+    if (!initial) return;
+    if (initial.name !== undefined) setName(initial.name);
+    if (initial.email !== undefined) setEmail(initial.email);
+    if (initial.company !== undefined) setCompany(initial.company);
+    if (initial.companySize !== undefined) setCompanySize(initial.companySize);
+    if (initial.industry !== undefined) setIndustry(initial.industry);
+    if (initial.country !== undefined) setCountry(initial.country);
+    if (initial.role !== undefined) setRole(initial.role);
+    if (initial.consentContact !== undefined)
+      setConsent(initial.consentContact);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrateKey]);
   const canSubmit = questionsDone ? profileReady : false;
   const canAdvance = !questionsDone && nameValid && emailValid && consent;
 
