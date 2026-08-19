@@ -17,7 +17,6 @@ import {
   Mail,
   Briefcase,
   Sparkles,
-  BarChart3,
   ClipboardList,
   Scale,
   type LucideIcon,
@@ -93,7 +92,6 @@ export function CommandPalette() {
       contact: Mail,
       legal: Scale,
       "benchmark-landing": Sparkles,
-      "benchmark-insights": BarChart3,
     };
       const navLabels: Record<string, string> = {
       home: "Home",
@@ -103,7 +101,6 @@ export function CommandPalette() {
       contact: "Contact",
       legal: "Privacy & Terms",
       "benchmark-landing": "Internal Audit Maturity Benchmark",
-      "benchmark-insights": "Insights Dashboard",
     };
     const navHints: Record<string, string> = {
       home: "The Trennt homepage",
@@ -113,7 +110,6 @@ export function CommandPalette() {
       contact: "Get in touch",
       legal: "Privacy, terms & cookies",
       "benchmark-landing": "Take the assessment",
-      "benchmark-insights": "Aggregate benchmark data",
     };
     const navEntries: SearchEntry[] = Object.entries(navLabels).map(
       ([key, label]) => ({

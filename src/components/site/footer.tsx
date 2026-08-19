@@ -37,7 +37,6 @@ const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }
     links: [
       { label: "Overview", view: "benchmark-landing" },
       { label: "Start Assessment", view: "benchmark-quiz" },
-      { label: "Insights Dashboard", view: "benchmark-insights" },
     ],
   },
 ];

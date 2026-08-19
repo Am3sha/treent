@@ -46,6 +46,13 @@ const BenchmarkInsightsView = dynamic(
 );
 import { NotFoundView } from "@/components/views/not-found-view";
 
+// Toggle: when false, the PUBLIC benchmark-insights page is hidden. Direct
+// navigation (/#/benchmark-insights) shows the branded NotFoundView instead.
+// To re-enable, flip this to true and restore the links removed in Phase 16.
+// NOTE: this only hides the public view — /admin/insights (NextAuth-protected)
+// and the /api/benchmark/stats endpoint are unaffected.
+const PUBLIC_BENCHMARK_INSIGHTS_ENABLED = false;
+
 import { ServiceDetailView } from "@/components/views/service-detail-view";
 
 function FrameworkAgreementsView() {
@@ -208,7 +215,10 @@ export default function Home() {
   useHashSync();
 
   const view = mounted ? storeView : "home";
-  const ViewComponent = VIEWS[view] ?? HomeView;
+  const ViewComponent =
+    view === "benchmark-insights" && !PUBLIC_BENCHMARK_INSIGHTS_ENABLED
+      ? NotFoundView
+      : (VIEWS[view] ?? HomeView);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

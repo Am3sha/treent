@@ -16,7 +16,7 @@ const PUBLIC_URLS = [
   { url: `${BASE_URL}/#/careers`, changeFrequency: "weekly", priority: 0.7 },
   { url: `${BASE_URL}/#/legal`, changeFrequency: "monthly", priority: 0.5 },
   { url: `${BASE_URL}/#/benchmark-landing`, changeFrequency: "weekly", priority: 0.7 },
-  { url: `${BASE_URL}/#/benchmark-insights`, changeFrequency: "weekly", priority: 0.7 },
+  // benchmark-insights is intentionally omitted while hidden (Phase 16 toggle).
   // Quiz, results, and follow-up are session-specific benchmark flow states, not indexable destinations.
 ] as const;
 

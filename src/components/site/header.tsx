@@ -24,7 +24,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Home", view: "home" },
   { label: "About Us", view: "about" },
   { label: "Services", view: "services" },
-  { label: "Insights", view: "benchmark-insights" },
   { label: "Careers", view: "careers" },
   { label: "Contact", view: "contact" },
 ];
