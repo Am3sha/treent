@@ -475,6 +475,52 @@ export function HomeView() {
 
 
 
+
+
+      {/* 3. OUR EXPERTISE SECTION (Built Around Internal Audit)           */}
+      {/* ================================================================ */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="section-shell">
+          <div className="grid items-center gap-12 lg:grid-cols-12">
+            <Reveal y={16} duration={0.6} className="lg:col-span-5">
+              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+                Our Expertise
+              </div>
+              <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212]">
+                Built Around<br />Internal Audit.
+              </h2>
+              <p className="mt-6 text-[15px] leading-relaxed text-gray-500 max-w-md">
+                Internal audit is our sole focus. That specialisation shapes our methods, capabilities, and delivery approach around the needs of modern internal audit functions. The result is independent perspective, practical insight, and measurable value.
+              </p>
+
+              <div className="mt-10">
+                <Button
+                  onClick={() => navigate("services")}
+                  className="h-11 rounded-[8px] bg-[#003D3C] px-6 text-[14px] font-semibold text-white transition-all duration-200 ease-out hover:bg-[#002f2e] hover:shadow-[0_10px_24px_-10px_rgba(0,61,60,0.5)] hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Know More
+                </Button>
+              </div>
+            </Reveal>
+
+            <Reveal y={16} duration={0.6} delay={0.1} className="lg:col-span-7">
+              <div className="overflow-hidden rounded-[24px] shadow-lg group">
+                <Image
+                  src="/trennt-hero-02.webp"
+                  alt="TRENNT Internal Audit Specialists reviewing document"
+                  width={800}
+                  height={480}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 800px"
+                  style={{ width: "auto", height: "auto" }}
+                  className="h-[420px] w-full object-cover sm:h-[480px] transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                />
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* 4. WATERMARK & SERVICES SECTION                                  */}
       {/* ================================================================ */}
       <Reveal
