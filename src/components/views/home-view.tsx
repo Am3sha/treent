@@ -433,48 +433,19 @@ export function HomeView() {
       {/* ================================================================ */}
       <section className="bg-[#F8F9FA] py-20 lg:py-28 border-b border-gray-100">
         <div className="section-shell">
-          <div className="grid items-start gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-3">
+          <div className="max-w-4xl">
+            <Reveal y={16} duration={0.6}>
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
                 <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
                 About Trennt
               </div>
-            </div>
-            <div className="lg:col-span-9">
-              <h2 className="text-[32px] sm:text-[40px] font-medium leading-[1.25] text-[#121212] tracking-tight max-w-3xl">
+              <h2 className="mt-6 text-[32px] sm:text-[40px] font-medium leading-[1.25] text-[#121212] tracking-tight">
                 Through independent internal audit, we help organizations strengthen governance, uncover opportunities, and make confident decisions.
               </h2>
-
-
-              <div className="mt-10">
-                <Button
-                  onClick={() => navigate("services")}
-                  className="h-11 rounded-[8px] bg-[#003D3C] px-6 text-[14px] font-semibold text-white transition-all duration-200 ease-out hover:bg-[#002f2e] hover:shadow-[0_10px_24px_-10px_rgba(0,61,60,0.5)] hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Know More
-                </Button>
-              </div>
-            </div>
-
-            <Reveal y={16} duration={0.6} delay={0.1} className="lg:col-span-7">
-              <div className="overflow-hidden rounded-[24px] shadow-lg group">
-                <Image
-                  src="/trennt-hero-02.webp"
-                  alt="TRENNT Internal Audit Specialists reviewing document"
-                  width={800}
-                  height={480}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 800px"
-                  style={{ width: "auto", height: "auto" }}
-                  className="h-[420px] w-full object-cover sm:h-[480px] transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-                />
-              </div>
             </Reveal>
           </div>
         </div>
       </section>
-
-
-
 
 
       {/* 3. OUR EXPERTISE SECTION (Built Around Internal Audit)           */}
