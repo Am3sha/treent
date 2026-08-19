@@ -9,7 +9,6 @@ import {
   Loader2,
   MapPin,
   Send,
-  Sparkles,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
 import { CAREERS, PERKS } from "@/lib/content";
@@ -58,12 +57,6 @@ const applicationFormSchema = z.object({
 
 type ApplicationFormValues = z.infer<typeof applicationFormSchema>;
 
-const CULTURE_STATS = [
-  { value: "94%", label: "voluntary retention", sub: "Trailing three years" },
-  { value: "26 wk", label: "paid parental leave", sub: "For all parents" },
-  { value: "£4,000", label: "annual learning budget", sub: "Plus protected Fridays" },
-  { value: "4 wk", label: "work from anywhere", sub: "Every year" },
-];
 
 const CULTURE_VALUES = [
   {
@@ -158,32 +151,6 @@ export function CareersView() {
               </Reveal>
             </div>
 
-            <div className="lg:col-span-5">
-              <Reveal delay={0.15}>
-                <Card className="rounded-2xl border-border/70 bg-card/95 p-6 shadow-sm backdrop-blur sm:p-7">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-medium uppercase tracking-[0.18em] text-primary/80">
-                      Working at Trennt
-                    </span>
-                  </div>
-                  <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5">
-                    {CULTURE_STATS.map((s) => (
-                      <div key={s.label}>
-                        <dt className="sr-only">{s.label}</dt>
-                        <dd className="text-3xl font-semibold tabular-nums tracking-tight text-primary">
-                          {s.value}
-                        </dd>
-                        <p className="mt-1 text-sm font-medium text-foreground">
-                          {s.label}
-                        </p>
-                        <p className="text-xs text-muted-foreground">{s.sub}</p>
-                      </div>
-                    ))}
-                  </dl>
-                </Card>
-              </Reveal>
-            </div>
           </div>
         </div>
       </section>

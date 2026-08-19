@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   ArrowRight,
   CheckCircle2,
-  Clock,
   Mail,
   MapPin,
   MessageSquare,
@@ -512,11 +511,6 @@ export function ContactView() {
                       label: "Headquarters",
                       value: COMPANY.address,
                       isMultiline: true,
-                    },
-                    {
-                      icon: Clock,
-                      label: "Response time",
-                      value: "Within one business day, Mon–Fri",
                     },
                   ].map((item, i) => {
                     const Icon = item.icon;

@@ -19,7 +19,7 @@ export const COMPANY = {
   foundedYear: 2014,
   email: "info@trennt.sa",
   phone: "+966 50 123 4567",
-  address: `King Fahd Road, Tower 3\nSuite 1205, Riyadh 12271\nSaudi Arabia`,
+    address: "Riyadh, Saudi Arabia",
   offices: [
     { city: "Riyadh", country: "Saudi Arabia", flag: "SA" },
   ],
