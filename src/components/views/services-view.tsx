@@ -22,6 +22,7 @@ import {
 } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { METHODOLOGY, SERVICES } from "@/lib/content";
+import type { ViewKey } from "@/lib/types";
 import { Icon } from "@/components/site/icon";
 import {
   Reveal,
@@ -483,7 +484,7 @@ export function ServicesView() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => navigate(activeService.slug as any)}
+                              onClick={() => navigate(activeService.slug as ViewKey)}
                               className="gap-2 rounded-full border-gray-300 bg-white text-[#003D3C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#003D3C]/30 hover:scale-[1.02] active:scale-[0.98]"
                             >
                               Learn more

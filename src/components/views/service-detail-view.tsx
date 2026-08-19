@@ -14,7 +14,8 @@ import {
     CheckSquare,
     Sparkles,
 } from "lucide-react";
-import { SERVICES, FRAMEWORK_AGREEMENTS } from "@/lib/content";
+import { SERVICES } from "@/lib/content";
+import type { ViewKey } from "@/lib/types";
 import { useNav } from "@/lib/store";
 import { Reveal, RevealStagger, Eyebrow, useReducedMotion } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
@@ -211,7 +212,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                             return (
                                 <Reveal key={other.slug} delay={idx * 0.06}>
                                     <div
-                                        onClick={() => navigate(other.slug as any)}
+                                        onClick={() => navigate(other.slug as ViewKey)}
                                         className="group relative flex h-full cursor-pointer flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-6 shadow-2xs transition-all duration-200 ease-out hover:-translate-y-1 hover:border-[#003D3C]/40 hover:shadow-md"
                                     >
                                         <div>

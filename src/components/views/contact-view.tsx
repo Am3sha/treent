@@ -3,7 +3,6 @@
 import * as React from "react";
 import {
   ArrowRight,
-  CheckCircle2,
   Mail,
   MapPin,
   MessageSquare,
@@ -317,7 +316,7 @@ export function ContactView() {
                           <Input
                             id="name"
                             {...register("name")}
-                            placeholder="Jane Patel"
+                            placeholder="Full name"
                             autoComplete="name"
                             aria-invalid={!!errors.name}
                             className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
@@ -336,7 +335,7 @@ export function ContactView() {
                             id="email"
                             type="email"
                             {...register("email")}
-                            placeholder="jane@company.com"
+                            placeholder="you@company.com"
                             autoComplete="email"
                             aria-invalid={!!errors.email}
                             className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
@@ -355,7 +354,7 @@ export function ContactView() {
                           <Input
                             id="company"
                             {...register("company")}
-                            placeholder="Northwind Logistics"
+                            placeholder="Company name"
                             autoComplete="organization"
                             className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
@@ -365,7 +364,7 @@ export function ContactView() {
                           <Input
                             id="phone"
                             {...register("phone")}
-                            placeholder="+966 50 123 4567"
+                            placeholder="+966 5x xxx xxxx"
                             autoComplete="tel"
                             inputMode="tel"
                             pattern="[+\d\s\-()]*"
@@ -419,7 +418,7 @@ export function ContactView() {
                         <Textarea
                           id="message"
                           {...register("message")}
-                          placeholder="A sentence or two on what you're trying to change, and the question you'd like to start with."
+                          placeholder="Tell us a little about your inquiry…"
                           className="min-h-36 resize-y rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           aria-invalid={!!errors.message}
                         />

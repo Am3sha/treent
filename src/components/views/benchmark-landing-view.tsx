@@ -16,12 +16,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
-import {
-  BENCHMARK_QUESTIONS,
-  DIMENSIONS,
-  TIER_META,
-} from "@/lib/content";
-import type { BenchmarkStats, MaturityTier } from "@/lib/types";
+import { DIMENSIONS, TIER_META } from "@/lib/content";
+import type { MaturityTier } from "@/lib/types";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +25,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -38,7 +33,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Icon } from "@/components/site/icon";
 import { cn } from "@/lib/utils";
 
@@ -113,36 +107,6 @@ export function BenchmarkLandingView() {
   const navigate = useNav((s) => s.navigate);
   const startAssessment = useNav((s) => s.startAssessment);
   const result = useNav((s) => s.result);
-
-  const [stats, setStats] = React.useState<BenchmarkStats | null>(null);
-  const [statsState, setStatsState] = React.useState<
-    "loading" | "loaded" | "empty" | "error"
-  >("loading");
-
-  React.useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/benchmark/stats", { cache: "no-store" });
-        if (!res.ok) throw new Error("stats fetch failed");
-        const response = (await res.json()) as { ok: boolean; data?: BenchmarkStats };
-        const data = response.data;
-        if (cancelled) return;
-        if (!data || data.totalAssessments === 0) {
-          setStatsState("empty");
-          setStats(data ?? null);
-        } else {
-          setStats(data);
-          setStatsState("loaded");
-        }
-      } catch {
-        if (!cancelled) setStatsState("error");
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleStart = () => {
     startAssessment();
@@ -222,81 +186,31 @@ export function BenchmarkLandingView() {
         </div>
       </section>
 
-      {/* STATS STRIP -------------------------------------------------- */}
-      <section className="border-y border-border/70 bg-secondary/30">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px overflow-hidden px-4 sm:px-6 md:grid-cols-4 lg:px-8">
-          <StatCell
-            label="Organisations benchmarked"
-            value={
-              statsState === "loading" ? (
-                <Skeleton className="h-9 w-24" />
-              ) : statsState === "empty" || statsState === "error" ? (
-                <span className="text-3xl font-semibold tracking-tight text-foreground">
-                  Be the first
-                </span>
-              ) : (
-                <span className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
-                  {stats!.totalAssessments.toLocaleString()}
-                </span>
-              )
-            }
-            sub={
-              statsState === "empty"
-                ? "Set the benchmark for your sector"
-                : "And counting, across sectors"
-            }
-          />
-          <StatCell
-            label="Average internal audit maturity score"
-            value={
-              statsState === "loading" ? (
-                <Skeleton className="h-9 w-24" />
-              ) : statsState === "empty" || statsState === "error" ? (
-                <span className="text-3xl font-semibold tracking-tight text-foreground">
-                  —
-                </span>
-              ) : (
-                <span className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
-                  {stats!.averageOverall.toFixed(0)}
-                  <span className="text-base font-normal text-muted-foreground">
-                    {" "}
-                    / 100
+      {/* FIVE DIMENSIONS AT A GLANCE ---------------------------------- */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-3 sm:grid-cols-5">
+          {DIMENSIONS.map((d, i) => (
+            <Reveal key={d.key} delay={0.15 + i * 0.05}>
+              <button
+                onClick={() => navigate("benchmark-quiz")}
+                className="group flex h-full w-full flex-col gap-2 rounded-xl border border-border/80 bg-card/60 px-4 py-5 text-left shadow-2xs backdrop-blur-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[11px] font-medium tracking-widest text-primary/60">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
+                  <DimensionGlyph name={d.icon} />
+                </div>
+                <span className="text-[13px] font-semibold tracking-tight text-foreground">
+                  {d.short}
                 </span>
-              )
-            }
-            sub="Mean across all submissions"
-          />
-          <StatCell
-            label="Questions"
-            value={
-              <span className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
-                {BENCHMARK_QUESTIONS.length}
-              </span>
-            }
-            sub="Across 5 dimensions"
-          />
-          <StatCell
-            label="Tiers"
-            value={
-              <span className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
-                4
-              </span>
-            }
-            sub="Initial \u2192 Advanced"
-          />
+                <span className="text-[11px] leading-snug text-muted-foreground group-hover:text-primary/80 transition-colors">
+                  {d.label}
+                </span>
+              </button>
+            </Reveal>
+          ))}
         </div>
-        {statsState === "loaded" && (
-          <div className="mx-auto max-w-6xl px-4 pb-6 sm:px-6 lg:px-8">
-            <button
-              onClick={() => navigate("benchmark-insights")}
-              className="group inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
-            >
-              Explore the full insights dashboard
-              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </button>
-          </div>
-        )}
       </section>
 
       {/* WHAT YOU'LL GET ---------------------------------------------- */}
@@ -545,26 +459,6 @@ export function BenchmarkLandingView() {
           </Reveal>
         </div>
       </section>
-    </div>
-  );
-}
-
-function StatCell({
-  label,
-  value,
-  sub,
-}: {
-  label: string;
-  value: React.ReactNode;
-  sub?: string;
-}) {
-  return (
-    <div className="flex flex-col gap-1 bg-secondary/30 px-5 py-8 sm:px-6">
-      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        {label}
-      </span>
-      <div className="mt-1">{value}</div>
-      {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
     </div>
   );
 }
