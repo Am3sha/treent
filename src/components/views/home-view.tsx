@@ -476,15 +476,13 @@ export function HomeView() {
             </Reveal>
 
             <Reveal y={16} duration={0.6} delay={0.1} className="lg:col-span-7">
-              <div className="overflow-hidden rounded-[24px] shadow-lg group">
+              <div className="relative h-[420px] w-full overflow-hidden rounded-[24px] shadow-lg group sm:h-[480px]">
                 <Image
                   src="/trennt-hero-02.webp"
                   alt="TRENNT Internal Audit Specialists reviewing document"
-                  width={800}
-                  height={480}
+                  fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 800px"
-                  style={{ width: "auto", height: "auto" }}
-                  className="h-[420px] w-full object-cover sm:h-[480px] transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                 />
               </div>
             </Reveal>
