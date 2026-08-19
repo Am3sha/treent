@@ -635,16 +635,14 @@ function DetailsStep({
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Alex Morgan"
               autoComplete="name"
             />
           </Field>
-          <Field label="Work email" required>
+          <Field label="email" required>
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="alex@yourcompany.com"
               autoComplete="email"
             />
           </Field>
@@ -652,7 +650,6 @@ function DetailsStep({
             <Input
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-              placeholder="Trennt Industries"
               autoComplete="organization"
             />
           </Field>
@@ -688,7 +685,6 @@ function DetailsStep({
             <Input
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              placeholder="United Kingdom"
               autoComplete="country-name"
             />
           </Field>
@@ -696,7 +692,6 @@ function DetailsStep({
             <Input
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              placeholder="Chief Operating Officer"
               autoComplete="organization-title"
             />
           </Field>
