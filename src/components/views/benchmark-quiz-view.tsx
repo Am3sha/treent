@@ -76,7 +76,7 @@ export function BenchmarkQuizView() {
   const resetResponses = useNav((s) => s.resetResponses);
   const { toast } = useToast();
 
-  const [step, setStep] = React.useState(0); // 0..4 = dimension steps, 5 = details
+  const [step, setStep] = React.useState(0); // 0 = details, 1..5 = dimension steps
   const [submitting, setSubmitting] = React.useState(false);
 
   // Start a fresh assessment if there are no responses and no startedAt.
@@ -89,34 +89,55 @@ export function BenchmarkQuizView() {
     }
   }, [startAssessment]);
 
-  const isDetailsStep = step === STEPS.length;
+  const isDetailsStep = step === 0;
 
   // Compute progress.
   const answeredCount = React.useMemo(
     () => TOTAL_QUESTIONS - countUnanswered(responses),
     [responses]
   );
-  const overallPct = Math.round(
-    ((step + (isDetailsStep ? 1 : 0)) / TOTAL_STEPS) * 100
-  );
+  const overallPct = isDetailsStep
+    ? answeredCount >= TOTAL_QUESTIONS
+      ? 100
+      : 0
+    : Math.round((step / TOTAL_STEPS) * 100);
 
-  // For dimension steps, check whether all 3 questions on this step are answered.
+  // For dimension steps, check whether all questions on this step are answered.
   const stepComplete = React.useMemo(() => {
     if (isDetailsStep) return true;
-    const stepDef = STEPS[step];
+    const stepDef = STEPS[step - 1];
     return stepDef.questions.every((q) => responses[q.id] !== undefined);
   }, [isDetailsStep, step, responses]);
 
-  const currentDim = !isDetailsStep ? DIMENSIONS[step] : null;
+  const currentDim = !isDetailsStep ? DIMENSIONS[step - 1] : null;
 
   const goNext = () => {
     if (!stepComplete) return;
-    if (isDetailsStep) return; // details step uses submit
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setStep((s) => Math.min(s + 1, STEPS.length));
+    if (isDetailsStep) {
+      // Details is the first step: advance into the questions.
+      setStep(1);
+      return;
+    }
+    if (step === STEPS.length) {
+      // All 26 questions answered — return to details for the final submit.
+      setStep(0);
+      return;
+    }
+    setStep((s) => s + 1);
+  };
+  const advanceFromDetails = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setStep(1);
   };
   const goBack = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (isDetailsStep) {
+      // Coming back from the details form: go to the last question step so
+      // the user can review answers before submitting.
+      setStep(answeredCount >= TOTAL_QUESTIONS ? STEPS.length : 0);
+      return;
+    }
     setStep((s) => Math.max(s - 1, 0));
   };
 
@@ -185,7 +206,7 @@ export function BenchmarkQuizView() {
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="hidden text-xs text-muted-foreground sm:inline">
+            <span className="hidden text-xs text-muted-foreground sm:inline">
                 {answeredCount} / {TOTAL_QUESTIONS} answered
               </span>
               <button
@@ -216,7 +237,7 @@ export function BenchmarkQuizView() {
             >
               <DimensionStep
                 dimension={currentDim!}
-                questions={STEPS[step].questions}
+                questions={STEPS[step - 1].questions}
                 responses={responses}
                 onRespond={setResponse}
               />
@@ -233,7 +254,9 @@ export function BenchmarkQuizView() {
                 initial={respondent}
                 resultExists={!!result}
                 submitting={submitting}
+                answeredCount={answeredCount}
                 onSubmit={handleSubmit}
+                onAdvanceToQuestions={advanceFromDetails}
                 onGoToResults={() => navigate("benchmark-results")}
               />
             </motion.div>
@@ -244,12 +267,12 @@ export function BenchmarkQuizView() {
         <div className="mt-10 flex items-center justify-between gap-4 border-t border-border/70 pt-6">
           <Button
             variant="ghost"
-            onClick={goBack}
-            disabled={step === 0 || submitting}
+            onClick={step === 0 ? handleExit : goBack}
+            disabled={submitting}
             className="gap-1.5"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            {step === 0 ? "Exit" : "Back"}
           </Button>
           <div className="hidden text-xs text-muted-foreground sm:block">
             {!isDetailsStep && (
@@ -270,12 +293,16 @@ export function BenchmarkQuizView() {
               disabled={!stepComplete}
               className="gap-1.5"
             >
-              {step === STEPS.length - 1 ? "Review details" : "Next"}
+              {step === STEPS.length
+                ? "Get my report"
+                : "Next"}
               <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
             <span className="text-sm text-muted-foreground">
-              Submit on the form above
+              {answeredCount >= TOTAL_QUESTIONS
+                ? "Get your results on the form above"
+                : "Submit on the form above"}
             </span>
           )}
         </div>
@@ -464,13 +491,17 @@ function DetailsStep({
   initial,
   resultExists,
   submitting,
+  answeredCount,
   onSubmit,
+  onAdvanceToQuestions,
   onGoToResults,
 }: {
   initial: RespondentProfile | null;
   resultExists: boolean;
   submitting: boolean;
+  answeredCount: number;
   onSubmit: (p: RespondentProfile) => void;
+  onAdvanceToQuestions?: () => void;
   onGoToResults: () => void;
 }) {
   const [name, setName] = React.useState(initial?.name ?? "");
@@ -486,7 +517,12 @@ function DetailsStep({
 
   const nameValid = name.trim().length >= 2;
   const emailValid = EMAIL_RE.test(email.trim());
-  const canSubmit = nameValid && emailValid && consent && !submitting;
+  const profileReady = nameValid && emailValid && consent && !submitting;
+  const questionsDone = answeredCount >= TOTAL_QUESTIONS;
+  // Details appears twice: first visit (before questions) only advances,
+  // final visit (after all questions) performs the real submission.
+  const canSubmit = questionsDone ? profileReady : false;
+  const canAdvance = !questionsDone && nameValid && emailValid && consent;
 
   const profile: RespondentProfile = {
     name: name.trim(),
@@ -503,10 +539,14 @@ function DetailsStep({
     <div>
       <div className="mb-8">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80">
-          Final step
+          {answeredCount >= TOTAL_QUESTIONS
+            ? `Step ${TOTAL_STEPS} of ${TOTAL_STEPS} — Final step`
+            : `Step 1 of ${TOTAL_STEPS} — Your details`}
         </p>
         <h1 className="mt-1 text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
-          A few details, then your report.
+          {answeredCount >= TOTAL_QUESTIONS
+            ? "A few details, then your report."
+            : "A few details, then the questions."}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           We use this to compute your percentile against peer organisations and
@@ -630,8 +670,10 @@ function DetailsStep({
           <Button
             type="button"
             size="lg"
-            disabled={!canSubmit}
-            onClick={() => onSubmit(profile)}
+            disabled={questionsDone ? !canSubmit : !canAdvance}
+            onClick={() =>
+              questionsDone ? onSubmit(profile) : onAdvanceToQuestions?.()
+            }
             className="gap-2 sm:min-w-[200px]"
           >
             {submitting ? (
@@ -639,16 +681,21 @@ function DetailsStep({
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Submitting…
               </>
+            ) : questionsDone ? (
+              <>
+                Get my results
+                <ArrowRight className="h-4 w-4" />
+              </>
             ) : (
               <>
-                See my results
+                Start the questions
                 <ArrowRight className="h-4 w-4" />
               </>
             )}
           </Button>
         </div>
 
-        {!canSubmit && !submitting && (
+        {!canSubmit && !canAdvance && !submitting && (
           <div className="flex items-start gap-2 text-xs text-muted-foreground">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>
