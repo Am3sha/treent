@@ -473,6 +473,49 @@ export function HomeView() {
         </div>
       </section>
 
+
+
+      {/* 4. WATERMARK & SERVICES SECTION                                  */}
+      {/* ================================================================ */}
+      <Reveal
+        as="section"
+        y={18}
+        duration={0.65}
+        className="relative py-24 lg:py-36 bg-[#F4F7F6] overflow-hidden border-t border-b border-gray-100"
+      >
+        <div
+          className="absolute right-[3%] top-1/2 -translate-y-1/2 w-[36%] max-w-[420px] pointer-events-none select-none hidden md:block"
+          aria-hidden="true"
+        >
+          <TrenntParticleLogo />
+        </div>
+
+        <div className="section-shell relative z-10">
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+              Capabilities
+            </div>
+            <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
+              Practical solutions tailored to strengthen governance, enhance internal controls, and support confident decision-making.
+            </h2>
+
+            <div className="mt-8">
+              <Button
+                onClick={() => navigate("services")}
+                className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Know More
+              </Button>
+            </div>
+
+            <p className="mt-8 text-[13.5px] text-gray-500 max-w-lg leading-relaxed">
+              Every engagement is tailored to strengthen governance, improve internal controls, and support strategic decision-making.
+            </p>
+          </div>
+        </div>
+      </Reveal>
+
       {/* ================================================================ */}
       {/* 8. LATEST ARTICLES & PERSPECTIVES SECTION                        */}
       {/* ================================================================ */}
