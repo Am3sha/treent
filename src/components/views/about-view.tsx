@@ -4,7 +4,7 @@ import * as React from "react";
 import { ArrowRight, ArrowUpRight, MapPin, CheckCircle2, ShieldCheck, MessagesSquare, Users, RefreshCw, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNav } from "@/lib/store";
-import { COMPANY, LEADERSHIP } from "@/lib/content";
+import { COMPANY } from "@/lib/content";
 import { Icon } from "@/components/site/icon";
 import { Reveal, RevealStagger, Eyebrow, SectionHeading, useReducedMotion } from "@/components/site/reveal";
 import { CountUp } from "@/components/site/count-up";
@@ -87,14 +87,6 @@ export function AboutView() {
                   {COMPANY.description}
                 </p>
               </Reveal>
-              <Reveal y={14} duration={0.55} delay={0.15}>
-                <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 text-[14px] font-medium text-white/70">
-                  <span className="inline-flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-[#ADDFB3]" />
-                    {COMPANY.address}
-                  </span>
-                </div>
-              </Reveal>
             </div>
             <div className="lg:col-span-5">
               <Reveal y={14} duration={0.55} delay={0.15}>
@@ -171,47 +163,6 @@ export function AboutView() {
         </div>
       </section>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* STATS HIGHLIGHT BAR                                                */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="bg-[#F4F7F6] py-12 border-b border-gray-100">
-        <div className="section-shell">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 text-center md:text-left">
-            <div>
-              <div className="text-[36px] sm:text-[44px] font-extrabold text-[#003D3C] tracking-tight">
-                <CountUp value="100%" duration={1200} />
-              </div>
-              <div className="text-[13px] font-semibold text-gray-500 mt-1">
-                Internal Audit Focus
-              </div>
-            </div>
-            <div>
-              <div className="text-[36px] sm:text-[44px] font-extrabold text-[#003D3C] tracking-tight">
-                <CountUp value="50+" duration={1400} />
-              </div>
-              <div className="text-[13px] font-semibold text-gray-500 mt-1">
-                Successful Engagements
-              </div>
-            </div>
-            <div>
-              <div className="text-[36px] sm:text-[44px] font-extrabold text-[#003D3C] tracking-tight">
-                <CountUp value="15+" duration={1600} />
-              </div>
-              <div className="text-[13px] font-semibold text-gray-500 mt-1">
-                Years Team Experience
-              </div>
-            </div>
-            <div>
-              <div className="text-[36px] sm:text-[44px] font-extrabold text-[#003D3C] tracking-tight">
-                <CountUp value="98%" duration={1800} />
-              </div>
-              <div className="text-[13px] font-semibold text-gray-500 mt-1">
-                Client Satisfaction
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ------------------------------------------------------------------ */}
       {/* WHO WE ARE                                                          */}
@@ -239,21 +190,13 @@ export function AboutView() {
             <Reveal y={14} duration={0.55} delay={0.08}>
               <div className="space-y-6 text-[15px] sm:text-[16px] leading-relaxed text-gray-600">
                 <p>
-                  Trennt is an internal audit firm based in Saudi Arabia,
-                  dedicated exclusively to internal audit delivery. We are not a
-                  generalist consulting firm—our entire practice is focused on
-                  providing world-class internal audit services.
+                  Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery.
                 </p>
                 <p>
-                  We work with Boards, Audit Committees, and executive
-                  management, providing clear and objective insight into the
-                  effectiveness of governance, risk management, and internal
-                  controls.
+                  We support Boards, Audit Committees, and senior management by providing objective insight into the effectiveness of risk management, internal controls, and governance processes.
                 </p>
                 <p>
-                  Our risk-based engagements direct attention to the areas of
-                  greatest importance, strengthen the control environment, and
-                  give leadership a sounder basis for decision-making.
+                  Through structured, risk-based engagements, Trennt helps organisations strengthen governance, enhance control effectiveness, and support informed decision-making.
                 </p>
               </div>
             </Reveal>
@@ -308,58 +251,6 @@ export function AboutView() {
             ))}
           </RevealStagger>
         </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* LEADERSHIP                                                          */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        aria-labelledby="leadership-heading"
-        className="section-shell py-20 lg:py-28"
-      >
-        <Reveal y={14} duration={0.55}>
-          <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-            <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-            Our Team
-          </div>
-          <h2
-            id="leadership-heading"
-            className="mt-4 text-[32px] sm:text-[42px] font-bold text-[#121212]"
-          >
-            Experienced internal audit professionals.
-          </h2>
-          <p className="mt-3 max-w-2xl text-[14px] text-gray-500 leading-relaxed">
-            Our team brings deep expertise in internal audit, risk management, governance, and controls across a wide range of industries.
-          </p>
-        </Reveal>
-
-        <RevealStagger stagger={0.08} delay={0.1} y={14} childDuration={0.5} className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {LEADERSHIP.map((p, i) => (
-            <motion.div
-              key={p.name}
-              whileHover={reduced ? {} : { y: -5 }}
-              transition={{ duration: 0.25, ease: EASE_OUT }}
-              className="flex flex-col rounded-[16px] bg-white p-7 shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-[0_20px_40px_-24px_rgba(0,61,60,0.2)] hover:border-gray-200"
-            >
-              <div className="flex items-center gap-4">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#003D3C] text-[15px] font-extrabold text-[#ADDFB3] shadow-xs">
-                  {p.initials}
-                </span>
-                <div>
-                  <h3 className="text-[17px] font-bold text-[#121212]">
-                    {p.name}
-                  </h3>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#003D3C]">
-                    {p.role}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-5 text-[13px] leading-relaxed text-gray-500">
-                {p.bio}
-              </p>
-            </motion.div>
-          ))}
-        </RevealStagger>
       </section>
 
       {/* ------------------------------------------------------------------ */}

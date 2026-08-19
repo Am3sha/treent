@@ -169,22 +169,11 @@ export function ServicesView() {
                   practical expertise.
                 </p>
               </Reveal>
-              <Reveal delay={0.15}>
-                <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-medium text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 border border-gray-200/80 shadow-2xs">
-                    <Check className="h-3.5 w-3.5 text-[#003D3C]" />
-                    IIA Standards Compliant
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 border border-gray-200/80 shadow-2xs">
-                    <ShieldCheck className="h-3.5 w-3.5 text-[#003D3C]" />
-                    Independent & Objective
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 border border-gray-200/80 shadow-2xs">
-                    <CheckSquare className="h-3.5 w-3.5 text-[#003D3C]" />
-                    Risk-Based Approach
-                  </span>
-                </div>
-              </Reveal>
+            <Reveal delay={0.15}>
+              <p className="mt-8 text-[15px] font-semibold text-[#003D3C]">
+                Exclusively internal audit — an independent perspective, delivering practical, actionable recommendations.
+              </p>
+            </Reveal>
             </div>
 
             {/* Right Column: Dynamic Animated Ecosystem Card Stack */}

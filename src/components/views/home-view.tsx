@@ -429,9 +429,9 @@ export function HomeView() {
       </section>
 
       {/* ================================================================ */}
-      {/* 2. ABOUT TRENNT SECTION (STATS)                                  */}
+      {/* 2. ABOUT TRENNT SECTION                                  */}
       {/* ================================================================ */}
-      <Reveal as="section" y={18} duration={0.6} className="bg-[#F8F9FA] py-20 lg:py-28 border-b border-gray-100">
+      <section className="bg-[#F8F9FA] py-20 lg:py-28 border-b border-gray-100">
         <div className="section-shell">
           <div className="grid items-start gap-12 lg:grid-cols-12">
             <div className="lg:col-span-3">
@@ -445,61 +445,6 @@ export function HomeView() {
                 Through independent internal audit, we help organizations strengthen governance, uncover opportunities, and make confident decisions.
               </h2>
 
-              <RevealStagger
-                stagger={0.1}
-                delay={0.05}
-                y={12}
-                className="mt-16 grid grid-cols-2 gap-8 sm:grid-cols-4 pt-10 border-t border-gray-200"
-              >
-                {[
-                  { value: "150+", label: "Audit Engagements", d: 0 },
-                  { value: "12+", label: "Industries Served", d: 100 },
-                  { value: "99%", label: "Client Satisfaction", d: 200 },
-                  { value: "15+", label: "Years of Combined Experience", d: 300 },
-                ].map((stat) => (
-                  <div key={stat.value}>
-                    <div className="text-[36px] sm:text-[44px] font-bold text-[#121212] tracking-tight">
-                      <CountUp value={stat.value} duration={1600} delay={stat.d} />
-                    </div>
-                    <div className="mt-1 text-[13px] text-gray-500 font-medium">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </RevealStagger>
-            </div>
-          </div>
-        </div>
-      </Reveal>
-
-      {/* ================================================================ */}
-      {/* 3. OUR EXPERTISE SECTION (Built Around Internal Audit)           */}
-      {/* ================================================================ */}
-      <section className="py-20 lg:py-28 bg-white">
-        <div className="section-shell">
-          <div className="grid items-center gap-12 lg:grid-cols-12">
-            <Reveal y={16} duration={0.6} className="lg:col-span-5">
-              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                Our Expertise
-              </div>
-              <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212]">
-                Built Around<br />Internal Audit.
-              </h2>
-              <p className="mt-6 text-[15px] leading-relaxed text-gray-500 max-w-md">
-                Internal audit is our sole focus. That specialisation shapes our methods, capabilities, and delivery approach around the needs of modern internal audit functions. The result is independent perspective, practical insight, and measurable value.
-              </p>
-
-              <div className="mt-8 space-y-2.5 text-[14px] font-semibold text-[#121212]">
-                <RevealStagger stagger={0.08} y={8}>
-                  <div>Internal Audit</div>
-                  <div>Governance Assurance</div>
-                  <div>Internal Controls</div>
-                  <div>Risk Assessment</div>
-                  <div>Audit Committee Support</div>
-                  <div>Control Effectiveness Reviews</div>
-                </RevealStagger>
-              </div>
 
               <div className="mt-10">
                 <Button
@@ -509,7 +454,7 @@ export function HomeView() {
                   Know More
                 </Button>
               </div>
-            </Reveal>
+            </div>
 
             <Reveal y={16} duration={0.6} delay={0.1} className="lg:col-span-7">
               <div className="overflow-hidden rounded-[24px] shadow-lg group">
@@ -525,210 +470,6 @@ export function HomeView() {
               </div>
             </Reveal>
           </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* 4. WATERMARK & SERVICES SECTION                                  */}
-      {/* ================================================================ */}
-      <Reveal
-        as="section"
-        y={18}
-        duration={0.65}
-        className="relative py-24 lg:py-36 bg-[#F4F7F6] overflow-hidden border-t border-b border-gray-100"
-      >
-        <div
-          className="absolute right-[3%] top-1/2 -translate-y-1/2 w-[36%] max-w-[420px] pointer-events-none select-none hidden md:block"
-          aria-hidden="true"
-        >
-          <TrenntParticleLogo />
-        </div>
-
-        <div className="section-shell relative z-10">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-              Capabilities
-            </div>
-            <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
-              Practical solutions tailored to strengthen governance, enhance internal controls, and support confident decision-making.
-            </h2>
-
-            <div className="mt-8">
-              <Button
-                onClick={() => navigate("services")}
-                className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Know More
-              </Button>
-            </div>
-
-            <p className="mt-8 text-[13.5px] text-gray-500 max-w-lg leading-relaxed">
-              Every engagement is tailored to strengthen governance, improve internal controls, and support strategic decision-making.
-            </p>
-          </div>
-        </div>
-      </Reveal>
-
-      {/* ================================================================ */}
-      {/* 5. CASE STUDIES / SELECTED ENGAGEMENTS                            */}
-      {/* ================================================================ */}
-      <section className="py-20 lg:py-28 bg-[#F8F9FA] border-t border-gray-100">
-        <div className="section-shell">
-          <Reveal y={14} duration={0.55}>
-            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-              Case Studies
-            </div>
-
-            <div className="mt-4 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-              <h2 className="text-[36px] sm:text-[44px] font-bold text-[#121212]">
-                Selected<br />Engagements
-              </h2>
-              <p className="max-w-md text-[14px] leading-relaxed text-gray-500">
-                Exploring how independent insight has helped organizations strengthen governance, improve operational resilience, and create long-term value.
-              </p>
-            </div>
-          </Reveal>
-
-          <RevealStagger stagger={0.1} delay={0.1} y={14} childDuration={0.55} className="mt-12 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                title: "Governance Review",
-                category: "Manufacturing",
-                desc: "Strengthening governance frameworks through independent assessment and practical recommendations.",
-                icon: Building2,
-              },
-              {
-                title: "Internal Audit Transformation",
-                category: "Healthcare",
-                desc: "Enhancing internal audit processes to improve controls, compliance, and operational confidence.",
-                icon: ShieldCheck,
-              },
-              {
-                title: "Risk Assessment",
-                category: "Financial Services",
-                desc: "Identifying key risks and delivering strategic insights for stronger decision-making.",
-                icon: FileSpreadsheet,
-              },
-            ].map((card, idx) => {
-              const IconComp = card.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  whileHover={reduced ? {} : { y: -6 }}
-                  transition={{ duration: 0.25, ease: EASE_OUT }}
-                  className="group flex flex-col justify-between rounded-[16px] bg-white p-6 shadow-sm border border-gray-100 transition-all duration-300 ease-out hover:shadow-[0_20px_40px_-24px_rgba(0,61,60,0.25)] hover:border-gray-200"
-                >
-                  <div>
-                    <div className="relative h-48 w-full rounded-[12px] overflow-hidden bg-gradient-to-br from-[#EAEFEF] via-[#F4F7F6] to-[#DEE8E6] flex items-center justify-center border border-[#003D3C]/5">
-                      <div className="absolute inset-0 bg-[radial-gradient(#003D3C_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.06] transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
-                      <div className="relative flex flex-col items-center gap-2 transition-transform duration-500 ease-out group-hover:scale-[1.08]">
-                        <div className="h-12 w-12 rounded-full bg-white/80 backdrop-blur-xs flex items-center justify-center shadow-xs border border-[#003D3C]/10 text-[#003D3C]/70">
-                          <IconComp className="h-6 w-6 stroke-[1.75]" />
-                        </div>
-                        <span className="text-[11px] font-bold tracking-widest text-[#003D3C]/40 uppercase">
-                          Case Study
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="mt-6 text-[18px] font-bold text-[#121212]">
-                      {card.title}
-                    </h3>
-                    <div className="text-[12px] font-semibold text-gray-500 mt-0.5">
-                      {card.category}
-                    </div>
-                    <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
-                      {card.desc}
-                    </p>
-                  </div>
-                  <div className="mt-6">
-                    <Button
-                      onClick={() => navigate("services")}
-                      className="h-9 rounded-[6px] bg-[#EEF4F2] px-4 text-[12px] font-semibold text-[#003D3C] transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-sm hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-1.5 group/btn"
-                    >
-                      <span className="hover-underline-grow">Know More</span>
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-250 ease-out group-hover/btn:translate-x-1" />
-                    </Button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </RevealStagger>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* 7. CLIENT PERSPECTIVES SECTION                                   */}
-      {/* ================================================================ */}
-      <section className="py-24 lg:py-32 bg-[#003D3C] text-white">
-        <div className="section-shell">
-          <Reveal y={14} duration={0.55}>
-            <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
-              <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
-              Client Perspectives
-            </div>
-
-            <div className="mt-4 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-              <h2 className="text-[36px] sm:text-[44px] font-bold text-white">
-                Our Clients Say It All
-              </h2>
-              <p className="max-w-md text-[14px] leading-relaxed text-white/70">
-                Independent thinking, actionable recommendations, meaningful outcomes.
-              </p>
-            </div>
-          </Reveal>
-
-          <RevealStagger stagger={0.1} delay={0.1} y={16} childDuration={0.55} className="mt-14 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                quote: "Trennt brought a fresh perspective to our governance framework. Their structured approach and practical recommendations gave our leadership team greater confidence in every decision.",
-                author: "Ahmad Al-Harbi",
-                role: "Chief Executive Officer, Al-Riyadh Manufacturing Co.",
-              },
-              {
-                quote: "Their team delivered clear, objective audit insights that helped us streamline internal controls while maintaining regulatory compliance.",
-                author: "Sara Al-Mansoor",
-                role: "Head of Audit Committee, Gulf Financial Group",
-              },
-              {
-                quote: "The Trennt team acts as a true partner. Their deep domain expertise in Saudi regulations and risk management makes them invaluable.",
-                author: "Khalid Al-Otaibi",
-                role: "Managing Director, National Health Tech",
-              },
-            ].map((testimonial, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={reduced ? {} : { y: -4 }}
-                transition={{ duration: 0.25, ease: EASE_OUT }}
-                className="rounded-[16px] bg-white/5 border border-white/10 p-8 backdrop-blur-sm transition-all duration-300 ease-out hover:bg-white/10 hover:border-white/20 flex flex-col justify-between"
-              >
-                <div>
-                  <motion.div
-                    initial={{ opacity: 0, y: -6 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: reduced ? 0 : 0.5, ease: EASE_OUT, delay: reduced ? 0 : 0.15 + idx * 0.05 }}
-                    className="text-[36px] text-[#ADDFB3] font-serif leading-none"
-                  >
-                    &ldquo;
-                  </motion.div>
-                  <p className="text-[14px] leading-relaxed text-white/85 mt-2">
-                    {testimonial.quote}
-                  </p>
-                </div>
-                <div className="mt-8 flex items-center gap-3.5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ADDFB3]/15 border border-[#ADDFB3]/30 text-[13px] font-extrabold text-[#ADDFB3] shadow-xs">
-                    {testimonial.author.split(' ').map((n: string) => n[0]).join('')}
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-bold text-white">{testimonial.author}</div>
-                    <div className="text-[11px] text-white/60">{testimonial.role}</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </RevealStagger>
         </div>
       </section>
 

@@ -117,22 +117,6 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                         </Reveal>
 
                         {/* Standard Key Facts Badges */}
-                        <Reveal delay={0.15}>
-                            <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-medium text-muted-foreground">
-                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-gray-50 px-3 py-1.5 border border-gray-200/80 shadow-2xs">
-                                    <Check className="h-3.5 w-3.5 text-[#003D3C]" />
-                                    IIA Global Standards Compliant
-                                </span>
-                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-gray-50 px-3 py-1.5 border border-gray-200/80 shadow-2xs">
-                                    <ShieldCheck className="h-3.5 w-3.5 text-[#003D3C]" />
-                                    Independent & Objective
-                                </span>
-                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-gray-50 px-3 py-1.5 border border-gray-200/80 shadow-2xs">
-                                    <CheckSquare className="h-3.5 w-3.5 text-[#003D3C]" />
-                                    Risk-Based Approach
-                                </span>
-                            </div>
-                        </Reveal>
                     </div>
                 </div>
             </section>

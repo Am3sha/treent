@@ -195,19 +195,6 @@ export const FRAMEWORK_AGREEMENTS = {
 };
 
 // ---------------------------------------------------------------------------
-// Team
-// ---------------------------------------------------------------------------
-
-export const LEADERSHIP: TeamMember[] = [
-  {
-    name: "Senior Leadership",
-    role: "Internal Audit Experts",
-    bio: "Experienced internal audit professionals with deep expertise in governance, risk management, and internal controls.",
-    initials: "SL",
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Careers
 // ---------------------------------------------------------------------------
 
