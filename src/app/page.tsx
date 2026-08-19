@@ -90,7 +90,7 @@ function FrameworkAgreementsView() {
             {FRAMEWORK_AGREEMENTS.includes.map((item, i) => (
               <Reveal key={i} delay={i * 0.05}>
                 <li className="flex items-start gap-3 text-base leading-relaxed text-foreground">
-                  <Check className="mt-1 h-5 w-5 shrink-0 text-[#003D3C]" />
+                  <Check className="mt-1 h-5 w-5 shrink-0 text-[#00313C]" />
                   {item}
                 </li>
               </Reveal>
@@ -106,7 +106,7 @@ function FrameworkAgreementsView() {
               <Button
                 size="lg"
                 onClick={() => navigate("contact")}
-                className="h-11 gap-2 rounded-full bg-[#003D3C] px-6 text-white shadow-sm hover:bg-[#002b2a]"
+                className="h-11 gap-2 rounded-full bg-[#00313C] px-6 text-white shadow-sm hover:bg-[#002b2a]"
               >
                 Inquire about a framework agreement
               </Button>
@@ -114,7 +114,7 @@ function FrameworkAgreementsView() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("services")}
-                className="h-11 gap-2 rounded-full border-gray-300 text-[#003D3C] hover:bg-[#EEF4F2]"
+                className="h-11 gap-2 rounded-full border-gray-300 text-[#00313C] hover:bg-[#EEF4F2]"
               >
                 View all services
               </Button>

@@ -85,14 +85,14 @@ export function Footer() {
     ? {}
     : {
         backgroundColor: "#ADDFB3",
-        color: "#003D3C",
+        color: "#00313C",
         scale: 1.07,
         y: -2,
         borderColor: "rgba(173,223,179,0.6)",
       };
 
   return (
-    <footer className="mt-auto bg-[#003D3C] text-white">
+    <footer className="mt-auto bg-[#00313C] text-white">
       <div className="section-shell pt-16 pb-7">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
           <Reveal y={12} duration={0.58} className="lg:col-span-4">
@@ -144,7 +144,7 @@ export function Footer() {
                       whileHover={reduced || status === "loading" ? {} : { scale: 1.03, y: -1 }}
                       whileTap={reduced || status === "loading" ? {} : { scale: 0.98 }}
                       transition={{ duration: 0.2, ease: EASE_OUT }}
-                      className="mr-1.5 my-1.5 inline-flex h-[38px] items-center rounded-full bg-[#ADDFB3] px-5 text-[13px] font-semibold text-[#003D3C] transition-all duration-200 ease-out hover:bg-white hover:shadow-[0_4px_16px_-6px_rgba(173,223,179,0.7)] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
+                      className="mr-1.5 my-1.5 inline-flex h-[38px] items-center rounded-full bg-[#ADDFB3] px-5 text-[13px] font-semibold text-[#00313C] transition-all duration-200 ease-out hover:bg-white hover:shadow-[0_4px_16px_-6px_rgba(173,223,179,0.7)] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
                     >
                       {status === "loading" ? "…" : "Subscribe"}
                     </motion.button>

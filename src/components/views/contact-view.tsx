@@ -182,7 +182,7 @@ export function ContactView() {
       {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="contact-hero-heading"
-        className="relative overflow-hidden bg-[#003D3C] text-white py-16 lg:py-24 border-b border-white/10"
+        className="relative overflow-hidden bg-[#00313C] text-white py-16 lg:py-24 border-b border-white/10"
       >
         <div className="section-shell relative z-10">
           <div className="max-w-3xl">
@@ -245,7 +245,7 @@ export function ContactView() {
                       transition={{ duration: 0.4, ease: EASE_OUT }}
                       className="flex flex-col items-center py-12 text-center"
                     >
-                      <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#EEF4F2] text-[#003D3C] overflow-hidden">
+                      <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#EEF4F2] text-[#00313C] overflow-hidden">
                         <motion.svg
                           viewBox="0 0 24 24"
                           fill="none"
@@ -286,13 +286,13 @@ export function ContactView() {
                         <Button
                           variant="outline"
                           onClick={() => setDone(false)}
-                          className="h-11 rounded-[10px] border-gray-200 text-[#003D3C] text-[14px] font-semibold hover:bg-gray-50"
+                          className="h-11 rounded-[10px] border-gray-200 text-[#00313C] text-[14px] font-semibold hover:bg-gray-50"
                         >
                           Send another message
                         </Button>
                         <Button
                           onClick={() => navigate("home")}
-                          className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#003D3C] hover:bg-[#c2e8c4]"
+                          className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#00313C] hover:bg-[#c2e8c4]"
                         >
                           Back to home
                           <ArrowRight className="h-4 w-4" />
@@ -319,7 +319,7 @@ export function ContactView() {
                             placeholder="Full name"
                             autoComplete="name"
                             aria-invalid={!!errors.name}
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#00313C] focus:ring-2 focus:ring-[#00313C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
                           {errors.name && (
                             <p className="text-xs font-medium text-destructive">
@@ -338,7 +338,7 @@ export function ContactView() {
                             placeholder="you@company.com"
                             autoComplete="email"
                             aria-invalid={!!errors.email}
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#00313C] focus:ring-2 focus:ring-[#00313C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
                           {errors.email && (
                             <p className="text-xs font-medium text-destructive">
@@ -356,7 +356,7 @@ export function ContactView() {
                             {...register("company")}
                             placeholder="Company name"
                             autoComplete="organization"
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#00313C] focus:ring-2 focus:ring-[#00313C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
                         </motion.div>
                         <motion.div custom={3} variants={FORM_FIELD_VARIANTS} className="space-y-2">
@@ -368,7 +368,7 @@ export function ContactView() {
                             autoComplete="tel"
                             inputMode="tel"
                             pattern="[+\d\s\-()]*"
-                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
+                            className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#00313C] focus:ring-2 focus:ring-[#00313C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
                           {errors.phone && (
                             <p className="text-xs font-medium text-destructive">
@@ -390,7 +390,7 @@ export function ContactView() {
                             <Select value={field.value} onValueChange={field.onChange}>
                               <SelectTrigger
                                 id="topic"
-                                className="h-11 w-full rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
+                                className="h-11 w-full rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#00313C] focus:ring-2 focus:ring-[#00313C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                                 aria-label="Topic"
                               >
                                 <SelectValue />
@@ -419,7 +419,7 @@ export function ContactView() {
                           id="message"
                           {...register("message")}
                           placeholder="Tell us a little about your inquiry…"
-                          className="min-h-36 resize-y rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
+                          className="min-h-36 resize-y rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#00313C] focus:ring-2 focus:ring-[#00313C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           aria-invalid={!!errors.message}
                         />
                         {errors.message ? (
@@ -461,7 +461,7 @@ export function ContactView() {
                           <Button
                             type="submit"
                             disabled={submitting}
-                            className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-7 text-[14px] font-semibold text-[#003D3C] shadow-none transition-all duration-300 ease-out hover:bg-[#c2e8c4] hover:shadow-[0_6px_20px_-8px_rgba(173,223,179,0.9)] disabled:opacity-60 disabled:hover:scale-100 disabled:hover:shadow-none"
+                            className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-7 text-[14px] font-semibold text-[#00313C] shadow-none transition-all duration-300 ease-out hover:bg-[#c2e8c4] hover:shadow-[0_6px_20px_-8px_rgba(173,223,179,0.9)] disabled:opacity-60 disabled:hover:scale-100 disabled:hover:shadow-none"
                           >
                             {submitting ? (
                               <>
@@ -471,7 +471,7 @@ export function ContactView() {
                             ) : (
                               <>
                                 Send message
-                                <ArrowRight className="h-4 w-4 text-[#003D3C]" />
+                                <ArrowRight className="h-4 w-4 text-[#00313C]" />
                               </>
                             )}
                           </Button>
@@ -517,7 +517,7 @@ export function ContactView() {
                       <>
                         <motion.span
                           whileHover={iconBounce}
-                          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]"
+                          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#00313C]"
                         >
                           <Icon className="h-4 w-4" />
                         </motion.span>
@@ -551,7 +551,7 @@ export function ContactView() {
                           >
                             <motion.span
                               whileHover={iconBounce}
-                              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#003D3C]"
+                              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF4F2] text-[#00313C]"
                             >
                               <Icon className="h-4 w-4" />
                             </motion.span>
@@ -559,7 +559,7 @@ export function ContactView() {
                               <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
                                 {item.label}
                               </div>
-                              <div className="font-medium text-[#121212] transition-colors duration-200 group-hover:text-[#003D3C]">
+                              <div className="font-medium text-[#121212] transition-colors duration-200 group-hover:text-[#00313C]">
                                 {item.value}
                               </div>
                             </div>
@@ -576,7 +576,7 @@ export function ContactView() {
 
             <Reveal y={12} duration={0.55} delay={0.24}>
               <div className="mt-6 flex items-start gap-3 rounded-[12px] border border-[#EEF4F2] bg-[#FAFCFA] p-5">
-                <MessageSquare className="mt-0.5 h-4 w-4 text-[#003D3C] shrink-0" />
+                <MessageSquare className="mt-0.5 h-4 w-4 text-[#00313C] shrink-0" />
                 <div>
                   <h4 className="text-[13px] font-bold text-[#121212]">
                     Prefer to reach us directly?

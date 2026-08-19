@@ -99,7 +99,7 @@ export function TrenntParticleLogo({ className }: { className?: string }) {
                     fontWeight="900"
                     letterSpacing="0.08em"
                     className="font-sans select-none"
-                    fill="#003D3C"
+                    fill="#00313C"
                     initial={reduced ? { opacity: 0.15 } : { opacity: 0 }}
                     whileInView={reduced ? { opacity: 0.15 } : { opacity: 0.18 }}
                     viewport={{ once: true, amount: 0.3 }}
@@ -115,7 +115,7 @@ export function TrenntParticleLogo({ className }: { className?: string }) {
                         width={p.id % 3 === 0 ? 4.2 : 3.2}
                         height={p.id % 3 === 0 ? 8.5 : 6.5}
                         rx="2"
-                        fill={p.id % 2 === 0 ? "#003D3C" : "#005A58"}
+                        fill={p.id % 2 === 0 ? "#00313C" : "#005A58"}
                         initial={
                             reduced
                                 ? { x: p.targetX - 2, y: p.targetY - 4, opacity: 0.7 }

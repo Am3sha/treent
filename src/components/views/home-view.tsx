@@ -83,13 +83,13 @@ function AnimatedProgressRing({
           stroke="currentColor"
           strokeLinecap="round"
           fill="none"
-          className="text-[#003D3C]"
+          className="text-[#00313C]"
           strokeDasharray={circumference}
           strokeDashoffset={dashoffset}
           style={{ transition: reduced ? "none" : undefined }}
         />
       </svg>
-      <span className="absolute text-[12px] font-bold text-[#003D3C]">
+      <span className="absolute text-[12px] font-bold text-[#00313C]">
         {Math.round(progress)}%
       </span>
     </div>
@@ -144,7 +144,7 @@ function AnimatedBar({
   return (
     <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
       <div
-        className="h-full rounded-full bg-[#003D3C]"
+        className="h-full rounded-full bg-[#00313C]"
         style={{ width: `${width}%` }}
       />
     </div>
@@ -241,7 +241,7 @@ export function HomeView() {
       {/* ================================================================ */}
       <section
         aria-labelledby="hero-heading"
-        className="relative overflow-hidden bg-[#003D3C] text-white pt-10 pb-20 lg:pt-16 lg:pb-32"
+        className="relative overflow-hidden bg-[#00313C] text-white pt-10 pb-20 lg:pt-16 lg:pb-32"
       >
         <div className="section-shell relative">
           <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
@@ -304,7 +304,7 @@ export function HomeView() {
               >
                 <Button
                   onClick={() => navigate("contact")}
-                  className="h-12 rounded-[10px] bg-white px-8 text-[15px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-[0_10px_30px_-12px_rgba(173,223,179,0.7)] hover:scale-[1.02] active:scale-[0.98]"
+                  className="h-12 rounded-[10px] bg-white px-8 text-[15px] font-semibold text-[#00313C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-[0_10px_30px_-12px_rgba(173,223,179,0.7)] hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Get Started
                 </Button>
@@ -342,7 +342,7 @@ export function HomeView() {
                   variants={statCard1}
                   className="absolute left-2 top-8 z-20 w-[220px] sm:w-[240px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-6"
                 >
-                  <div className="text-[13px] font-bold text-[#003D3C]">
+                  <div className="text-[13px] font-bold text-[#00313C]">
                     Internal Audit
                   </div>
                   <div className="text-[11px] text-gray-500 font-medium">
@@ -351,7 +351,7 @@ export function HomeView() {
                   <div className="mt-3 flex items-center gap-3">
                     <AnimatedProgressRing percent={78} />
                     <div>
-                      <div className="text-[12px] font-bold text-[#003D3C] leading-tight">
+                      <div className="text-[12px] font-bold text-[#00313C] leading-tight">
                         Engagement<br />Completion
                       </div>
                       <div className="mt-1 text-[10px] text-gray-500 leading-tight">
@@ -368,14 +368,14 @@ export function HomeView() {
                   variants={statCard2}
                   className="absolute left-2 bottom-10 z-20 w-[210px] sm:w-[230px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-8"
                 >
-                  <div className="text-[13px] font-bold text-[#003D3C]">
+                  <div className="text-[13px] font-bold text-[#00313C]">
                     Internal Controls
                   </div>
                   <div className="text-[11px] text-gray-500 font-medium">
                     Board Oversight
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
-                    <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
+                    <span className="text-[30px] font-extrabold text-[#00313C] leading-none tracking-tight">
                       <CountUp value="94%" duration={1300} delay={800} />
                     </span>
                     <div className="text-right">
@@ -399,14 +399,14 @@ export function HomeView() {
                   variants={statCard3}
                   className="absolute right-2 bottom-4 z-20 w-[210px] sm:w-[235px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-right-4"
                 >
-                  <div className="text-[13px] font-bold text-[#003D3C]">
+                  <div className="text-[13px] font-bold text-[#00313C]">
                     Governance Assessment
                   </div>
                   <div className="text-[11px] text-gray-500 font-medium">
                     Board Oversight
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
-                    <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
+                    <span className="text-[30px] font-extrabold text-[#00313C] leading-none tracking-tight">
                       <CountUp value="92%" duration={1300} delay={1000} />
                     </span>
                     <div className="text-right">
@@ -436,7 +436,7 @@ export function HomeView() {
           <div className="max-w-4xl">
             <Reveal y={16} duration={0.6}>
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+                <span className="h-2 w-2 rounded-full bg-[#00313C]" />
                 About Trennt
               </div>
               <h2 className="mt-6 text-[32px] sm:text-[40px] font-medium leading-[1.25] text-[#121212] tracking-tight">
@@ -455,7 +455,7 @@ export function HomeView() {
           <div className="grid items-center gap-12 lg:grid-cols-12">
             <Reveal y={16} duration={0.6} className="lg:col-span-5">
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+                <span className="h-2 w-2 rounded-full bg-[#00313C]" />
                 Our Expertise
               </div>
               <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212]">
@@ -468,7 +468,7 @@ export function HomeView() {
               <div className="mt-10">
                 <Button
                   onClick={() => navigate("services")}
-                  className="h-11 rounded-[8px] bg-[#003D3C] px-6 text-[14px] font-semibold text-white transition-all duration-200 ease-out hover:bg-[#002f2e] hover:shadow-[0_10px_24px_-10px_rgba(0,61,60,0.5)] hover:scale-[1.02] active:scale-[0.98]"
+                  className="h-11 rounded-[8px] bg-[#00313C] px-6 text-[14px] font-semibold text-white transition-all duration-200 ease-out hover:bg-[#002f2e] hover:shadow-[0_10px_24px_-10px_rgba(0,61,60,0.5)] hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Know More
                 </Button>
@@ -510,7 +510,7 @@ export function HomeView() {
         <div className="section-shell relative z-10">
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+              <span className="h-2 w-2 rounded-full bg-[#00313C]" />
               Capabilities
             </div>
             <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
@@ -520,7 +520,7 @@ export function HomeView() {
             <div className="mt-8">
               <Button
                 onClick={() => navigate("services")}
-                className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
+                className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#00313C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
               >
                 Know More
               </Button>
@@ -540,7 +540,7 @@ export function HomeView() {
         <div className="section-shell">
           <Reveal y={14} duration={0.55}>
             <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+              <span className="h-2 w-2 rounded-full bg-[#00313C]" />
               Insights
             </div>
 
@@ -584,13 +584,13 @@ export function HomeView() {
                   className="group flex flex-col justify-between transition-transform duration-300 ease-out"
                 >
                   <div>
-                    <div className="relative h-48 w-full rounded-[12px] overflow-hidden bg-gradient-to-br from-[#EAEFEF] via-[#F4F7F6] to-[#DEE8E6] flex items-center justify-center border border-[#003D3C]/5">
-                      <div className="absolute inset-0 bg-[radial-gradient(#003D3C_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.06] transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
+                    <div className="relative h-48 w-full rounded-[12px] overflow-hidden bg-gradient-to-br from-[#EAEFEF] via-[#F4F7F6] to-[#DEE8E6] flex items-center justify-center border border-[#00313C]/5">
+                      <div className="absolute inset-0 bg-[radial-gradient(#00313C_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.06] transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                       <div className="relative flex flex-col items-center gap-2 transition-transform duration-500 ease-out group-hover:scale-[1.08]">
-                        <div className="h-12 w-12 rounded-full bg-white/80 backdrop-blur-xs flex items-center justify-center shadow-xs border border-[#003D3C]/10 text-[#003D3C]/70">
+                        <div className="h-12 w-12 rounded-full bg-white/80 backdrop-blur-xs flex items-center justify-center shadow-xs border border-[#00313C]/10 text-[#00313C]/70">
                           <IconComp className="h-6 w-6 stroke-[1.75]" />
                         </div>
-                        <span className="text-[11px] font-bold tracking-widest text-[#003D3C]/40 uppercase">
+                        <span className="text-[11px] font-bold tracking-widest text-[#00313C]/40 uppercase">
                           {article.tag}
                         </span>
                       </div>
@@ -605,7 +605,7 @@ export function HomeView() {
                   <div className="mt-6">
                     <button
                       onClick={() => navigate("benchmark-insights")}
-                      className="text-[13px] font-semibold text-[#003D3C] inline-flex items-center gap-1.5 group/link"
+                      className="text-[13px] font-semibold text-[#00313C] inline-flex items-center gap-1.5 group/link"
                     >
                       <span className="hover-underline-grow">Read Article</span>
                       <ArrowRight className="h-3.5 w-3.5 transition-all duration-250 ease-out group-hover/link:translate-x-1" />

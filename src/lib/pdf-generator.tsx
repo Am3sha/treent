@@ -19,7 +19,7 @@ import type {
 import { DIMENSIONS, TIER_META, TIER_RECOMMENDATIONS } from "./content";
 
 const COLORS = {
-    primary: "#003D3C",
+    primary: "#00313C",
     dark: "#121212",
     accent: "#ADDFB3",
     soft: "#D5EBD6",

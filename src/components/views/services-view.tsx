@@ -156,7 +156,7 @@ export function ServicesView() {
                   className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl md:leading-[1.02] text-[#121212]"
                 >
                   Comprehensive internal audit services{" "}
-                  <span className="bg-gradient-to-r from-[#003D3C] via-[#005B58] to-[#003D3C] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#00313C] via-[#005B58] to-[#00313C] bg-clip-text text-transparent">
                     tailored to your needs.
                   </span>
                 </h1>
@@ -171,7 +171,7 @@ export function ServicesView() {
                 </p>
               </Reveal>
             <Reveal delay={0.15}>
-              <p className="mt-8 text-[15px] font-semibold text-[#003D3C]">
+              <p className="mt-8 text-[15px] font-semibold text-[#00313C]">
                 Exclusively internal audit — an independent perspective, delivering practical, actionable recommendations.
               </p>
             </Reveal>
@@ -192,7 +192,7 @@ export function ServicesView() {
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
-                    className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-[#003D3C]/20 via-[#ADDFB3]/30 to-[#003D3C]/10 blur-2xl pointer-events-none"
+                    className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-[#00313C]/20 via-[#ADDFB3]/30 to-[#00313C]/10 blur-2xl pointer-events-none"
                   />
 
                   {/* Main Floating Card */}
@@ -211,7 +211,7 @@ export function ServicesView() {
                   >
                     <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#003D3C] text-[#ADDFB3] shadow-sm">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#00313C] text-[#ADDFB3] shadow-sm">
                           <ShieldCheck className="h-5 w-5 stroke-[1.75]" />
                         </span>
                         <div>
@@ -223,8 +223,8 @@ export function ServicesView() {
                           </p>
                         </div>
                       </div>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[#ADDFB3]/40 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#003D3C]">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#003D3C] animate-pulse" />
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#ADDFB3]/40 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#00313C]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#00313C] animate-pulse" />
                         ACTIVE
                       </span>
                     </div>
@@ -234,14 +234,14 @@ export function ServicesView() {
                       <div>
                         <div className="flex justify-between text-xs font-semibold text-gray-700">
                           <span>Governance & Internal Controls</span>
-                          <span className="text-[#003D3C]">100%</span>
+                          <span className="text-[#00313C]">100%</span>
                         </div>
                         <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-100">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: "100%" }}
                             transition={{ duration: 1.2, ease: "easeOut" }}
-                            className="h-full bg-gradient-to-r from-[#003D3C] to-[#ADDFB3]"
+                            className="h-full bg-gradient-to-r from-[#00313C] to-[#ADDFB3]"
                           />
                         </div>
                       </div>
@@ -249,14 +249,14 @@ export function ServicesView() {
                       <div>
                         <div className="flex justify-between text-xs font-semibold text-gray-700">
                           <span>Risk-Based Assurance</span>
-                          <span className="text-[#003D3C]">Optimized</span>
+                          <span className="text-[#00313C]">Optimized</span>
                         </div>
                         <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-100">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: "92%" }}
                             transition={{ duration: 1.4, ease: "easeOut", delay: 0.2 }}
-                            className="h-full bg-[#003D3C]"
+                            className="h-full bg-[#00313C]"
                           />
                         </div>
                       </div>
@@ -264,7 +264,7 @@ export function ServicesView() {
                       <div>
                         <div className="flex justify-between text-xs font-semibold text-gray-700">
                           <span>Execution Quality Index</span>
-                          <span className="text-[#003D3C]">Verified</span>
+                          <span className="text-[#00313C]">Verified</span>
                         </div>
                         <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-100">
                           <motion.div
@@ -280,7 +280,7 @@ export function ServicesView() {
                     {/* Badges footer */}
                     <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs">
                       <span className="text-muted-foreground font-medium">5 Core & Development Services</span>
-                      <span className="font-semibold text-[#003D3C] hover:underline cursor-pointer flex items-center gap-1">
+                      <span className="font-semibold text-[#00313C] hover:underline cursor-pointer flex items-center gap-1">
                         Explore catalogue <ArrowRight className="h-3 w-3" />
                       </span>
                     </div>
@@ -301,10 +301,10 @@ export function ServicesView() {
                     }}
                     className="absolute -top-5 -right-4 hidden sm:flex items-center gap-2 rounded-full border border-gray-200/80 bg-white/95 px-3.5 py-1.5 shadow-lg backdrop-blur-md"
                   >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#EEF4F2] text-[#003D3C]">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#EEF4F2] text-[#00313C]">
                       <Handshake className="h-3.5 w-3.5" />
                     </span>
-                    <span className="text-xs font-bold text-[#003D3C]">Trusted Delivery</span>
+                    <span className="text-xs font-bold text-[#00313C]">Trusted Delivery</span>
                   </motion.div>
 
                   {/* Floating Pill 2 (Bottom Left) */}
@@ -322,7 +322,7 @@ export function ServicesView() {
                     }}
                     className="absolute -bottom-5 -left-4 hidden sm:flex items-center gap-2 rounded-full border border-gray-200/80 bg-white/95 px-3.5 py-1.5 shadow-lg backdrop-blur-md"
                   >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#003D3C] text-white">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#00313C] text-white">
                       <Check className="h-3.5 w-3.5" />
                     </span>
                     <span className="text-xs font-bold text-[#121212]">Actionable Insights</span>
@@ -354,8 +354,8 @@ export function ServicesView() {
                     className={cn(
                       "group relative inline-flex shrink-0 items-center gap-2.5 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 select-none border",
                       active
-                        ? "text-white border-[#003D3C] shadow-sm"
-                        : "text-gray-700 hover:text-[#003D3C] bg-gray-50/80 hover:bg-[#EEF4F2] border-gray-200/70"
+                        ? "text-white border-[#00313C] shadow-sm"
+                        : "text-gray-700 hover:text-[#00313C] bg-gray-50/80 hover:bg-[#EEF4F2] border-gray-200/70"
                     )}
                     style={{ WebkitTapHighlightColor: "transparent" }}
                   >
@@ -367,7 +367,7 @@ export function ServicesView() {
                             ? { duration: 0 }
                             : TAB_LAYOUT_TRANSITION
                         }
-                        className="absolute inset-0 z-0 rounded-full bg-[#003D3C]"
+                        className="absolute inset-0 z-0 rounded-full bg-[#00313C]"
                         aria-hidden
                       />
                     )}
@@ -375,8 +375,8 @@ export function ServicesView() {
                       className={cn(
                         "relative z-10 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors duration-200",
                         active
-                          ? "bg-[#ADDFB3] text-[#003D3C]"
-                          : "bg-white text-[#003D3C]/70 border border-gray-200 group-hover:border-[#003D3C]/20"
+                          ? "bg-[#ADDFB3] text-[#00313C]"
+                          : "bg-white text-[#00313C]/70 border border-gray-200 group-hover:border-[#00313C]/20"
                       )}
                     >
                       {String(i + 1).padStart(2, "0")}
@@ -421,7 +421,7 @@ export function ServicesView() {
                 >
                   <Card
                     id={`service-${activeService.slug}`}
-                    className="overflow-hidden rounded-2xl border-2 border-[#003D3C]/15 border-l-4 border-l-[#003D3C] bg-[#FAFBFA] shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-[#003D3C]/5"
+                    className="overflow-hidden rounded-2xl border-2 border-[#00313C]/15 border-l-4 border-l-[#00313C] bg-[#FAFBFA] shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-[#00313C]/5"
                   >
                     <div
                       className={
@@ -438,28 +438,28 @@ export function ServicesView() {
                       >
                         <motion.div variants={headerItemVariants}>
                           <div className="flex flex-wrap items-center gap-2.5">
-                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#003D3C] border border-[#003D3C]/10 shadow-2xs">
+                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#00313C] border border-[#00313C]/10 shadow-2xs">
                               {IconCmp ? (
                                 <IconCmp className="h-5 w-5 stroke-[1.75]" />
                               ) : (
                                 <Icon name={activeService.icon} className="h-5 w-5" />
                               )}
                             </span>
-                            <span className="font-mono text-xs font-semibold text-[#003D3C]/70 bg-white border border-[#003D3C]/10 px-2.5 py-0.5 rounded-full">
+                            <span className="font-mono text-xs font-semibold text-[#00313C]/70 bg-white border border-[#00313C]/10 px-2.5 py-0.5 rounded-full">
                               {String(activeIdx + 1).padStart(2, "0")}
                             </span>
                             <Badge
                               className={cn(
                                 "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider border-0 shadow-2xs",
                                 category.isCore
-                                  ? "bg-[#003D3C] text-white"
-                                  : "bg-[#ADDFB3] text-[#003D3C]"
+                                  ? "bg-[#00313C] text-white"
+                                  : "bg-[#ADDFB3] text-[#00313C]"
                               )}
                             >
                               {category.label}
                             </Badge>
-                            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF4F2] text-[#003D3C] border border-[#003D3C]/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider font-mono">
-                              <span className="h-1.5 w-1.5 rounded-full bg-[#003D3C] animate-pulse" />
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF4F2] text-[#00313C] border border-[#00313C]/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider font-mono">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#00313C] animate-pulse" />
                               Currently viewing
                             </span>
                           </div>
@@ -470,7 +470,7 @@ export function ServicesView() {
                           </h3>
                         </motion.div>
                         <motion.div variants={headerItemVariants}>
-                          <p className="mt-2 text-sm font-semibold text-[#003D3C]">
+                          <p className="mt-2 text-sm font-semibold text-[#00313C]">
                             {activeService.tagline}
                           </p>
                         </motion.div>
@@ -485,7 +485,7 @@ export function ServicesView() {
                               variant="outline"
                               size="sm"
                               onClick={() => navigate(activeService.slug as ViewKey)}
-                              className="gap-2 rounded-full border-gray-300 bg-white text-[#003D3C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#003D3C]/30 hover:scale-[1.02] active:scale-[0.98]"
+                              className="gap-2 rounded-full border-gray-300 bg-white text-[#00313C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#00313C]/30 hover:scale-[1.02] active:scale-[0.98]"
                             >
                               Learn more
                               <ArrowRight className="h-3.5 w-3.5" />
@@ -502,7 +502,7 @@ export function ServicesView() {
                         className="grid gap-8 p-8 sm:grid-cols-2 lg:col-span-7 lg:p-10 [direction:ltr]"
                       >
                         <div className="pr-2">
-                          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#003D3C]/90">
+                          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#00313C]/90">
                             Key benefits
                           </div>
                           <ul className="mt-4 space-y-3">
@@ -512,7 +512,7 @@ export function ServicesView() {
                                 variants={itemVariants}
                                 className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground/90 font-medium"
                               >
-                                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#003D3C]" />
+                                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#00313C]" />
                                 <span>{o}</span>
                               </motion.li>
                             ))}
@@ -530,7 +530,7 @@ export function ServicesView() {
                                 className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"
                               >
                                 <span
-                                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#003D3C]/60"
+                                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00313C]/60"
                                   aria-hidden
                                 />
                                 <span>{d}</span>
@@ -569,7 +569,7 @@ export function ServicesView() {
               <Reveal key={s.slug} delay={0.04 + i * 0.04}>
                 <Card
                   className={cn(
-                    "scroll-mt-24 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs transition-all duration-300 hover:border-[#003D3C]/30 hover:shadow-lg hover:shadow-[#003D3C]/5 hover:-translate-y-1"
+                    "scroll-mt-24 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs transition-all duration-300 hover:border-[#00313C]/30 hover:shadow-lg hover:shadow-[#00313C]/5 hover:-translate-y-1"
                   )}
                 >
                   <div
@@ -580,22 +580,22 @@ export function ServicesView() {
                   >
                     <div className="border-b border-gray-200/80 p-8 lg:col-span-5 lg:border-b-0 lg:border-r lg:p-10 [direction:ltr]">
                       <div className="flex items-center gap-2.5">
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#003D3C] border border-[#003D3C]/10 shadow-2xs">
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#00313C] border border-[#00313C]/10 shadow-2xs">
                           {IconCmp ? (
                             <IconCmp className="h-5 w-5 stroke-[1.75]" />
                           ) : (
                             <Icon name={s.icon} className="h-5 w-5" />
                           )}
                         </span>
-                        <span className="font-mono text-xs font-semibold text-[#003D3C]/70 bg-gray-50 border border-gray-200 px-2.5 py-0.5 rounded-full">
+                        <span className="font-mono text-xs font-semibold text-[#00313C]/70 bg-gray-50 border border-gray-200 px-2.5 py-0.5 rounded-full">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <Badge
                           className={cn(
                             "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider border-0 shadow-2xs",
                             category.isCore
-                              ? "bg-[#003D3C] text-white"
-                              : "bg-[#ADDFB3] text-[#003D3C]"
+                              ? "bg-[#00313C] text-white"
+                              : "bg-[#ADDFB3] text-[#00313C]"
                           )}
                         >
                           {category.label}
@@ -604,7 +604,7 @@ export function ServicesView() {
                       <h3 className="mt-6 text-2xl font-semibold tracking-tight text-[#121212]">
                         {s.title}
                       </h3>
-                      <p className="mt-2 text-sm font-semibold text-[#003D3C]">
+                      <p className="mt-2 text-sm font-semibold text-[#00313C]">
                         {s.tagline}
                       </p>
                       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
@@ -615,7 +615,7 @@ export function ServicesView() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleNavClick(s.slug)}
-                          className="gap-2 rounded-full border-gray-300 bg-white text-[#003D3C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#003D3C]/30 hover:scale-[1.02] active:scale-[0.98]"
+                          className="gap-2 rounded-full border-gray-300 bg-white text-[#00313C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#00313C]/30 hover:scale-[1.02] active:scale-[0.98]"
                         >
                           Jump to overview
                           <ArrowRight className="h-3.5 w-3.5" />
@@ -626,7 +626,7 @@ export function ServicesView() {
                     <div className="grid gap-8 p-8 sm:grid-cols-2 lg:col-span-7 lg:p-10 [direction:ltr]">
                       <RevealStagger stagger={0.08} y={8} childDuration={0.45}>
                         <div className="pr-2">
-                          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#003D3C]/90">
+                          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#00313C]/90">
                             Key benefits
                           </div>
                           <ul className="mt-4 space-y-3">
@@ -635,7 +635,7 @@ export function ServicesView() {
                                 key={o}
                                 className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground/90 font-medium"
                               >
-                                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#003D3C]" />
+                                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#00313C]" />
                                 <span>{o}</span>
                               </li>
                             ))}
@@ -654,7 +654,7 @@ export function ServicesView() {
                                 className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"
                               >
                                 <span
-                                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#003D3C]/60"
+                                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00313C]/60"
                                   aria-hidden
                                 />
                                 <span>{d}</span>
@@ -691,17 +691,17 @@ export function ServicesView() {
               const ProcessIconCmp = PROCESS_ICONS[m.step];
               return (
                 <Reveal key={m.step} delay={i * 0.06}>
-                  <div className="group relative flex flex-col justify-between h-full rounded-2xl border border-gray-200/80 bg-white p-7 shadow-xs transition-all duration-300 hover:border-[#003D3C]/30 hover:shadow-md hover:-translate-y-1">
+                  <div className="group relative flex flex-col justify-between h-full rounded-2xl border border-gray-200/80 bg-white p-7 shadow-xs transition-all duration-300 hover:border-[#00313C]/30 hover:shadow-md hover:-translate-y-1">
                     <div>
                       <div className="flex items-center justify-between">
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#003D3C] border border-[#003D3C]/10 shadow-2xs">
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#00313C] border border-[#00313C]/10 shadow-2xs">
                           {ProcessIconCmp ? (
                             <ProcessIconCmp className="h-5 w-5 stroke-[1.75]" />
                           ) : (
                             <Icon name={m.icon} className="h-5 w-5" />
                           )}
                         </span>
-                        <span className="font-mono text-3xl font-extralight tracking-tight text-[#003D3C]/30 group-hover:text-[#003D3C]/60 transition-colors duration-300">
+                        <span className="font-mono text-3xl font-extralight tracking-tight text-[#00313C]/30 group-hover:text-[#00313C]/60 transition-colors duration-300">
                           {m.step}
                         </span>
                       </div>
@@ -712,7 +712,7 @@ export function ServicesView() {
                         {m.description}
                       </p>
                     </div>
-                    <div className="mt-6 h-1 w-full rounded-full bg-gray-100 group-hover:bg-[#003D3C] transition-colors duration-300" aria-hidden />
+                    <div className="mt-6 h-1 w-full rounded-full bg-gray-100 group-hover:bg-[#00313C] transition-colors duration-300" aria-hidden />
                   </div>
                 </Reveal>
               );
@@ -730,7 +730,7 @@ export function ServicesView() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#003D3C] p-8 sm:p-12 md:p-16 shadow-2xl text-white">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#00313C] p-8 sm:p-12 md:p-16 shadow-2xl text-white">
               <div
                 className="absolute -right-20 -bottom-20 h-80 w-80 rounded-full bg-[#ADDFB3]/10 blur-3xl pointer-events-none"
                 aria-hidden
@@ -760,7 +760,7 @@ export function ServicesView() {
                   <Button
                     size="lg"
                     onClick={() => navigate("framework-agreements")}
-                    className="h-12 gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                    className="h-12 gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-[#00313C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                   >
                     Framework agreements
                     <ArrowRight className="h-4 w-4" />

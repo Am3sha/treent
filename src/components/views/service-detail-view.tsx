@@ -85,8 +85,8 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                     className={cn(
                                         "inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider shadow-2xs",
                                         category.isCore
-                                            ? "bg-[#003D3C] text-white"
-                                            : "bg-[#ADDFB3] text-[#003D3C]"
+                                            ? "bg-[#00313C] text-white"
+                                            : "bg-[#ADDFB3] text-[#00313C]"
                                     )}
                                 >
                                     <Sparkles className="h-3 w-3" />
@@ -98,7 +98,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                         {/* Title & Icon */}
                         <Reveal delay={0.05}>
                             <div className="mt-6 flex items-start gap-4">
-                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#003D3C] border border-[#003D3C]/10 shadow-2xs mt-1">
+                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#00313C] border border-[#00313C]/10 shadow-2xs mt-1">
                                     <IconComp className="h-6 w-6 stroke-[1.75]" />
                                 </span>
                                 <h1
@@ -133,10 +133,10 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                 {/* Key Benefits */}
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EEF4F2] text-[#003D3C]">
+                                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EEF4F2] text-[#00313C]">
                                             <Check className="h-4 w-4 stroke-[2.5]" />
                                         </span>
-                                        <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#003D3C]">
+                                        <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#00313C]">
                                             Key Benefits
                                         </h3>
                                     </div>
@@ -144,7 +144,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                         {service.outcomes.map((benefit, i) => (
                                             <Reveal key={i} delay={i * 0.04}>
                                                 <li className="flex items-start gap-3 text-sm font-medium text-gray-800 leading-snug">
-                                                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#003D3C]/10 text-[#003D3C]">
+                                                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#00313C]/10 text-[#00313C]">
                                                         <Check className="h-2.5 w-2.5 stroke-[3]" />
                                                     </span>
                                                     <span>{benefit}</span>
@@ -157,10 +157,10 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                 {/* Key Deliverables */}
                                 <div className="lg:border-l lg:border-gray-200/80 lg:pl-10">
                                     <div className="flex items-center gap-2">
-                                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EEF4F2] text-[#003D3C]">
+                                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EEF4F2] text-[#00313C]">
                                             <CheckSquare className="h-4 w-4 stroke-[2]" />
                                         </span>
-                                        <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#003D3C]">
+                                        <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#00313C]">
                                             Key Deliverables
                                         </h3>
                                     </div>
@@ -168,7 +168,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                         {service.deliverables.map((deliverable, i) => (
                                             <Reveal key={i} delay={i * 0.04}>
                                                 <li className="flex items-start gap-3 text-sm font-medium text-gray-700 leading-snug">
-                                                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#003D3C]" aria-hidden />
+                                                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00313C]" aria-hidden />
                                                     <span>{deliverable}</span>
                                                 </li>
                                             </Reveal>
@@ -197,7 +197,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                             <Button
                                 variant="outline"
                                 onClick={() => navigate("services")}
-                                className="inline-flex gap-2 rounded-full border-gray-300 text-[#003D3C] hover:bg-[#EEF4F2] self-start sm:self-auto"
+                                className="inline-flex gap-2 rounded-full border-gray-300 text-[#00313C] hover:bg-[#EEF4F2] self-start sm:self-auto"
                             >
                                 View all services
                                 <ArrowRight className="h-4 w-4" />
@@ -213,25 +213,25 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                 <Reveal key={other.slug} delay={idx * 0.06}>
                                     <div
                                         onClick={() => navigate(other.slug as ViewKey)}
-                                        className="group relative flex h-full cursor-pointer flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-6 shadow-2xs transition-all duration-200 ease-out hover:-translate-y-1 hover:border-[#003D3C]/40 hover:shadow-md"
+                                        className="group relative flex h-full cursor-pointer flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-6 shadow-2xs transition-all duration-200 ease-out hover:-translate-y-1 hover:border-[#00313C]/40 hover:shadow-md"
                                     >
                                         <div>
                                             <div className="flex items-center justify-between">
-                                                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#003D3C] border border-[#003D3C]/10">
+                                                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#00313C] border border-[#00313C]/10">
                                                     <OtherIcon className="h-5 w-5 stroke-[1.75]" />
                                                 </span>
                                                 <span
                                                     className={cn(
                                                         "rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider",
                                                         cat.isCore
-                                                            ? "bg-[#003D3C] text-white"
-                                                            : "bg-[#ADDFB3] text-[#003D3C]"
+                                                            ? "bg-[#00313C] text-white"
+                                                            : "bg-[#ADDFB3] text-[#00313C]"
                                                     )}
                                                 >
                                                     {cat.label}
                                                 </span>
                                             </div>
-                                            <h4 className="mt-4 text-base font-semibold text-[#121212] group-hover:text-[#003D3C] transition-colors">
+                                            <h4 className="mt-4 text-base font-semibold text-[#121212] group-hover:text-[#00313C] transition-colors">
                                                 {other.title}
                                             </h4>
                                             <p className="mt-2 text-xs leading-relaxed text-muted-foreground line-clamp-2">
@@ -239,7 +239,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                             </p>
                                         </div>
 
-                                        <div className="mt-6 pt-4 border-t border-gray-100 flex items-center text-xs font-semibold text-[#003D3C] group-hover:underline">
+                                        <div className="mt-6 pt-4 border-t border-gray-100 flex items-center text-xs font-semibold text-[#00313C] group-hover:underline">
                                             Learn more
                                             <ArrowUpRight className="ml-1 h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                                         </div>
@@ -260,7 +260,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
             >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <Reveal>
-                        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#003D3C] p-8 sm:p-12 md:p-16 shadow-2xl text-white">
+                        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#00313C] p-8 sm:p-12 md:p-16 shadow-2xl text-white">
                             <div
                                 className="absolute -right-20 -bottom-20 h-80 w-80 rounded-full bg-[#ADDFB3]/10 blur-3xl pointer-events-none"
                                 aria-hidden
@@ -290,7 +290,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                     <Button
                                         size="lg"
                                         onClick={() => navigate("framework-agreements")}
-                                        className="h-12 gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                                        className="h-12 gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-[#00313C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                                     >
                                         Framework agreements
                                         <ArrowRight className="h-4 w-4" />
