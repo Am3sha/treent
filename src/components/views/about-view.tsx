@@ -61,7 +61,7 @@ export function AboutView() {
       {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="about-hero-heading"
-        className="relative overflow-hidden bg-[#00313C] text-white py-16 lg:py-24 border-b border-white/10"
+        className="relative overflow-hidden bg-[#003D3C] text-white py-16 lg:py-24 border-b border-white/10"
       >
         <div className="section-shell relative z-10">
           <div className="grid items-start gap-8 lg:grid-cols-12">
@@ -149,7 +149,7 @@ export function AboutView() {
                     </div>
                     <Button
                       onClick={() => navigate("contact")}
-                      className="h-8 gap-1 rounded-full bg-white/10 px-3.5 text-[11px] font-semibold text-white border border-white/20 hover:bg-white hover:text-[#00313C] transition-all"
+                      className="h-8 gap-1 rounded-full bg-white/10 px-3.5 text-[11px] font-semibold text-white border border-white/20 hover:bg-white hover:text-[#003D3C] transition-all"
                     >
                       Contact Us
                       <ArrowUpRight className="h-3 w-3" />
@@ -174,7 +174,7 @@ export function AboutView() {
           <div className="lg:col-span-5">
             <Reveal y={14} duration={0.55}>
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#00313C]" />
+                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
                 Who We Are
               </div>
               <h2
@@ -213,7 +213,7 @@ export function AboutView() {
         <div className="section-shell">
           <Reveal y={14} duration={0.55}>
             <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#00313C]" />
+              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
               What We Believe
             </div>
             <h2
@@ -236,7 +236,7 @@ export function AboutView() {
                 className="group flex flex-col justify-between rounded-[16px] bg-white p-7 shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-[0_20px_40px_-24px_rgba(0,61,60,0.2)] hover:border-gray-200"
               >
                 <div>
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#EEF4F2] text-[#00313C] transition-colors duration-200 group-hover:bg-[#00313C] group-hover:text-[#ADDFB3]">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#EEF4F2] text-[#003D3C] transition-colors duration-200 group-hover:bg-[#003D3C] group-hover:text-[#ADDFB3]">
                     <Icon name={v.icon} className="h-5 w-5" />
                   </span>
                   <h3 className="mt-6 text-[18px] font-bold text-[#121212]">
@@ -257,7 +257,7 @@ export function AboutView() {
       {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="about-cta-heading"
-        className="bg-[#00313C] text-white py-20 lg:py-28"
+        className="bg-[#003D3C] text-white py-20 lg:py-28"
       >
         <div className="section-shell">
           <Reveal y={14} duration={0.55}>
@@ -282,7 +282,7 @@ export function AboutView() {
                 <div className="lg:col-span-4 flex flex-col gap-3.5 sm:flex-row lg:justify-end">
                   <Button
                     onClick={() => navigate("services")}
-                    className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#00313C] shadow-none transition-all duration-200 hover:bg-[#c2e8c4] hover:scale-[1.02] active:scale-[0.98]"
+                    className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#003D3C] shadow-none transition-all duration-200 hover:bg-[#c2e8c4] hover:scale-[1.02] active:scale-[0.98]"
                   >
                     Explore Services
                     <ArrowRight className="h-4 w-4" />
