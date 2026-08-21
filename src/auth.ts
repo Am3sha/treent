@@ -38,15 +38,15 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        console.error("[auth] authorize entered");
+
         if (!credentials?.email || !credentials?.password) {
-          console.error("[auth] missing credentials");
+
           return null;
         }
 
         const email = String(credentials.email);
         if (isLoginRateLimited(req, email)) {
-          console.error("[auth] rate limited");
+
           return null;
         }
 
@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
         const normalizedAdmin = adminEmail.trim().toLowerCase();
 
         if (normalizedInput !== normalizedAdmin) {
-          console.error("[auth] email mismatch");
+
           recordLoginFailure(req, email);
           return null;
         }

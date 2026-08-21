@@ -126,10 +126,7 @@ function allowedOrigins(): string[] {
   }
 
   const result = [...new Set([...defaults, ...configured])];
-  console.log("[origin] ALLOWED_FORM_ORIGINS raw:", JSON.stringify(raw));
-  console.log("[origin] defaults:", defaults);
-  console.log("[origin] configured:", configured);
-  console.log("[origin] final allowed origins:", result);
+
   return result;
 }
 
@@ -137,9 +134,7 @@ function hasAllowedOrigin(request: Request): boolean {
   const originHeader = request.headers.get("origin");
   const refererHeader = request.headers.get("referer");
   const source = originHeader ?? refererHeader;
-  console.log("[origin] origin header:", JSON.stringify(originHeader));
-  console.log("[origin] referer header:", JSON.stringify(refererHeader));
-  console.log("[origin] source used:", JSON.stringify(source));
+
   if (!source) {
     console.warn("[origin] no origin/referer header — blocking");
     return false;
@@ -149,8 +144,7 @@ function hasAllowedOrigin(request: Request): boolean {
     const origin = new URL(source).origin;
     const allowed = allowedOrigins();
     const matched = allowed.some((allowedOrigin) => origin === allowedOrigin || origin.startsWith(`${allowedOrigin}:`));
-    console.log("[origin] parsed origin:", origin);
-    console.log("[origin] matched:", matched);
+
     return matched;
   } catch {
     console.warn("[origin] failed to parse source as URL");
