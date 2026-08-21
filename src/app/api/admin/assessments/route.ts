@@ -16,6 +16,7 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const params = url.searchParams;
+    const search = params.get("search") || undefined;
     const tier = params.get("tier") || undefined;
     const industry = params.get("industry") || undefined;
     const companySize = params.get("companySize") || undefined;
@@ -23,14 +24,20 @@ export async function GET(req: Request) {
     const pageSize = Math.min(100, Math.max(1, parseInt(params.get("pageSize") || "20", 10)));
 
     // Build where clause
-    const where: {
-      tier?: string;
-      industry?: string;
-      companySize?: string;
-    } = {};
+    const where: any = {};
     if (tier && VALID_TIERS.includes(tier)) where.tier = tier;
     if (industry) where.industry = industry;
     if (companySize) where.companySize = companySize;
+
+    if (search) {
+      where.OR = [
+        { id: { contains: search, mode: "insensitive" } },
+        { companyName: { contains: search, mode: "insensitive" } },
+        { respondentName: { contains: search, mode: "insensitive" } },
+        { respondentEmail: { contains: search, mode: "insensitive" } },
+        { industry: { contains: search, mode: "insensitive" } },
+      ];
+    }
 
     const [total, records] = await Promise.all([
     db.assessment.count({ where }),

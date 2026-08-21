@@ -27,6 +27,7 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: <Home className="h-4 w-4" /> },
   { href: "/admin/insights", label: "Insights", icon: <BarChart3 className="h-4 w-4" /> },
   { href: "/admin/assessments", label: "Assessments", icon: <FileText className="h-4 w-4" /> },
+  { href: "/admin/follow-ups", label: "Follow-Ups", icon: <UserPlus className="h-4 w-4" /> },
   { href: "/admin/contact", label: "Contact Inquiries", icon: <Mail className="h-4 w-4" /> },
   { href: "/admin/careers", label: "Career Applications", icon: <Briefcase className="h-4 w-4" /> },
   { href: "/admin/newsletter", label: "Newsletter Subscribers", icon: <UserPlus className="h-4 w-4" /> },

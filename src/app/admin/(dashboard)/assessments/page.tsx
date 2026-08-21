@@ -3,21 +3,24 @@
 import * as React from "react";
 import {
   Download,
-  ChevronDown,
-  ChevronRight,
-  ShieldAlert,
   Filter,
-  Users,
-  TrendingUp,
-  Clock,
-  Database,
   RefreshCw,
-  Mail,
-  Building2,
-  CheckCircle2,
   FileText,
+  MoreVertical,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
   Trash2,
+  FileDown,
+  X,
+  Database,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+  Mail,
 } from "lucide-react";
+import { DOMAIN_MAX_POINTS } from "@/lib/benchmark-scoring";
 import { generatePDF } from "@/lib/pdf-generator";
 import {
   Dialog,
@@ -27,15 +30,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { DIMENSIONS, BENCHMARK_QUESTIONS } from "@/lib/content";
 import type { Dimension, MaturityTier } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AdminErrorState, AdminLoadingState } from "@/components/admin/admin-loading-state";
+import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { AdminLoadingState } from "@/components/admin/admin-loading-state";
 import {
   Select,
   SelectContent,
@@ -43,7 +53,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatDate, formatDuration, csvEscape, downloadCsv } from "@/lib/utils";
+import { formatDate, formatDuration, csvEscape, downloadCsv, cn } from "@/lib/utils";
 
 interface AdminRecord {
   id: string;
@@ -83,26 +93,35 @@ interface AdminResponse {
   };
 }
 
-const TIER_COLORS: Record<string, string> = {
-  initial: "bg-orange-500/10 text-orange-700 border-orange-500/20",
-  developing: "bg-amber-500/10 text-amber-700 border-amber-500/20",
-  established: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
-  advanced: "bg-teal-500/10 text-teal-700 border-teal-500/20",
+const TIER_STYLES: Record<string, { label: string; color: string }> = {
+  initial: { label: "Initial", color: "bg-red-500/10 text-red-700 border-red-500/20" },
+  developing: { label: "Developing", color: "bg-orange-500/10 text-orange-700 border-orange-500/20" },
+  defined: { label: "Defined", color: "bg-yellow-500/10 text-yellow-700 border-yellow-500/20" },
+  established: { label: "Established", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" },
+  advanced: { label: "Advanced", color: "bg-teal-600/10 text-teal-700 border-teal-600/20" },
 };
 
 export default function AdminAssessmentsPage() {
   const [data, setData] = React.useState<AdminResponse | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
+  const [search, setSearch] = React.useState("");
   const [tier, setTier] = React.useState<string>("all");
   const [industry, setIndustry] = React.useState<string>("all");
-  const [companySize, setCompanySize] = React.useState<string>("all");
   const [page, setPage] = React.useState(1);
-  const [expandedId, setExpandedId] = React.useState<string | null>(null);
   const [refreshKey, setRefreshKey] = React.useState(0);
   const [deleteId, setDeleteId] = React.useState<string | null>(null);
+  const [viewRecord, setViewRecord] = React.useState<AdminRecord | null>(null);
   const [deleting, setDeleting] = React.useState(false);
+  const [downloadingId, setDownloadingId] = React.useState<string | null>(null);
   const { toast } = useToast();
+
+  const [debouncedSearch, setDebouncedSearch] = React.useState("");
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -112,10 +131,11 @@ export default function AdminAssessmentsPage() {
       try {
         const params = new URLSearchParams();
         params.set("page", String(page));
-        params.set("pageSize", "20");
+        params.set("pageSize", "10");
+        if (debouncedSearch) params.set("search", debouncedSearch);
         if (tier !== "all") params.set("tier", tier);
         if (industry !== "all") params.set("industry", industry);
-        if (companySize !== "all") params.set("companySize", companySize);
+        
         const res = await fetch(`/api/admin/assessments?${params}`, {
           cache: "no-store",
           signal: controller.signal,
@@ -126,674 +146,39 @@ export default function AdminAssessmentsPage() {
         setData(json.data);
         setError(false);
       } catch (error) {
-        if (
-          !active ||
-          (error instanceof DOMException && error.name === "AbortError")
-        ) {
-          return;
-        }
+        if (!active || (error instanceof DOMException && error.name === "AbortError")) return;
         setError(true);
       } finally {
-        if (active) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
     };
 
     void fetchData();
-
     return () => {
       active = false;
       controller.abort();
     };
-  }, [page, tier, industry, companySize, refreshKey]);
+  }, [page, tier, industry, debouncedSearch, refreshKey]);
 
-  const beginFetchTransition = React.useCallback(() => {
+  const handleRefresh = () => {
     setLoading(true);
-    setError(false);
-  }, []);
-
-  const handleRefresh = React.useCallback(() => {
-    beginFetchTransition();
-    setRefreshKey((value) => value + 1);
-  }, [beginFetchTransition]);
-
-  const handleTierChange = React.useCallback(
-    (value: string) => {
-      beginFetchTransition();
-      setPage(1);
-      setTier(value);
-    },
-    [beginFetchTransition]
-  );
-
-  const handleIndustryChange = React.useCallback(
-    (value: string) => {
-      beginFetchTransition();
-      setPage(1);
-      setIndustry(value);
-    },
-    [beginFetchTransition]
-  );
-
-  const handleCompanySizeChange = React.useCallback(
-    (value: string) => {
-      beginFetchTransition();
-      setPage(1);
-      setCompanySize(value);
-    },
-    [beginFetchTransition]
-  );
-
-  const handleClearFilters = React.useCallback(() => {
-    beginFetchTransition();
-    setPage(1);
-    setTier("all");
-    setIndustry("all");
-    setCompanySize("all");
-  }, [beginFetchTransition]);
-
-  const handleExportCsv = () => {
-    if (!data) return;
-    const headers = [
-      "ID",
-      "Submitted",
-      "Name",
-      "Email",
-      "Company",
-      "Industry",
-      "Company Size",
-      "Country",
-      "Role",
-      "Overall Score",
-      "Tier",
-      "Governance",
-      "Risk",
-      "Execution",
-      "Reporting",
-      "Capability",
-      "Question Count",
-      "Duration (sec)",
-      "Consent Contact",
-      "Follow-ups",
-    ];
-    const rows = data.records.map((r) => [
-      r.id,
-      formatDate(r.createdAt),
-      r.respondentName,
-      r.respondentEmail,
-      r.companyName,
-      r.industry,
-      r.companySize,
-      r.country,
-      r.role,
-      r.overallScore,
-      r.tier,
-      r.scores.governance,
-      r.scores.risk,
-      r.scores.execution,
-      r.scores.reporting,
-      r.scores.capability,
-      r.questionCount,
-      r.durationSec,
-      r.consentContact ? "yes" : "no",
-      r.followUps.length,
-    ]);
-    const csv = [headers, ...rows]
-      .map((row) => row.map(csvEscape).join(","))
-      .join("\n");
-    downloadCsv(csv, `trennt-assessments-${new Date().toISOString().slice(0, 10)}.csv`);
+    setRefreshKey((v) => v + 1);
   };
 
-  const handleExportResponsesCsv = () => {
-    if (!data) return;
-    const headers = [
-      "Assessment ID",
-      "Submitted",
-      "Company",
-      "Industry",
-      "Overall Score",
-      "Tier",
-      "Question ID",
-      "Dimension",
-      "Question",
-      "Selected Option",
-      "Score",
-    ];
-    const rows: (string | number)[][] = [];
-    for (const r of data.records) {
-      for (const q of BENCHMARK_QUESTIONS) {
-        const value = r.responses?.[q.id];
-        if (value === undefined) continue;
-        rows.push([
-          r.id,
-          formatDate(r.createdAt),
-          r.companyName ?? "",
-          r.industry ?? "",
-          r.overallScore,
-          r.tier,
-          q.id,
-          q.dimension,
-          q.prompt,
-          value.option || "-",
-        ]);
-      }
-    }
-    const csv = [headers, ...rows]
-      .map((row) => row.map(csvEscape).join(","))
-      .join("\n");
-    downloadCsv(csv, `trennt-responses-${new Date().toISOString().slice(0, 10)}.csv`);
-  };
-
-  const handleDelete = async () => {
-    if (!deleteId) return;
-    setDeleting(true);
+  const handleDownloadPDF = async (record: AdminRecord) => {
+    setDownloadingId(record.id);
     try {
-      const res = await fetch(`/api/admin/assessments?id=${encodeURIComponent(deleteId)}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        throw new Error("Failed to delete assessment");
-      }
-
-      // Optimistic update: remove from state
-      setData((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          total: prev.total - 1,
-          records: prev.records.filter((r) => r.id !== deleteId),
-        };
-      });
-
-      toast({
-        title: "Assessment Deleted",
-        description: "The assessment has been successfully deleted.",
-      });
-      setDeleteId(null);
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "An error occurred while deleting the assessment.",
-        variant: "destructive",
-      });
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  // Aggregate stats from current dataset
-  const stats = React.useMemo(() => {
-    if (!data) return null;
-    const records = data.records;
-    const avgOverall =
-      records.length > 0
-        ? Math.round(
-            records.reduce((sum, r) => sum + r.overallScore, 0) /
-              records.length
-          )
-        : 0;
-    const leadingCount = records.filter((r) => r.tier === "advanced").length;
-    const avgDuration =
-      records.length > 0
-        ? Math.round(
-            records.reduce((sum, r) => sum + (r.durationSec ?? 0), 0) /
-              records.length
-          )
-        : 0;
-    const withFollowUp = records.filter((r) => r.followUps.length > 0).length;
-    return {
-      total: data.total,
-      avgOverall,
-      leadingCount,
-      leadingPct: records.length > 0 ? Math.round((leadingCount / records.length) * 100) : 0,
-      avgDuration,
-      withFollowUp,
-    };
-  }, [data]);
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Assessments</h1>
-        <p className="text-muted-foreground">View and manage all benchmark assessments.</p>
-      </div>
-
-      {/* KPI strip */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-        {stats ? (
-          <>
-            <KpiCard
-              icon={<Database className="h-4 w-4" />}
-              label="Total records"
-              value={String(stats.total)}
-            />
-            <KpiCard
-              icon={<TrendingUp className="h-4 w-4" />}
-              label="Avg score"
-              value={`${stats.avgOverall} / 100`}
-              accent
-            />
-            <KpiCard
-              icon={<CheckCircle2 className="h-4 w-4" />}
-              label="Advanced tier"
-              value={`${stats.leadingPct}%`}
-              sub={`${stats.leadingCount} orgs`}
-            />
-            <KpiCard
-              icon={<Clock className="h-4 w-4" />}
-              label="Avg duration"
-              value={formatDuration(stats.avgDuration)}
-            />
-            <KpiCard
-              icon={<Mail className="h-4 w-4" />}
-              label="Follow-ups"
-              value={String(stats.withFollowUp)}
-              sub="requested"
-            />
-          </>
-        ) : (
-          <AdminLoadingState rows={5} itemClassName="h-5 w-20" className="col-span-full grid grid-cols-2 gap-4 lg:grid-cols-5" />
-        )}
-      </div>
-
-      {/* Filters + export */}
-      <div className="flex flex-col gap-4 rounded-xl border border-border/60 bg-secondary/30 p-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
-            <Filter className="h-3.5 w-3.5" />
-            Filters
-          </span>
-          <Select value={tier} onValueChange={handleTierChange}>
-            <SelectTrigger className="h-9 w-[150px] text-sm">
-              <SelectValue placeholder="Tier" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All tiers</SelectItem>
-              {(data?.filters.tiers ?? []).map((t) => (
-                <SelectItem key={t} value={t}>
-                  {t}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={industry} onValueChange={handleIndustryChange}>
-            <SelectTrigger className="h-9 w-[180px] text-sm">
-              <SelectValue placeholder="Industry" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All industries</SelectItem>
-              {(data?.filters.industries ?? []).map((i) => (
-                <SelectItem key={i} value={i}>
-                  {i}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={companySize} onValueChange={handleCompanySizeChange}>
-            <SelectTrigger className="h-9 w-[150px] text-sm">
-              <SelectValue placeholder="Company size" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All sizes</SelectItem>
-              {(data?.filters.companySizes ?? []).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {(tier !== "all" || industry !== "all" || companySize !== "all") && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClearFilters}
-              className="h-9 text-xs"
-            >
-              Clear
-            </Button>
-          )}
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={loading}
-            className="gap-1.5"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExportCsv}
-            disabled={!data || data.records.length === 0}
-            className="gap-1.5"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Export summary
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExportResponsesCsv}
-            disabled={!data || data.records.length === 0}
-            className="gap-1.5"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Export responses
-          </Button>
-        </div>
-      </div>
-
-      {/* Records table */}
-      <div className="rounded-xl border border-border/60 overflow-hidden">
-        {error ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <ShieldAlert className="h-10 w-10 text-destructive" />
-            <h2 className="mt-4 text-lg font-semibold">
-              Couldn&apos;t load records
-            </h2>
-            <Button onClick={handleRefresh} className="mt-4 rounded-full">
-              Retry
-            </Button>
-          </div>
-        ) : loading ? (
-          <div className="p-4">
-            <AdminLoadingState rows={6} itemClassName="h-4 w-32" className="space-y-3" />
-          </div>
-        ) : data && data.records.length > 0 ? (
-          <>
-            {/* Desktop table */}
-            <div className="hidden md:block">
-              <table className="w-full text-sm">
-                <thead className="bg-secondary/40">
-                  <tr className="border-b border-border/60 text-left">
-                    <th className="px-4 py-3 font-medium text-muted-foreground"></th>
-                    <th className="px-4 py-3 font-medium text-muted-foreground">Date</th>
-                    <th className="px-4 py-3 font-medium text-muted-foreground">Organisation</th>
-                    <th className="px-4 py-3 font-medium text-muted-foreground">Industry</th>
-                    <th className="px-4 py-3 font-medium text-muted-foreground">Score</th>
-                    <th className="px-4 py-3 font-medium text-muted-foreground">Tier</th>
-                    <th className="px-4 py-3 font-medium text-muted-foreground">Follow-ups</th>
-                    <th className="px-4 py-3 font-medium text-muted-foreground">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.records.map((r) => (
-                    <React.Fragment key={r.id}>
-                      <tr
-                        className="cursor-pointer border-b border-border/50 transition-colors hover:bg-secondary/50"
-                        onClick={() =>
-                          setExpandedId(expandedId === r.id ? null : r.id)
-                        }
-                      >
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {expandedId === r.id ? (
-                            <ChevronDown className="h-4 w-4" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {formatDate(r.createdAt)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="font-medium text-foreground">
-                            {r.companyName || r.respondentName || "Anonymous"}
-                          </div>
-                          {r.respondentEmail && (
-                            <div className="text-xs text-muted-foreground">
-                              {r.respondentEmail}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {r.industry || "—"}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="font-semibold text-foreground tabular-nums">
-                            {r.overallScore}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {" "}
-                            / 100
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge
-                            variant="outline"
-                            className={
-                              "border " + (TIER_COLORS[r.tier] ?? "")
-                            }
-                          >
-                            {r.tier}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          {r.followUps.length > 0 ? (
-                            <Badge
-                              variant="secondary"
-                              className="gap-1 text-xs font-normal"
-                            >
-                              <Mail className="h-3 w-3" />
-                              {r.followUps.length}
-                            </Badge>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setDeleteId(r.id);
-                                }}
-                              >
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Delete Assessment?</DialogTitle>
-                                <DialogDescription>
-                                  This action will permanently remove the assessment and all related benchmark data.
-                                  This action cannot be undone.
-                                </DialogDescription>
-                              </DialogHeader>
-<DialogFooter>
-                                 <DialogClose asChild>
-                                   <Button variant="ghost" onClick={() => { setDeleteId(null); toast({ title: "Cancelled", description: "Deletion cancelled.", variant: "default" }); }}>
-                                     Cancel
-                                   </Button>
-                                 </DialogClose>
-                                <Button
-                                  variant="destructive"
-                                  onClick={handleDelete}
-                                  disabled={deleting}
-                                >
-                                  {deleting ? "Deleting..." : "Delete"}
-                                </Button>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                        </td>
-                      </tr>
-                      {expandedId === r.id && (
-                        <tr className="bg-secondary/20">
-                          <td colSpan={8} className="px-4 py-5">
-                            <RecordDetail record={r} />
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile cards */}
-            <div className="divide-y divide-border/50 md:hidden">
-              {data.records.map((r) => (
-                <div key={r.id} className="p-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <button
-                      onClick={() =>
-                        setExpandedId(expandedId === r.id ? null : r.id)
-                      }
-                      className="flex-1 text-left"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium text-foreground">
-                          {r.companyName || r.respondentName || "Anonymous"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(r.createdAt)} · {r.industry || "—"}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="font-semibold tabular-nums">
-                          {r.overallScore}
-                        </span>
-                        <Badge
-                          variant="outline"
-                          className={"border " + (TIER_COLORS[r.tier] ?? "")}
-                        >
-                          {r.tier}
-                        </Badge>
-                      </div>
-                    </button>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 flex-shrink-0"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteId(r.id);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Delete Assessment?</DialogTitle>
-                          <DialogDescription>
-                            This action will permanently remove the assessment and all related benchmark data.
-                            This action cannot be undone.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                          <DialogClose asChild>
-                            <Button variant="ghost" onClick={() => setDeleteId(null)}>
-                              Cancel
-                            </Button>
-                          </DialogClose>
-                          <Button
-                            variant="destructive"
-                            onClick={handleDelete}
-                            disabled={deleting}
-                          >
-                            {deleting ? "Deleting..." : "Delete"}
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                  {expandedId === r.id && (
-                    <div className="mt-4">
-                      <RecordDetail record={r} />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {data.totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-border/60 px-4 py-3 text-sm">
-                <span className="text-muted-foreground">
-                  Page {data.page} of {data.totalPages} · {data.total} total records
-                </span>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      beginFetchTransition();
-                      setPage((p) => Math.max(1, p - 1));
-                    }}
-                    disabled={data.page <= 1}
-                    className="h-8"
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      beginFetchTransition();
-                      setPage((p) => Math.min(data.totalPages, p + 1));
-                    }}
-                    disabled={data.page >= data.totalPages}
-                    className="h-8"
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <Users className="h-10 w-10 text-muted-foreground/40" />
-            <p className="mt-4 text-sm text-muted-foreground">
-              No records match these filters.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Record detail (expanded)
-// ---------------------------------------------------------------------------
-
-function RecordDetail({ record }: { record: AdminRecord }) {
-  const [downloading, setDownloading] = React.useState(false);
-  const dimScores = DIMENSIONS.map((d) => ({
-    meta: d,
-    score: record.scores[d.key],
-  }));
-
-  const handleDownloadPDF = async () => {
-    setDownloading(true);
-    // Yield to browser to let loading state paint before blocking PDF generation
-    await new Promise((r) => setTimeout(r, 0));
-    try {
-      // Map AdminRecord to the types expected by generatePDF
       const result = {
         id: record.id,
         overall: record.overallScore,
         scores: record.scores,
         tier: record.tier,
-        percentile: 0, // We don't have percentile stored, use 0
+        percentile: 0,
         questionCount: record.questionCount,
         createdAt: record.createdAt,
         responses: record.responses || {},
       };
-      const respondent = record.respondentName || record.respondentEmail ? {
+      const respondent = {
         name: record.respondentName || "",
         email: record.respondentEmail || "",
         company: record.companyName || "",
@@ -802,192 +187,345 @@ function RecordDetail({ record }: { record: AdminRecord }) {
         country: record.country || "",
         role: record.role || "",
         consentContact: record.consentContact,
-      } : null;
-
+      };
       await generatePDF(result, respondent, null);
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to generate PDF", variant: "destructive" });
     } finally {
-      setDownloading(false);
+      setDownloadingId(null);
     }
   };
 
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/assessments?id=${encodeURIComponent(deleteId)}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete assessment");
+      setData((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          total: prev.total - 1,
+          records: prev.records.filter((r) => r.id !== deleteId),
+        };
+      });
+      toast({ title: "Assessment Deleted", description: "The assessment has been successfully deleted." });
+      setDeleteId(null);
+    } catch (err) {
+      toast({ title: "Error", description: err instanceof Error ? err.message : "An error occurred", variant: "destructive" });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleExportCsv = () => {
+    if (!data) return;
+    const headers = ["ID", "Submitted", "Company", "Industry", "Score", "Tier"];
+    const rows = data.records.map((r) => [
+      r.id, formatDate(r.createdAt), r.companyName || "—", r.industry || "—", r.overallScore, r.tier
+    ]);
+    const csv = [headers, ...rows].map((row) => row.map(csvEscape).join(",")).join("\n");
+    downloadCsv(csv, `trennt-assessments-${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
+  const stats = React.useMemo(() => {
+    if (!data) return null;
+    const avgOverall = data.records.length > 0 ? Math.round(data.records.reduce((sum, r) => sum + r.overallScore, 0) / data.records.length) : 0;
+    return { total: data.total, avgOverall };
+  }, [data]);
+
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleDownloadPDF}
-          disabled={downloading}
-          className="gap-1.5"
-        >
-          <FileText className={downloading ? "h-3.5 w-3.5 animate-pulse" : "h-3.5 w-3.5"} />
-          {downloading ? "Preparing PDF..." : "Download PDF Report"}
-        </Button>
-      </div>
-      {/* Meta grid */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <DetailField label="Respondent" value={record.respondentName || "—"} />
-        <DetailField label="Role" value={record.role || "—"} />
-        <DetailField
-          label="Company size"
-          value={record.companySize || "—"}
-        />
-        <DetailField label="Country" value={record.country || "—"} />
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-[#003D3C]">Assessments</h1>
+          <p className="text-sm text-muted-foreground">Manage and review all internal audit capability benchmarks.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
+            <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+            Refresh
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExportCsv} disabled={!data || data.records.length === 0}>
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
-      {/* Dimension scores */}
-      <div>
-        <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
-          Dimension scores
-        </p>
-        <div className="mt-2 grid gap-2 sm:grid-cols-5">
-          {dimScores.map((d) => (
-            <div
-              key={d.meta.key}
-              className="rounded-lg border border-border/60 bg-background p-3"
-            >
-              <p className="text-xs text-muted-foreground">{d.meta.short}</p>
-              <p className="mt-1 text-lg font-semibold tabular-nums text-foreground">
-                {d.score}
-                <span className="text-xs font-normal text-muted-foreground">
-                  {" "}
-                  / 100
-                </span>
-              </p>
-              <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full bg-primary/60"
-                  style={{ width: `${d.score}%` }}
-                />
+      {/* KPI Strip */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="p-4 flex items-center gap-4">
+          <div className="h-10 w-10 rounded-full bg-[#003D3C]/10 flex items-center justify-center text-[#003D3C]">
+            <Database className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Assessments</p>
+            <p className="text-2xl font-bold text-[#003D3C]">{stats?.total ?? "—"}</p>
+          </div>
+        </Card>
+        <Card className="p-4 flex items-center gap-4">
+          <div className="h-10 w-10 rounded-full bg-[#ADDFB3]/20 flex items-center justify-center text-[#003D3C]">
+            <TrendingUp className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Average Score</p>
+            <p className="text-2xl font-bold text-[#003D3C]">{stats?.avgOverall ?? "—"}%</p>
+          </div>
+        </Card>
+        {/* Placeholder for more KPIs if needed */}
+      </div>
+
+      {/* Table Section */}
+      <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
+        {/* Filters */}
+        <div className="p-4 border-b border-border/60 bg-muted/20 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by company or industry..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 h-10"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Select value={tier} onValueChange={(v) => { setPage(1); setTier(v); }}>
+              <SelectTrigger className="h-10 w-[140px]">
+                <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+                <SelectValue placeholder="Tier" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tiers</SelectItem>
+                {data?.filters.tiers.map(t => <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={industry} onValueChange={(v) => { setPage(1); setIndustry(v); }}>
+              <SelectTrigger className="h-10 w-[180px]">
+                <SelectValue placeholder="Industry" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Industries</SelectItem>
+                {data?.filters.industries.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="p-8">
+            <AdminLoadingState rows={8} />
+          </div>
+        ) : error ? (
+          <div className="p-20 text-center">
+            <p className="text-destructive">Failed to load assessments. Please try again.</p>
+            <Button variant="link" onClick={handleRefresh}>Retry</Button>
+          </div>
+        ) : !data || data.records.length === 0 ? (
+          <div className="p-20 text-center text-muted-foreground">
+            <Database className="h-10 w-10 mx-auto mb-4 opacity-20" />
+            <p>No assessments found matching your criteria.</p>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/30 border-b border-border/60">
+                  <tr className="text-left text-muted-foreground font-medium">
+                    <th className="px-4 py-3.5">Date</th>
+                    <th className="px-4 py-3.5">Company</th>
+                    <th className="px-4 py-3.5">Industry</th>
+                    <th className="px-4 py-3.5 w-48">Score</th>
+                    <th className="px-4 py-3.5">Tier</th>
+                    <th className="px-4 py-3.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {data.records.map((r) => (
+                    <tr key={r.id} className="hover:bg-muted/10 transition-colors">
+                      <td className="px-4 py-4 text-muted-foreground whitespace-nowrap">
+                        {new Date(r.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="font-medium text-[#003D3C]">{r.companyName || "—"}</div>
+                        <div className="text-xs text-muted-foreground">{r.respondentName || "—"}</div>
+                      </td>
+                      <td className="px-4 py-4 text-muted-foreground">{r.industry || "—"}</td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <Progress value={r.overallScore} className="h-1.5 flex-1 bg-muted" />
+                          <span className="font-bold text-[#003D3C] w-8 text-right">{r.overallScore}%</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <Badge variant="outline" className={cn("capitalize font-medium px-2 py-0.5 border", TIER_STYLES[r.tier.toLowerCase()]?.color)}>
+                          {r.tier}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem onClick={() => setViewRecord(r)}>
+                              <Eye className="h-4 w-4 mr-2" /> View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDownloadPDF(r)} disabled={downloadingId === r.id}>
+                              <FileDown className={cn("h-4 w-4 mr-2", downloadingId === r.id && "animate-pulse")} />
+                              {downloadingId === r.id ? "Exporting..." : "Export PDF"}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteId(r.id)}>
+                              <Trash2 className="h-4 w-4 mr-2" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Footer */}
+            <div className="p-4 border-t border-border/60 bg-muted/5 flex items-center justify-between text-sm text-muted-foreground">
+              <div>
+                Showing <span className="font-medium text-foreground">{(page - 1) * data.pageSize + 1}</span> to{" "}
+                <span className="font-medium text-foreground">{Math.min(page * data.pageSize, data.total)}</span> of{" "}
+                <span className="font-medium text-foreground">{data.total}</span> results
               </div>
+              <div className="flex items-center gap-4">
+                <span className="hidden sm:inline-block">Page {data.page} of {data.totalPages}</span>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage(p => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages}>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* View Detail Dialog */}
+      <Dialog open={!!viewRecord} onOpenChange={(open) => !open && setViewRecord(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-[#003D3C]">Assessment Details</DialogTitle>
+            <DialogDescription>Full breakdown for {viewRecord?.companyName || "Anonymous Organisation"}</DialogDescription>
+          </DialogHeader>
+          {viewRecord && <RecordDetail record={viewRecord} onDownload={() => handleDownloadPDF(viewRecord)} downloading={downloadingId === viewRecord.id} />}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Assessment?</DialogTitle>
+            <DialogDescription>
+              This will permanently remove the assessment for <span className="font-bold">{data?.records.find(r => r.id === deleteId)?.companyName || "this organisation"}</span>.
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="ghost">Cancel</Button>
+            </DialogClose>
+            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+              {deleting ? "Deleting..." : "Delete Permanently"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function RecordDetail({ record, onDownload, downloading }: { record: AdminRecord; onDownload: () => void; downloading: boolean }) {
+  return (
+    <div className="space-y-6 py-4">
+      <div className="flex justify-end">
+        <Button onClick={onDownload} disabled={downloading} variant="outline" size="sm">
+          <FileDown className={cn("h-4 w-4 mr-2", downloading && "animate-pulse")} />
+          Download PDF Report
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <DetailItem label="Respondent" value={record.respondentName || "—"} />
+        <DetailItem label="Email" value={record.respondentEmail || "—"} />
+        <DetailItem label="Role" value={record.role || "—"} />
+        <DetailItem label="Country" value={record.country || "—"} />
+        <DetailItem label="Company Size" value={record.companySize || "—"} />
+        <DetailItem label="Duration" value={formatDuration(record.durationSec)} />
+        <DetailItem label="Consent" value={record.consentContact ? "Yes" : "No"} />
+        <DetailItem label="Follow-ups" value={String(record.followUps.length)} />
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="font-semibold text-[#003D3C] border-b pb-2">Domain Scores</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {DIMENSIONS.map(d => (
+            <div key={d.key} className="p-3 rounded-lg border bg-muted/10">
+              <p className="text-xs text-muted-foreground uppercase mb-1">{d.label}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-bold text-[#003D3C]">{record.scores[d.key]}</span>
+                <span className="text-xs text-muted-foreground">/ {DOMAIN_MAX_POINTS[d.key]}</span>
+              </div>
+              <Progress value={(record.scores[d.key] / DOMAIN_MAX_POINTS[d.key]) * 100} className="h-1 mt-2" />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Consent + duration */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5">
-          <Clock className="h-3.5 w-3.5" />
-          Duration: {formatDuration(record.durationSec)}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <CheckCircle2 className="h-3.5 w-3.5" />
-          Consent to contact: {record.consentContact ? "Yes" : "No"}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Building2 className="h-3.5 w-3.5" />
-          ID: {record.id.slice(0, 12)}…
-        </span>
-      </div>
-
-      {/* Individual responses */}
-      <div>
-        <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
-          Individual responses ({Object.keys(record.responses || {}).length})
-        </p>
-        <div className="mt-2 space-y-1.5">
-          {BENCHMARK_QUESTIONS.map((q) => {
-            const value = record.responses?.[q.id];
-            if (value === undefined) return null;
+      <div className="space-y-3">
+        <h3 className="font-semibold text-[#003D3C] border-b pb-2">Question Responses</h3>
+        <div className="space-y-4">
+          {BENCHMARK_QUESTIONS.map((q, idx) => {
+            const resp = record.responses?.[q.id];
             return (
-              <div
-                key={q.id}
-                className="flex items-start gap-3 rounded-md border border-border/40 bg-background px-3 py-2"
-              >
-                <Badge
-                  variant="outline"
-                  className="shrink-0 border-border/60 text-[10px] font-mono"
-                >
-                  {q.id}
-                </Badge>
-                <p className="min-w-0 flex-1 text-xs leading-relaxed text-foreground/80">
-                  {q.prompt}
-                </p>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-primary">
-                  {value.option || "-"} ({value.score})
-                </span>
+              <div key={q.id} className="text-sm">
+                <p className="font-medium mb-1">{idx + 1}. {q.prompt}</p>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="font-normal">{resp?.option || "—"}</Badge>
+                  <span className="text-xs text-muted-foreground">Score: {resp?.score ?? 0}</span>
+                </div>
               </div>
             );
           })}
         </div>
       </div>
-
-      {/* Follow-ups */}
-      {record.followUps.length > 0 && (
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
-            Follow-up requests ({record.followUps.length})
-          </p>
-          <div className="mt-2 space-y-1.5">
-            {record.followUps.map((f) => (
-              <div
-                key={f.id}
-                className="flex items-center gap-3 rounded-md border border-border/40 bg-background px-3 py-2 text-xs"
-              >
-                <Mail className="h-3.5 w-3.5 text-primary" />
-                <span className="font-medium capitalize">{f.interest}</span>
-                <span className="text-muted-foreground">·</span>
-                <span className="text-muted-foreground">
-                  Status: {f.status}
-                </span>
-                <span className="text-muted-foreground">·</span>
-                <span className="text-muted-foreground">
-                  {formatDate(f.createdAt)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-function DetailField({ label, value }: { label: string; value: string }) {
+function DetailItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-0.5 text-sm font-medium text-foreground">{value}</p>
+      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-0.5">{label}</p>
+      <p className="font-medium">{value}</p>
     </div>
   );
 }
 
-function KpiCard({
-  icon,
-  label,
-  value,
-  sub,
-  accent,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  sub?: string;
-  accent?: boolean;
-}) {
+function Card({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Card
-      className={`rounded-xl border-border/60 p-4 transition-all hover:border-primary/30 hover:shadow-sm ${
-        accent ? "bg-primary/5" : ""
-      }`}
-    >
-      <div className="flex items-center gap-2 text-primary">
-        {icon}
-        <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-          {label}
-        </span>
-      </div>
-      <div className="mt-2.5 flex items-baseline gap-1.5">
-        <span
-          className={`text-2xl font-semibold tracking-tight tabular-nums ${
-            accent ? "text-primary" : "text-foreground"
-          }`}
-        >
-          {value}
-        </span>
-        {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
-      </div>
-    </Card>
+    <div className={cn("rounded-xl border border-border/60 bg-card text-card-foreground shadow-sm", className)} {...props}>
+      {children}
+    </div>
   );
 }
