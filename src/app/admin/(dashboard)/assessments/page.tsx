@@ -19,6 +19,11 @@ import {
   CheckCircle2,
   Clock,
   Mail,
+  User,
+  Building2,
+  Globe,
+  Briefcase,
+  ChevronDown,
 } from "lucide-react";
 import { DOMAIN_MAX_POINTS } from "@/lib/benchmark-scoring";
 import { generatePDF } from "@/lib/pdf-generator";
@@ -38,6 +43,12 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { DIMENSIONS, BENCHMARK_QUESTIONS } from "@/lib/content";
 import type { Dimension, MaturityTier } from "@/lib/types";
@@ -274,7 +285,6 @@ export default function AdminAssessmentsPage() {
             <p className="text-2xl font-bold text-[#003D3C]">{stats?.avgOverall ?? "—"}%</p>
           </div>
         </Card>
-        {/* Placeholder for more KPIs if needed */}
       </div>
 
       {/* Table Section */}
@@ -336,56 +346,64 @@ export default function AdminAssessmentsPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/30 border-b border-border/60">
-                  <tr className="text-left text-muted-foreground font-medium">
-                    <th className="px-4 py-3.5">Date</th>
-                    <th className="px-4 py-3.5">Company</th>
-                    <th className="px-4 py-3.5">Industry</th>
-                    <th className="px-4 py-3.5 w-48">Score</th>
-                    <th className="px-4 py-3.5">Tier</th>
+              <table className="w-full text-sm border-collapse">
+                <thead className="bg-muted/30 border-b border-border/60 text-muted-foreground uppercase text-[10px] font-bold tracking-wider">
+                  <tr>
+                    <th className="px-4 py-3.5 text-left">Date</th>
+                    <th className="px-4 py-3.5 text-left">Organisation</th>
+                    <th className="px-4 py-3.5 text-left">Industry</th>
+                    <th className="px-4 py-3.5 text-left w-48">Maturity Score</th>
+                    <th className="px-4 py-3.5 text-left">Tier</th>
                     <th className="px-4 py-3.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {data.records.map((r) => (
-                    <tr key={r.id} className="hover:bg-muted/10 transition-colors">
+                    <tr key={r.id} className="hover:bg-muted/10 transition-colors group">
                       <td className="px-4 py-4 text-muted-foreground whitespace-nowrap">
                         {new Date(r.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
                       <td className="px-4 py-4">
-                        <div className="font-medium text-[#003D3C]">{r.companyName || "—"}</div>
-                        <div className="text-xs text-muted-foreground">{r.respondentName || "—"}</div>
+                        <div className="font-semibold text-[#003D3C]">{r.companyName || "—"}</div>
+                        <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <User className="h-3 w-3" />
+                          {r.respondentName || "—"}
+                        </div>
                       </td>
                       <td className="px-4 py-4 text-muted-foreground">{r.industry || "—"}</td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <Progress value={r.overallScore} className="h-1.5 flex-1 bg-muted" />
-                          <span className="font-bold text-[#003D3C] w-8 text-right">{r.overallScore}%</span>
+                          <div className="h-1.5 flex-1 bg-muted rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-[#003D3C] transition-all duration-500" 
+                              style={{ width: `${r.overallScore}%` }}
+                            />
+                          </div>
+                          <span className="font-bold text-[#003D3C] w-8 text-right tabular-nums">{r.overallScore}%</span>
                         </div>
                       </td>
                       <td className="px-4 py-4">
-                        <Badge variant="outline" className={cn("capitalize font-medium px-2 py-0.5 border", TIER_STYLES[r.tier.toLowerCase()]?.color)}>
+                        <Badge variant="outline" className={cn("capitalize font-medium px-2 py-0.5 border text-[10px]", TIER_STYLES[r.tier.toLowerCase()]?.color)}>
                           {r.tier}
                         </Badge>
                       </td>
                       <td className="px-4 py-4 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground group-hover:text-[#003D3C]">
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-40">
-                            <DropdownMenuItem onClick={() => setViewRecord(r)}>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem onClick={() => setViewRecord(r)} className="cursor-pointer">
                               <Eye className="h-4 w-4 mr-2" /> View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDownloadPDF(r)} disabled={downloadingId === r.id}>
+                            <DropdownMenuItem onClick={() => handleDownloadPDF(r)} disabled={downloadingId === r.id} className="cursor-pointer">
                               <FileDown className={cn("h-4 w-4 mr-2", downloadingId === r.id && "animate-pulse")} />
-                              {downloadingId === r.id ? "Exporting..." : "Export PDF"}
+                              {downloadingId === r.id ? "Generating..." : "Download PDF"}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteId(r.id)}>
+                            <DropdownMenuItem onClick={() => setDeleteId(r.id)} className="text-destructive cursor-pointer">
                               <Trash2 className="h-4 w-4 mr-2" /> Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -397,8 +415,7 @@ export default function AdminAssessmentsPage() {
               </table>
             </div>
 
-            {/* Pagination Footer */}
-            <div className="p-4 border-t border-border/60 bg-muted/5 flex items-center justify-between text-sm text-muted-foreground">
+            <div className="p-4 border-t border-border/60 bg-muted/5 flex items-center justify-between text-xs text-muted-foreground">
               <div>
                 Showing <span className="font-medium text-foreground">{(page - 1) * data.pageSize + 1}</span> to{" "}
                 <span className="font-medium text-foreground">{Math.min(page * data.pageSize, data.total)}</span> of{" "}
@@ -422,12 +439,142 @@ export default function AdminAssessmentsPage() {
 
       {/* View Detail Dialog */}
       <Dialog open={!!viewRecord} onOpenChange={(open) => !open && setViewRecord(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl text-[#003D3C]">Assessment Details</DialogTitle>
-            <DialogDescription>Full breakdown for {viewRecord?.companyName || "Anonymous Organisation"}</DialogDescription>
-          </DialogHeader>
-          {viewRecord && <RecordDetail record={viewRecord} onDownload={() => handleDownloadPDF(viewRecord)} downloading={downloadingId === viewRecord.id} />}
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+          {viewRecord && (
+            <>
+              <DialogHeader className="p-6 border-b bg-muted/20">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className={cn("capitalize text-[10px] border", TIER_STYLES[viewRecord.tier.toLowerCase()]?.color)}>
+                        {viewRecord.tier} Tier
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">{formatDate(viewRecord.createdAt)}</span>
+                    </div>
+                    <DialogTitle className="text-2xl font-bold text-[#003D3C]">
+                      {viewRecord.companyName || "Anonymous Organisation"}
+                    </DialogTitle>
+                    <DialogDescription className="text-sm">
+                      Internal Audit Maturity Benchmark Details
+                    </DialogDescription>
+                  </div>
+                  <Button 
+                    onClick={() => handleDownloadPDF(viewRecord)} 
+                    disabled={downloadingId === viewRecord.id} 
+                    className="bg-[#003D3C] hover:bg-[#003D3C]/90 rounded-full px-6"
+                  >
+                    <FileDown className={cn("h-4 w-4 mr-2", downloadingId === viewRecord.id && "animate-pulse")} />
+                    {downloadingId === viewRecord.id ? "Generating..." : "Download Report"}
+                  </Button>
+                </div>
+              </DialogHeader>
+
+              <div className="p-6 space-y-8">
+                {/* Respondent Info Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <InfoCard icon={User} label="Respondent" value={viewRecord.respondentName} />
+                  <InfoCard icon={Mail} label="Email" value={viewRecord.respondentEmail} />
+                  <InfoCard icon={Briefcase} label="Role" value={viewRecord.role} />
+                  <InfoCard icon={Building2} label="Company Size" value={viewRecord.companySize} />
+                  <InfoCard icon={Globe} label="Country" value={viewRecord.country} />
+                  <InfoCard icon={Clock} label="Duration" value={formatDuration(viewRecord.durationSec)} />
+                  <InfoCard 
+                    icon={CheckCircle2} 
+                    label="Consent" 
+                    value={viewRecord.consentContact ? "Agreed to contact" : "No contact"} 
+                    valueColor={viewRecord.consentContact ? "text-emerald-600" : "text-muted-foreground"}
+                  />
+                  <InfoCard icon={TrendingUp} label="Follow-ups" value={String(viewRecord.followUps.length)} />
+                </div>
+
+                {/* Domain Scores Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-1 bg-[#003D3C] rounded-full" />
+                    <h3 className="font-bold text-[#003D3C] uppercase text-xs tracking-widest">Maturity by Domain</h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    {DIMENSIONS.map(d => {
+                      const score = viewRecord.scores[d.key];
+                      const max = DOMAIN_MAX_POINTS[d.key];
+                      const percent = Math.round((score / max) * 100);
+                      return (
+                        <div key={d.key} className="p-4 rounded-xl border bg-muted/5 space-y-3">
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider leading-tight h-8 line-clamp-2">
+                            {d.label}
+                          </p>
+                          <div className="flex items-baseline justify-between">
+                            <span className="text-2xl font-bold text-[#003D3C] tabular-nums">{score}</span>
+                            <span className="text-[10px] text-muted-foreground">/ {max}</span>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-[10px] font-medium">
+                              <span>Maturity</span>
+                              <span>{percent}%</span>
+                            </div>
+                            <Progress value={percent} className="h-1 bg-muted" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Question Breakdown Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-1 bg-[#003D3C] rounded-full" />
+                    <h3 className="font-bold text-[#003D3C] uppercase text-xs tracking-widest">Question Responses</h3>
+                  </div>
+                  
+                  <Accordion type="multiple" className="border rounded-xl overflow-hidden bg-card">
+                    {DIMENSIONS.map((dim, dimIdx) => {
+                      const dimQuestions = BENCHMARK_QUESTIONS.filter(q => q.dimension === dim.key);
+                      return (
+                        <AccordionItem key={dim.key} value={dim.key} className={cn("border-b", dimIdx === DIMENSIONS.length - 1 && "border-0")}>
+                          <AccordionTrigger className="px-6 hover:bg-muted/30 hover:no-underline py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="size-6 rounded-full bg-[#003D3C]/10 flex items-center justify-center text-[#003D3C] text-[10px] font-bold">
+                                {dimIdx + 1}
+                              </div>
+                              <span className="text-sm font-semibold text-[#003D3C]">{dim.label}</span>
+                              <Badge variant="secondary" className="ml-2 text-[10px] px-2 py-0">
+                                {dimQuestions.length} Questions
+                              </Badge>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="px-6 pb-4 pt-2 space-y-4">
+                            {dimQuestions.map((q, qIdx) => {
+                              const resp = viewRecord.responses?.[q.id];
+                              const questionIndex = BENCHMARK_QUESTIONS.findIndex(bq => bq.id === q.id) + 1;
+                              return (
+                                <div key={q.id} className="p-4 rounded-lg bg-muted/20 border border-border/40 space-y-2">
+                                  <div className="flex gap-3">
+                                    <span className="text-xs font-bold text-muted-foreground tabular-nums pt-0.5">{questionIndex}.</span>
+                                    <p className="text-sm font-medium leading-relaxed">{q.prompt}</p>
+                                  </div>
+                                  <div className="ml-7 flex flex-wrap items-center gap-3">
+                                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-background border shadow-sm">
+                                      <span className="text-[10px] font-bold text-[#003D3C] uppercase tracking-tighter border-r pr-2 mr-1">Selection</span>
+                                      <span className="text-sm font-semibold">{resp?.option || "—"}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-background border shadow-sm">
+                                      <span className="text-[10px] font-bold text-[#003D3C] uppercase tracking-tighter border-r pr-2 mr-1">Points</span>
+                                      <span className="text-sm font-bold tabular-nums">{resp?.score ?? 0}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
+                </div>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -455,59 +602,25 @@ export default function AdminAssessmentsPage() {
   );
 }
 
-function RecordDetail({ record, onDownload, downloading }: { record: AdminRecord; onDownload: () => void; downloading: boolean }) {
+function InfoCard({ 
+  icon: Icon, 
+  label, 
+  value, 
+  valueColor = "text-foreground" 
+}: { 
+  icon: React.ComponentType<{ className?: string }>; 
+  label: string; 
+  value: string | null;
+  valueColor?: string;
+}) {
   return (
-    <div className="space-y-6 py-4">
-      <div className="flex justify-end">
-        <Button onClick={onDownload} disabled={downloading} variant="outline" size="sm">
-          <FileDown className={cn("h-4 w-4 mr-2", downloading && "animate-pulse")} />
-          Download PDF Report
-        </Button>
+    <div className="p-3 rounded-xl border bg-card shadow-sm flex items-start gap-3">
+      <div className="size-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+        <Icon className="h-4 w-4 text-muted-foreground" />
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <DetailItem label="Respondent" value={record.respondentName || "—"} />
-        <DetailItem label="Email" value={record.respondentEmail || "—"} />
-        <DetailItem label="Role" value={record.role || "—"} />
-        <DetailItem label="Country" value={record.country || "—"} />
-        <DetailItem label="Company Size" value={record.companySize || "—"} />
-        <DetailItem label="Duration" value={formatDuration(record.durationSec)} />
-        <DetailItem label="Consent" value={record.consentContact ? "Yes" : "No"} />
-        <DetailItem label="Follow-ups" value={String(record.followUps.length)} />
-      </div>
-
-      <div className="space-y-3">
-        <h3 className="font-semibold text-[#003D3C] border-b pb-2">Domain Scores</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {DIMENSIONS.map(d => (
-            <div key={d.key} className="p-3 rounded-lg border bg-muted/10">
-              <p className="text-xs text-muted-foreground uppercase mb-1">{d.label}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-[#003D3C]">{record.scores[d.key]}</span>
-                <span className="text-xs text-muted-foreground">/ {DOMAIN_MAX_POINTS[d.key]}</span>
-              </div>
-              <Progress value={(record.scores[d.key] / DOMAIN_MAX_POINTS[d.key]) * 100} className="h-1 mt-2" />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <h3 className="font-semibold text-[#003D3C] border-b pb-2">Question Responses</h3>
-        <div className="space-y-4">
-          {BENCHMARK_QUESTIONS.map((q, idx) => {
-            const resp = record.responses?.[q.id];
-            return (
-              <div key={q.id} className="text-sm">
-                <p className="font-medium mb-1">{idx + 1}. {q.prompt}</p>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="font-normal">{resp?.option || "—"}</Badge>
-                  <span className="text-xs text-muted-foreground">Score: {resp?.score ?? 0}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <div className="min-w-0">
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{label}</p>
+        <p className={cn("text-sm font-semibold truncate mt-0.5", valueColor)}>{value || "—"}</p>
       </div>
     </div>
   );
