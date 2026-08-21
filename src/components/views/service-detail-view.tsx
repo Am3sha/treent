@@ -189,7 +189,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                     <Reveal>
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-gray-200/80 pb-8">
                             <div>
-                                <Eyebrow>Service Catalogue</Eyebrow>
+                                <Eyebrow>Services</Eyebrow>
                                 <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#121212] sm:text-3xl">
                                     Explore other internal audit services
                                 </h2>

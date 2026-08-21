@@ -281,7 +281,7 @@ export function ServicesView() {
                     <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs">
                       <span className="text-muted-foreground font-medium">5 Core & Development Services</span>
                       <span className="font-semibold text-[#003D3C] hover:underline cursor-pointer flex items-center gap-1">
-                        Explore catalogue <ArrowRight className="h-3 w-3" />
+                        Explore services <ArrowRight className="h-3 w-3" />
                       </span>
                     </div>
                   </motion.div>
@@ -552,7 +552,7 @@ export function ServicesView() {
         {/* ------------------------------------------------------------------ */}
         <Reveal y={12} duration={0.55} delay={0.08} className="mt-20">
           <SectionHeading
-            eyebrow="Full service catalogue"
+            eyebrow="Full services list"
             title="Explore every service in depth."
             description="Our core services provide flexible delivery capacity; our development services help organisations build, enhance, and continuously improve their internal audit function."
             className="max-w-2xl"
