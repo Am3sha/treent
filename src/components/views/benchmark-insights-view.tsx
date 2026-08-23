@@ -35,6 +35,7 @@ import {
 } from "recharts";
 import { TooltipValueType } from "recharts";
 import { useNav } from "@/lib/store";
+import { useTranslation } from "@/lib/i18n";
 import { DIMENSIONS, TIER_META } from "@/lib/content";
 import type { BenchmarkStats, MaturityTier } from "@/lib/types";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
@@ -43,6 +44,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 const TIER_COLORS: Record<MaturityTier, string> = {
   initial: "oklch(0.55 0.12 35)",
@@ -73,6 +75,7 @@ function formatWeek(iso: string): string {
 }
 
 export function BenchmarkInsightsView() {
+  const { t, l, lang, isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
   const [stats, setStats] = React.useState<BenchmarkStats | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -103,53 +106,50 @@ export function BenchmarkInsightsView() {
   const dimensionData = React.useMemo(() => {
     if (!stats) return [];
     return DIMENSIONS.map((d) => ({
-      dimension: d.short,
-      fullLabel: d.label,
+      dimension: l(d.short),
+      fullLabel: l(d.label),
       average: stats.dimensionAverages[d.key],
     }));
-  }, [stats]);
+  }, [stats, l]);
 
   const tierData = React.useMemo(() => {
     if (!stats) return [];
     return (["initial", "developing", "defined", "established", "advanced"] as MaturityTier[]).map(
-      (t) => ({
-        name: t,
-        value: stats.tierDistribution[t] ?? 0,
-        fill: TIER_COLORS[t],
+      (tierKey) => ({
+        name: l(TIER_META[tierKey].label),
+        value: stats.tierDistribution[tierKey] ?? 0,
+        fill: TIER_COLORS[tierKey],
       })
     );
-  }, [stats]);
+  }, [stats, l]);
 
   const radarData = React.useMemo(() => {
     if (!stats) return [];
     return DIMENSIONS.map((d) => ({
-      dimension: d.short,
+      dimension: l(d.short),
       average: stats.dimensionAverages[d.key],
     }));
-  }, [stats]);
+  }, [stats, l]);
 
   return (
-    <div className="bg-background">
+    <div className={cn("bg-background", isRTL && "font-arabic")}>
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60 bg-secondary/30">
         <div className="absolute inset-0 bg-radial-fade opacity-70" />
         <div className="absolute inset-0 bg-grid opacity-40 mask-fade-b" />
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
           <Reveal>
-            <Eyebrow>Benchmark Insights · Live data</Eyebrow>
+            <Eyebrow>{t("benchmark.insights.hero.eyebrow")}</Eyebrow>
           </Reveal>
           <Reveal delay={0.05}>
             <h1 className="mt-4 max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl md:leading-[1.02]">
-              The state of internal audit maturity,{" "}
-              <span className="text-primary">across our benchmark dataset.</span>
+              {t("benchmark.insights.hero.title_p1")}{" "}
+              <span className="text-primary">{t("benchmark.insights.hero.title_p2")}</span>
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Every assessment submitted to Trennt&apos;s Internal Audit Maturity Benchmark
-              is captured and aggregated — here, anonymised, is what the data says about
-              where organisations stand today. Updated in real time as new benchmarks are
-              completed.
+              {t("benchmark.insights.hero.description")}
             </p>
           </Reveal>
           <Reveal delay={0.15}>
@@ -158,15 +158,15 @@ export function BenchmarkInsightsView() {
                 onClick={() => navigate("benchmark-landing")}
                 className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Take the benchmark
-                <ArrowUpRight className="h-4 w-4" />
+                {t("benchmark.insights.hero.cta_primary")}
+                <ArrowUpRight className={cn("h-4 w-4", isRTL && "rotate-90")} />
               </Button>
               <Button
                 variant="outline"
                 onClick={() => navigate("contact")}
                 className="rounded-full"
               >
-                Talk to an advisor
+                {t("benchmark.insights.hero.cta_secondary")}
               </Button>
             </div>
           </Reveal>
@@ -187,32 +187,32 @@ export function BenchmarkInsightsView() {
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 <KpiCard
                   icon={<Users className="h-4 w-4" />}
-                  label="Organisations benchmarked"
+                  label={t("benchmark.insights.kpi.total.label")}
                   value={stats.totalAssessments.toString()}
-                  sub="& growing"
+                  sub={t("benchmark.insights.kpi.total.sub")}
                 />
                 <KpiCard
                   icon={<Target className="h-4 w-4" />}
-                  label="Average internal audit maturity score"
+                  label={t("benchmark.insights.kpi.average.label")}
                   value={`${stats.averageOverall}`}
-                  sub="/ 100"
+                  sub={t("benchmark.insights.kpi.average.sub")}
                   accent
                 />
                 <KpiCard
                   icon={<Activity className="h-4 w-4" />}
-                  label="Advanced-tier share"
+                  label={t("benchmark.insights.kpi.advanced.label")}
                   value={`${Math.round(
-                    ((stats.tierDistribution.Leading ?? 0) /
+                    ((stats.tierDistribution.advanced ?? 0) /
                       Math.max(stats.totalAssessments, 1)) *
                       100
                   )}%`}
-                  sub="of all respondents"
+                  sub={t("benchmark.insights.kpi.advanced.sub")}
                 />
                 <KpiCard
                   icon={<Clock className="h-4 w-4" />}
-                  label="Avg. time to complete"
+                  label={t("benchmark.insights.kpi.duration.label")}
                   value={formatDuration(stats.avgDurationSec)}
-                  sub="per assessment"
+                  sub={t("benchmark.insights.kpi.duration.sub")}
                 />
               </div>
             </Reveal>
@@ -222,16 +222,16 @@ export function BenchmarkInsightsView() {
           <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 md:pb-16 lg:px-8">
             <Reveal>
               <SectionHeading
-                eyebrow="Where the market sits"
-                title="Maturity by dimension"
-                description="Average scores across the five dimensions of internal audit maturity, computed from every benchmark in the dataset."
+                eyebrow={t("benchmark.insights.dimensions.eyebrow")}
+                title={t("benchmark.insights.dimensions.title")}
+                description={t("benchmark.insights.dimensions.description")}
               />
             </Reveal>
             <div className="mt-10 grid gap-6 lg:grid-cols-5">
               <Reveal delay={0.05} className="lg:col-span-2">
                 <Card className="h-full rounded-xl border-border/70 p-6">
                   <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                    Dimension profile
+                    {t("benchmark.insights.dimensions.profile_label")}
                   </h3>
                   <div className="mt-4 h-[280px]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -269,7 +269,7 @@ export function BenchmarkInsightsView() {
               <Reveal delay={0.1} className="lg:col-span-3">
                 <Card className="h-full rounded-xl border-border/70 p-6">
                   <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                    Average score per dimension
+                    {t("benchmark.insights.dimensions.bar_label")}
                   </h3>
                   <div className="mt-4 h-[280px]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -304,7 +304,7 @@ export function BenchmarkInsightsView() {
                             border: "1px solid oklch(0.89 0.012 120)",
                             fontSize: 12,
                           }}
-                          formatter={(v: TooltipValueType | undefined) => [`${typeof v === "number" ? v : 0} / 100`, "Average"]}
+                          formatter={(v: TooltipValueType | undefined) => [`${typeof v === "number" ? v : 0} / 100`, t("benchmark.insights.common.average")]}
                         />
                         <Bar dataKey="average" radius={[0, 6, 6, 0]} barSize={28}>
                           {dimensionData.map((_, i) => (
@@ -330,7 +330,7 @@ export function BenchmarkInsightsView() {
                           <Icon name={d.icon} className="h-4 w-4" />
                         </span>
                         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          {d.short}
+                          {l(d.short)}
                         </span>
                       </div>
                       <p className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
@@ -350,7 +350,7 @@ export function BenchmarkInsightsView() {
                         />
                       </div>
                       <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                        {d.description}
+                        {l(d.description)}
                       </p>
                     </Card>
                   </Reveal>
@@ -364,16 +364,16 @@ export function BenchmarkInsightsView() {
             <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
               <Reveal>
                 <SectionHeading
-                  eyebrow="The distribution"
-                  title="How maturity is spread"
-                  description="Where every organisation in the dataset sits on the four-stage maturity ladder, plus how benchmark submissions have trended over recent weeks."
+                  eyebrow={t("benchmark.insights.distribution.eyebrow")}
+                  title={t("benchmark.insights.distribution.title")}
+                  description={t("benchmark.insights.distribution.description")}
                 />
               </Reveal>
               <div className="mt-10 grid gap-6 lg:grid-cols-5">
                 <Reveal delay={0.05} className="lg:col-span-2">
                   <Card className="h-full rounded-xl border-border/70 p-6">
                     <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                      Tier distribution
+                      {t("benchmark.insights.distribution.tiers_label")}
                     </h3>
                     <div className="mt-4 h-[260px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -410,19 +410,21 @@ export function BenchmarkInsightsView() {
                     <div className="mt-4 grid grid-cols-2 gap-3">
                       {(
                         ["initial", "developing", "defined", "established", "advanced"] as MaturityTier[]
-                      ).map((t) => (
+                      ).map((tier) => (
                         <div
-                          key={t}
+                          key={tier}
                           className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/60 px-3 py-2"
                         >
                           <span
                             className="h-2.5 w-2.5 rounded-full"
-                            style={{ backgroundColor: TIER_COLORS[t] }}
+                            style={{ backgroundColor: TIER_COLORS[tier] }}
                           />
                           <span className="text-xs font-medium text-foreground">
-                            {stats.tierDistribution[t] ?? 0}
+                            {stats.tierDistribution[tier] ?? 0}
                           </span>
-                          <span className="text-xs text-muted-foreground">{t}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {isRTL ? t(`benchmark.tiers.${tier}.label`) : tier}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -432,14 +434,14 @@ export function BenchmarkInsightsView() {
                   <Card className="h-full rounded-xl border-border/70 p-6">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                        Submissions over time
+                        {t("benchmark.insights.distribution.trend_label")}
                       </h3>
                       <Badge
                         variant="secondary"
                         className="gap-1 text-xs font-normal"
                       >
                         <TrendingUp className="h-3 w-3" />
-                        last 12 weeks
+                        {t("benchmark.insights.distribution.trend_badge")}
                       </Badge>
                     </div>
                     <div className="mt-4 h-[260px]">
@@ -461,7 +463,7 @@ export function BenchmarkInsightsView() {
                               <stop
                                 offset="100%"
                                 stopColor="oklch(0.38 0.06 162)"
-                                stopOpacity={0}
+                            stopOpacity={0}
                               />
                             </linearGradient>
                           </defs>
@@ -475,6 +477,7 @@ export function BenchmarkInsightsView() {
                             axisLine={false}
                             tickLine={false}
                             interval={1}
+                            reversed={isRTL}
                           />
                           <YAxis
                             allowDecimals={false}
@@ -482,6 +485,7 @@ export function BenchmarkInsightsView() {
                             axisLine={false}
                             tickLine={false}
                             width={28}
+                            orientation={isRTL ? "right" : "left"}
                           />
                           <Tooltip
                             contentStyle={{
@@ -496,7 +500,7 @@ export function BenchmarkInsightsView() {
                             stroke="oklch(0.38 0.06 162)"
                             strokeWidth={2}
                             fill="url(#trendGrad)"
-                            name="Submissions"
+                            name={t("benchmark.insights.distribution.trend_name")}
                           />
                         </AreaChart>
                       </ResponsiveContainer>
@@ -511,9 +515,9 @@ export function BenchmarkInsightsView() {
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
             <Reveal>
               <SectionHeading
-                eyebrow="Segments"
-                title="Maturity by sector & scale"
-                description="Average internal audit maturity scores broken down by industry and organisation size — a view of where different segments of the market currently sit."
+                eyebrow={t("benchmark.insights.segments.eyebrow")}
+                title={t("benchmark.insights.segments.title")}
+                description={t("benchmark.insights.segments.description")}
               />
             </Reveal>
             <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -522,13 +526,13 @@ export function BenchmarkInsightsView() {
                   <div className="flex items-center gap-2">
                     <Building2 className="h-4 w-4 text-primary" />
                     <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                      By industry
+                      {t("benchmark.insights.segments.industry_label")}
                     </h3>
                   </div>
                   <div className="mt-5 space-y-3">
                     {stats.byIndustry.length === 0 ? (
                       <p className="text-sm text-muted-foreground">
-                        No industry data yet.
+                        {t("benchmark.insights.segments.no_data")}
                       </p>
                     ) : (
                       stats.byIndustry.map((row) => (
@@ -539,7 +543,7 @@ export function BenchmarkInsightsView() {
                             </span>
                             <span className="text-muted-foreground">
                               {row.average}/100 · {row.count}{" "}
-                              {row.count === 1 ? "org" : "orgs"}
+                              {row.count === 1 ? t("benchmark.insights.common.org") : t("benchmark.insights.common.orgs")}
                             </span>
                           </div>
                           <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -559,7 +563,7 @@ export function BenchmarkInsightsView() {
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-primary" />
                     <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                      By organisation size
+                      {t("benchmark.insights.segments.size_label")}
                     </h3>
                   </div>
                   <div className="mt-5 h-[240px]">
@@ -595,8 +599,8 @@ export function BenchmarkInsightsView() {
                             border: "1px solid oklch(0.89 0.012 120)",
                             fontSize: 12,
                           }}
-                          formatter={(v: TooltipValueType | undefined) => [`${typeof v === "number" ? v : 0} / 100`, "Average"]}
-                          labelFormatter={(l) => `Size: ${l}`}
+                          formatter={(v: any) => [`${typeof v === "number" ? v : 0} / 100`, t("benchmark.insights.common.average")]}
+                          labelFormatter={(label) => `${t("benchmark.insights.segments.size_tooltip_prefix")}: ${label}`}
                         />
                         <Bar
                           dataKey="average"
@@ -608,8 +612,7 @@ export function BenchmarkInsightsView() {
                     </ResponsiveContainer>
                   </div>
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Each bar shows the average internal audit maturity score for organisations of that
-                    headcount band.
+                    {t("benchmark.insights.segments.size_footer")}
                   </p>
                 </Card>
               </Reveal>
@@ -622,19 +625,18 @@ export function BenchmarkInsightsView() {
               <Reveal>
                 <div className="grid gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-1">
-                    <Eyebrow>What the data says</Eyebrow>
+                    <Eyebrow>{t("benchmark.insights.observations.eyebrow")}</Eyebrow>
                     <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-                      Three patterns in the data.
+                      {t("benchmark.insights.observations.title")}
                     </h2>
                     <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                      These observations are generated from the live dataset and refresh as
-                      new benchmarks are submitted.
+                      {t("benchmark.insights.observations.description")}
                     </p>
                   </div>
                   <div className="grid gap-4 lg:col-span-2 sm:grid-cols-3">
                     <InsightCard
                       icon={<BarChart3 className="h-4 w-4" />}
-                      title="Strongest dimension"
+                      title={t("benchmark.insights.observations.strongest.title")}
                       body={
                         stats.dimensionAverages
                           ? (() => {
@@ -642,14 +644,17 @@ export function BenchmarkInsightsView() {
                               entries.sort((a, b) => b[1] - a[1]);
                               const top = entries[0];
                               const topDim = DIMENSIONS.find((d) => d.key === top[0]);
-                              return `${topDim?.label ?? top[0]} leads the dataset at ${top[1]}/100 — the area where organisations are most mature on average.`;
+                              const dimLabel = isRTL ? t(`benchmark.dimensions.${top[0]}.label`) : (topDim?.label ?? top[0]);
+                              return t("benchmark.insights.observations.strongest.body")
+                                .replace("{dimension}", dimLabel)
+                                .replace("{score}", top[1].toString());
                             })()
                           : "—"
                       }
                     />
                     <InsightCard
                       icon={<AlertCircle className="h-4 w-4" />}
-                      title="Biggest gap"
+                      title={t("benchmark.insights.observations.weakest.title")}
                       body={
                         stats.dimensionAverages
                           ? (() => {
@@ -659,19 +664,23 @@ export function BenchmarkInsightsView() {
                               const bottomDim = DIMENSIONS.find(
                                 (d) => d.key === bottom[0]
                               );
-                              return `${bottomDim?.label ?? bottom[0]} is the weakest dimension at ${bottom[1]}/100 — the most common area for improvement across the dataset.`;
+                              const dimLabel = isRTL ? t(`benchmark.dimensions.${bottom[0]}.label`) : (bottomDim?.label ?? bottom[0]);
+                              return t("benchmark.insights.observations.weakest.body")
+                                .replace("{dimension}", dimLabel)
+                                .replace("{score}", bottom[1].toString());
                             })()
                           : "—"
                       }
                     />
                     <InsightCard
                       icon={<Sparkles className="h-4 w-4" />}
-                      title="Maturity frontier"
-                      body={`${Math.round(
-                        ((stats.tierDistribution.Leading ?? 0) /
-                          Math.max(stats.totalAssessments, 1)) *
-                          100
-                      )}% of organisations benchmark at the Leading tier — operating at the frontier of internal audit maturity.`}
+                      title={t("benchmark.insights.observations.frontier.title")}
+                      body={t("benchmark.insights.observations.frontier.body")
+                        .replace("{percent}", Math.round(
+                          ((stats.tierDistribution.advanced ?? 0) /
+                            Math.max(stats.totalAssessments, 1)) *
+                            100
+                        ).toString())}
                     />
                   </div>
                 </div>
@@ -687,11 +696,10 @@ export function BenchmarkInsightsView() {
                 <div className="relative flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
                   <div className="max-w-xl">
                     <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-                      Where does your organisation sit?
+                      {t("benchmark.insights.cta.title")}
                     </h2>
                     <p className="mt-3 text-primary-foreground/80">
-                      Take the benchmark yourself — eight minutes, fifteen questions, a clear
-                      picture of where you stand against your peers.
+                      {t("benchmark.insights.cta.description")}
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-3">
@@ -700,8 +708,8 @@ export function BenchmarkInsightsView() {
                       onClick={() => navigate("benchmark-landing")}
                       className="gap-1.5 rounded-full bg-background text-foreground hover:bg-background/90"
                     >
-                      Start the benchmark
-                      <ArrowUpRight className="h-4 w-4" />
+                      {t("benchmark.insights.cta.primary")}
+                      <ArrowUpRight className={cn("h-4 w-4", isRTL && "rotate-90")} />
                     </Button>
                     <Button
                       size="lg"
@@ -709,7 +717,7 @@ export function BenchmarkInsightsView() {
                       onClick={() => navigate("contact")}
                       className="rounded-full border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
                     >
-                      Talk to an advisor
+                      {t("benchmark.insights.cta.secondary")}
                     </Button>
                   </div>
                 </div>
@@ -803,16 +811,17 @@ function InsightsSkeleton() {
 }
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
       <div className="flex flex-col items-center text-center">
         <AlertCircle className="h-10 w-10 text-destructive" />
-        <h2 className="mt-4 text-xl font-semibold">Couldn&apos;t load insights</h2>
+        <h2 className="mt-4 text-xl font-semibold">{t("benchmark.insights.error.title")}</h2>
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          We couldn&apos;t fetch the benchmark dataset right now. Please try again.
+          {t("benchmark.insights.error.description")}
         </p>
         <Button onClick={onRetry} className="mt-6 rounded-full">
-          Retry
+          {t("benchmark.insights.error.cta")}
         </Button>
       </div>
     </div>
@@ -820,20 +829,20 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
 }
 
 function EmptyState({ onStart }: { onStart: () => void }) {
+  const { t, isRTL } = useTranslation();
   return (
     <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
       <div className="flex flex-col items-center text-center">
         <BarChart3 className="h-10 w-10 text-primary" />
         <h2 className="mt-4 text-2xl font-semibold tracking-tight">
-          No benchmarks yet
+          {t("benchmark.insights.empty.title")}
         </h2>
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          Once organisations start completing the Internal Audit Maturity Benchmark, aggregated
-          insights will appear here. Be the first to contribute.
+          {t("benchmark.insights.empty.description")}
         </p>
         <Button onClick={onStart} className="mt-6 gap-1.5 rounded-full">
-          Take the first benchmark
-          <ArrowUpRight className="h-4 w-4" />
+          {t("benchmark.insights.empty.cta")}
+          <ArrowUpRight className={cn("h-4 w-4", isRTL && "rotate-90")} />
         </Button>
       </div>
     </div>

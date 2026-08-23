@@ -29,6 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "@/lib/i18n";
 
 type Topic = "general" | "services" | "framework" | "other";
 
@@ -100,11 +101,27 @@ const CHECKMARK_DRAW = {
 };
 
 export function ContactView() {
+  const { t, lang } = useTranslation();
   const navigate = useNav((s) => s.navigate);
   const { toast } = useToast();
   const [submitting, setSubmitting] = React.useState(false);
   const [done, setDone] = React.useState(false);
   const reduced = useReducedMotion();
+
+  const TOPICS: { value: Topic; label: string; hint: string }[] = [
+    { value: "general", label: t('contact.form.topics.general.label'), hint: t('contact.form.topics.general.hint') },
+    {
+      value: "services",
+      label: t('contact.form.topics.services.label'),
+      hint: t('contact.form.topics.services.hint'),
+    },
+    {
+      value: "framework",
+      label: t('contact.form.topics.framework.label'),
+      hint: t('contact.form.topics.framework.hint'),
+    },
+    { value: "other", label: t('contact.form.topics.other.label'), hint: t('contact.form.topics.other.hint') },
+  ];
 
   const {
     control,
@@ -149,17 +166,17 @@ export function ContactView() {
       const result = (await res.json()) as { ok: true; data: { id: string } };
       setDone(true);
       toast({
-        title: "Message received",
-        description: `Thanks, ${data.name.split(" ")[0]}. We'll be in touch within one business day. Reference ${result.data.id}.`,
+        title: t('contact.form.success_title'),
+        description: t('contact.form.success_desc', { name: data.name.split(" ")[0], id: result.data.id }),
       });
       reset();
     } catch (err) {
       toast({
-        title: "Couldn't send your message",
+        title: t('contact.form.error_title'),
         description:
           err instanceof Error
             ? err.message
-            : "Something went wrong. Please try again or email us directly.",
+            : t('contact.form.error_desc'),
         variant: "destructive",
       });
     } finally {
@@ -186,31 +203,31 @@ export function ContactView() {
       >
         <div className="section-shell relative z-10">
           <div className="max-w-3xl">
-            <Reveal y={14} duration={0.55}>
-              <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
-                <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
-                Contact
-              </div>
-            </Reveal>
+                <Reveal y={14} duration={0.55}>
+                  <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
+                    <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
+                    {t('contact.hero.eyebrow')}
+                  </div>
+                </Reveal>
 
-            <motion.h1
-              id="contact-hero-heading"
-              className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
-              initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={reduced ? { duration: 0 } : { duration: 0.7, ease: EASE_OUT, delay: 0.06 }}
-            >
-              {"Get in touch."}
-            </motion.h1>
+                <motion.h1
+                  id="contact-hero-heading"
+                  className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
+                  initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={reduced ? { duration: 0 } : { duration: 0.7, ease: EASE_OUT, delay: 0.06 }}
+                >
+                  {t('contact.hero.heading')}
+                </motion.h1>
 
-            <motion.p
-              className="mt-5 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80"
-              initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE_OUT, delay: 0.18 }}
-            >
-              Whether you need internal audit outsourcing, co-sourcing, or support for your existing function, we&apos;re happy to discuss how we can help.
-            </motion.p>
+                <motion.p
+                  className="mt-5 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80"
+                  initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE_OUT, delay: 0.18 }}
+                >
+                  {t('contact.hero.description')}
+                </motion.p>
           </div>
         </div>
       </section>
@@ -275,12 +292,10 @@ export function ContactView() {
                         </motion.svg>
                       </span>
                       <h3 className="mt-6 text-[22px] font-bold text-[#121212]">
-                        Message received
+                        {t('contact.form.done.title')}
                       </h3>
                       <p className="mt-3 max-w-md text-[14px] leading-relaxed text-gray-500">
-                        Thanks for reaching out. A member of the Trennt team
-                        will be in touch within one business day. If your enquiry
-                        is urgent, please call us directly.
+                        {t('contact.form.done.description')}
                       </p>
                       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                         <Button
@@ -288,13 +303,13 @@ export function ContactView() {
                           onClick={() => setDone(false)}
                           className="h-11 rounded-[10px] border-gray-200 text-[#003D3C] text-[14px] font-semibold hover:bg-gray-50"
                         >
-                          Send another message
+                          {t('contact.form.done.cta_another')}
                         </Button>
                         <Button
                           onClick={() => navigate("home")}
                           className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#003D3C] hover:bg-[#c2e8c4]"
                         >
-                          Back to home
+                          {t('contact.form.done.cta_home')}
                           <ArrowRight className="h-4 w-4" />
                         </Button>
                       </div>
@@ -311,12 +326,12 @@ export function ContactView() {
                       <div className="grid gap-5 sm:grid-cols-2">
                         <motion.div custom={0} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                           <Label htmlFor="name" className="text-[13px] font-semibold text-[#121212]">
-                            Full name <span className="text-destructive">*</span>
+                            {t('contact.form.labels.name')} <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             id="name"
                             {...register("name")}
-                            placeholder="Full name"
+                            placeholder={t('contact.form.placeholders.name')}
                             autoComplete="name"
                             aria-invalid={!!errors.name}
                             className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
@@ -329,13 +344,13 @@ export function ContactView() {
                         </motion.div>
                         <motion.div custom={1} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                           <Label htmlFor="email" className="text-[13px] font-semibold text-[#121212]">
-                            Work email <span className="text-destructive">*</span>
+                            {t('contact.form.labels.email')} <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             id="email"
                             type="email"
                             {...register("email")}
-                            placeholder="you@company.com"
+                            placeholder={t('contact.form.placeholders.email')}
                             autoComplete="email"
                             aria-invalid={!!errors.email}
                             className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
@@ -350,21 +365,21 @@ export function ContactView() {
 
                       <div className="grid gap-5 sm:grid-cols-2">
                         <motion.div custom={2} variants={FORM_FIELD_VARIANTS} className="space-y-2">
-                          <Label htmlFor="company" className="text-[13px] font-semibold text-[#121212]">Company</Label>
+                          <Label htmlFor="company" className="text-[13px] font-semibold text-[#121212]">{t('contact.form.labels.company')}</Label>
                           <Input
                             id="company"
                             {...register("company")}
-                            placeholder="Company name"
+                            placeholder={t('contact.form.placeholders.company')}
                             autoComplete="organization"
                             className="h-11 rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           />
                         </motion.div>
                         <motion.div custom={3} variants={FORM_FIELD_VARIANTS} className="space-y-2">
-                          <Label htmlFor="phone" className="text-[13px] font-semibold text-[#121212]">Phone</Label>
+                          <Label htmlFor="phone" className="text-[13px] font-semibold text-[#121212]">{t('contact.form.labels.phone')}</Label>
                           <Input
                             id="phone"
                             {...register("phone")}
-                            placeholder="+966 5x xxx xxxx"
+                            placeholder={t('contact.form.placeholders.phone')}
                             autoComplete="tel"
                             inputMode="tel"
                             pattern="[+\d\s\-()]*"
@@ -380,7 +395,7 @@ export function ContactView() {
 
                       <motion.div custom={4} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                         <Label htmlFor="topic" className="text-[13px] font-semibold text-[#121212]">
-                          What&apos;s this about?{" "}
+                          {t('contact.form.labels.topic')}{" "}
                           <span className="text-destructive">*</span>
                         </Label>
                         <Controller
@@ -412,13 +427,13 @@ export function ContactView() {
 
                       <motion.div custom={5} variants={FORM_FIELD_VARIANTS} className="space-y-2">
                         <Label htmlFor="message" className="text-[13px] font-semibold text-[#121212]">
-                          How can we help?{" "}
+                          {t('contact.form.labels.message')}{" "}
                           <span className="text-destructive">*</span>
                         </Label>
                         <Textarea
                           id="message"
                           {...register("message")}
-                          placeholder="Tell us a little about your inquiry…"
+                          placeholder={t('contact.form.placeholders.message')}
                           className="min-h-36 resize-y rounded-[8px] border-gray-200 text-[14px] transition-all duration-300 ease-out focus:border-[#003D3C] focus:ring-2 focus:ring-[#003D3C]/20 focus:shadow-[0_0_0_3px_rgba(0,61,60,0.08)]"
                           aria-invalid={!!errors.message}
                         />
@@ -434,7 +449,7 @@ export function ContactView() {
                             transition={reduced ? { duration: 0 } : { duration: 0.25, ease: EASE_OUT }}
                             className="text-xs text-gray-400 tabular-nums"
                           >
-                            {charCount} characters
+                            {charCount} {t('contact.form.labels.characters')}
                           </motion.p>
                         )}
                       </motion.div>
@@ -442,17 +457,8 @@ export function ContactView() {
                       <motion.div
                         custom={6}
                         variants={FORM_FIELD_VARIANTS}
-                        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-2"
+                        className="flex justify-end pt-2"
                       >
-                        <div className="space-y-1">
-                          <p className="text-xs text-gray-500 max-w-xs">
-                            We respond within one business day. Your details are
-                            never shared.
-                          </p>
-                          <p className="text-[11px] text-gray-400 max-w-xs">
-                            Exclusively internal audit. Serving Boards and Audit Committees across Saudi Arabia.
-                          </p>
-                        </div>
                         <motion.div
                           whileHover={reduced || submitting ? {} : { scale: 1.02, y: -1 }}
                           whileTap={reduced || submitting ? {} : { scale: 0.98 }}
@@ -466,11 +472,11 @@ export function ContactView() {
                             {submitting ? (
                               <>
                                 <Loader2 className="h-4 w-4 animate-spin" />
-                                Sending…
+                                {t('contact.form.buttons.submitting')}
                               </>
                             ) : (
                               <>
-                                Send message
+                                {t('contact.form.buttons.submit')}
                                 <ArrowRight className="h-4 w-4 text-[#003D3C]" />
                               </>
                             )}
@@ -489,28 +495,28 @@ export function ContactView() {
             <Reveal y={12} duration={0.55} delay={0.12}>
               <Card className="rounded-[16px] border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
                 <h3 className="text-[17px] font-bold text-[#121212]">
-                  Direct contact
+                  {t('contact.aside.title')}
                 </h3>
                 <ul className="mt-6 space-y-5 text-[14px]">
                   {[
                     {
                       icon: Mail,
-                      label: "Email",
+                      label: t('contact.aside.labels.email'),
                       value: COMPANY.email,
                       href: `mailto:${COMPANY.email}`,
                     },
                     {
                       icon: Phone,
-                      label: "Phone",
+                      label: t('contact.aside.labels.phone'),
                       value: COMPANY.phone,
                       href: `tel:${COMPANY.phone.replace(/\s/g, "")}`,
                     },
-                    {
-                      icon: MapPin,
-                      label: "Headquarters",
-                      value: COMPANY.address,
-                      isMultiline: true,
-                    },
+                      {
+                        icon: MapPin,
+                        label: lang === 'ar' ? "الموقع" : "Location",
+                        value: lang === 'ar' ? "الرياض، السعودية" : "Riyadh, Saudi",
+                        isMultiline: false,
+                      },
                   ].map((item, i) => {
                     const Icon = item.icon;
                     const content = (
@@ -574,20 +580,6 @@ export function ContactView() {
               </Card>
             </Reveal>
 
-            <Reveal y={12} duration={0.55} delay={0.24}>
-              <div className="mt-6 flex items-start gap-3 rounded-[12px] border border-[#EEF4F2] bg-[#FAFCFA] p-5">
-                <MessageSquare className="mt-0.5 h-4 w-4 text-[#003D3C] shrink-0" />
-                <div>
-                  <h4 className="text-[13px] font-bold text-[#121212]">
-                    Prefer to reach us directly?
-                  </h4>
-                  <p className="mt-1 text-[12px] leading-relaxed text-gray-500">
-                    Skip the form and email or call us using the details above —
-                    a partner reads every enquiry personally.
-                  </p>
-                </div>
-              </div>
-            </Reveal>
           </aside>
         </div>
       </section>

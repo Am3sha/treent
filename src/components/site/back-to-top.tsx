@@ -5,8 +5,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EASE_OUT, useReducedMotion } from "@/components/site/reveal";
+import { useTranslation } from "@/lib/i18n";
 
 export function BackToTop() {
+  const { isRTL } = useTranslation();
   const [visible, setVisible] = React.useState(false);
   const reduced = useReducedMotion();
 
@@ -31,7 +33,8 @@ export function BackToTop() {
           whileHover={reduced ? {} : { scale: 1.06, y: -2 }}
           whileTap={reduced ? {} : { scale: 0.95 }}
           className={cn(
-            "fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-md backdrop-blur-md transition-colors duration-300 hover:border-primary/40 hover:bg-primary hover:text-primary-foreground"
+            "fixed bottom-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-md backdrop-blur-md transition-colors duration-300 hover:border-primary/40 hover:bg-primary hover:text-primary-foreground",
+            isRTL ? "left-6" : "right-6"
           )}
         >
           <ArrowUp className="h-4 w-4" />

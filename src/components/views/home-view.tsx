@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Reveal, RevealStagger, useReducedMotion } from "@/components/site/reveal";
 import { CountUp } from "@/components/site/count-up";
 import { TrenntParticleLogo } from "@/components/site/trennt-particle-logo";
+import { useTranslation } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
@@ -152,6 +154,7 @@ function AnimatedBar({
 }
 
 export function HomeView() {
+  const { t, l, isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
   const reduced = useReducedMotion();
 
@@ -160,7 +163,7 @@ export function HomeView() {
   const heroImgScale = useTransform(scrollY, [0, 600], [1, reduced ? 1 : 1.03]);
 
   const heroHeadline: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : 20 },
+    hidden: { opacity: 0.001, y: reduced ? 0 : 20 },
     visible: {
       opacity: 1,
       y: 0,
@@ -169,7 +172,7 @@ export function HomeView() {
   };
 
   const heroEyebrow: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : 12 },
+    hidden: { opacity: 0.001, y: reduced ? 0 : 12 },
     visible: {
       opacity: 1,
       y: 0,
@@ -178,7 +181,7 @@ export function HomeView() {
   };
 
   const heroBody: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : 16 },
+    hidden: { opacity: 0.001, y: reduced ? 0 : 16 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
@@ -187,7 +190,7 @@ export function HomeView() {
   };
 
   const heroCta: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : 14 },
+    hidden: { opacity: 0.001, y: reduced ? 0 : 14 },
     visible: {
       opacity: 1,
       y: 0,
@@ -246,14 +249,14 @@ export function HomeView() {
         <div className="section-shell relative">
           <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
             {/* LEFT COLUMN: TYPOGRAPHY & CTA */}
-            <div className="lg:col-span-6 xl:col-span-6 z-10">
+            <div className={cn("lg:col-span-6 xl:col-span-6 z-10", isRTL && "font-arabic")}>
               <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={heroEyebrow}
                 className="text-[13px] font-semibold uppercase tracking-[0.2em] text-[#ADDFB3]"
               >
-                DRIVING CONFIDENCE THROUGH
+                {t("home.hero.eyebrow")}
               </motion.div>
 
               <motion.h1
@@ -261,9 +264,16 @@ export function HomeView() {
                 initial="hidden"
                 animate="visible"
                 variants={heroHeadline}
-                className="mt-4 text-[48px] sm:text-[62px] lg:text-[72px] font-extrabold uppercase leading-[0.96] tracking-[0.05em] text-[#ADDFB3]"
+                className={cn(
+                  "mt-4 text-[48px] sm:text-[62px] lg:text-[72px] font-extrabold uppercase leading-[0.96] tracking-[0.05em] text-[#ADDFB3]",
+                  isRTL && "leading-[1.1] font-arabic"
+                )}
               >
-                STRATEGIC<br />INSIGHT
+                {isRTL ? (
+                  <>رؤية<br />استراتيجية</>
+                ) : (
+                  <>STRATEGIC<br />INSIGHT</>
+                )}
               </motion.h1>
 
               <motion.p
@@ -273,7 +283,7 @@ export function HomeView() {
                 variants={heroBody}
                 className="mt-5 text-[13px] font-semibold uppercase tracking-[0.18em] text-[#ADDFB3]"
               >
-                Internal Audit. Delivered with Independence.
+                {t("home.hero.subheadline")}
               </motion.p>
 
               <motion.p
@@ -283,7 +293,7 @@ export function HomeView() {
                 variants={heroBody}
                 className="mt-6 max-w-md text-[16px] leading-[1.7] text-white/85 font-normal"
               >
-                Independent internal audit insight that helps organisations focus on what matters, strengthen governance, and make better-informed decisions.
+                {t("home.hero.description")}
               </motion.p>
 
               <motion.p
@@ -293,7 +303,7 @@ export function HomeView() {
                 variants={heroBody}
                 className="mt-6 text-[15px] font-medium text-white/75"
               >
-                Integrity. Insight. Impact.
+                {t("home.hero.values")}
               </motion.p>
 
               <motion.div
@@ -306,7 +316,7 @@ export function HomeView() {
                   onClick={() => navigate("contact")}
                   className="h-12 rounded-[10px] bg-white px-8 text-[15px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-[0_10px_30px_-12px_rgba(173,223,179,0.7)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Get Started
+                  {t("nav.get_started")}
                 </Button>
               </motion.div>
             </div>
@@ -429,18 +439,18 @@ export function HomeView() {
       </section>
 
       {/* ================================================================ */}
-      {/* 2. ABOUT TRENNT SECTION                                  */}
+      {/* 2. ABOUT TRENNT SECTION                                          */}
       {/* ================================================================ */}
       <section className="bg-[#F8F9FA] py-20 lg:py-28 border-b border-gray-100">
         <div className="section-shell">
-          <div className="max-w-4xl">
+          <div className={cn("max-w-4xl w-full", isRTL && "ml-auto text-right")}>
             <Reveal y={16} duration={0.6}>
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
                 <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                About Trennt
+                {t('home.about.eyebrow')}
               </div>
               <h2 className="mt-6 text-[32px] sm:text-[40px] font-medium leading-[1.25] text-[#121212] tracking-tight">
-                Through independent internal audit, we help organizations strengthen governance, uncover opportunities, and make confident decisions.
+                {t('home.about.heading')}
               </h2>
             </Reveal>
           </div>
@@ -453,39 +463,32 @@ export function HomeView() {
       <section className="py-20 lg:py-28 bg-white">
         <div className="section-shell">
           <div className="grid items-center gap-12 lg:grid-cols-12">
-            <Reveal y={16} duration={0.6} className="lg:col-span-5">
-              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                Our Expertise
-              </div>
-              <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212]">
-                Built Around<br />Internal Audit.
-              </h2>
-              <p className="mt-6 text-[15px] leading-relaxed text-gray-500 max-w-md">
-                Internal audit is our sole focus. That specialisation shapes our methods, capabilities, and delivery approach around the needs of modern internal audit functions. The result is independent perspective, practical insight, and measurable value.
-              </p>
-
-              <div className="mt-10">
-                <Button
-                  onClick={() => navigate("services")}
-                  className="h-11 rounded-[8px] bg-[#003D3C] px-6 text-[14px] font-semibold text-white transition-all duration-200 ease-out hover:bg-[#002f2e] hover:shadow-[0_10px_24px_-10px_rgba(0,61,60,0.5)] hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Know More
-                </Button>
-              </div>
-            </Reveal>
-
-            <Reveal y={16} duration={0.6} delay={0.1} className="lg:col-span-7">
-              <div className="relative h-[420px] w-full overflow-hidden rounded-[24px] shadow-lg group sm:h-[480px]">
-                <Image
-                  src="/trennt-hero-02.webp"
-                  alt="TRENNT Internal Audit Specialists reviewing document"
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 800px"
-                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-                />
-              </div>
-            </Reveal>
+            <div className={cn("lg:col-span-5", isRTL && "text-right")}>
+              <Reveal y={16} duration={0.6}>
+                <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+                  <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+                  {t('home.expertise.eyebrow')}
+                </div>
+                <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212] whitespace-pre-line">
+                  {t('home.expertise.heading')}
+                </h2>
+                <p className={cn("mt-6 text-[15px] leading-relaxed text-gray-500 max-w-2xl", isRTL && "mr-0 ml-auto")}>
+                  {t('home.expertise.description')}
+                </p>
+              </Reveal>
+            </div>
+            <div className={cn("lg:col-span-7")}>
+              <Reveal y={16} duration={0.6} delay={0.1}>
+                <div className="relative overflow-hidden rounded-[24px] border border-gray-100 shadow-xl aspect-[4/3]">
+                  <Image
+                    src="/trennt-hero-02.webp"
+                    alt="Our Expertise"
+                    fill
+                    className="object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                </div>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>
@@ -499,122 +502,40 @@ export function HomeView() {
         className="relative py-24 lg:py-36 bg-[#F4F7F6] overflow-hidden border-t border-b border-gray-100"
       >
         <div
-          className="absolute right-[3%] top-1/2 -translate-y-1/2 w-[36%] max-w-[420px] pointer-events-none select-none hidden md:block"
+          className={cn(
+            "absolute top-1/2 -translate-y-1/2 w-[36%] max-w-[420px] pointer-events-none select-none hidden md:block",
+            isRTL ? "left-[5%]" : "right-[5%]"
+          )}
           aria-hidden="true"
         >
           <TrenntParticleLogo />
         </div>
 
         <div className="section-shell relative z-10">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-              Capabilities
-            </div>
-            <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
-              Practical solutions tailored to strengthen governance, enhance internal controls, and support confident decision-making.
-            </h2>
+          <div className={cn("max-w-3xl w-full", isRTL && "ml-auto text-right")}>
+            <Reveal y={16} duration={0.6}>
+              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+                {t('home.capabilities.eyebrow')}
+              </div>
+              <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
+                {t('home.capabilities.heading')}
+              </h2>
 
-            <div className="mt-8">
-              <Button
-                onClick={() => navigate("services")}
-                className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Know More
-              </Button>
-            </div>
-
-            <p className="mt-8 text-[13.5px] text-gray-500 max-w-lg leading-relaxed">
-              Every engagement is tailored to strengthen governance, improve internal controls, and support strategic decision-making.
-            </p>
+              <div className={cn("mt-8 flex", isRTL && "justify-end")}>
+                <Button
+                  onClick={() => navigate("services")}
+                  className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {t('home.capabilities.cta')}
+                </Button>
+              </div>
+            </Reveal>
           </div>
         </div>
       </Reveal>
 
-      {/* ================================================================ */}
-      {/* 8. LATEST ARTICLES & PERSPECTIVES SECTION                        */}
-      {/* ================================================================ */}
-      <section className="py-20 lg:py-28 bg-white border-t border-gray-100">
-        <div className="section-shell">
-          <Reveal y={14} duration={0.55}>
-            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-              Insights
-            </div>
 
-            <div className="mt-4 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-              <h2 className="text-[36px] sm:text-[44px] font-bold text-[#121212]">
-                Latest Articles &amp;<br />Perspectives
-              </h2>
-              <p className="max-w-md text-[14px] leading-relaxed text-gray-500">
-                Stay informed on the latest thinking in governance, internal audit, risk management, and organizational performance.
-              </p>
-            </div>
-          </Reveal>
-
-          <RevealStagger stagger={0.1} delay={0.1} y={14} childDuration={0.55} className="mt-12 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                title: "The Future of Internal Audit",
-                desc: "How modern internal audit is evolving to deliver greater strategic value, stronger governance, and more informed decision-making.",
-                icon: BookOpen,
-                tag: "Governance",
-              },
-              {
-                title: "Building Better Internal Controls",
-                desc: "Actionable steps for organizations to develop effective control environments that support operational efficiency and sustainable growth.",
-                icon: Sparkles,
-                tag: "Internal Audit",
-              },
-              {
-                title: "Strengthening Governance",
-                desc: "Key practices for board oversight, internal audit alignment, and transparent risk reporting in growing enterprises.",
-                icon: LineChart,
-                tag: "Risk & Controls",
-              },
-            ].map((article, idx) => {
-              const IconComp = article.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  whileHover={reduced ? {} : { y: -5 }}
-                  transition={{ duration: 0.25, ease: EASE_OUT }}
-                  className="group flex flex-col justify-between transition-transform duration-300 ease-out"
-                >
-                  <div>
-                    <div className="relative h-48 w-full rounded-[12px] overflow-hidden bg-gradient-to-br from-[#EAEFEF] via-[#F4F7F6] to-[#DEE8E6] flex items-center justify-center border border-[#003D3C]/5">
-                      <div className="absolute inset-0 bg-[radial-gradient(#003D3C_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.06] transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
-                      <div className="relative flex flex-col items-center gap-2 transition-transform duration-500 ease-out group-hover:scale-[1.08]">
-                        <div className="h-12 w-12 rounded-full bg-white/80 backdrop-blur-xs flex items-center justify-center shadow-xs border border-[#003D3C]/10 text-[#003D3C]/70">
-                          <IconComp className="h-6 w-6 stroke-[1.75]" />
-                        </div>
-                        <span className="text-[11px] font-bold tracking-widest text-[#003D3C]/40 uppercase">
-                          {article.tag}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="mt-6 text-[18px] font-bold text-[#121212]">
-                      {article.title}
-                    </h3>
-                    <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
-                      {article.desc}
-                    </p>
-                  </div>
-                  <div className="mt-6">
-                    <button
-                      onClick={() => navigate("benchmark-insights")}
-                      className="text-[13px] font-semibold text-[#003D3C] inline-flex items-center gap-1.5 group/link"
-                    >
-                      <span className="hover-underline-grow">Read Article</span>
-                      <ArrowRight className="h-3.5 w-3.5 transition-all duration-250 ease-out group-hover/link:translate-x-1" />
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </RevealStagger>
-        </div>
-      </section>
     </div>
   );
 }

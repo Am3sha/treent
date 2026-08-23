@@ -13,13 +13,21 @@ import type {
 export const COMPANY = {
   name: "Trennt",
   legalName: "Trennt Partners",
-  tagline: "Internal Audit. Delivered with Independence.",
-  description:
-    "Trennt is a Saudi Arabia-based firm specialising exclusively in internal audit. We give Boards, Audit Committees, and executive management clear, objective insight into governance, risk management, and internal control effectiveness.",
+  tagline: {
+    en: "Internal Audit. Delivered with Independence.",
+    ar: "المراجعة الداخلية. تُقدم باستقلالية."
+  },
+  description: {
+    en: "Trennt is a Saudi Arabia-based firm specialising exclusively in internal audit. We give Boards, Audit Committees, and executive management clear, objective insight into governance, risk management, and internal control effectiveness.",
+    ar: "ترينت هي شركة سعودية متخصصة حصرياً في المراجعة الداخلية. نحن نقدم لمجالس الإدارة ولجان المراجعة والإدارة التنفيذية رؤية واضحة وموضوعية حول فعالية الحوكمة وإدارة المخاطر والرقابة الداخلية."
+  },
   foundedYear: 2014,
   email: "info@trennt.sa",
   phone: "+966 50 123 4567",
-    address: "Riyadh, Saudi Arabia",
+  address: {
+    en: "Riyadh, Saudi",
+    ar: "الرياض، السعودية"
+  },
   offices: [
     { city: "Riyadh", country: "Saudi Arabia", flag: "SA" },
   ],
@@ -37,108 +45,118 @@ export const COMPANY = {
 export const SERVICES: ServiceItem[] = [
   {
     slug: "internal-audit-outsourcing",
-    title: "Internal Audit Outsourcing",
-    tagline: "Trennt runs your internal audit function end to end.",
-    description:
-      "Trennt can take responsibility for the organisation's internal audit activities through an independent, structured, and risk-focused delivery model.",
+    title: { en: "Internal Audit Outsourcing", ar: "إسناد المراجعة الداخلية لجهات خارجية" },
+    tagline: { en: "Trennt runs your internal audit function end to end.", ar: "ترينت تدير وظيفة المراجعة الداخلية لديك بشكل كامل." },
+    description: {
+      en: "Trennt can take responsibility for the organisation's internal audit activities through an independent, structured, and risk-focused delivery model.",
+      ar: "يمكن لترينت تحمل مسؤولية أنشطة المراجعة الداخلية للمنظمة من خلال نموذج تقديم مستقل ومنظم ويركز على المخاطر."
+    },
     icon: "Users",
     outcomes: [
-      "Risk Assessment & Annual Audit Planning",
-      "Execution of the Approved Audit Plan",
-      "Reporting to Management & Audit Committee",
-      "Issue Follow-Up and Action Tracking",
-      "Ongoing Management of Internal Audit Activities",
+      { en: "Risk Assessment & Annual Audit Planning", ar: "تقييم المخاطر وتخطيط المراجعة السنوي" },
+      { en: "Execution of the Approved Audit Plan", ar: "تنفيذ خطة المراجعة المعتمدة" },
+      { en: "Reporting to Management & Audit Committee", ar: "رفع التقارير للإدارة ولجنة المراجعة" },
+      { en: "Issue Follow-Up and Action Tracking", ar: "متابعة الملاحظات وتتبع الإجراءات" },
+      { en: "Ongoing Management of Internal Audit Activities", ar: "الإدارة المستمرة لأنشطة المراجعة الداخلية" },
     ],
     deliverables: [
-      "Annual risk-based audit plan",
-      "Full audit delivery with reports",
-      "Audit committee reporting pack",
-      "Follow-up tracking system",
+      { en: "Annual risk-based audit plan", ar: "خطة مراجعة سنوية قائمة على المخاطر" },
+      { en: "Full audit delivery with reports", ar: "تقديم كامل للمراجعة مع التقارير" },
+      { en: "Audit committee reporting pack", ar: "حزمة تقارير لجنة المراجعة" },
+      { en: "Follow-up tracking system", ar: "نظام تتبع المتابعة" },
     ],
   },
   {
     slug: "internal-audit-co-sourcing",
-    title: "Internal Audit Co-Sourcing",
-    tagline: "Additional capacity, specialist expertise, and seamless integration.",
-    description:
-      "Our co-sourcing model strengthens an existing internal audit function with targeted support, specialist expertise, and delivery capacity while preserving its overall structure.",
+    title: { en: "Internal Audit Co-Sourcing", ar: "المراجعة الداخلية المشتركة" },
+    tagline: { en: "Additional capacity, specialist expertise, and seamless integration.", ar: "قدرة إضافية، خبرة متخصصة، وتكامل سلس." },
+    description: {
+      en: "Our co-sourcing model strengthens an existing internal audit function with targeted support, specialist expertise, and delivery capacity while preserving its overall structure.",
+      ar: "يعزز نموذج التوريد المشترك لدينا وظيفة المراجعة الداخلية الحالية بدعم مستهدف وخبرة متخصصة وقدرة على التنفيذ مع الحفاظ على هيكلها العام."
+    },
     icon: "Users2",
     outcomes: [
-      "Targeted Internal Audit Assignments",
-      "Additional Support for the Annual Audit Plan",
-      "Collaboration with the Existing Internal Audit Team",
-      "Coverage Across Diverse Risk & Business Areas",
-      "Delivery Aligned with the Organisation's or Trennt's Methodology",
+      { en: "Targeted Internal Audit Assignments", ar: "مهام المراجعة الداخلية المستهدفة" },
+      { en: "Additional Support for the Annual Audit Plan", ar: "دعم إضافي لخطة المراجعة السنوية" },
+      { en: "Collaboration with the Existing Internal Audit Team", ar: "التعاون مع فريق المراجعة الداخلية الحالي" },
+      { en: "Coverage Across Diverse Risk & Business Areas", ar: "تغطية عبر مختلف مجالات المخاطر والأعمال" },
+      { en: "Delivery Aligned with the Organisation's or Trennt's Methodology", ar: "التنفيذ المتوافق مع منهجية المنظمة أو ترينت" },
     ],
     deliverables: [
-      "Co-sourced audit engagements",
-      "Integration with your team",
-      "Flexible delivery options",
+      { en: "Co-sourced audit engagements", ar: "ارتباطات المراجعة المشتركة" },
+      { en: "Integration with your team", ar: "التكامل مع فريقك" },
+      { en: "Flexible delivery options", ar: "خيارات تنفيذ مرنة" },
     ],
   },
   {
     slug: "internal-audit-function-establishment",
-    title: "Internal Audit Function Establishment",
-    tagline: "Establishing the foundations for a fully running function.",
-    description:
-      "Trennt designs and puts in place internal audit functions aligned with governance expectations and the IIA Global Internal Audit Standards.",
+    title: { en: "Internal Audit Function Establishment", ar: "تأسيس وظيفة المراجعة الداخلية" },
+    tagline: { en: "Establishing the foundations for a fully running function.", ar: "إرساء الأسس لوظيفة تعمل بشكل كامل." },
+    description: {
+      en: "Trennt designs and puts in place internal audit functions aligned with governance expectations and the IIA Global Internal Audit Standards.",
+      ar: "تقوم ترينت بتصميم ووضع وظائف المراجعة الداخلية بما يتماشى مع توقعات الحوكمة والمعايير العالمية للمراجعة الداخلية (IIA)."
+    },
     icon: "Building2",
     outcomes: [
-      "Internal Audit Governance Structure",
-      "Internal Audit Strategy",
-      "Internal Audit Charter",
-      "Target Operating Model",
-      "Audit Methodology & Procedures",
-      "Function Implementation & Launch",
+      { en: "Internal Audit Governance Structure", ar: "هيكل حوكمة المراجعة الداخلية" },
+      { en: "Internal Audit Strategy", ar: "استراتيجية المراجعة الداخلية" },
+      { en: "Internal Audit Charter", ar: "ميثاق المراجعة الداخلية" },
+      { en: "Target Operating Model", ar: "نموذج التشغيل المستهدف" },
+      { en: "Audit Methodology & Procedures", ar: "منهجية وإجراءات المراجعة" },
+      { en: "Function Implementation & Launch", ar: "تنفيذ وإطلاق الوظيفة" },
     ],
     deliverables: [
-      "Internal audit charter",
-      "Governance framework documentation",
-      "Operating model design",
-      "Methodology and tools",
+      { en: "Internal audit charter", ar: "ميثاق المراجعة الداخلية" },
+      { en: "Governance framework documentation", ar: "توثيق إطار الحوكمة" },
+      { en: "Operating model design", ar: "تصميم نموذج التشغيل" },
+      { en: "Methodology and tools", ar: "المنهجية والأدوات" },
     ],
   },
   {
     slug: "internal-audit-transformation",
-    title: "Internal Audit Transformation",
-    tagline: "Turn an existing function into a more effective one.",
-    description:
-      "A structured transformation journey for organisations seeking a more effective, relevant, and sustainable internal audit function.",
+    title: { en: "Internal Audit Transformation", ar: "تحويل المراجعة الداخلية" },
+    tagline: { en: "Turn an existing function into a more effective one.", ar: "تحويل الوظيفة الحالية إلى وظيفة أكثر فعالية." },
+    description: {
+      en: "A structured transformation journey for organisations seeking a more effective, relevant, and sustainable internal audit function.",
+      ar: "رحلة تحول منظمة للمنظمات التي تسعى إلى وظيفة مراجعة داخلية أكثر فعالية وملاءمة واستدامة."
+    },
     icon: "RefreshCcw",
     outcomes: [
-      "Current-State & Maturity Assessment",
-      "Governance Model Enhancement",
-      "Operating Model Optimisation",
-      "Methodology & Process Enhancement",
-      "Internal Audit Capability Development",
-      "Prioritised Transformation Roadmap",
+      { en: "Current-State & Maturity Assessment", ar: "تقييم الوضع الحالي والنضج" },
+      { en: "Governance Model Enhancement", ar: "تعزيز نموذج الحوكمة" },
+      { en: "Operating Model Optimisation", ar: "تحسين نموذج التشغيل" },
+      { en: "Methodology & Process Enhancement", ar: "تعزيز المنهجية والعمليات" },
+      { en: "Internal Audit Capability Development", ar: "تطوير قدرات المراجعة الداخلية" },
+      { en: "Prioritised Transformation Roadmap", ar: "خارطة طريق التحول ذات الأولوية" },
     ],
     deliverables: [
-      "Current state assessment report",
-      "Transformation roadmap",
-      "Enhanced methodology",
-      "Capability development plan",
+      { en: "Current state assessment report", ar: "تقرير تقييم الوضع الحالي" },
+      { en: "Transformation roadmap", ar: "خارطة طريق التحول" },
+      { en: "Enhanced methodology", ar: "منهجية معززة" },
+      { en: "Capability development plan", ar: "خطة تطوير القدرات" },
     ],
   },
   {
     slug: "quality-assurance-and-improvement-program",
-    title: "Quality Assurance & Improvement Program (QAIP)",
-    tagline: "Independent evidence of internal audit quality.",
-    description:
-      "Independent assessment and improvement support to help internal audit functions evaluate performance and strengthen alignment with the IIA Global Internal Audit Standards.",
+    title: { en: "Quality Assurance & Improvement Program (QAIP)", ar: "برنامج تأكيد وتحسين الجودة (QAIP)" },
+    tagline: { en: "Independent evidence of internal audit quality.", ar: "دليل مستقل على جودة المراجعة الداخلية." },
+    description: {
+      en: "Independent assessment and improvement support to help internal audit functions evaluate performance and strengthen alignment with the IIA Global Internal Audit Standards.",
+      ar: "دعم التقييم والتحسين المستقل لمساعدة وظائف المراجعة الداخلية على تقييم الأداء وتعزيز التوافق مع المعايير العالمية للمراجعة الداخلية (IIA)."
+    },
     icon: "CheckCircle2",
     outcomes: [
-      "Internal Quality Assessments",
-      "Assessment of Standards Conformance",
-      "Identification of Improvement Opportunities",
-      "Preparation for External Quality Assessments",
-      "Ongoing Quality & Performance Monitoring",
+      { en: "Internal Quality Assessments", ar: "تقييمات الجودة الداخلية" },
+      { en: "Assessment of Standards Conformance", ar: "تقييم التوافق مع المعايير" },
+      { en: "Identification of Improvement Opportunities", ar: "تحديد فرص التحسين" },
+      { en: "Preparation for External Quality Assessments", ar: "الاستعداد لتقييمات الجودة الخارجية" },
+      { en: "Ongoing Quality & Performance Monitoring", ar: "المراقبة المستمرة للجودة والأداء" },
     ],
     deliverables: [
-      "QAIP assessment report",
-      "Conformance statement",
-      "Improvement plan",
-      "External assessment readiness guide",
+      { en: "QAIP assessment report", ar: "تقرير تقييم برنامج تأكيد وتحسين الجودة" },
+      { en: "Conformance statement", ar: "بيان التوافق" },
+      { en: "Improvement plan", ar: "خطة التحسين" },
+      { en: "External assessment readiness guide", ar: "دليل الجاهزية للتقييم الخارجي" },
     ],
   },
 ];
@@ -150,30 +168,38 @@ export const SERVICES: ServiceItem[] = [
 export const METHODOLOGY = [
   {
     step: "01",
-    title: "Initial Discussion",
-    description:
-      "Clarifying the organisation's needs, priorities, and expectations.",
+    title: { en: "Initial Discussion", ar: "المناقشة الأولية" },
+    description: {
+      en: "Clarifying the organisation's needs, priorities, and expectations.",
+      ar: "توضيح احتياجات المنظمة وأولوياتها وتوقعاتها."
+    },
     icon: "MessageSquare",
   },
   {
     step: "02",
-    title: "Engagement Scoping",
-    description:
-      "Agreeing the scope, objectives, deliverables, and resources required.",
+    title: { en: "Engagement Scoping", ar: "تحديد نطاق العمل" },
+    description: {
+      en: "Agreeing the scope, objectives, deliverables, and resources required.",
+      ar: "الاتفاق على النطاق والأهداف والمخرجات والموارد المطلوبة."
+    },
     icon: "Scope",
   },
   {
     step: "03",
-    title: "Engagement Agreement",
-    description:
-      "Confirming the commercial terms and delivery arrangements.",
+    title: { en: "Engagement Agreement", ar: "اتفاقية الارتباط" },
+    description: {
+      en: "Confirming the commercial terms and delivery arrangements.",
+      ar: "تأكيد الشروط التجارية وترتيبات التنفيذ."
+    },
     icon: "FileText",
   },
   {
     step: "04",
-    title: "Internal Audit Delivery",
-    description:
-      "Delivering the agreed work, reporting, and follow-up activities.",
+    title: { en: "Internal Audit Delivery", ar: "تنفيذ المراجعة الداخلية" },
+    description: {
+      en: "Delivering the agreed work, reporting, and follow-up activities.",
+      ar: "تنفيذ العمل المتفق عليه ورفع التقارير وأنشطة المتابعة."
+    },
     icon: "CheckSquare",
   },
 ];
@@ -183,15 +209,20 @@ export const METHODOLOGY = [
 // ---------------------------------------------------------------------------
 
 export const FRAMEWORK_AGREEMENTS = {
-  title: "Framework Agreements",
-  description:
-    "A flexible model for ongoing internal audit support, covering future Internal Audit Outsourcing and Co-Sourcing engagements as needs arise.",
+  title: { en: "Framework Agreements", ar: "اتفاقيات الإطار" },
+  description: {
+    en: "A flexible model for ongoing internal audit support, covering future Internal Audit Outsourcing and Co-Sourcing engagements as needs arise.",
+    ar: "نموذج مرن لدعم المراجعة الداخلية المستمر، يغطي ارتباطات إسناد المراجعة الداخلية لجهات خارجية والمراجعة الداخلية المشتركة المستقبلية حسب الحاجة."
+  },
   includes: [
-    "Commercial & Engagement Terms",
-    "Reporting & Communication Arrangements",
-    "Standard Engagement Process",
+    { en: "Commercial & Engagement Terms", ar: "الشروط التجارية وشروط الارتباط" },
+    { en: "Reporting & Communication Arrangements", ar: "ترتيبات رفع التقارير والتواصل" },
+    { en: "Standard Engagement Process", ar: "عملية الارتباط القياسية" },
   ],
-  additional: "Once the framework is in place, individual assignments can be initiated efficiently as organisational requirements emerge.",
+  additional: {
+    en: "Once the framework is in place, individual assignments can be initiated efficiently as organisational requirements emerge.",
+    ar: "بمجرد وضع الإطار، يمكن البدء في المهام الفردية بكفاءة مع ظهور متطلبات المنظمة."
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -201,32 +232,46 @@ export const FRAMEWORK_AGREEMENTS = {
 export const CAREERS: CareerItem[] = [
   {
     slug: "internal-audit-senior",
-    title: "Senior Internal Auditor",
-    team: "Internal Audit",
-    location: "Riyadh",
+    title: { en: "Senior Internal Auditor", ar: "مراقب داخلي أول" },
+    team: { en: "Internal Audit", ar: "المراجعة الداخلية" },
+    location: { en: "Riyadh", ar: "الرياض" },
     type: "Full-time",
-    level: "Senior",
-    summary:
-      "Join our team of internal audit professionals and work with leading organisations across sectors.",
+    level: { en: "Senior", ar: "خبير" },
+    summary: {
+      en: "Join our team of internal audit professionals and work with leading organisations across sectors.",
+      ar: "انضم إلى فريقنا من محترفي المراجعة الداخلية واعمل مع منظمات رائدة في مختلف القطاعات."
+    },
     responsibilities: [
-      "Lead internal audit engagements",
-      "Develop risk-based audit plans",
-      "Prepare audit reports",
-      "Engage with audit committees and management",
+      { en: "Lead internal audit engagements", ar: "قيادة ارتباطات المراجعة الداخلية" },
+      { en: "Develop risk-based audit plans", ar: "تطوير خطط مراجعة قائمة على المخاطر" },
+      { en: "Prepare audit reports", ar: "إعداد تقارير المراجعة" },
+      { en: "Engage with audit committees and management", ar: "التواصل مع لجان المراجعة والإدارة" },
     ],
     requirements: [
-      "5+ years internal audit experience",
-      "Strong understanding of IIA standards",
-      "Experience in governance, risk, and controls",
-      "Excellent communication skills",
+      { en: "5+ years internal audit experience", ar: "خبرة تزيد عن 5 سنوات في المراجعة الداخلية" },
+      { en: "Strong understanding of IIA standards", ar: "فهم قوي لمعايير IIA" },
+      { en: "Experience in governance, risk, and controls", ar: "خبرة في الحوكمة والمخاطر والرقابة" },
+      { en: "Excellent communication skills", ar: "مهارات تواصل ممتازة" },
     ],
   },
 ];
 
 export const PERKS = [
-  { title: "Professional Growth", description: "Continuous learning and development in internal audit.", icon: "GraduationCap" },
-  { title: "Impactful Work", description: "Work with leading organisations to strengthen governance and controls.", icon: "TrendingUp" },
-  { title: "Collaborative Team", description: "Work with experienced internal audit professionals.", icon: "Users" },
+  {
+    title: { en: "Professional Growth", ar: "النمو المهني" },
+    description: { en: "Continuous learning and development in internal audit.", ar: "التعلم والتطوير المستمر في المراجعة الداخلية." },
+    icon: "GraduationCap"
+  },
+  {
+    title: { en: "Impactful Work", ar: "عمل مؤثر" },
+    description: { en: "Work with leading organisations to strengthen governance and controls.", ar: "العمل مع منظمات رائدة لتعزيز الحوكمة والرقابة." },
+    icon: "TrendingUp"
+  },
+  {
+    title: { en: "Collaborative Team", ar: "فريق تعاوني" },
+    description: { en: "Work with experienced internal audit professionals.", ar: "العمل مع محترفي مراجعة داخلية ذوي خبرة." },
+    icon: "Users"
+  },
 ];
 
 // ---------------------------------------------------------------------------

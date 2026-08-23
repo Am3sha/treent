@@ -42,7 +42,7 @@ export function Reveal({
   const Tag = motion[as] as typeof motion.div;
 
   const variants: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : y },
+    hidden: { opacity: 0.001, y: reduced ? 0 : y }, // Almost transparent but not 0 to avoid layout issues
     visible: { opacity: 1, y: 0 },
   };
 
@@ -50,14 +50,16 @@ export function Reveal({
     <Tag
       ref={ref}
       className={className}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      initial={reduced ? "visible" : "hidden"}
+      animate={inView ? "visible" : (reduced ? "visible" : "hidden")}
       variants={variants}
       transition={{
         duration: reduced ? 0 : duration,
         ease: EASE_OUT,
         delay: reduced ? 0 : delay,
       }}
+      // Ensure content is visible if JS fails or slow
+      style={{ opacity: inView ? 1 : (reduced ? 1 : 0.001) }}
     >
       {children}
     </Tag>
@@ -97,7 +99,7 @@ export function RevealStagger({
   };
 
   const item: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : y },
+    hidden: { opacity: 0.001, y: reduced ? 0 : y },
     visible: {
       opacity: 1,
       y: 0,
@@ -112,8 +114,8 @@ export function RevealStagger({
     <Tag
       ref={ref}
       className={className}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      initial={reduced ? "visible" : "hidden"}
+      animate={inView ? "visible" : (reduced ? "visible" : "hidden")}
       variants={container}
     >
       {React.Children.map(children, (child) => {

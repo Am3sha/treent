@@ -36,6 +36,7 @@ import {
   COMPANY,
 } from "@/lib/content";
 import type { ViewKey } from "@/lib/types";
+import { useTranslation } from "@/lib/i18n";
 
 // Helper to set the URL hash (used for sub-path navigation to articles/case studies)
 function navigateToHash(path: string) {
@@ -55,6 +56,7 @@ interface SearchEntry {
 }
 
 export function CommandPalette() {
+  const { l } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const navigate = useNav((s) => s.navigate);
 
@@ -133,12 +135,12 @@ export function CommandPalette() {
     };
     const serviceEntries: SearchEntry[] = SERVICES.map((s) => ({
       id: `service-${s.slug}`,
-      label: s.title,
-      hint: s.tagline,
+      label: l(s.title),
+      hint: l(s.tagline),
       group: "Services",
       icon: serviceIcons[s.icon] ?? Compass,
       action: () => goService(s.slug as ViewKey),
-      keywords: `${s.tagline} ${s.description}`,
+      keywords: `${l(s.tagline)} ${l(s.description)}`,
     }));
 
     return [...navEntries, ...serviceEntries];
@@ -196,7 +198,7 @@ export function CommandPalette() {
       <div className="flex items-center justify-between border-t border-border/60 px-3 py-2 text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1">
           <Search className="h-3 w-3" />
-          {COMPANY.name}
+          {l(COMPANY.name as any)}
         </span>
         <span className="flex items-center gap-2">
           <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">

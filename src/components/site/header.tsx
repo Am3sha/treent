@@ -11,6 +11,7 @@ import { useNav } from "@/lib/store";
 import { SERVICES } from "@/lib/content";
 import type { ViewKey } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 const emptySubscribe = () => () => { };
@@ -57,11 +58,12 @@ function ServicesDropdownPanel({
   onNavigate,
   className,
 }: ServicesDropdownPanelProps) {
+  const { l } = useTranslation();
   const { core, development } = getServiceGroups();
 
   const renderGroup = (label: string, items: typeof SERVICES) => (
     <div>
-      <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#003D3C]/55">
+      <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#013D3E]/55">
         {label}
       </p>
       <ul className="space-y-0.5" role="none">
@@ -71,10 +73,10 @@ function ServicesDropdownPanel({
               type="button"
               role="menuitem"
               onClick={() => onNavigate(service.slug as ViewKey)}
-              className="group relative flex w-full items-center rounded-[6px] px-3 py-2.5 text-left text-[13px] font-medium leading-snug text-[#003D3C] transition-colors duration-150 hover:bg-[#ADDFB3]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/50"
+              className="group relative flex w-full items-center rounded-[6px] px-3 py-2.5 text-left text-[13px] font-medium leading-snug text-[#013D3E] transition-colors duration-150 hover:bg-[#ADDFB3]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/50"
             >
               <span className="absolute left-0 h-0 w-[3px] rounded-full bg-[#ADDFB3] opacity-0 transition-all duration-150 group-hover:h-[60%] group-hover:opacity-100 group-focus-visible:h-[60%] group-focus-visible:opacity-100" />
-              <span className="relative">{service.title}</span>
+              <span className="relative">{l(service.title)}</span>
             </button>
           </li>
         ))}
@@ -85,24 +87,24 @@ function ServicesDropdownPanel({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-[7px] border border-[#003D3C]/8 bg-[#FAFBFA] py-2 shadow-[0_12px_40px_-12px_rgba(0,61,60,0.22)]",
+        "overflow-hidden rounded-[7px] border border-[#013D3E]/8 bg-[#FAFBFA] py-2 shadow-[0_12px_40px_-12px_rgba(1,61,62,0.22)]",
         className
       )}
       role="menu"
       aria-label="Services"
     >
       {renderGroup("Core", core)}
-      <div className="my-2 border-t border-[#003D3C]/10" role="separator" />
+      <div className="my-2 border-t border-[#013D3E]/10" role="separator" />
       {renderGroup("Development", development)}
-      <div className="my-2 border-t border-[#003D3C]/10" role="separator" />
+      <div className="my-2 border-t border-[#013D3E]/10" role="separator" />
       <button
         type="button"
         role="menuitem"
         onClick={() => onNavigate("services")}
-        className="mx-2 flex w-[calc(100%-1rem)] items-center justify-between rounded-[6px] px-3 py-2.5 text-left text-[13px] font-semibold text-[#003D3C] transition-colors duration-150 hover:bg-[#ADDFB3]/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/50"
+        className="mx-2 flex w-[calc(100%-1rem)] items-center justify-between rounded-[6px] px-3 py-2.5 text-left text-[13px] font-semibold text-[#013D3E] transition-colors duration-150 hover:bg-[#ADDFB3]/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/50"
       >
         View all services
-        <ArrowUpRight className="h-3.5 w-3.5 text-[#003D3C]/70" />
+        <ArrowUpRight className="h-3.5 w-3.5 text-[#013D3E]/70" />
       </button>
     </div>
   );
@@ -158,6 +160,8 @@ function DesktopServicesNav({ active, onNavigate, reduced }: DesktopServicesNavP
     },
   };
 
+  const { t } = useTranslation();
+
   return (
     <div
       ref={containerRef}
@@ -184,7 +188,7 @@ function DesktopServicesNav({ active, onNavigate, reduced }: DesktopServicesNavP
             : "text-white/95 hover:text-[#ADDFB3]"
         )}
       >
-        Services
+        {t("nav.services")}
         <ChevronDown
           className={cn(
             "h-3.5 w-3.5 transition-transform duration-200 ease-out",
@@ -244,6 +248,7 @@ function MobileServicesNav({
   reduced,
   variants,
 }: MobileServicesNavProps) {
+  const { l, t } = useTranslation();
   const [expanded, setExpanded] = React.useState(false);
 
   const subItemVariants = {
@@ -291,7 +296,7 @@ function MobileServicesNav({
         )}
       >
         <span className="flex items-center gap-2">
-          Services
+          {t("nav.services")}
           {active && <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />}
         </span>
         <ChevronDown
@@ -321,7 +326,7 @@ function MobileServicesNav({
                   onClick={() => onNavigate(service.slug as ViewKey)}
                   className="flex w-full items-center rounded-lg py-3 px-3 text-left text-[15px] font-medium text-white/90 transition-colors duration-200 hover:bg-white/5 hover:text-[#ADDFB3]"
                 >
-                  {service.title}
+                  {l(service.title)}
                 </motion.button>
               ))}
               <motion.button
@@ -342,8 +347,18 @@ function MobileServicesNav({
 }
 
 export function Header() {
+  const { t, isRTL } = useTranslation();
   const storeView = useNav((s) => s.view);
   const navigate = useNav((s) => s.navigate);
+
+  const getNavItems = () => [
+    { label: t("nav.home"), view: "home" as ViewKey },
+    { label: t("nav.about"), view: "about" as ViewKey },
+    { label: t("nav.services"), view: "services" as ViewKey },
+    { label: t("nav.careers"), view: "careers" as ViewKey },
+    { label: t("nav.contact"), view: "contact" as ViewKey },
+  ];
+
   const mounted = React.useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -354,7 +369,9 @@ export function Header() {
   const reduced = useReducedMotion();
   const isMobile = useIsMobile();
   const scrollThreshold = 50;
-  const mobileMenuVisible = mobileOpen && isMobile;
+  // On server/initial render, we don't know if it's mobile, but we assume mobile
+  // to avoid showing desktop nav on phones.
+  const mobileMenuVisible = mounted ? (mobileOpen && isMobile) : false;
 
   const view = mounted ? storeView : "home";
 
@@ -429,10 +446,12 @@ export function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-[100] w-full transition-all duration-300 border-b",
-        scrolled
-          ? "bg-[#003D3C]/98 backdrop-blur-md border-[#002f2e]/60 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.35)]"
-          : "bg-[#003D3C] border-[#002f2e]/40"
+        "fixed top-0 inset-x-0 z-[100] w-full transition-all duration-300 border-b",
+        mobileMenuVisible 
+          ? "bg-[#013D3E] h-screen border-none shadow-none" 
+          : scrolled
+            ? "bg-[#013D3E] backdrop-blur-md border-[#002f2e]/60 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.35)]"
+            : "bg-[#013D3E] border-[#002f2e]/40"
       )}
     >
       <div className="section-shell flex h-[88px] items-center justify-between">
@@ -445,11 +464,14 @@ export function Header() {
         </button>
 
         <nav
-          className="hidden items-center gap-7 lg:gap-8 xl:gap-10 md:flex"
+          className={cn(
+            "hidden items-center gap-7 lg:gap-8 xl:gap-10 md:flex",
+            isRTL && "font-arabic"
+          )}
           aria-label="Primary navigation"
         >
-          {NAV_ITEMS.map((item) => {
-            if (item.label === "Services") {
+          {getNavItems().map((item) => {
+            if (item.view === "services") {
               return (
                 <DesktopServicesNav
                   key={item.label}
@@ -492,20 +514,24 @@ export function Header() {
             onClick={() => go("benchmark-quiz")}
             className={cn(
               "hidden md:inline-flex text-[14px] font-semibold tracking-wide transition-colors duration-200 py-1 border-b border-transparent hover:border-[#ADDFB3]",
+              isRTL && "font-arabic",
               view === "benchmark-quiz"
                 ? "text-[#ADDFB3] border-[#ADDFB3]"
                 : "text-white/95 hover:text-[#ADDFB3]"
             )}
           >
-            Start Assessment
+            {t("nav.start_assessment")}
           </button>
 
           <Button
             onClick={() => go("contact")}
-            className="hidden sm:inline-flex h-11 items-center gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#003D3C] shadow-none transition-all duration-200 ease-out hover:bg-[#c2e8c4] hover:shadow-[0_6px_20px_-8px_rgba(173,223,179,0.6)] hover:scale-[1.02] active:scale-[0.98]"
+            className={cn(
+              "hidden sm:inline-flex h-11 items-center gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#013D3E] shadow-none transition-all duration-200 ease-out hover:bg-[#c2e8c4] hover:shadow-[0_6px_20px_-8px_rgba(173,223,179,0.6)] hover:scale-[1.02] active:scale-[0.98]",
+              isRTL && "font-arabic"
+            )}
           >
-            Get Started
-            <ArrowUpRight className="h-4 w-4 text-[#003D3C] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            {t("nav.contact")}
+            <ArrowUpRight className="h-4 w-4 text-[#013D3E] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Button>
 
           <button
@@ -521,21 +547,21 @@ export function Header() {
       <AnimatePresence>
         {mobileMenuVisible && (
           <motion.div
-            className="fixed inset-0 z-[200] bg-[#003D3C] md:hidden"
+            className="fixed inset-0 z-[200] bg-[#013D3E] md:hidden"
             initial="hidden"
             animate="visible"
             exit="exit"
           >
             <motion.div
               variants={backdropVariants}
-              className="absolute inset-0 bg-[#003D3C]"
+              className="absolute inset-0 bg-[#013D3E] opacity-100"
               onClick={() => setMobileOpen(false)}
               aria-hidden="true"
             />
 
             <motion.div
               variants={panelVariants}
-              className="relative ml-auto flex h-full w-[86%] max-w-[420px] flex-col bg-[#003D3C] text-white shadow-2xl border-l border-white/10"
+              className="relative ml-auto flex h-full w-[86%] max-w-[420px] flex-col bg-[#013D3E] text-white shadow-2xl border-l border-white/10"
             >
               <div className="section-shell flex h-[88px] items-center justify-between border-b border-white/10">
                 <button
@@ -556,8 +582,8 @@ export function Header() {
 
               <div className="flex-1 overflow-y-auto px-6 py-8">
                 <nav className="space-y-1" aria-label="Mobile navigation">
-                  {NAV_ITEMS.map((item) => {
-                    if (item.label === "Services") {
+                  {getNavItems().map((item) => {
+                    if (item.view === "services") {
                       return (
                         <MobileServicesNav
                           key={item.label}
@@ -595,12 +621,13 @@ export function Header() {
                     onClick={() => go("benchmark-quiz")}
                     className={cn(
                       "flex w-full items-center justify-between py-4 px-3 rounded-lg text-left text-[18px] font-semibold transition-all duration-200 border-t border-white/10 mt-2 pt-4",
+                      isRTL && "font-arabic",
                       view === "benchmark-quiz"
                         ? "text-[#ADDFB3] bg-[#ADDFB3]/10"
                         : "text-white hover:text-[#ADDFB3] hover:bg-white/5"
                     )}
                   >
-                    <span>Start Assessment</span>
+                    <span>{t("nav.start_assessment")}</span>
                     {view === "benchmark-quiz" && (
                       <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
                     )}
@@ -610,9 +637,12 @@ export function Header() {
                 <motion.div variants={ctaVariants} className="mt-8 pt-4">
                   <Button
                     onClick={() => go("contact")}
-                    className="h-14 w-full items-center justify-center gap-2 rounded-[10px] bg-[#ADDFB3] text-[16px] font-semibold text-[#003D3C] transition-all duration-200 hover:bg-[#c2e8c4] hover:scale-[1.01] active:scale-[0.99]"
+                    className={cn(
+                      "h-14 w-full items-center justify-center gap-2 rounded-[10px] bg-[#ADDFB3] text-[16px] font-semibold text-[#013D3E] transition-all duration-200 hover:bg-[#c2e8c4] hover:scale-[1.01] active:scale-[0.99]",
+                      isRTL && "font-arabic"
+                    )}
                   >
-                    Get Started
+                    {t("nav.get_started")}
                     <ArrowUpRight className="h-5 w-5" />
                   </Button>
                 </motion.div>

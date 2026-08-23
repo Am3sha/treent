@@ -6,6 +6,7 @@ import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { BackToTop } from "@/components/site/back-to-top";
 import { CommandPalette } from "@/components/site/command-palette";
+import { LanguageSwitcher } from "@/components/site/language-switcher";
 import type { ViewKey } from "@/lib/types";
 import { SERVICES, FRAMEWORK_AGREEMENTS } from "@/lib/content";
 import { Icon } from "@/components/site/icon";
@@ -55,7 +56,10 @@ const PUBLIC_BENCHMARK_INSIGHTS_ENABLED = false;
 
 import { ServiceDetailView } from "@/components/views/service-detail-view";
 
+import { useTranslation } from "@/lib/i18n";
+
 function FrameworkAgreementsView() {
+  const { l, t } = useTranslation();
   const navigate = useNav((s) => s.navigate);
 
   return (
@@ -65,16 +69,16 @@ function FrameworkAgreementsView() {
         <div className="absolute inset-0 bg-grid mask-fade-b opacity-40 pointer-events-none" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 md:pb-24 md:pt-24 lg:px-8">
           <Reveal>
-            <Eyebrow>Services</Eyebrow>
+            <Eyebrow>{t('nav.services')}</Eyebrow>
           </Reveal>
           <Reveal delay={0.05}>
             <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight text-[#121212] sm:text-5xl md:text-6xl md:leading-[1.02]">
-              {FRAMEWORK_AGREEMENTS.title}
+              {l(FRAMEWORK_AGREEMENTS.title)}
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance">
-              {FRAMEWORK_AGREEMENTS.description}
+              {l(FRAMEWORK_AGREEMENTS.description)}
             </p>
           </Reveal>
         </div>
@@ -82,8 +86,8 @@ function FrameworkAgreementsView() {
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <div className="max-w-3xl">
           <SectionHeading
-            eyebrow="What's included"
-            title="Framework agreement components"
+            eyebrow={t('services.framework.eyebrow')}
+            title={t('services.framework.title')}
             description=""
           />
           <ul className="mt-8 space-y-4">
@@ -91,14 +95,14 @@ function FrameworkAgreementsView() {
               <Reveal key={i} delay={i * 0.05}>
                 <li className="flex items-start gap-3 text-base leading-relaxed text-foreground">
                   <Check className="mt-1 h-5 w-5 shrink-0 text-[#003D3C]" />
-                  {item}
+                  {l(item)}
                 </li>
               </Reveal>
             ))}
           </ul>
           <Reveal delay={0.2}>
             <p className="mt-8 text-lg leading-relaxed text-muted-foreground">
-              {FRAMEWORK_AGREEMENTS.additional}
+              {l(FRAMEWORK_AGREEMENTS.additional)}
             </p>
           </Reveal>
           <Reveal delay={0.25}>
@@ -108,7 +112,7 @@ function FrameworkAgreementsView() {
                 onClick={() => navigate("contact")}
                 className="h-11 gap-2 rounded-full bg-[#003D3C] px-6 text-white shadow-sm hover:bg-[#002b2a]"
               >
-                Inquire about a framework agreement
+                {t('services.framework.cta_contact')}
               </Button>
               <Button
                 size="lg"
@@ -116,7 +120,7 @@ function FrameworkAgreementsView() {
                 onClick={() => navigate("services")}
                 className="h-11 gap-2 rounded-full border-gray-300 text-[#003D3C] hover:bg-[#EEF4F2]"
               >
-                View all services
+                {t('services.common.view_all')}
               </Button>
             </div>
           </Reveal>
@@ -159,12 +163,21 @@ const VIEWS: Record<ViewKey, React.ComponentType> = {
 
 function useHashSync() {
   const setView = useNav((s) => s.setView);
+  const setLang = useNav((s) => s.setLang);
+
   React.useEffect(() => {
-    // Sync from hash on mount
     const apply = () => {
-      const raw = window.location.hash.replace(/^#\/?/, "");
-      // Only consider the first path segment for view routing (e.g. "resources"
-      // from "resources/the-maturity-trap"). Sub-paths are handled by the view.
+      let raw = window.location.hash.replace(/^#\/?/, "");
+      let lang: "en" | "ar" = "en";
+
+      if (raw.startsWith("ar/")) {
+        lang = "ar";
+        raw = raw.replace("ar/", "");
+      } else if (raw === "ar") {
+        lang = "ar";
+        raw = "";
+      }
+
       const firstSegment = raw.split("/")[0] as ViewKey;
       const valid: ViewKey[] = [
         "home",
@@ -186,20 +199,26 @@ function useHashSync() {
         "benchmark-insights",
         "not-found",
       ];
-      // If hash is non-empty but doesn't match a valid view, show 404
+
       const v = valid.includes(firstSegment)
         ? firstSegment
         : raw.length > 0
           ? "not-found"
           : "home";
+
       if (useNav.getState().view !== v) {
         useNav.setState({ view: v });
+      }
+      if (useNav.getState().lang !== lang) {
+        useNav.setState({ lang });
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
       }
     };
     apply();
     window.addEventListener("hashchange", apply);
     return () => window.removeEventListener("hashchange", apply);
-  }, [setView]);
+  }, [setView, setLang]);
 }
 
 const emptySubscribe = () => () => { };
@@ -223,7 +242,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 pt-[88px]">
         <React.Suspense
           fallback={
             <div className="flex min-h-[60vh] items-center justify-center">
@@ -236,6 +255,7 @@ export default function Home() {
       </main>
       <Footer />
       <BackToTop />
+      <LanguageSwitcher />
       <CommandPalette />
     </div>
   );

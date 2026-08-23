@@ -8,54 +8,51 @@ import { COMPANY } from "@/lib/content";
 import { Icon } from "@/components/site/icon";
 import { Reveal, RevealStagger, Eyebrow, useReducedMotion } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
-const VALUES = [
-  {
-    title: "Independence and objectivity",
-    description:
-      "We maintain complete independence in all our work, ensuring unbiased assessments and recommendations that serve only your organization's best interests.",
-    icon: "ShieldCheck",
-  },
-  {
-    title: "Excellence in execution",
-    description:
-      "We adhere strictly to professional standards and best practices, delivering high-quality work that you can trust.",
-    icon: "CheckCircle2",
-  },
-  {
-    title: "Integrity and transparency",
-    description:
-      "We are honest, transparent, and ethical in all our interactions. We will tell you what you need to hear, not what you want to hear.",
-    icon: "MessagesSquare",
-  },
-  {
-    title: "Collaboration and partnership",
-    description:
-      "We work alongside your team as trusted partners, transferring knowledge and building capability throughout the engagement.",
-    icon: "Users",
-  },
-  {
-    title: "Continuous improvement",
-    description:
-      "We are committed to learning and improving, staying current with the latest standards and practices in internal audit.",
-    icon: "RefreshCw",
-  },
-  {
-    title: "Results-focused",
-    description:
-      "We measure our success by the tangible improvements in your governance, risk management, and internal control processes.",
-    icon: "Target",
-  },
-];
-
 export function AboutView() {
+  const { t, l, isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
   const reduced = useReducedMotion();
 
+  const getValues = () => [
+    {
+      title: t("about.values.v1.title"),
+      description: t("about.values.v1.description"),
+      icon: "ShieldCheck",
+    },
+    {
+      title: t("about.values.v2.title"),
+      description: t("about.values.v2.description"),
+      icon: "CheckCircle2",
+    },
+    {
+      title: t("about.values.v3.title"),
+      description: t("about.values.v3.description"),
+      icon: "MessagesSquare",
+    },
+    {
+      title: t("about.values.v4.title"),
+      description: t("about.values.v4.description"),
+      icon: "Users",
+    },
+    {
+      title: t("about.values.v5.title"),
+      description: t("about.values.v5.description"),
+      icon: "RefreshCw",
+    },
+    {
+      title: t("about.values.v6.title"),
+      description: t("about.values.v6.description"),
+      icon: "Target",
+    },
+  ];
+
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col", isRTL && "font-arabic")}>
       {/* ------------------------------------------------------------------ */}
       {/* HERO                                                                */}
       {/* ------------------------------------------------------------------ */}
@@ -69,21 +66,21 @@ export function AboutView() {
               <Reveal y={14} duration={0.55}>
                 <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
                   <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
-                  About Trennt
+                  {t("about.hero.eyebrow")}
                 </div>
               </Reveal>
               <Reveal y={14} duration={0.55} delay={0.05}>
-                <h1
-                  id="about-hero-heading"
-                  className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
-                >
-                  An internal audit firm dedicated exclusively to{" "}
-                  <span className="text-[#ADDFB3]">internal audit delivery.</span>
-                </h1>
+	                <h1
+	                  id="about-hero-heading"
+	                  className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
+	                >
+	                  {t("about.hero.title_p1")}{" "}
+	                  <span className="text-[#ADDFB3]">{t("about.hero.title_p2")}</span>
+	                </h1>
               </Reveal>
               <Reveal y={14} duration={0.55} delay={0.1}>
                 <p className="mt-6 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80">
-                  {COMPANY.description}
+                  {t("about.hero.description")}
                 </p>
               </Reveal>
             </div>
@@ -93,10 +90,10 @@ export function AboutView() {
                   {/* Subtle Eyebrow Header */}
                   <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#ADDFB3]">
-                      Exclusive Practice
+                      {t("about.sidebar.eyebrow")}
                     </span>
                     <span className="text-[10px] font-medium text-white/50">
-                      Riyadh, KSA
+                      {t("about.sidebar.location")}
                     </span>
                   </div>
 
@@ -107,9 +104,9 @@ export function AboutView() {
                         <ShieldCheck className="h-3 w-3" />
                       </span>
                       <div>
-                        <h4 className="text-xs font-semibold text-white">100% Dedicated Practice</h4>
+                        <h4 className="text-xs font-semibold text-white">{t("about.sidebar.p1.title")}</h4>
                         <p className="mt-0.5 text-[11px] leading-snug text-white/70">
-                          Exclusively focused on internal audit — zero generalist dilution.
+                          {t("about.sidebar.p1.desc")}
                         </p>
                       </div>
                     </div>
@@ -119,9 +116,9 @@ export function AboutView() {
                         <CheckCircle2 className="h-3 w-3" />
                       </span>
                       <div>
-                        <h4 className="text-xs font-semibold text-white">IIA Standards Compliance</h4>
+                        <h4 className="text-xs font-semibold text-white">{t("about.sidebar.p2.title")}</h4>
                         <p className="mt-0.5 text-[11px] leading-snug text-white/70">
-                          Aligned with IIA Global Standards & KSA governance rules.
+                          {t("about.sidebar.p2.desc")}
                         </p>
                       </div>
                     </div>
@@ -131,9 +128,9 @@ export function AboutView() {
                         <Users className="h-3 w-3" />
                       </span>
                       <div>
-                        <h4 className="text-xs font-semibold text-white">Board & Leadership Partner</h4>
+                        <h4 className="text-xs font-semibold text-white">{t("about.sidebar.p3.title")}</h4>
                         <p className="mt-0.5 text-[11px] leading-snug text-white/70">
-                          Independent objective insight for Audit Committees & C-suites.
+                          {t("about.sidebar.p3.desc")}
                         </p>
                       </div>
                     </div>
@@ -142,7 +139,7 @@ export function AboutView() {
                   {/* Direct Contact Footer */}
                   <div className="mt-5 pt-3.5 border-t border-white/10 flex items-center justify-between">
                     <div>
-                      <div className="text-[9px] uppercase tracking-wider text-white/50 font-semibold">Direct Inquiry</div>
+                      <div className="text-[9px] uppercase tracking-wider text-white/50 font-semibold">{t("about.sidebar.footer.eyebrow")}</div>
                       <a href={`mailto:${COMPANY.email}`} className="text-[11px] font-medium text-[#ADDFB3] hover:underline">
                         {COMPANY.email}
                       </a>
@@ -151,7 +148,7 @@ export function AboutView() {
                       onClick={() => navigate("contact")}
                       className="h-8 gap-1 rounded-full bg-white/10 px-3.5 text-[11px] font-semibold text-white border border-white/20 hover:bg-white hover:text-[#003D3C] transition-all"
                     >
-                      Contact Us
+                      {t("nav.contact")}
                       <ArrowUpRight className="h-3 w-3" />
                     </Button>
                   </div>
@@ -175,13 +172,13 @@ export function AboutView() {
             <Reveal y={14} duration={0.55}>
               <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
                 <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                Who We Are
+                {t("about.who.eyebrow")}
               </div>
               <h2
                 id="who-we-are-heading"
                 className="mt-4 text-[32px] sm:text-[42px] font-bold text-[#121212] leading-tight"
               >
-                Independent internal audit, focused on what matters.
+                {t("about.who.title")}
               </h2>
             </Reveal>
           </div>
@@ -189,13 +186,13 @@ export function AboutView() {
             <Reveal y={14} duration={0.55} delay={0.08}>
               <div className="space-y-6 text-[15px] sm:text-[16px] leading-relaxed text-gray-600">
                 <p>
-                  Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery.
+                  {t("about.who.p1")}
                 </p>
                 <p>
-                  We support Boards, Audit Committees, and senior management by providing objective insight into the effectiveness of risk management, internal controls, and governance processes.
+                  {t("about.who.p2")}
                 </p>
                 <p>
-                  Through structured, risk-based engagements, Trennt helps organisations strengthen governance, enhance control effectiveness, and support informed decision-making.
+                  {t("about.who.p3")}
                 </p>
               </div>
             </Reveal>
@@ -214,21 +211,21 @@ export function AboutView() {
           <Reveal y={14} duration={0.55}>
             <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
               <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-              What We Believe
+              {t("about.values.eyebrow")}
             </div>
             <h2
               id="values-heading"
               className="mt-4 text-[32px] sm:text-[42px] font-bold text-[#121212]"
             >
-              The principles that guide our work.
+              {t("about.values.title")}
             </h2>
             <p className="mt-3 max-w-2xl text-[14px] text-gray-500 leading-relaxed">
-              These values define who we are, how we work, and what you can expect when you partner with Trennt.
+              {t("about.values.description")}
             </p>
           </Reveal>
 
           <RevealStagger stagger={0.08} delay={0.1} y={14} childDuration={0.5} className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {VALUES.map((v, i) => (
+            {getValues().map((v, i) => (
               <motion.div
                 key={v.title}
                 whileHover={reduced ? {} : { y: -5 }}
@@ -240,10 +237,10 @@ export function AboutView() {
                     <Icon name={v.icon} className="h-5 w-5" />
                   </span>
                   <h3 className="mt-6 text-[18px] font-bold text-[#121212]">
-                    {v.title}
+                    {l(v.title)}
                   </h3>
                   <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
-                    {v.description}
+                    {l(v.description)}
                   </p>
                 </div>
               </motion.div>
@@ -266,17 +263,16 @@ export function AboutView() {
                 <div className="lg:col-span-8">
                   <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
                     <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
-                    Let's Work Together
+                    {t("about.cta.eyebrow")}
                   </div>
                   <h2
                     id="about-cta-heading"
                     className="mt-4 text-[32px] sm:text-[44px] font-bold text-white leading-tight"
                   >
-                    Ready to strengthen your internal audit function?
+                    {t("about.cta.title")}
                   </h2>
                   <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/80">
-                    We'd welcome the opportunity to discuss your needs and how
-                    we can help. Contact us to schedule an initial conversation.
+                    {t("about.cta.description")}
                   </p>
                 </div>
                 <div className="lg:col-span-4 flex flex-col gap-3.5 sm:flex-row lg:justify-end">
@@ -284,14 +280,14 @@ export function AboutView() {
                     onClick={() => navigate("services")}
                     className="h-11 gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#003D3C] shadow-none transition-all duration-200 hover:bg-[#c2e8c4] hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    Explore Services
+                    {t("about.cta.primary")}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                   <Button
                     onClick={() => navigate("contact")}
                     className="h-11 gap-2 rounded-[10px] border border-white/30 bg-transparent px-6 text-[14px] font-semibold text-white transition-all duration-200 hover:bg-white/10 hover:border-white/50 active:scale-[0.98]"
                   >
-                    Contact Us
+                    {t("nav.contact")}
                     <ArrowUpRight className="h-4 w-4" />
                   </Button>
                 </div>

@@ -13,6 +13,7 @@ import {
 import { useNav } from "@/lib/store";
 import { CAREERS, PERKS } from "@/lib/content";
 import type { CareerItem } from "@/lib/types";
+import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/site/icon";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
@@ -59,27 +60,35 @@ type ApplicationFormValues = z.infer<typeof applicationFormSchema>;
 
 const CULTURE_VALUES = [
   {
-    title: "Senior by default",
-    description:
-      "We hire people who can run work, not staff them onto someone else's. Every consultant owns their workstreams from week one.",
+    title: { en: "Senior by default", ar: "خبراء بشكل افتراضي" },
+    description: {
+      en: "We hire people who can run work, not staff them onto someone else's. Every consultant owns their workstreams from week one.",
+      ar: "نحن نوظف أشخاصاً يمكنهم إدارة العمل بأنفسهم. كل مستشار يمتلك مسارات عمله منذ الأسبوع الأول."
+    },
     icon: "Compass",
   },
   {
-    title: "Apprenticeship, not curriculum",
-    description:
-      "You learn by sitting next to a partner who has done it ten times. We invest in protected learning time, not training theatres.",
+    title: { en: "Apprenticeship, not curriculum", ar: "التلمذة لا المناهج" },
+    description: {
+      en: "You learn by sitting next to a partner who has done it ten times. We invest in protected learning time, not training theatres.",
+      ar: "تتعلم بالجلوس بجانب شريك قام بذلك عشر مرات. نحن نستثمر في وقت التعلم المحمي، وليس في قاعات التدريب."
+    },
     icon: "GraduationCap",
   },
   {
-    title: "One firm, four offices",
-    description:
-      "Small enough that the partners know your work. Large enough that the next engagement can be in a different city, sector, or practice.",
+    title: { en: "One firm, four offices", ar: "شركة واحدة، أربعة مكاتب" },
+    description: {
+      en: "Small enough that the partners know your work. Large enough that the next engagement can be in a different city, sector, or practice.",
+      ar: "صغيرة بما يكفي ليعرف الشركاء عملك. كبيرة بما يكفي ليكون الارتباط القادم في مدينة أو قطاع أو ممارسة مختلفة."
+    },
     icon: "Building2",
   },
   {
-    title: "Life outside the deck",
-    description:
-      "We don't glamourise hours. We expect you to use your parental leave, your sabbatical, and your four work-from-anywhere weeks.",
+    title: { en: "Life outside the deck", ar: "حياة خارج نطاق العمل" },
+    description: {
+      en: "We don't glamourise hours. We expect you to use your parental leave, your sabbatical, and your four work-from-anywhere weeks.",
+      ar: "نحن لا نمجد ساعات العمل الطويلة. نتوقع منك استخدام إجازة الوالدية، وإجازتك الدراسية، وأسابيع العمل من أي مكان الأربعة الخاصة بك."
+    },
     icon: "HeartHandshake",
   },
 ];
@@ -87,6 +96,7 @@ const CULTURE_VALUES = [
 
 
 export function CareersView() {
+  const { t, l, lang } = useTranslation();
   const navigate = useNav((s) => s.navigate);
   const { toast } = useToast();
   const [activeRole, setActiveRole] = React.useState<CareerItem | null>(null);
@@ -106,22 +116,20 @@ export function CareersView() {
           <div className="grid items-center gap-12 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <Reveal>
-                <Eyebrow>Careers at Trennt</Eyebrow>
+                <Eyebrow>{t('careers.hero.eyebrow')}</Eyebrow>
               </Reveal>
               <Reveal delay={0.05}>
                 <h1
                   id="careers-hero-heading"
                   className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl md:leading-[1.02]"
                 >
-                  Build a career on{" "}
-                  <span className="text-primary">work that outlasts you.</span>
+                  {t('careers.hero.heading')}{" "}
+                  <span className="text-primary">{t('careers.hero.heading_accent')}</span>
                 </h1>
               </Reveal>
               <Reveal delay={0.1}>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance">
-                  We hire senior practitioners who want to own outcomes, mentor
-                  the next generation, and build a firm they&apos;re proud of.
-                  Small teams, real work, no theatre.
+                  {t('careers.hero.description')}
                 </p>
               </Reveal>
               <Reveal delay={0.15}>
@@ -134,7 +142,7 @@ export function CareersView() {
                     }}
                     className="h-11 gap-2 rounded-full bg-primary px-6 text-primary-foreground shadow-sm hover:bg-primary/90"
                   >
-                    See open roles
+                    {t('careers.hero.cta_roles')}
                     <ArrowDown className="h-4 w-4" />
                   </Button>
                   <Button
@@ -143,7 +151,7 @@ export function CareersView() {
                     onClick={() => navigate("contact")}
                     className="h-11 gap-2 rounded-full border-border/70 px-6 hover:bg-accent hover:text-accent-foreground"
                   >
-                    Open application
+                    {t('careers.hero.cta_apply')}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -164,9 +172,9 @@ export function CareersView() {
       >
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            eyebrow="Open roles"
-            title="Five roles, currently open."
-            description="We hire deliberately. If a role isn't here, it isn't open — but we still read open applications."
+            eyebrow={t('careers.roles.eyebrow')}
+            title={t('careers.roles.title')}
+            description={t('careers.roles.description')}
             className="max-w-2xl"
           />
         </div>
@@ -187,10 +195,10 @@ export function CareersView() {
                         </span>
                         <div>
                           <h3 className="text-base font-semibold tracking-tight text-foreground">
-                            {role.title}
+                            {l(role.title)}
                           </h3>
                           <p className="mt-0.5 text-xs text-muted-foreground">
-                            {role.team} · {role.level}
+                            {l(role.team)} · {l(role.level)}
                           </p>
                         </div>
                       </div>
@@ -200,7 +208,7 @@ export function CareersView() {
                           className="rounded-full border-border/70 text-xs font-medium"
                         >
                           <MapPin className="mr-1 h-3 w-3" />
-                          {role.location}
+                          {l(role.location)}
                         </Badge>
                         <Badge
                           variant="secondary"
@@ -215,20 +223,20 @@ export function CareersView() {
                     <div className="grid gap-8 py-2 sm:grid-cols-2">
                       <div>
                         <p className="text-sm leading-relaxed text-muted-foreground">
-                          {role.summary}
+                          {l(role.summary)}
                         </p>
                         <div className="mt-6">
                           <div className="text-xs font-medium uppercase tracking-[0.18em] text-primary/80">
-                            What you&apos;ll own
+                            {t('careers.roles.responsibilities')}
                           </div>
                           <ul className="mt-3 space-y-2.5">
-                            {role.responsibilities.map((r) => (
+                            {role.responsibilities.map((r, i) => (
                               <li
-                                key={r}
+                                key={i}
                                 className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground/90"
                               >
                                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                                <span>{r}</span>
+                                <span>{l(r)}</span>
                               </li>
                             ))}
                           </ul>
@@ -236,19 +244,19 @@ export function CareersView() {
                       </div>
                       <div>
                         <div className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                          What we&apos;re looking for
+                          {t('careers.roles.requirements')}
                         </div>
                         <ul className="mt-3 space-y-2.5">
-                          {role.requirements.map((r) => (
+                          {role.requirements.map((r, i) => (
                             <li
-                              key={r}
+                              key={i}
                               className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"
                             >
                               <span
                                 className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary/50"
                                 aria-hidden
                               />
-                              <span>{r}</span>
+                              <span>{l(r)}</span>
                             </li>
                           ))}
                         </ul>
@@ -257,7 +265,7 @@ export function CareersView() {
                             onClick={() => setActiveRole(role)}
                             className="h-10 gap-2 rounded-full bg-primary px-5 text-primary-foreground shadow-sm hover:bg-primary/90"
                           >
-                            Apply for this role
+                            {t('careers.roles.apply_button')}
                             <ArrowUpRight className="h-4 w-4" />
                           </Button>
                         </div>
@@ -280,23 +288,23 @@ export function CareersView() {
       >
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
           <SectionHeading
-            eyebrow="Perks & benefits"
-            title="Designed for careers, not contracts."
-            description="A benefit set that says: we expect you to be here in ten years, and to have a life outside the firm while you do."
+            eyebrow={t('careers.perks.eyebrow')}
+            title={t('careers.perks.title')}
+            description={t('careers.perks.description')}
             className="max-w-2xl"
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {PERKS.map((p, i) => (
-              <Reveal key={p.title} delay={(i % 3) * 0.06}>
+              <Reveal key={i} delay={(i % 3) * 0.06}>
                 <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-sm">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-primary/8 text-primary">
                     <Icon name={p.icon} className="h-5 w-5" />
                   </span>
                   <h3 className="mt-5 text-base font-semibold tracking-tight">
-                    {p.title}
+                    {l(p.title)}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {p.description}
+                    {l(p.description)}
                   </p>
                 </div>
               </Reveal>
@@ -315,39 +323,33 @@ export function CareersView() {
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <SectionHeading
-              eyebrow="Our culture"
-              title="Small firm, long careers, real ownership."
+              eyebrow={t('careers.culture.eyebrow')}
+              title={t('careers.culture.title')}
             />
             <Reveal delay={0.05}>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                Trennt is a partnership in the old sense: the people who own
-                the firm are the people who do the work. That shapes everything
-                — how we hire, how we promote, how we behave on engagements. We
-                are deliberately small, deliberately senior, and deliberately
-                independent.
+                {t('careers.culture.p1')}
               </p>
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                If you want to be a generalist who can run a board readout on
-                Monday and a process map on Wednesday, this is the place. If you
-                want a clear ladder to climb, it isn&apos;t.
+                {t('careers.culture.p2')}
               </p>
             </Reveal>
           </div>
           <div className="lg:col-span-7">
             <div className="grid gap-5 sm:grid-cols-2">
               {CULTURE_VALUES.map((v, i) => (
-                <Reveal key={v.title} delay={(i % 2) * 0.06}>
+                <Reveal key={i} delay={(i % 2) * 0.06}>
                   <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-sm">
                     <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-primary/8 text-primary">
                       <Icon name={v.icon} className="h-5 w-5" />
                     </span>
                     <h3 className="mt-5 text-base font-semibold tracking-tight">
-                      {v.title}
+                      {l(v.title)}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {v.description}
+                      {l(v.description)}
                     </p>
                   </div>
                 </Reveal>
@@ -373,17 +375,15 @@ export function CareersView() {
               />
               <div className="grid items-center gap-10 lg:grid-cols-2">
                 <div>
-                  <Eyebrow>Don&apos;t see your role?</Eyebrow>
+                  <Eyebrow>{t('careers.cta.eyebrow')}</Eyebrow>
                   <h2
                     id="careers-cta-heading"
                     className="mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl"
                   >
-                    Send an open application.
+                    {t('careers.cta.title')}
                   </h2>
                   <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground text-balance">
-                    We read every open application that comes in. If you&apos;ve
-                    done the work and want to do it somewhere smaller and more
-                    senior, tell us.
+                    {t('careers.cta.description')}
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
@@ -392,7 +392,7 @@ export function CareersView() {
                     onClick={() => navigate("contact")}
                     className="h-11 gap-2 rounded-full bg-primary px-6 text-primary-foreground shadow-sm hover:bg-primary/90"
                   >
-                    Send open application
+                    {t('careers.cta.button')}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -410,14 +410,14 @@ export function CareersView() {
         onClose={() => setActiveRole(null)}
         onSubmitted={(name) => {
           toast({
-            title: "Application received",
-            description: `Thanks, ${name}. We'll review and be in touch within five business days.`,
+            title: t('careers.form.success_title'),
+            description: t('careers.form.success_desc', { name }),
           });
           setActiveRole(null);
         }}
         onError={(msg) => {
           toast({
-            title: "Couldn't submit your application",
+            title: t('careers.form.error_title'),
             description: msg,
             variant: "destructive",
           });
@@ -459,6 +459,7 @@ function ApplicationDialog({
   onSubmitted: (name: string) => void;
   onError: (msg: string) => void;
 }) {
+  const { t, l } = useTranslation();
   const [submitting, setSubmitting] = React.useState(false);
 
   const {
@@ -506,7 +507,7 @@ function ApplicationDialog({
           email: data.email.trim(),
           phone: data.phone?.trim() || undefined,
           roleSlug: role.slug,
-          roleTitle: role.title,
+          roleTitle: l(role.title),
           yearsExp: data.yearsExp ? Number(data.yearsExp) : undefined,
           linkedin: data.linkedin?.trim() || undefined,
           portfolio: data.portfolio?.trim() || undefined,
@@ -542,10 +543,10 @@ function ApplicationDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="text-xl tracking-tight">
-            Apply for {role?.title}
+            {t('careers.form.title')} {l(role?.title)}
           </DialogTitle>
           <DialogDescription>
-            {role?.team} · {role?.location} · {role?.type} · {role?.level}
+            {l(role?.team)} · {l(role?.location)} · {role?.type} · {l(role?.level)}
           </DialogDescription>
         </DialogHeader>
 
@@ -553,7 +554,7 @@ function ApplicationDialog({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="apply-name">
-                Full name <span className="text-destructive">*</span>
+                {t('careers.form.labels.name')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="apply-name"
@@ -567,7 +568,7 @@ function ApplicationDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="apply-email">
-                Email <span className="text-destructive">*</span>
+                {t('careers.form.labels.email')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="apply-email"
@@ -584,7 +585,7 @@ function ApplicationDialog({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="apply-phone">Phone</Label>
+              <Label htmlFor="apply-phone">{t('careers.form.labels.phone')}</Label>
               <Input
                 id="apply-phone"
                 {...register("phone")}
@@ -592,14 +593,14 @@ function ApplicationDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="apply-years">Years of experience</Label>
+              <Label htmlFor="apply-years">{t('careers.form.labels.experience')}</Label>
               <Input
                 id="apply-years"
                 type="number"
                 min={0}
                 max={50}
                 {...register("yearsExp")}
-                placeholder="e.g. 7"
+                placeholder={t('careers.form.placeholders.experience')}
                 aria-invalid={!!errors.yearsExp}
               />
               {errors.yearsExp && (
@@ -610,7 +611,7 @@ function ApplicationDialog({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="apply-linkedin">LinkedIn URL</Label>
+              <Label htmlFor="apply-linkedin">{t('careers.form.labels.linkedin')}</Label>
               <Input
                 id="apply-linkedin"
                 {...register("linkedin")}
@@ -618,7 +619,7 @@ function ApplicationDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="apply-portfolio">Portfolio / GitHub</Label>
+              <Label htmlFor="apply-portfolio">{t('careers.form.labels.portfolio')}</Label>
               <Input
                 id="apply-portfolio"
                 {...register("portfolio")}
@@ -629,16 +630,16 @@ function ApplicationDialog({
 
           <div className="space-y-2">
             <Label htmlFor="apply-message">
-              Why Trennt, and why this role?
+              {t('careers.form.labels.message')}
             </Label>
             <Textarea
               id="apply-message"
               {...register("message")}
-              placeholder="A few sentences on what you're looking for and what you'd bring."
+              placeholder={t('careers.form.placeholders.message')}
               className="min-h-28 resize-y"
             />
             <p className="text-xs text-muted-foreground">
-              Optional, but it&apos;s the first thing we read.
+              {t('careers.form.labels.optional')}
             </p>
           </div>
 
@@ -650,7 +651,7 @@ function ApplicationDialog({
               disabled={submitting}
               className="rounded-full"
             >
-              Cancel
+              {t('careers.form.buttons.cancel')}
             </Button>
             <Button
               type="submit"
@@ -660,12 +661,12 @@ function ApplicationDialog({
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Submitting…
+                  {t('careers.form.buttons.submitting')}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4" />
-                  Submit application
+                  {t('careers.form.buttons.submit')}
                 </>
               )}
             </Button>

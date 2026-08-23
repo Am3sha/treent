@@ -53,7 +53,7 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
         trennt: {
-          primary: "#003D3C",
+          primary: "#013D3E",
           dark: "#121212",
           accent: "#ADDFB3",
           soft: "#D5EBD6",
@@ -83,9 +83,9 @@ const config: Config = {
         "8xl": "90rem",
       },
       boxShadow: {
-        soft: "0 12px 35px -18px rgb(0 61 60 / 0.18)",
-        card: "0 18px 40px -22px rgb(0 61 60 / 0.15)",
-        hero: "0 30px 60px -30px rgb(0 61 60 / 0.25)",
+        soft: "0 12px 35px -18px rgb(1 61 62 / 0.18)",
+        card: "0 18px 40px -22px rgb(1 61 62 / 0.15)",
+        hero: "0 30px 60px -30px rgb(1 61 62 / 0.25)",
       },
     },
   },

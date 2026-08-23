@@ -11,6 +11,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Reveal, RevealStagger, RevealItem, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
+import { useTranslation } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }[] = [
   {
@@ -48,9 +50,39 @@ const newsletterFormSchema = z.object({
 type NewsletterFormValues = z.infer<typeof newsletterFormSchema>;
 
 export function Footer() {
+  const { t, l, isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
   const [status, setStatus] = React.useState<"idle" | "loading" | "ok" | "already-subscribed" | "err">("idle");
   const reduced = useReducedMotion();
+
+  const getFooterNav = () => [
+    {
+      heading: t("footer.nav_heading"),
+      links: [
+        { label: t("nav.about"), view: "about" as ViewKey },
+        { label: t("nav.services"), view: "services" as ViewKey },
+        { label: t("nav.contact"), view: "contact" as ViewKey },
+      ],
+    },
+    {
+      heading: t("footer.services_heading"),
+      links: [
+        { label: isRTL ? "الاستعانة بمصادر خارجية للمراجعة الداخلية" : "Internal Audit Outsourcing", view: "internal-audit-outsourcing" as ViewKey },
+        { label: isRTL ? "المشاركة في المراجعة الداخلية" : "Internal Audit Co-Sourcing", view: "internal-audit-co-sourcing" as ViewKey },
+        { label: isRTL ? "تأسيس وظيفة المراجعة" : "Function Establishment", view: "internal-audit-function-establishment" as ViewKey },
+        { label: isRTL ? "تحول المراجعة الداخلية" : "Internal Audit Transformation", view: "internal-audit-transformation" as ViewKey },
+        { label: isRTL ? "برنامج ضمان وتحسين الجودة" : "QAIP", view: "quality-assurance-and-improvement-program" as ViewKey },
+        { label: isRTL ? "اتفاقيات الإطار" : "Framework Agreements", view: "framework-agreements" as ViewKey },
+      ],
+    },
+    {
+      heading: t("footer.benchmark_heading"),
+      links: [
+        { label: isRTL ? "نظرة عامة" : "Overview", view: "benchmark-landing" as ViewKey },
+        { label: t("nav.start_assessment"), view: "benchmark-quiz" as ViewKey },
+      ],
+    },
+  ];
 
   const {
     register,
@@ -85,14 +117,14 @@ export function Footer() {
     ? {}
     : {
         backgroundColor: "#ADDFB3",
-        color: "#003D3C",
+        color: "#013D3E",
         scale: 1.07,
         y: -2,
         borderColor: "rgba(173,223,179,0.6)",
       };
 
   return (
-    <footer className="mt-auto bg-[#003D3C] text-white">
+    <footer className={cn("mt-auto bg-[#013D3E] text-white", isRTL && "font-arabic")}>
       <div className="section-shell pt-16 pb-7">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
           <Reveal y={12} duration={0.58} className="lg:col-span-4">
@@ -117,9 +149,7 @@ export function Footer() {
                 <Logo variant="light" />
               </motion.div>
               <p className="max-w-sm text-[15px] leading-[1.6] text-white/65">
-                Trennt is an internal audit firm based in Saudi Arabia, dedicated
-                exclusively to internal audit delivery. We support Boards, Audit
-                Committees, and senior management with objective insight.
+                {t("footer.cta_description")}
               </p>
 
               <form onSubmit={handleSubmit(subscribe)} className="max-w-sm">
@@ -144,7 +174,7 @@ export function Footer() {
                       whileHover={reduced || status === "loading" ? {} : { scale: 1.03, y: -1 }}
                       whileTap={reduced || status === "loading" ? {} : { scale: 0.98 }}
                       transition={{ duration: 0.2, ease: EASE_OUT }}
-                      className="mr-1.5 my-1.5 inline-flex h-[38px] items-center rounded-full bg-[#ADDFB3] px-5 text-[13px] font-semibold text-[#003D3C] transition-all duration-200 ease-out hover:bg-white hover:shadow-[0_4px_16px_-6px_rgba(173,223,179,0.7)] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
+                      className="mr-1.5 my-1.5 inline-flex h-[38px] items-center rounded-full bg-[#ADDFB3] px-5 text-[13px] font-semibold text-[#013D3E] transition-all duration-200 ease-out hover:bg-white hover:shadow-[0_4px_16px_-6px_rgba(173,223,179,0.7)] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
                     >
                       {status === "loading" ? "…" : "Subscribe"}
                     </motion.button>
@@ -197,7 +227,7 @@ export function Footer() {
           </Reveal>
 
           <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
-            {FOOTER_NAV.map((col, idx) => (
+            {getFooterNav().map((col, idx) => (
               <Reveal
                 key={col.heading}
                 y={12}
@@ -216,7 +246,7 @@ export function Footer() {
                           className="group inline-flex items-center gap-1.5 text-[14px] text-white/75 transition-colors duration-200 ease-out hover:text-white"
                         >
                           <span className="hover-underline-grow">{l.label}</span>
-                          <ArrowUpRight className="h-3 w-3 opacity-0 -translate-x-1 transition-all duration-250 ease-out group-hover:opacity-100 group-hover:translate-x-0" />
+                          <ArrowUpRight className={cn("h-3 w-3 opacity-0 transition-all duration-250 ease-out group-hover:opacity-100 group-hover:translate-x-0", isRTL ? "translate-x-1" : "-translate-x-1")} />
                         </button>
                       </li>
                     ))}
@@ -242,7 +272,7 @@ export function Footer() {
                 </div>
                 <div className="flex items-start gap-2.5">
                   <MapPin className="mt-0.5 h-4 w-4 text-[#ADDFB3]/70" strokeWidth={1.6} />
-                  <span>{COMPANY.address}</span>
+                  <span>{l(COMPANY.address as any)}</span>
                 </div>
               </div>
               <motion.button
@@ -252,14 +282,14 @@ export function Footer() {
                 transition={{ duration: 0.22, ease: EASE_OUT }}
                 className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-white/15 px-5 py-2.5 text-[13px] font-medium text-white transition-colors duration-250 ease-out hover:border-[#ADDFB3]/50 hover:bg-[#ADDFB3]/10 hover:text-[#ADDFB3] group"
               >
-                Talk to TRENNT
+                {t("footer.cta_talk")}
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-250 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.8} />
               </motion.button>
             </div>
 
             <div className="mt-2.5 flex flex-col items-start justify-between gap-3 text-[12px] text-white/45 sm:flex-row sm:items-center">
               <p>
-                © {new Date().getFullYear()} {COMPANY.legalName}. All rights reserved.
+                {t("footer.copyright").replace("{year}", new Date().getFullYear().toString())}
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 <span className="inline-flex items-center gap-2">

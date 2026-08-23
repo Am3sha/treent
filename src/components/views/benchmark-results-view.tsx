@@ -84,6 +84,7 @@ const DIMENSION_INTERPRETATION: Record<Dimension, { high: string; mid: string; l
 };
 
 export function BenchmarkResultsView() {
+  const l = (obj: any) => (typeof obj === "string" ? obj : obj?.en || "");
   const result = useNav((s) => s.result);
   const respondent = useNav((s) => s.respondent);
   const navigate = useNav((s) => s.navigate);
@@ -176,6 +177,7 @@ function PriorityFocusCard({
   band: "low" | "mid" | "high";
   onOpenService: (slug: string) => void;
 }) {
+  const l = (obj: any) => (typeof obj === "string" ? obj : obj?.en || "");
   const rec = DOMAIN_RECOMMENDATIONS[item.meta.key]?.[band] ?? null;
   return (
     <div className="space-y-3">
@@ -190,12 +192,12 @@ function PriorityFocusCard({
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold">{item.meta.label}</p>
+            <p className="text-sm font-semibold">{l(item.meta.label)}</p>
             <Badge
               variant="outline"
               className="text-[10px] uppercase tracking-wider"
             >
-              {item.tier}
+              {l(TIER_META[item.tier as MaturityTier]?.label || item.tier)}
             </Badge>
             <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
               {item.score}
@@ -240,6 +242,7 @@ function ResultsBody({
   onShare: () => void;
   onOpenService: (slug: string) => void;
 }) {
+  const l = (obj: any) => (typeof obj === "string" ? obj : obj?.en || "");
   const [downloading, setDownloading] = React.useState(false);
 
   const handleDownload = async () => {
@@ -320,7 +323,7 @@ function ResultsBody({
   }, [stats, statsState, respondentIndustry]);
 
   const radarData = DIMENSIONS.map((d) => ({
-    dimension: d.short,
+    dimension: l(d.short),
     score: result.scores[d.key],
     benchmark:
       stats && statsState === "loaded"
@@ -360,7 +363,7 @@ function ResultsBody({
                     className="size-1.5 rounded-full"
                     style={{ background: tierMeta.color }}
                   />
-                  {tierMeta.label} tier
+                  {l(tierMeta.label)} tier
                   <span className="ml-1 font-mono text-[10px] opacity-70">
                     {tierMeta.range}
                   </span>
@@ -404,7 +407,7 @@ function ResultsBody({
               <Separator className="my-6" />
 
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {tierMeta.summary}
+                {l(tierMeta.summary as any)}
               </p>
 
               <div className="mt-5 flex items-center gap-2 rounded-lg border border-border bg-secondary/30 p-3">
@@ -677,12 +680,12 @@ function ResultsBody({
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold">{s.meta.label}</p>
+                            <p className="text-sm font-semibold">{l(s.meta.label)}</p>
                             <Badge
                               variant="outline"
                               className="text-[10px] uppercase tracking-wider"
                             >
-                              {s.tier}
+                              {l(TIER_META[s.tier]?.label || s.tier)}
                             </Badge>
                             <span className="ml-auto font-mono text-sm font-semibold tabular-nums">
                               {s.score}
@@ -740,12 +743,12 @@ function ResultsBody({
               </CardTitle>
             </div>
             <CardDescription className="mt-1">
-              {tierMeta.label} tier · {tierMeta.range} · {result.overall}/100
+              {l(tierMeta.label)} tier · {tierMeta.range} · {result.overall}/100
             </CardDescription>
           </CardHeader>
           <CardContent className="px-6 sm:px-8">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              {tierMeta.summary}
+              {l(tierMeta.summary)}
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {TIER_RECOMMENDATIONS[result.tier].map((rec, i) => (
@@ -757,7 +760,7 @@ function ResultsBody({
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p className="mt-2 text-sm leading-relaxed text-foreground">
-                    {rec}
+                    {l(rec)}
                   </p>
                 </div>
               ))}
@@ -856,6 +859,7 @@ function DimensionRow({
     interp: string;
   };
 }) {
+  const l = (obj: any) => (typeof obj === "string" ? obj : obj?.en || "");
   return (
     <div className="grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-5 sm:p-5">
       <div className="flex items-center gap-3 sm:min-w-[200px]">
@@ -868,9 +872,9 @@ function DimensionRow({
           <Icon name={row.meta.icon} className="h-5 w-5" />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">{row.meta.label}</p>
+          <p className="truncate text-sm font-semibold">{l(row.meta.label)}</p>
           <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-            {row.tier}
+            {l(TIER_META[row.tier]?.label || row.tier)}
           </p>
         </div>
       </div>

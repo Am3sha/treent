@@ -101,31 +101,33 @@ export interface BenchmarkStats {
   avgDurationSec: number;
 }
 
+export type LocalizedString = string | { en: string; ar: string };
+
 export interface ServiceItem {
   slug: string;
-  title: string;
-  tagline: string;
-  description: string;
+  title: LocalizedString;
+  tagline: LocalizedString;
+  description: LocalizedString;
   icon: string;
-  outcomes: string[];
-  deliverables: string[];
+  outcomes: LocalizedString[];
+  deliverables: LocalizedString[];
 }
 
 export interface CareerItem {
   slug: string;
-  title: string;
-  team: string;
-  location: string;
+  title: LocalizedString;
+  team: LocalizedString;
+  location: LocalizedString;
   type: "Full-time" | "Part-time" | "Contract";
-  level: string;
-  summary: string;
-  responsibilities: string[];
-  requirements: string[];
+  level: LocalizedString;
+  summary: LocalizedString;
+  responsibilities: LocalizedString[];
+  requirements: LocalizedString[];
 }
 
 export interface TeamMember {
   name: string;
-  role: string;
-  bio: string;
+  role: LocalizedString;
+  bio: LocalizedString;
   initials: string;
 }

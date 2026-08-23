@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/Providers";
+// import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,16 +46,24 @@ export const metadata: Metadata = {
   },
 };
 
+import { ibmPlexSansArabic } from "@/lib/fonts-arabic";
+import { LanguageAttributes } from "@/components/site/language-attributes";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSansArabic.variable} antialiased bg-background text-foreground`}
       >
+        {/* 
+          Hydration script removed to fix "script tag while rendering" warning.
+          LanguageAttributes and useHashSync handle document attributes.
+        */}
+        <LanguageAttributes />
         <Providers>
           <ThemeProvider
             attribute="class"
