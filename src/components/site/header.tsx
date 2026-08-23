@@ -4,6 +4,7 @@ import * as React from "react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./logo";
+import { LanguageSwitcher } from "./language-switcher";
 import { useReducedMotion } from "@/components/site/reveal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
@@ -447,8 +448,8 @@ export function Header() {
     <header
       className={cn(
         "fixed top-0 inset-x-0 z-[100] w-full transition-all duration-300 border-b",
-        mobileMenuVisible 
-          ? "bg-[#013D3E] h-screen border-none shadow-none" 
+        mobileMenuVisible
+          ? "bg-[#013D3E] h-screen border-none shadow-none"
           : scrolled
             ? "bg-[#013D3E] backdrop-blur-md border-[#002f2e]/60 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.35)]"
             : "bg-[#013D3E] border-[#002f2e]/40"
@@ -509,7 +510,7 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-5 sm:gap-6">
+        <div className="flex items-center gap-4 sm:gap-5">
           <button
             onClick={() => go("benchmark-quiz")}
             className={cn(
@@ -533,6 +534,8 @@ export function Header() {
             {t("nav.contact")}
             <ArrowUpRight className="h-4 w-4 text-[#013D3E] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Button>
+
+          <LanguageSwitcher className="hidden sm:inline-flex" />
 
           <button
             onClick={() => setMobileOpen(true)}
@@ -632,6 +635,10 @@ export function Header() {
                       <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
                     )}
                   </motion.button>
+
+                  <motion.div variants={navItemVariants} className="mt-4 pt-2">
+                    <LanguageSwitcher variant="mobile" />
+                  </motion.div>
                 </nav>
 
                 <motion.div variants={ctaVariants} className="mt-8 pt-4">

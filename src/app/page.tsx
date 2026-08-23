@@ -212,7 +212,8 @@ function useHashSync() {
       if (useNav.getState().lang !== lang) {
         useNav.setState({ lang });
         document.documentElement.lang = lang;
-        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+        document.documentElement.dir = "ltr";
+        document.body.dir = lang === "ar" ? "rtl" : "ltr";
       }
     };
     apply();
@@ -255,7 +256,6 @@ export default function Home() {
       </main>
       <Footer />
       <BackToTop />
-      <LanguageSwitcher />
       <CommandPalette />
     </div>
   );

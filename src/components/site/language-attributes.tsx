@@ -8,7 +8,10 @@ export function LanguageAttributes() {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    // Keep html dir as "ltr" so browser scrollbar stays on the right side in both Arabic and English
+    document.documentElement.dir = "ltr";
+    // Apply rtl/ltr to body so all content, text, and Tailwind rtl: variants function properly
+    document.body.dir = lang === "ar" ? "rtl" : "ltr";
   }, [lang]);
 
   return null;

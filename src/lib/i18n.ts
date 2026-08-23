@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useNav } from "./store";
 import { en } from "./translations/en";
 import { ar } from "./translations/ar";
@@ -9,14 +10,23 @@ const translations = {
   ar,
 };
 
+const emptySubscribe = () => () => { };
+
 export function useTranslation() {
-  const lang = useNav((s) => (s as any).lang || "en");
+  const mounted = React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+
+  const storeLang = useNav((s) => (s as any).lang || "en");
+  const lang: Language = mounted ? storeLang : "en";
   const setLang = useNav((s) => (s as any).setLang);
 
-  const t = (key: string, options?: { returnObjects?: boolean; [key: string]: any }) => {
+  const t = (key: string, options?: { returnObjects?: boolean;[key: string]: any }) => {
     const keys = key.split(".");
-    let value: any = translations[lang as Language];
-    
+    let value: any = translations[lang];
+
     for (const k of keys) {
       if (value && value[k] !== undefined) {
         value = value[k];
@@ -38,7 +48,7 @@ export function useTranslation() {
       }
       return value;
     }
-    
+
     return key;
   };
 

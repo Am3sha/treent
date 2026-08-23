@@ -105,7 +105,8 @@ export const useNav = create<NavState>((set, get) => {
         window.location.hash = `#/${prefix}${view}`;
         // Update document attributes
         document.documentElement.lang = lang;
-        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+        document.documentElement.dir = "ltr";
+        document.body.dir = lang === "ar" ? "rtl" : "ltr";
       }
       set({ lang });
     },
