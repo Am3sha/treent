@@ -70,13 +70,13 @@ export function AboutView() {
                 </div>
               </Reveal>
               <Reveal y={14} duration={0.55} delay={0.05}>
-	                <h1
-	                  id="about-hero-heading"
-	                  className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
-	                >
-	                  {t("about.hero.title_p1")}{" "}
-	                  <span className="text-[#ADDFB3]">{t("about.hero.title_p2")}</span>
-	                </h1>
+                <h1
+                  id="about-hero-heading"
+                  className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
+                >
+                  {t("about.hero.title_p1")}{" "}
+                  <span className="text-[#ADDFB3]">{t("about.hero.title_p2")}</span>
+                </h1>
               </Reveal>
               <Reveal y={14} duration={0.55} delay={0.1}>
                 <p className="mt-6 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80">
@@ -123,17 +123,19 @@ export function AboutView() {
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-[#ADDFB3]/15 text-[#ADDFB3]">
-                        <Users className="h-3 w-3" />
-                      </span>
-                      <div>
-                        <h4 className="text-xs font-semibold text-white">{t("about.sidebar.p3.title")}</h4>
-                        <p className="mt-0.5 text-[11px] leading-snug text-white/70">
-                          {t("about.sidebar.p3.desc")}
-                        </p>
+                    {Boolean(t("about.sidebar.p3.title")) && (
+                      <div className="flex items-start gap-3">
+                        <span className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-[#ADDFB3]/15 text-[#ADDFB3]">
+                          <Users className="h-3 w-3" />
+                        </span>
+                        <div>
+                          <h4 className="text-xs font-semibold text-white">{t("about.sidebar.p3.title")}</h4>
+                          <p className="mt-0.5 text-[11px] leading-snug text-white/70">
+                            {t("about.sidebar.p3.desc")}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Direct Contact Footer */}

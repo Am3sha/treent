@@ -60,34 +60,34 @@ type ApplicationFormValues = z.infer<typeof applicationFormSchema>;
 
 const CULTURE_VALUES = [
   {
-    title: { en: "Senior by default", ar: "خبراء بشكل افتراضي" },
+    title: { en: "Professional Judgement", ar: "الحكم المهني" },
     description: {
-      en: "We hire people who can run work, not staff them onto someone else's. Every consultant owns their workstreams from week one.",
-      ar: "نحن نوظف أشخاصاً يمكنهم إدارة العمل بأنفسهم. كل مستشار يمتلك مسارات عمله منذ الأسبوع الأول."
+      en: "We expect our people to apply sound judgement, challenge appropriately, and maintain objectivity.",
+      ar: "نتوقع من فريقنا تطبيق حكم مهني سليم، وممارسة التحدي المهني عند الحاجة، والمحافظة على الموضوعية."
     },
     icon: "Compass",
   },
   {
-    title: { en: "Apprenticeship, not curriculum", ar: "التلمذة لا المناهج" },
+    title: { en: "Quality and Accountability", ar: "الجودة والمسؤولية" },
     description: {
-      en: "You learn by sitting next to a partner who has done it ten times. We invest in protected learning time, not training theatres.",
-      ar: "تتعلم بالجلوس بجانب شريك قام بذلك عشر مرات. نحن نستثمر في وقت التعلم المحمي، وليس في قاعات التدريب."
+      en: "Each team member is accountable for the quality, accuracy, and professionalism of their work.",
+      ar: "كل عضو في الفريق مسؤول عن جودة ودقة ومهنية عمله."
     },
     icon: "GraduationCap",
   },
   {
-    title: { en: "One firm, four offices", ar: "شركة واحدة، أربعة مكاتب" },
+    title: { en: "Collaboration", ar: "التعاون" },
     description: {
-      en: "Small enough that the partners know your work. Large enough that the next engagement can be in a different city, sector, or practice.",
-      ar: "صغيرة بما يكفي ليعرف الشركاء عملك. كبيرة بما يكفي ليكون الارتباط القادم في مدينة أو قطاع أو ممارسة مختلفة."
+      en: "Engagements are delivered through close coordination, clear responsibilities, and effective review.",
+      ar: "تُنفذ المهام من خلال تنسيق واضح، ومسؤوليات محددة، ومراجعة مهنية فعالة."
     },
     icon: "Building2",
   },
   {
-    title: { en: "Life outside the deck", ar: "حياة خارج نطاق العمل" },
+    title: { en: "Continuous Learning", ar: "التعلم المستمر" },
     description: {
-      en: "We don't glamourise hours. We expect you to use your parental leave, your sabbatical, and your four work-from-anywhere weeks.",
-      ar: "نحن لا نمجد ساعات العمل الطويلة. نتوقع منك استخدام إجازة الوالدية، وإجازتك الدراسية، وأسابيع العمل من أي مكان الأربعة الخاصة بك."
+      en: "Professional development is part of how we maintain and strengthen our internal audit capability.",
+      ar: "يمثل التطوير المهني جزءًا أساسيًا من المحافظة على قدراتنا وتعزيزها في المراجعة الداخلية."
     },
     icon: "HeartHandshake",
   },

@@ -272,7 +272,7 @@ export function Footer() {
                 </div>
                 <div className="flex items-start gap-2.5">
                   <MapPin className="mt-0.5 h-4 w-4 text-[#ADDFB3]/70" strokeWidth={1.6} />
-                  <span>{l(COMPANY.address as any)}</span>
+                  <span>{l(COMPANY.address)}</span>
                 </div>
               </div>
               <motion.button

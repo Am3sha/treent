@@ -58,6 +58,7 @@ export default function RootLayout({
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSansArabic.variable} antialiased bg-background text-foreground`}
+        suppressHydrationWarning
       >
         {/* 
           Hydration script removed to fix "script tag while rendering" warning.

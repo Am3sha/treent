@@ -18,13 +18,13 @@ export const en = {
   },
   home: {
     hero: {
-      eyebrow: "Internal Audit Specialists",
-      title: "Objective Insight. Measurable Value.",
-      subheadline: "Internal Audit. Delivered with Independence.",
-      description: "We are a dedicated internal audit firm based in Riyadh, supporting Boards and management with independent perspective and practical solutions.",
-      values: "Integrity. Insight. Impact.",
-      cta_primary: "Start Benchmark",
-      cta_secondary: "Our Services",
+      eyebrow: "STRATEGIC INSIGHT",
+      title: "INTERNAL AUDIT. DELIVERED WITH INDEPENDENCE.",
+      subheadline: "A specialist firm dedicated exclusively to internal audit.",
+      description: "Trennt is a specialist firm dedicated exclusively to internal audit.",
+      values: "",
+      cta_primary: "Explore Our Services",
+      cta_secondary: "Start the Benchmark",
     },
     about: {
       eyebrow: "About Trennt",
@@ -32,36 +32,36 @@ export const en = {
     },
     expertise: {
       eyebrow: "Our Expertise",
-      heading: "Built Around\nInternal Audit.",
-      description: "Internal audit is our sole focus. That specialisation shapes our methods, capabilities, and delivery approach around the needs of modern internal audit functions.",
+      heading: "Built Around Internal Audit.",
+      description: "Internal audit is our sole focus. This specialisation shapes our methodology, capabilities, and approach to delivery.",
     },
     capabilities: {
       eyebrow: "Capabilities",
-      heading: "Practical solutions tailored to strengthen governance, enhance internal controls, and support confident decision-making.",
-      cta: "Know More",
+      heading: "We provide structured, risk-based internal audit services aligned with the governance, risk, and control environment of each organisation.",
+      cta: "Learn More",
     }
   },
   about: {
     hero: {
       eyebrow: "About Trennt",
-      title_p1: "An internal audit firm dedicated exclusively to",
-      title_p2: "internal audit delivery.",
-      description: "Trennt is a Saudi Arabia-based firm specialising exclusively in internal audit. We give Boards, Audit Committees, and executive management clear, objective insight into governance, risk management, and internal control effectiveness.",
+      title_p1: "A specialist firm dedicated exclusively to",
+      title_p2: "internal audit.",
+      description: "Trennt focuses exclusively on internal audit, providing structured, risk-based services across the internal audit lifecycle. Our specialised focus shapes our methodology, capabilities, and approach to delivery.",
     },
     sidebar: {
       eyebrow: "Exclusive Practice",
       location: "Riyadh, KSA",
       p1: {
-        title: "100% Dedicated Practice",
-        desc: "Exclusively focused on internal audit — zero generalist dilution.",
+        title: "Dedicated Internal Audit Practice",
+        desc: "Exclusively focused on internal audit.",
       },
       p2: {
-        title: "IIA Standards Compliance",
-        desc: "Aligned with IIA Global Standards & KSA governance rules.",
+        title: "Governance-Focused Perspective",
+        desc: "Our work considers the effectiveness of governance, risk management, and internal control.",
       },
       p3: {
-        title: "Board & Leadership Partner",
-        desc: "Independent objective insight for Audit Committees & C-suites.",
+        title: "",
+        desc: "",
       },
       footer: {
         eyebrow: "Direct Inquiry",
@@ -69,44 +69,44 @@ export const en = {
     },
     who: {
       eyebrow: "Who We Are",
-      title: "Independent internal audit, focused on what matters.",
-      p1: "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery.",
-      p2: "We support Boards, Audit Committees, and senior management by providing objective insight into the effectiveness of risk management, internal controls, and governance processes.",
-      p3: "Through structured, risk-based engagements, Trennt helps organisations strengthen governance, enhance control effectiveness, and support informed decision-making.",
+      title: "Internal audit, with a specialist focus.",
+      p1: "Trennt is dedicated exclusively to internal audit.",
+      p2: "We provide structured, risk-based internal audit services designed around the governance, risk, and control environment of each organisation.",
+      p3: "Our approach combines professional judgement, relevant internal audit capability, and disciplined delivery across each engagement.",
     },
     values: {
       eyebrow: "What We Believe",
       title: "The principles that guide our work.",
-      description: "These values define who we are, how we work, and what you can expect when you partner with Trennt.",
+      description: "These principles shape how we approach and deliver our work.",
       v1: {
         title: "Independence and objectivity",
-        description: "We maintain complete independence in all our work, ensuring unbiased assessments and recommendations that serve only your organization's best interests.",
+        description: "We maintain professional objectivity and appropriate independence throughout our engagements.",
       },
       v2: {
-        title: "Excellence in execution",
-        description: "We adhere strictly to professional standards and best practices, delivering high-quality work that you can trust.",
+        title: "Professional discipline",
+        description: "Our work is structured, risk-based, and aligned with applicable professional standards.",
       },
       v3: {
         title: "Integrity and transparency",
-        description: "We are honest, transparent, and ethical in all our interactions. We will tell you what you need to hear, not what you want to hear.",
+        description: "We communicate clearly and act with integrity throughout the engagement.",
       },
       v4: {
-        title: "Collaboration and partnership",
-        description: "We work alongside your team as trusted partners, transferring knowledge and building capability throughout the engagement.",
+        title: "Collaboration",
+        description: "We work closely with internal audit functions and relevant stakeholders throughout delivery.",
       },
       v5: {
         title: "Continuous improvement",
-        description: "We are committed to learning and improving, staying current with the latest standards and practices in internal audit.",
+        description: "We continuously develop our methodologies and capabilities in line with evolving internal audit practices and standards.",
       },
       v6: {
-        title: "Results-focused",
-        description: "We measure our success by the tangible improvements in your governance, risk management, and internal control processes.",
+        title: "Clear outcomes",
+        description: "Our work is designed to provide clear, relevant, and actionable internal audit results.",
       },
     },
     cta: {
       eyebrow: "Let's Work Together",
-      title: "Ready to strengthen your internal audit function?",
-      description: "We'd welcome the opportunity to discuss your needs and how we can help. Contact us to schedule an initial conversation.",
+      title: "Ready to discuss your internal audit needs?",
+      description: "We welcome the opportunity to understand your requirements and discuss how Trennt can support your internal audit function.",
       primary: "Explore Services",
     }
   },
@@ -329,10 +329,10 @@ export const en = {
   services: {
     hero: {
       eyebrow: "Services",
-      heading: "Comprehensive internal audit services",
-      heading_accent: "tailored to your needs.",
-      description: "Two service areas. One internal audit focus. From core outsourcing and co-sourcing support to internal audit function development, Trennt helps organisations strengthen governance, risk management, and internal controls with independent, practical expertise.",
-      highlight: "Exclusively internal audit — an independent perspective, delivering practical, actionable recommendations.",
+      heading: "Internal audit services across the full function lifecycle.",
+      heading_accent: "",
+      description: "Trennt provides internal audit services across two areas: core delivery and function development.",
+      highlight: "Our core services support the execution of internal audit activities, while our development services support the establishment, enhancement, and continuous improvement of internal audit functions.",
       card: {
         title: "Audit Framework Stack",
         subtitle: "Trennt Professional Excellence",
@@ -353,31 +353,31 @@ export const en = {
     full_list: {
       eyebrow: "Full services list",
       title: "Explore every service in depth.",
-      description: "Our core services provide flexible delivery capacity; our development services help organisations build, enhance, and continuously improve their internal audit function."
+      description: "Our core services support the execution of internal audit activities, while our development services support the establishment, enhancement, and continuous improvement of internal audit functions."
     },
     sections: {
-      outcomes: "Key Outcomes",
-      deliverables: "Deliverables"
+      outcomes: "Key Areas",
+      deliverables: "Key Deliverables"
     },
     detail: {
-      key_benefits: "Key Benefits",
+      key_benefits: "Key Areas",
       key_deliverables: "Key Deliverables",
-      explore_other: "Explore other internal audit services",
+      explore_other: "Explore Other Internal Audit Services",
       service_tag: "Service"
     },
     cta: {
       eyebrow: "Start a conversation",
       title: "Ready to discuss your internal audit needs?",
-      description: "We'd welcome the opportunity to understand your requirements and discuss how we can help. Contact us to schedule an initial conversation.",
-      button: "Contact us"
+      description: "We welcome the opportunity to understand your requirements and discuss the appropriate internal audit support.",
+      button: "Contact Us"
     },
     process: {
-      eyebrow: "Engagement process",
-      heading: "A structured, professional approach.",
-      description: "Every engagement follows our four-step process, ensuring clarity, alignment, and measurable outcomes from start to finish."
+      eyebrow: "A structured approach to delivery.",
+      heading: "A structured approach to delivery.",
+      description: "Our engagements are structured around clear scope, agreed responsibilities, and defined deliverables."
     },
     framework: {
-      eyebrow: "Framework agreements",
+      eyebrow: "Framework Agreements",
       heading: "A flexible model for ongoing support.",
       description: "For organisations seeking continuous access to internal audit expertise without the friction of individual engagement agreements.",
       includes: "What's included:",
@@ -388,42 +388,42 @@ export const en = {
       viewing: "Currently viewing",
       learn_more: "Learn more",
       jump_to_overview: "Jump to overview",
-      view_all: "View all services"
+      view_all: "View All Services"
     }
   },
   careers: {
     hero: {
       eyebrow: "Careers at Trennt",
-      heading: "Build a career on",
-      heading_accent: "work that outlasts you.",
-      description: "We hire senior practitioners who want to own outcomes, mentor the next generation, and build a firm they're proud of. Small teams, real work, no theatre.",
-      cta_roles: "See open roles",
-      cta_apply: "Open application"
+      heading: "Build your career in internal audit.",
+      heading_accent: "",
+      description: "Trennt is dedicated exclusively to internal audit. We look for professionals who value technical quality, professional judgement, accountability, and continuous development.",
+      cta_roles: "View Open Roles",
+      cta_apply: "Open Application"
     },
     roles: {
-      eyebrow: "Open roles",
-      title: "Five roles, currently open.",
-      description: "We hire deliberately. If a role isn't here, it isn't open — but we still read open applications.",
-      responsibilities: "What you'll own",
-      requirements: "What we're looking for",
-      apply_button: "Apply for this role"
+      eyebrow: "Current Opportunities",
+      title: "Current Opportunities",
+      description: "We recruit based on business needs and engagement requirements. Available roles will be listed here as they open.",
+      responsibilities: "What you’ll own",
+      requirements: "What we’re looking for",
+      apply_button: "View Role"
     },
     perks: {
-      eyebrow: "Perks & benefits",
-      title: "Designed for careers, not contracts.",
-      description: "A benefit set that says: we expect you to be here in ten years, and to have a life outside the firm while you do."
+      eyebrow: "Working at Trennt",
+      title: "A focused environment for professionals who want to build depth in internal audit and contribute directly to engagement delivery.",
+      description: "Professional development, meaningful responsibility, experienced collaboration, and specialist focus."
     },
     culture: {
-      eyebrow: "Our culture",
-      title: "Small firm, long careers, real ownership.",
-      p1: "Trennt is a partnership in the old sense: the people who own the firm are the people who do the work. That shapes everything — how we hire, how we promote, how we behave on engagements. We are deliberately small, deliberately senior, and deliberately independent.",
-      p2: "If you want to be a generalist who can run a board readout on Monday and a process map on Wednesday, this is the place. If you want a clear ladder to climb, it isn't."
+      eyebrow: "How We Work",
+      title: "Our approach to people reflects the same principles that guide our client work.",
+      p1: "We expect our people to apply sound judgement, challenge appropriately, and maintain objectivity.",
+      p2: "Engagements are delivered through close coordination, clear responsibilities, and effective review. Professional development is part of how we maintain and strengthen our internal audit capability."
     },
     cta: {
-      eyebrow: "Don't see your role?",
-      title: "Send an open application.",
-      description: "We read every open application that comes in. If you've done the work and want to do it somewhere smaller and more senior, tell us.",
-      button: "Send open application"
+      eyebrow: "Open Applications",
+      title: "Open Applications",
+      description: "We welcome applications from internal audit professionals whose experience and capabilities align with our current or future requirements.",
+      button: "Send Open Application"
     },
     form: {
       title: "Apply for",
@@ -453,9 +453,9 @@ export const en = {
   },
   contact: {
     hero: {
-      eyebrow: "Contact",
+      eyebrow: "Get in touch.",
       heading: "Get in touch.",
-      description: "Whether you need internal audit outsourcing, co-sourcing, or support for your existing function, we're happy to discuss how we can help."
+      description: "For enquiries regarding Trennt’s internal audit services, please contact us using the form below or through the contact details provided."
     },
     form: {
       success_title: "Message received",
@@ -467,8 +467,8 @@ export const en = {
         email: "Work email",
         company: "Company",
         phone: "Phone",
-        topic: "What's this about?",
-        message: "How can we help?",
+        topic: "General Enquiry",
+        message: "How can we assist?",
         characters: "characters"
       },
       placeholders: {
@@ -476,12 +476,12 @@ export const en = {
         email: "you@company.com",
         company: "Company name",
         phone: "+966 5x xxx xxxx",
-        message: "Tell us a little about your inquiry…"
+        message: "How can we assist?"
       },
       topics: {
-        general: { label: "General enquiry", hint: "Anything else on your mind." },
-        services: { label: "Engagement enquiry", hint: "Discuss a specific internal audit service." },
-        framework: { label: "Framework agreement", hint: "Discuss a framework agreement for ongoing services." },
+        general: { label: "General Enquiry", hint: "How can we assist?" },
+        services: { label: "Engagement Enquiry", hint: "Discuss a specific internal audit service." },
+        framework: { label: "Framework Agreement", hint: "Discuss a framework agreement for ongoing services." },
         other: { label: "Other", hint: "Other questions or requests." }
       },
       footer: {
@@ -489,7 +489,7 @@ export const en = {
         service_scope: "Exclusively internal audit. Serving Boards and Audit Committees across Saudi Arabia."
       },
       buttons: {
-        submit: "Send message",
+        submit: "Send Message",
         submitting: "Sending…"
       },
       done: {
@@ -500,11 +500,11 @@ export const en = {
       }
     },
     aside: {
-      title: "Direct contact",
+      title: "Direct Contact",
       labels: {
-        email: "Email",
-        phone: "Phone",
-        headquarters: "Headquarters"
+        email: "EMAIL",
+        phone: "PHONE",
+        headquarters: "LOCATION"
       },
       hint_title: "Prefer to reach us directly?",
       hint_desc: "Skip the form and email or call us using the details above."

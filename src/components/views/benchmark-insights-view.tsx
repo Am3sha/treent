@@ -35,7 +35,6 @@ import {
 } from "recharts";
 import { TooltipValueType } from "recharts";
 import { useNav } from "@/lib/store";
-import { useTranslation } from "@/lib/i18n";
 import { DIMENSIONS, TIER_META } from "@/lib/content";
 import type { BenchmarkStats, MaturityTier } from "@/lib/types";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
@@ -44,6 +43,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const TIER_COLORS: Record<MaturityTier, string> = {

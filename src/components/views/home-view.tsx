@@ -265,26 +265,12 @@ export function HomeView() {
                 animate="visible"
                 variants={heroHeadline}
                 className={cn(
-                  "mt-4 text-[48px] sm:text-[62px] lg:text-[72px] font-extrabold uppercase leading-[0.96] tracking-[0.05em] text-[#ADDFB3]",
-                  isRTL && "leading-[1.1] font-arabic"
+                  "mt-4 text-[44px] sm:text-[56px] lg:text-[68px] font-extrabold uppercase leading-[1.02] tracking-[0.03em] text-[#ADDFB3]",
+                  isRTL && "leading-[1.15] font-arabic"
                 )}
               >
-                {isRTL ? (
-                  <>رؤية<br />استراتيجية</>
-                ) : (
-                  <>STRATEGIC<br />INSIGHT</>
-                )}
+                {t("home.hero.title")}
               </motion.h1>
-
-              <motion.p
-                initial="hidden"
-                animate="visible"
-                custom={0}
-                variants={heroBody}
-                className="mt-5 text-[13px] font-semibold uppercase tracking-[0.18em] text-[#ADDFB3]"
-              >
-                {t("home.hero.subheadline")}
-              </motion.p>
 
               <motion.p
                 initial="hidden"
@@ -296,16 +282,6 @@ export function HomeView() {
                 {t("home.hero.description")}
               </motion.p>
 
-              <motion.p
-                initial="hidden"
-                animate="visible"
-                custom={1}
-                variants={heroBody}
-                className="mt-6 text-[15px] font-medium text-white/75"
-              >
-                {t("home.hero.values")}
-              </motion.p>
-
               <motion.div
                 initial="hidden"
                 animate="visible"
@@ -313,10 +289,10 @@ export function HomeView() {
                 className="mt-8"
               >
                 <Button
-                  onClick={() => navigate("contact")}
+                  onClick={() => navigate("services")}
                   className="h-12 rounded-[10px] bg-white px-8 text-[15px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-[0_10px_30px_-12px_rgba(173,223,179,0.7)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  {t("nav.get_started")}
+                  {t("home.hero.cta_primary")}
                 </Button>
               </motion.div>
             </div>

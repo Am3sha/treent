@@ -187,10 +187,10 @@ export function ContactView() {
   const iconBounce: { scale: number; y: number; transition: { type: "spring"; stiffness: number; damping: number } } | Record<string, never> = reduced
     ? {}
     : {
-        scale: 1.15,
-        y: -2,
-        transition: { type: "spring" as const, stiffness: 400, damping: 17 },
-      };
+      scale: 1.15,
+      y: -2,
+      transition: { type: "spring" as const, stiffness: 400, damping: 17 },
+    };
 
   return (
     <div className="flex flex-col">
@@ -203,31 +203,31 @@ export function ContactView() {
       >
         <div className="section-shell relative z-10">
           <div className="max-w-3xl">
-                <Reveal y={14} duration={0.55}>
-                  <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
-                    <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
-                    {t('contact.hero.eyebrow')}
-                  </div>
-                </Reveal>
+            <Reveal y={14} duration={0.55}>
+              <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
+                <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
+                {t('contact.hero.eyebrow')}
+              </div>
+            </Reveal>
 
-                <motion.h1
-                  id="contact-hero-heading"
-                  className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
-                  initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={reduced ? { duration: 0 } : { duration: 0.7, ease: EASE_OUT, delay: 0.06 }}
-                >
-                  {t('contact.hero.heading')}
-                </motion.h1>
+            <motion.h1
+              id="contact-hero-heading"
+              className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
+              initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.7, ease: EASE_OUT, delay: 0.06 }}
+            >
+              {t('contact.hero.heading')}
+            </motion.h1>
 
-                <motion.p
-                  className="mt-5 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80"
-                  initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE_OUT, delay: 0.18 }}
-                >
-                  {t('contact.hero.description')}
-                </motion.p>
+            <motion.p
+              className="mt-5 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80"
+              initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.6, ease: EASE_OUT, delay: 0.18 }}
+            >
+              {t('contact.hero.description')}
+            </motion.p>
           </div>
         </div>
       </section>
@@ -511,12 +511,12 @@ export function ContactView() {
                       value: COMPANY.phone,
                       href: `tel:${COMPANY.phone.replace(/\s/g, "")}`,
                     },
-                      {
-                        icon: MapPin,
-                        label: lang === 'ar' ? "الموقع" : "Location",
-                        value: lang === 'ar' ? "الرياض، السعودية" : "Riyadh, Saudi",
-                        isMultiline: false,
-                      },
+                    {
+                      icon: MapPin,
+                      label: t('contact.aside.labels.headquarters'),
+                      value: lang === 'ar' ? "الرياض، السعودية" : "Riyadh, Saudi",
+                      isMultiline: false,
+                    },
                   ].map((item, i) => {
                     const Icon = item.icon;
                     const content = (
