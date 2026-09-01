@@ -265,11 +265,16 @@ export function HomeView() {
                 animate="visible"
                 variants={heroHeadline}
                 className={cn(
-                  "mt-4 text-[44px] sm:text-[56px] lg:text-[68px] font-extrabold uppercase leading-[1.02] tracking-[0.03em] text-[#ADDFB3]",
-                  isRTL && "leading-[1.15] font-arabic"
+                  "mt-5 text-balance tracking-tight leading-[1.08]",
+                  isRTL && "font-arabic"
                 )}
               >
-                {t("home.hero.title")}
+                <span className="block text-3xl font-semibold tracking-tight text-white/95 sm:text-4xl md:text-5xl lg:text-[52px]">
+                  {t("home.hero.title_p1")}
+                </span>
+                <span className="mt-1 sm:mt-2 block text-3xl font-extrabold tracking-tight text-[#ADDFB3] sm:text-4xl md:text-5xl lg:text-[56px]">
+                  {t("home.hero.title_p2")}
+                </span>
               </motion.h1>
 
               <motion.p

@@ -16,11 +16,11 @@ export function Logo({
       <Image
         src={variant === "light" ? "/trennt-logo.webp" : "/logo.svg"}
         alt="TRENNT"
-        width={200}
-        height={40}
+        width={250}
+        height={60}
         priority
         className={cn(
-          "h-16 md:h-[66px] lg:h-[72px] w-auto object-contain transition-opacity hover:opacity-95",
+          "h-20 sm:h-[80px] md:h-[86px] lg:h-[90px] w-auto object-contain transition-opacity hover:opacity-95",
           variant === "light" && "mix-blend-lighten"
         )}
       />

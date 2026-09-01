@@ -39,9 +39,9 @@ import { useTranslation } from "@/lib/i18n";
 
 const TIER_LABELS: Record<MaturityTier, { en: string; ar: string }> = {
   initial: { en: "Initial", ar: "أولي" },
-  developing: { en: "Developing", ar: "في طور النمو" },
+  developing: { en: "Developing", ar: "نامٍ" },
   defined: { en: "Defined", ar: "محدد" },
-  established: { en: "Established", ar: "مرسخ" },
+  established: { en: "Established", ar: "راسخ" },
   advanced: { en: "Advanced", ar: "متقدم" },
 };
 
@@ -56,7 +56,7 @@ export function BenchmarkLandingView() {
     navigate("benchmark-quiz");
   };
 
-  const outcomesIcons = [Compass, BarChart3, Users, FileText];
+  const outcomesIcons = [Compass, BarChart3, Users, FileText, CheckCircle2];
   const outcomesItems = (t("benchmark_landing.outcomes.items", { returnObjects: true }) as Array<{ title: string; description: string }>) || [];
   const stepsItems = (t("benchmark_landing.steps.items", { returnObjects: true }) as Array<{ n: string; title: string; description: string }>) || [];
   const faqItems = (t("benchmark_landing.faq.items", { returnObjects: true }) as Array<{ q: string; a: string }>) || [];
@@ -153,7 +153,7 @@ export function BenchmarkLandingView() {
             description={t("benchmark_landing.outcomes.description")}
           />
         </Reveal>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {outcomesItems.map((o, i) => {
             const IconComp = outcomesIcons[i] || Compass;
             return (

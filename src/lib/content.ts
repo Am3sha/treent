@@ -306,7 +306,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     label: "Governance & Operating Model",
     short: "Governance",
     description:
-      "Reporting lines, charter approval, CAE evaluation, and independence of the internal audit function.",
+      "Governance arrangements, reporting lines, authority, oversight, and the positioning of the internal audit function.",
     icon: "ShieldCheck",
     accent: "text-emerald-700",
   },
@@ -315,34 +315,34 @@ export const DIMENSIONS: DimensionMeta[] = [
     label: "Risk Assessment & Planning",
     short: "Risk",
     description:
-      "Maturity of the audit risk assessment, treatment of emerging risks, and audit plan coordination.",
+      "The approach to risk assessment, audit planning, emerging risks, and alignment of internal audit coverage with organisational priorities.",
     icon: "Target",
     accent: "text-amber-700",
   },
   {
     key: "execution",
-    label: "Audit Execution & Strategic Alignment",
+    label: "Audit Execution & Methodology",
     short: "Execution",
     description:
-      "Methodology rigour, supervisory review, delivery consistency, and alignment with organisational strategy.",
+      "The consistency, rigour, supervision, and execution of internal audit engagements.",
     icon: "Workflow",
     accent: "text-teal-700",
   },
   {
     key: "reporting",
-    label: "Reporting & Impact",
+    label: "Reporting & Follow-Up",
     short: "Reporting",
     description:
-      "Timeliness of reporting, follow-up of management actions, escalation, and audit performance measurement.",
+      "The quality and timeliness of reporting, follow-up of agreed actions, escalation, and monitoring of internal audit performance.",
     icon: "FileChartColumn",
     accent: "text-blue-700",
   },
   {
     key: "capability",
-    label: "Capability & Continuous Improvement",
+    label: "Capability & Quality",
     short: "Capability",
     description:
-      "Specialist expertise, competency assessment, professional development, and quality assurance (QAIP).",
+      "Internal audit competencies, specialist capability, professional development, and quality assurance arrangements.",
     icon: "GraduationCap",
     accent: "text-orange-700",
   },

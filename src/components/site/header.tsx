@@ -455,7 +455,7 @@ export function Header() {
             : "bg-[#013D3E] border-[#002f2e]/40"
       )}
     >
-      <div className="section-shell flex h-[88px] items-center justify-between">
+      <div className="section-shell flex h-[92px] md:h-[98px] items-center justify-between">
         <button
           onClick={() => go("home")}
           className="flex items-center outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/40 rounded-sm py-1 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"

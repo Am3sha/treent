@@ -6,9 +6,12 @@ import {
   ArrowUpRight,
   Briefcase,
   Check,
+  FileText,
   Loader2,
   MapPin,
   Send,
+  Upload,
+  X,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
 import { CAREERS, PERKS } from "@/lib/content";
@@ -95,6 +98,21 @@ const CULTURE_VALUES = [
 
 
 
+const GENERAL_APPLICATION_ROLE: CareerItem = {
+  slug: "general-application",
+  title: { en: "General Application", ar: "تقديم طلب عام" },
+  team: { en: "Internal Audit", ar: "المراجعة الداخلية" },
+  level: { en: "All Levels", ar: "كافة المستويات" },
+  location: { en: "Riyadh, KSA", ar: "الرياض، المملكة العربية السعودية" },
+  type: "Full-time",
+  summary: {
+    en: "We are always interested in connecting with experienced internal audit professionals. Submit your CV and details for current or upcoming engagement opportunities.",
+    ar: "نرحب دائماً بالتواصل مع الكفاءات المتخصصة في المراجعة الداخلية. يمكنك تقديم بياناتك وسيرتك الذاتية للفرص الحالية والمستقبلية."
+  },
+  responsibilities: [],
+  requirements: [],
+};
+
 export function CareersView() {
   const { t, l, lang } = useTranslation();
   const navigate = useNav((s) => s.navigate);
@@ -148,7 +166,7 @@ export function CareersView() {
                   <Button
                     size="lg"
                     variant="outline"
-                    onClick={() => navigate("contact")}
+                    onClick={() => setActiveRole(GENERAL_APPLICATION_ROLE)}
                     className="h-11 gap-2 rounded-full border-border/70 px-6 hover:bg-accent hover:text-accent-foreground"
                   >
                     {t('careers.hero.cta_apply')}
@@ -163,7 +181,7 @@ export function CareersView() {
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* OPEN ROLES                                                          */}
+      {/* OPEN ROLES / GENERAL APPLICATION                                    */}
       {/* ------------------------------------------------------------------ */}
       <section
         id="open-roles"
@@ -179,104 +197,38 @@ export function CareersView() {
           />
         </div>
 
-        <div className="mt-12">
-          <Accordion type="single" collapsible className="flex flex-col gap-4">
-            {CAREERS.map((role, i) => (
-              <Reveal key={role.slug} delay={Math.min(i * 0.04, 0.2)}>
-                <AccordionItem
-                  value={role.slug}
-                  className="overflow-hidden rounded-2xl border border-border/70 bg-card px-5 transition-all first:border-b data-[state=open]:border-primary/30 data-[state=open]:shadow-sm sm:px-7"
+        <Reveal>
+          <div className="mt-12 overflow-hidden rounded-2xl border border-border/70 bg-card p-6 sm:p-8 transition-all hover:border-primary/30 hover:shadow-md">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <span className="mt-0.5 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Send className="h-5 w-5" />
+                </span>
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight text-foreground">
+                    {t('careers.roles.card_title')}
+                  </h3>
+                  <p className="mt-1 text-xs font-medium text-muted-foreground">
+                    {t('careers.roles.card_subtitle')}
+                  </p>
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground/90">
+                    {t('careers.roles.card_description')}
+                  </p>
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-3">
+                <Button
+                  onClick={() => setActiveRole(GENERAL_APPLICATION_ROLE)}
+                  size="lg"
+                  className="h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground shadow-sm hover:bg-primary/90"
                 >
-                  <AccordionTrigger className="hover:no-underline">
-                    <div className="flex w-full flex-col items-start gap-3 py-2 pr-4 text-left sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-                      <div className="flex items-start gap-4">
-                        <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8 text-primary">
-                          <Briefcase className="h-4 w-4" />
-                        </span>
-                        <div>
-                          <h3 className="text-base font-semibold tracking-tight text-foreground">
-                            {l(role.title)}
-                          </h3>
-                          <p className="mt-0.5 text-xs text-muted-foreground">
-                            {l(role.team)} · {l(role.level)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge
-                          variant="outline"
-                          className="rounded-full border-border/70 text-xs font-medium"
-                        >
-                          <MapPin className="mr-1 h-3 w-3" />
-                          {l(role.location)}
-                        </Badge>
-                        <Badge
-                          variant="secondary"
-                          className="rounded-full text-xs font-medium"
-                        >
-                          {role.type}
-                        </Badge>
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid gap-8 py-2 sm:grid-cols-2">
-                      <div>
-                        <p className="text-sm leading-relaxed text-muted-foreground">
-                          {l(role.summary)}
-                        </p>
-                        <div className="mt-6">
-                          <div className="text-xs font-medium uppercase tracking-[0.18em] text-primary/80">
-                            {t('careers.roles.responsibilities')}
-                          </div>
-                          <ul className="mt-3 space-y-2.5">
-                            {role.responsibilities.map((r, i) => (
-                              <li
-                                key={i}
-                                className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground/90"
-                              >
-                                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                                <span>{l(r)}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                          {t('careers.roles.requirements')}
-                        </div>
-                        <ul className="mt-3 space-y-2.5">
-                          {role.requirements.map((r, i) => (
-                            <li
-                              key={i}
-                              className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"
-                            >
-                              <span
-                                className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary/50"
-                                aria-hidden
-                              />
-                              <span>{l(r)}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-6">
-                          <Button
-                            onClick={() => setActiveRole(role)}
-                            className="h-10 gap-2 rounded-full bg-primary px-5 text-primary-foreground shadow-sm hover:bg-primary/90"
-                          >
-                            {t('careers.roles.apply_button')}
-                            <ArrowUpRight className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Reveal>
-            ))}
-          </Accordion>
-        </div>
+                  {t('careers.roles.apply_button')}
+                  <ArrowUpRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ------------------------------------------------------------------ */}
@@ -459,8 +411,12 @@ function ApplicationDialog({
   onSubmitted: (name: string) => void;
   onError: (msg: string) => void;
 }) {
-  const { t, l } = useTranslation();
+  const { t, l, lang } = useTranslation();
   const [submitting, setSubmitting] = React.useState(false);
+  const [cvFile, setCvFile] = React.useState<File | null>(null);
+  const [cvDataUrl, setCvDataUrl] = React.useState<string | null>(null);
+  const [cvError, setCvError] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -475,7 +431,6 @@ function ApplicationDialog({
       phone: "",
       yearsExp: "",
       linkedin: "",
-      portfolio: "",
       message: "",
     },
   });
@@ -489,14 +444,56 @@ function ApplicationDialog({
         phone: "",
         yearsExp: "",
         linkedin: "",
-        portfolio: "",
         message: "",
       });
+      setCvFile(null);
+      setCvDataUrl(null);
+      setCvError(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }, [role, reset]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setCvFile(null);
+      setCvDataUrl(null);
+      setCvError(null);
+      return;
+    }
+    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+    if (ext !== ".pdf" && ext !== ".docx") {
+      setCvError(t('careers.form.errors.cv_invalid_type'));
+      setCvFile(null);
+      setCvDataUrl(null);
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setCvError(t('careers.form.errors.cv_invalid_size'));
+      setCvFile(null);
+      setCvDataUrl(null);
+      return;
+    }
+    setCvError(null);
+    setCvFile(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCvDataUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeFile = () => {
+    setCvFile(null);
+    setCvDataUrl(null);
+    setCvError(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const onSubmit = async (data: ApplicationFormValues) => {
     if (!role) return;
+    if (cvError) return;
+
     setSubmitting(true);
     try {
       const res = await fetch("/api/careers", {
@@ -510,7 +507,7 @@ function ApplicationDialog({
           roleTitle: l(role.title),
           yearsExp: data.yearsExp ? Number(data.yearsExp) : undefined,
           linkedin: data.linkedin?.trim() || undefined,
-          portfolio: data.portfolio?.trim() || undefined,
+          resume: cvDataUrl || undefined,
           message: data.message?.trim() || undefined,
         }),
       });
@@ -518,10 +515,7 @@ function ApplicationDialog({
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error || "Request failed");
       }
-      const result = (await res.json()) as { ok: true; data: { id: string } };
       onSubmitted(data.name.trim().split(" ")[0]);
-      // Use the id if you want; keep onSubmitted signature simple
-      void result.data.id;
     } catch (err) {
       onError(
         err instanceof Error
@@ -540,34 +534,37 @@ function ApplicationDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="text-xl tracking-tight">
-            {t('careers.form.title')} {l(role?.title)}
+      <DialogContent className="max-h-[82vh] overflow-y-auto rounded-3xl border border-border/80 bg-background/95 p-4 shadow-2xl backdrop-blur-xl sm:max-w-[410px] sm:p-5 text-foreground">
+        <DialogHeader className="text-right rtl:text-right ltr:text-left">
+          <DialogTitle className="text-base font-semibold tracking-tight text-foreground">
+            {role?.slug === "general-application"
+              ? (lang === "ar" ? "تقديم طلب الانضمام" : "General Application")
+              : `${t('careers.form.title')} ${l(role?.title)}`}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="mt-0.5 text-[11px] text-muted-foreground">
             {l(role?.team)} · {l(role?.location)} · {role?.type} · {l(role?.level)}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="apply-name">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-1 space-y-2.5" noValidate>
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="apply-name" className="text-[11px] font-medium text-foreground">
                 {t('careers.form.labels.name')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="apply-name"
                 {...register("name")}
                 autoComplete="name"
+                className="h-8.5 rounded-xl text-xs"
                 aria-invalid={!!errors.name}
               />
               {errors.name && (
-                <p className="text-xs text-destructive">{errors.name.message}</p>
+                <p className="text-[10px] text-destructive">{errors.name.message}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="apply-email">
+            <div className="space-y-1">
+              <Label htmlFor="apply-email" className="text-[11px] font-medium text-foreground">
                 {t('careers.form.labels.email')} <span className="text-destructive">*</span>
               </Label>
               <Input
@@ -575,25 +572,27 @@ function ApplicationDialog({
                 type="email"
                 {...register("email")}
                 autoComplete="email"
+                className="h-8.5 rounded-xl text-xs"
                 aria-invalid={!!errors.email}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-[10px] text-destructive">{errors.email.message}</p>
               )}
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="apply-phone">{t('careers.form.labels.phone')}</Label>
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="apply-phone" className="text-[11px] font-medium text-foreground">{t('careers.form.labels.phone')}</Label>
               <Input
                 id="apply-phone"
                 {...register("phone")}
                 autoComplete="tel"
+                className="h-8.5 rounded-xl text-xs"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="apply-years">{t('careers.form.labels.experience')}</Label>
+            <div className="space-y-1">
+              <Label htmlFor="apply-years" className="text-[11px] font-medium text-foreground">{t('careers.form.labels.experience')}</Label>
               <Input
                 id="apply-years"
                 type="number"
@@ -601,71 +600,127 @@ function ApplicationDialog({
                 max={50}
                 {...register("yearsExp")}
                 placeholder={t('careers.form.placeholders.experience')}
+                className="h-8.5 rounded-xl text-xs"
                 aria-invalid={!!errors.yearsExp}
               />
               {errors.yearsExp && (
-                <p className="text-xs text-destructive">{errors.yearsExp.message}</p>
+                <p className="text-[10px] text-destructive">{errors.yearsExp.message}</p>
               )}
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="apply-linkedin">{t('careers.form.labels.linkedin')}</Label>
-              <Input
-                id="apply-linkedin"
-                {...register("linkedin")}
-                placeholder="https://linkedin.com/in/…"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="apply-portfolio">{t('careers.form.labels.portfolio')}</Label>
-              <Input
-                id="apply-portfolio"
-                {...register("portfolio")}
-                placeholder="https://…"
-              />
-            </div>
+          <div className="space-y-1">
+            <Label htmlFor="apply-linkedin" className="text-[11px] font-medium text-foreground">{t('careers.form.labels.linkedin')}</Label>
+            <Input
+              id="apply-linkedin"
+              {...register("linkedin")}
+              placeholder="https://linkedin.com/in/…"
+              className="h-8.5 rounded-xl text-xs"
+            />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="apply-message">
+          <div className="space-y-1">
+            <Label htmlFor="apply-cv" className="text-[11px] font-medium text-foreground">
+              {t('careers.form.labels.cv')}
+            </Label>
+            <input
+              ref={fileInputRef}
+              id="apply-cv"
+              type="file"
+              accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+
+            {!cvFile ? (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-dashed border-border/80 bg-muted/20 px-3 py-2 text-left transition-all hover:border-primary/50 hover:bg-primary/5 rtl:text-right"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Upload className="h-3.5 w-3.5" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-medium text-foreground">
+                      {t('careers.form.placeholders.cv')}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">
+                      PDF / DOCX (Max 5MB)
+                    </p>
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full border border-border/70 bg-background px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                  {lang === "ar" ? "اختر ملفاً" : "Browse"}
+                </span>
+              </button>
+            ) : (
+              <div className="flex items-center justify-between rounded-xl border border-primary/30 bg-primary/5 p-2 px-3">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <FileText className="h-4 w-4 shrink-0 text-primary" />
+                  <div className="truncate">
+                    <p className="truncate text-xs font-medium text-foreground">
+                      {cvFile.name}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {(cvFile.size / (1024 * 1024)).toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={removeFile}
+                  className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Remove CV"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+            {cvError && (
+              <p className="text-[10px] font-medium text-destructive">{cvError}</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="apply-message" className="text-[11px] font-medium text-foreground">
               {t('careers.form.labels.message')}
             </Label>
             <Textarea
               id="apply-message"
               {...register("message")}
               placeholder={t('careers.form.placeholders.message')}
-              className="min-h-28 resize-y"
+              className="min-h-14 resize-y rounded-xl text-xs"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground">
               {t('careers.form.labels.optional')}
             </p>
           </div>
 
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+          <div className="flex flex-col-reverse gap-2 pt-1.5 sm:flex-row sm:items-center sm:justify-end">
             <Button
               type="button"
               variant="ghost"
               onClick={onClose}
               disabled={submitting}
-              className="rounded-full"
+              className="h-8.5 rounded-full text-xs"
             >
               {t('careers.form.buttons.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={submitting}
-              className="gap-2 rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+              className="h-8.5 gap-2 rounded-full bg-primary text-xs text-primary-foreground shadow-sm hover:bg-primary/90"
             >
               {submitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   {t('careers.form.buttons.submitting')}
                 </>
               ) : (
                 <>
-                  <Send className="h-4 w-4" />
+                  <Send className="h-3.5 w-3.5" />
                   {t('careers.form.buttons.submit')}
                 </>
               )}

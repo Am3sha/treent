@@ -19,7 +19,8 @@ export const en = {
   home: {
     hero: {
       eyebrow: "STRATEGIC INSIGHT",
-      title: "INTERNAL AUDIT. DELIVERED WITH INDEPENDENCE.",
+      title_p1: "Internal Audit.",
+      title_p2: "Delivered with Independence.",
       subheadline: "A specialist firm dedicated exclusively to internal audit.",
       description: "Trennt is a specialist firm dedicated exclusively to internal audit.",
       values: "",
@@ -404,9 +405,12 @@ export const en = {
       eyebrow: "Current Opportunities",
       title: "Current Opportunities",
       description: "We recruit based on business needs and engagement requirements. Available roles will be listed here as they open.",
-      responsibilities: "What you’ll own",
-      requirements: "What we’re looking for",
-      apply_button: "View Role"
+      card_title: "General Application",
+      card_subtitle: "Internal Audit · All Levels",
+      card_location: "Riyadh, KSA",
+      card_type: "Full-time",
+      card_description: "We are always interested in connecting with experienced internal audit professionals. Submit your details and CV for current or upcoming engagement opportunities.",
+      apply_button: "Apply Now"
     },
     perks: {
       eyebrow: "Working at Trennt",
@@ -436,13 +440,19 @@ export const en = {
         phone: "Phone",
         experience: "Years of experience",
         linkedin: "LinkedIn URL",
-        portfolio: "Portfolio / GitHub",
-        message: "Why Trennt, and why this role?",
-        optional: "Optional, but it's the first thing we read."
+        cv: "CV / Resume (PDF or DOCX)",
+        message: "Cover Note / Why Trennt?",
+        optional: "Optional note for our hiring team."
       },
       placeholders: {
         experience: "e.g. 7",
-        message: "A few sentences on what you're looking for and what you'd bring."
+        message: "Brief note about your experience and focus areas.",
+        cv: "Upload CV / Resume"
+      },
+      errors: {
+        cv_required: "Please attach your CV / Resume.",
+        cv_invalid_type: "Invalid file type. Only PDF and DOCX files are allowed.",
+        cv_invalid_size: "File size exceeds maximum limit of 5MB."
       },
       buttons: {
         cancel: "Cancel",
@@ -667,124 +677,128 @@ export const en = {
   },
   benchmark_landing: {
     hero: {
-      eyebrow: "Trennt Benchmark",
-      title_part1: "How mature is your internal audit function,",
-      title_highlight: "really?",
-      description: "A fifteen-question diagnostic, built on five dimensions of internal audit maturity. Eight minutes in, you get a real score, a tier, a percentile vs peers, and a clear read on where to focus next.",
-      start_button: "Start the benchmark",
-      talk_button: "Talk to us",
+      eyebrow: "The Trennt Benchmark",
+      title_part1: "Assess the maturity of",
+      title_highlight: "your internal audit function.",
+      description: "The Trennt Internal Audit Capability Benchmark provides a structured assessment across five core dimensions of internal audit capability. Complete the assessment to receive an overall maturity score, dimension-level results, and focused areas for improvement.",
+      start_button: "Start the Benchmark",
+      talk_button: "Contact Us",
       last_result_button: "View your last result"
     },
     outcomes: {
-      eyebrow: "What you'll get",
-      title: "A genuine diagnostic, not a quiz.",
-      description: "You will leave with a defensible read on your internal audit maturity — and a clear point of view on what to do about it.",
+      eyebrow: "What You'll Receive",
+      title: "A structured view of internal audit capability.",
+      description: "The benchmark is designed to provide a clear view of the current maturity of the internal audit function across key governance, planning, execution, reporting, and capability areas.",
       items: [
         {
-          title: "Your internal audit maturity tier",
-          description: "A clear Initial → Advanced rating, normalised from 26 evidence-based questions across the five domains of internal audit maturity."
+          title: "Overall internal audit maturity score",
+          description: "Receive a clear, overall maturity score calculated across five core dimensions."
         },
         {
-          title: "A per-dimension breakdown",
-          description: "Where you lead, where you lag, and a radar profile that makes the shape of your organisation legible at a glance."
+          title: "Maturity level",
+          description: "Clear classification across 5 defined maturity levels: Initial, Developing, Defined, Established, or Advanced."
         },
         {
-          title: "Your position vs peers",
-          description: "An honest percentile against every organisation that has benchmarked with us — not a flattering vanity number."
+          title: "Results across each assessment dimension",
+          description: "Detailed breakdown across governance, planning, execution, reporting, and capability areas."
         },
         {
-          title: "A tailored next-steps briefing",
-          description: "Two-to-three recommendations calibrated to your tier, with an optional 1:1 consultation to make them concrete."
+          title: "Key strengths and areas for improvement",
+          description: "Clear visibility into where your internal audit function leads and where gaps exist."
+        },
+        {
+          title: "Focused recommendations based on assessment results",
+          description: "Tailored recommendations to guide the next stage of development for your internal audit function."
         }
       ]
     },
     dimensions: {
-      eyebrow: "What we measure",
-      title: "Five dimensions of internal audit maturity.",
-      description: "Maturity is not one number — it is a shape. We assess the five dimensions that, in our experience, separate organisations that compound from those that stall.",
-      extra_card: "Each dimension carries three sharp statements — drawn from our work with 320+ organisations — designed to surface where you genuinely are, not where you wish you were.",
+      eyebrow: "Core Dimensions",
+      title: "Five dimensions of internal audit capability.",
+      description: "Maturity is evaluated across five key dimensions that define internal audit effectiveness.",
+      extra_card: "Each dimension assesses essential capability statements to surface your true operational maturity.",
       items: {
         governance: {
           label: "Governance & Operating Model",
           short: "Governance",
-          description: "Reporting lines, charter approval, CAE evaluation, and independence of the internal audit function."
+          description: "Governance arrangements, reporting lines, authority, oversight, and the positioning of the internal audit function."
         },
         risk: {
           label: "Risk Assessment & Planning",
           short: "Risk",
-          description: "Maturity of the audit risk assessment, treatment of emerging risks, and audit plan coordination."
+          description: "The approach to risk assessment, audit planning, emerging risks, and alignment of internal audit coverage with organisational priorities."
         },
         execution: {
-          label: "Audit Execution & Strategic Alignment",
+          label: "Audit Execution & Methodology",
           short: "Execution",
-          description: "Methodology rigour, supervisory review, delivery consistency, and alignment with organisational strategy."
+          description: "The consistency, rigour, supervision, and execution of internal audit engagements."
         },
         reporting: {
-          label: "Reporting & Impact",
+          label: "Reporting & Follow-Up",
           short: "Reporting",
-          description: "Timeliness of reporting, follow-up of management actions, escalation, and audit performance measurement."
+          description: "The quality and timeliness of reporting, follow-up of agreed actions, escalation, and monitoring of internal audit performance."
         },
         capability: {
-          label: "Capability & Continuous Improvement",
+          label: "Capability & Quality",
           short: "Capability",
-          description: "Specialist expertise, competency assessment, professional development, and quality assurance (QAIP)."
+          description: "Internal audit competencies, specialist capability, professional development, and quality assurance arrangements."
         }
       }
     },
     steps: {
-      eyebrow: "How it works",
-      title: "Three steps. About eight minutes.",
+      eyebrow: "Process",
+      title: "How the Benchmark Works",
       items: [
         {
           n: "01",
-          title: "Answer 26 questions",
-          description: "Fifteen sharp statements across five dimensions, on a 1–5 scale. Roughly eight minutes; no jargon, no homework required."
+          title: "Complete the Assessment",
+          description: "Respond to a structured set of questions across the five dimensions of internal audit capability."
         },
         {
           n: "02",
-          title: "Get your score & tier",
-          description: "We normalise your answers to a 0–100 internal audit maturity score, place you in one of five tiers, and compute your percentile vs the cohort."
+          title: "Review Your Results",
+          description: "Receive an overall maturity score and a breakdown of performance across each dimension."
         },
         {
           n: "03",
-          title: "Decide what's next",
-          description: "Review your strengths and focus areas, then — if useful — request a tailored briefing with a Trennt partner."
+          title: "Identify Priorities",
+          description: "Review the key strengths, areas for improvement, and recommendations arising from the assessment."
         }
       ]
     },
     methodology: {
-      eyebrow: "Methodology & Trust",
-      title: "How the benchmark works — and how we keep your data safe.",
-      p1: "Each of the fifteen statements uses a 1–5 Likert scale. Your responses are normalised to a 0–100 internal audit maturity score for each dimension (where 1 represents a score of 0 and 5 represents 100), and a weighted overall score is calculated across the five dimensions. The overall score places you into one of five tiers — Initial, Developing, Defined, Established, or Advanced — with tailored recommendations for each.",
-      p2: "Your percentile is calculated against every other completed assessment in our database. It is descriptive, not prescriptive: a low percentile is a data point, not a judgment.",
-      privacy: "Your individual responses are stored securely and used only to compute your benchmark and to improve aggregated, anonymised insights. We never share individual scores. You can request deletion at any time by emailing"
+      eyebrow: "Confidentiality & Data",
+      title: "Your Information",
+      p1: "Assessment responses are used to generate your benchmark results and recommendations. Individual assessment results are treated as confidential and are not shared with other organisations.",
+      p2: "Assessment results are presented across five maturity levels: Initial, Developing, Defined, Established, and Advanced.",
+      privacy: "For enquiries regarding the benchmark or the use of assessment information, contact"
     },
     faq: {
-      eyebrow: "Frequently asked",
-      title: "Good questions, briefly answered.",
+      eyebrow: "FAQ",
+      title: "Frequently Asked Questions",
       items: [
         {
-          q: "How long does it take?",
-          a: "Most leaders complete the benchmark in six to nine minutes. There are 15 statements across five dimensions, each on a 1–5 scale. You can pause and resume — your responses are saved as you go."
+          q: "How long does the assessment take?",
+          a: "The benchmark is designed to be completed within a short period of time."
         },
         {
-          q: "Is my data confidential?",
-          a: "Yes. Your individual responses are stored securely and used only to compute your benchmark and to improve aggregated, anonymised insights. We never publish individual scores or share them with third parties. You can request deletion at any time."
+          q: "Is my information confidential?",
+          a: "Yes. Individual assessment responses and results are treated as confidential."
         },
         {
-          q: "What do I get at the end?",
-          a: "A full results report: your overall internal audit maturity score, tier, percentile against the cohort, a per-dimension radar profile, identified strengths and focus areas, and a short set of recommendations calibrated to your tier. You can request a 1:1 follow-up from the results page."
+          q: "What will I receive?",
+          a: "You will receive an overall maturity result, dimension-level results, and focused recommendations."
         },
         {
-          q: "Can my team take it too?",
-          a: "Absolutely — and we encourage it. Running the benchmark across a leadership team reveals where there is alignment and where there is divergence on internal audit maturity. Get in touch via the follow-up form and we will set up a cohort view for your organisation."
+          q: "Can more than one person from my organisation complete the benchmark?",
+          a: "Yes. Different participants may complete the assessment independently to provide additional perspectives on the internal audit function."
         }
       ]
     },
     cta: {
-      eyebrow: "Get started",
-      title: "Eight minutes. A clearer picture of where you stand.",
-      description: "No signup required to start. Your responses are saved automatically as you go.",
+      eyebrow: "Get Started",
+      title: "Understand where your internal audit function stands.",
+      description: "Complete the benchmark to obtain a structured view of current internal audit capability and areas for further development.",
       review_last: "Review your last result"
     }
   }

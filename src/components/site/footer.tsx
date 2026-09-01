@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Linkedin, Twitter, Youtube, Mail, MapPin, ArrowUpRight } from "lucide-react";
+import { Linkedin, Mail, MapPin, ArrowUpRight } from "lucide-react";
 import { Logo } from "./logo";
 import { useNav } from "@/lib/store";
 import { COMPANY } from "@/lib/content";
@@ -13,6 +13,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Reveal, RevealStagger, RevealItem, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
 import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+function XIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" {...props}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
 
 const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }[] = [
   {
@@ -116,12 +124,12 @@ export function Footer() {
   const socialHover = reduced
     ? {}
     : {
-        backgroundColor: "#ADDFB3",
-        color: "#013D3E",
-        scale: 1.07,
-        y: -2,
-        borderColor: "rgba(173,223,179,0.6)",
-      };
+      backgroundColor: "#ADDFB3",
+      color: "#013D3E",
+      scale: 1.07,
+      y: -2,
+      borderColor: "rgba(173,223,179,0.6)",
+    };
 
   return (
     <footer className={cn("mt-auto bg-[#013D3E] text-white", isRTL && "font-arabic")}>
@@ -135,22 +143,19 @@ export function Footer() {
                   reduced
                     ? {}
                     : {
-                        opacity: 1,
-                        scale: 1,
-                        transition: {
-                          duration: 0.5,
-                          ease: EASE_OUT,
-                          delay: 0.1,
-                        },
-                      }
+                      opacity: 1,
+                      scale: 1,
+                      transition: {
+                        duration: 0.5,
+                        ease: EASE_OUT,
+                        delay: 0.1,
+                      },
+                    }
                 }
                 viewport={{ once: true, margin: "-60px 0px -60px 0px" }}
               >
                 <Logo variant="light" />
               </motion.div>
-              <p className="max-w-sm text-[15px] leading-[1.6] text-white/65">
-                {t("footer.cta_description")}
-              </p>
 
               <form onSubmit={handleSubmit(subscribe)} className="max-w-sm">
                 <label
@@ -204,10 +209,9 @@ export function Footer() {
 
               <div className="flex gap-2.5">
                 {[
-                  { icon: Linkedin, href: COMPANY.social.linkedin, label: "LinkedIn" },
-                  { icon: Twitter, href: COMPANY.social.twitter, label: "Twitter / X" },
-                  { icon: Youtube, href: COMPANY.social.youtube, label: "YouTube" },
-                ].map(({ icon: Icon, href, label }) => (
+                  { icon: Linkedin, href: COMPANY.social.linkedin, label: "LinkedIn", isLucide: true },
+                  { icon: XIcon, href: COMPANY.social.twitter, label: "X", isLucide: false },
+                ].map(({ icon: Icon, href, label, isLucide }) => (
                   <motion.a
                     key={label}
                     href={href}
@@ -219,7 +223,11 @@ export function Footer() {
                     transition={{ duration: 0.23, ease: EASE_OUT }}
                     className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/65"
                   >
-                    <Icon className="h-4 w-4" strokeWidth={1.8} />
+                    {isLucide ? (
+                      <Icon className="h-4 w-4" strokeWidth={1.8} />
+                    ) : (
+                      <Icon className="h-3.5 w-3.5" />
+                    )}
                   </motion.a>
                 ))}
               </div>

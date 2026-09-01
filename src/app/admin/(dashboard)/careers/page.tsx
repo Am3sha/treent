@@ -169,12 +169,12 @@ export default function AdminCareersPage() {
                             This action cannot be undone. This will permanently delete the career application.
                           </DialogDescription>
                         </DialogHeader>
-<DialogFooter>
-                           <DialogClose asChild>
-                             <Button variant="ghost" onClick={() => { setDeleteId(null); toast({ title: "Cancelled", description: "Deletion cancelled.", variant: "default" }); }}>
-                               Cancel
-                             </Button>
-                           </DialogClose>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button variant="ghost" onClick={() => { setDeleteId(null); toast({ title: "Cancelled", description: "Deletion cancelled.", variant: "default" }); }}>
+                              Cancel
+                            </Button>
+                          </DialogClose>
                           <Button
                             variant="destructive"
                             onClick={handleDelete}
@@ -200,6 +200,21 @@ export default function AdminCareersPage() {
                     <div>
                       <p className="text-xs text-muted-foreground">Years of Experience</p>
                       <p className="text-sm">{app.yearsExp} years</p>
+                    </div>
+                  )}
+                  {app.resume && (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1 font-medium">CV / Resume Attachment</p>
+                      <a
+                        href={app.resume}
+                        download={`CV_${app.name.replace(/\s+/g, "_")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-semibold text-primary transition-all hover:bg-primary/20 hover:shadow-xs"
+                      >
+                        <FileText className="h-4 w-4" />
+                        <span>Download / View CV</span>
+                      </a>
                     </div>
                   )}
                   {app.linkedin && (
