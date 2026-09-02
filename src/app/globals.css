@@ -130,6 +130,14 @@
     font-family: var(--font-arabic), var(--font-geist-sans), sans-serif;
   }
 
+  /* Arabic shaping is handled by the font; do not apply Latin tracking. */
+  html[dir="rtl"] body,
+  html[dir="rtl"] body *,
+  html[lang="ar"] body,
+  html[lang="ar"] body * {
+    letter-spacing: 0;
+  }
+
   ::selection {
     background-color: #013D3E;
     color: #FFFFFF;

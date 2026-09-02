@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { ibmPlexSansArabic } from "@/lib/fonts-arabic";
+import { notoSansArabic } from "@/lib/fonts-arabic";
 import { LanguageAttributes } from "@/components/site/language-attributes";
 
 export default function RootLayout({
@@ -57,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSansArabic.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSansArabic.variable} antialiased bg-background text-foreground`}
         suppressHydrationWarning
       >
         {/* 

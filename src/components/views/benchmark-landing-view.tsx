@@ -72,7 +72,12 @@ export function BenchmarkLandingView() {
             <Eyebrow>{t("benchmark_landing.hero.eyebrow")}</Eyebrow>
           </Reveal>
           <Reveal delay={0.05}>
-            <h1 className="mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
+            <h1
+              className={cn(
+                "mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl",
+                isRTL ? "leading-[1.28] md:leading-[1.18]" : "md:leading-[1.05]"
+              )}
+            >
               {t("benchmark_landing.hero.title_part1")}{" "}
               <span className="text-primary">{t("benchmark_landing.hero.title_highlight")}</span>
             </h1>

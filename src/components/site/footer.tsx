@@ -300,10 +300,6 @@ export function Footer() {
                 {t("footer.copyright").replace("{year}", new Date().getFullYear().toString())}
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#ADDFB3]" />
-                  {COMPANY.offices.length} office{COMPANY.offices.length > 1 ? "s" : ""} — {COMPANY.offices.map((o) => o.city).join(", ")}
-                </span>
                 <button
                   onClick={() => navigate("legal")}
                   className="inline-flex items-center gap-1 transition-colors duration-200 ease-out hover:text-white group"

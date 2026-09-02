@@ -406,10 +406,10 @@ export const en = {
       title: "Current Opportunities",
       description: "We recruit based on business needs and engagement requirements. Available roles will be listed here as they open.",
       card_title: "General Application",
-      card_subtitle: "Internal Audit · All Levels",
+      card_subtitle: "All Fields & Specialties · All Levels",
       card_location: "Riyadh, KSA",
       card_type: "Full-time",
-      card_description: "We are always interested in connecting with experienced internal audit professionals. Submit your details and CV for current or upcoming engagement opportunities.",
+      card_description: "We welcome applications across all fields—including Internal Audit, IT, AI, Strategy, and Advisory. Submit your details and CV for current or upcoming opportunities.",
       apply_button: "Apply Now"
     },
     perks: {
@@ -523,157 +523,177 @@ export const en = {
   legal: {
     hero: {
       eyebrow: "Legal · Policies",
-      heading: "Privacy, terms & cookies.",
-      description_start: "We keep these short, plain, and up to date. If anything here is unclear, please",
-      cta: "ask us",
-      description_end: "— we'd rather answer a question than leave you guessing.",
-      last_updated: "Last updated",
-      last_updated_date: "21 June 2026"
+      heading: "Privacy, Terms & Cookies",
+      description: "These policies explain how Trennt handles personal data, the terms governing use of our website, and our use of cookies.",
+      last_updated: "Last Updated",
+      last_updated_date: "September 2026",
     },
     tabs: {
       privacy: "Privacy Policy",
       privacy_short: "Privacy",
-      terms: "Terms of Service",
+      terms: "Terms of Use",
       terms_short: "Terms",
       cookies: "Cookie Policy",
-      cookies_short: "Cookies"
+      cookies_short: "Cookies",
     },
     privacy: {
-      who: {
-        title: "Who we are",
-        desc_1: "(\"Trennt\", \"we\", \"us\") is a limited liability partnership registered in England & Wales. Our registered office is",
-        desc_2: "You can reach us at",
-        desc_3: "or"
-      },
-      collect: {
-        title: "What we collect",
-        intro: "We collect only what we need to provide our services:",
-        items: [
-          "Contact details you give us via our contact form (name, email, company, phone, message).",
-          "Career application details (name, email, phone, role, portfolio links, message).",
-          "Newsletter email address, if you subscribe.",
-          "Benchmark assessment responses (your answers, the profile you provide, and the computed scores).",
-          "Standard technical data (IP address, browser type, pages visited) via privacy-preserving analytics."
-        ]
-      },
-      why: {
-        title: "Why we collect it",
-        intro: "We process your data for these purposes:",
-        items: [
-          "To respond to your enquiry, application, or follow-up request.",
-          "To compute and return your benchmark results and percentile.",
-          "To aggregate benchmark data into anonymised statistics shown on our Insights dashboard. Individual responses are never published — only aggregates of 5+ organisations.",
-          "To send you the Trennt Quarterly if you subscribe (you can unsubscribe at any time).",
-          "To improve our website, services, and content."
-        ]
-      },
-      basis: {
-        title: "Legal basis (GDPR)",
-        p1: "We rely on your",
-        consent: "consent",
-        p2: "for marketing communications and benchmark data capture, on",
-        legitimate: "legitimate interests",
-        p3: "for responding to your enquiries, and on",
-        contract: "contract",
-        p4: "for data needed to deliver engagements. You can withdraw consent at any time."
-      },
-      retention: {
-        title: "How long we keep it",
-        items: [
-          "Contact inquiries: 24 months, then deleted.",
-          "Career applications: 12 months, then deleted (unless you join us).",
-          "Newsletter subscriptions: until you unsubscribe.",
-          "Benchmark data: retained for aggregation, with personal identifiers removed after 36 months."
-        ]
-      },
-      sharing: {
-        title: "Who we share it with",
-        desc: "We do not sell your data. We share it only with subprocessors who help us operate (e.g. cloud hosting, email delivery, analytics) under written data processing agreements, and where required by law. A current list of subprocessors is available on request."
-      },
-      rights: {
-        title: "Your rights",
-        desc_1: "Under GDPR and UK GDPR, you have the right to access, correct, delete, restrict, or port your data, and to object to processing. To exercise any of these rights, email us at",
-        desc_2: "You can also complain to the UK Information Commissioner's Office (ICO) at ico.org.uk."
-      },
-      transfers: {
-        title: "International transfers",
-        desc: "Some subprocessors operate outside the UK/EEA. Where this happens, we use Standard Contractual Clauses or rely on adequacy decisions to ensure your data is protected to UK/EEA standards."
-      }
-    },
-    footer: {
-      title: "Questions about these policies?",
-      description: "We're happy to clarify anything. Email us directly or use the contact form.",
-      cta: "Contact us"
+      title: "1. Privacy Policy",
+      sections: [
+        {
+          title: "Who We Are",
+          content: "Trennt (“Trennt”, “we”, “us”) is an internal audit firm established in the Kingdom of Saudi Arabia.\n\nThis Privacy Policy explains how we collect, use, and protect personal data when you use our website or interact with us.",
+        },
+        {
+          title: "Information We May Collect",
+          intro: "We may collect information that you provide directly to us, including:",
+          items: [
+            "Name and contact details",
+            "Organisation and professional information",
+            "Information submitted through our contact forms",
+            "Information submitted through career applications",
+            "Responses submitted through our benchmark or other website tools",
+          ],
+          footer: "We may also collect limited technical information relating to your use of our website, such as browser, device, and website usage information.",
+        },
+        {
+          title: "How We Use Personal Data",
+          intro: "We may use personal data to:",
+          items: [
+            "Respond to enquiries and requests",
+            "Manage recruitment applications",
+            "Provide requested website tools or services",
+            "Communicate with you where appropriate",
+            "Operate, secure, and improve our website",
+            "Meet applicable legal and regulatory requirements",
+          ],
+          footer: "We will only process personal data where there is an appropriate legal basis for doing so.",
+        },
+        {
+          title: "Sharing of Personal Data",
+          content: "We do not sell personal data.\n\nWe may share personal data with service providers that support our operations, where necessary and subject to appropriate confidentiality and data protection requirements.\n\nWe may also disclose information where required by applicable law or a competent authority.",
+        },
+        {
+          title: "International Data Transfers",
+          content: "Where personal data is transferred outside the Kingdom of Saudi Arabia, Trennt will apply the requirements of applicable Saudi data protection laws and regulations.",
+        },
+        {
+          title: "Data Security",
+          content: "We apply appropriate organisational and technical measures designed to protect personal data against unauthorised access, loss, misuse, alteration, or disclosure.",
+        },
+        {
+          title: "Data Retention",
+          content: "We retain personal data only for as long as reasonably necessary for the purpose for which it was collected or as required by applicable law.",
+        },
+        {
+          title: "Your Rights",
+          content: "You may have rights in relation to your personal data under applicable Saudi data protection laws, including rights relating to access, correction, and deletion of personal data, subject to applicable legal requirements.\n\nTo submit a privacy request, please contact:",
+          contactEmail: "info@trennt.sa",
+        },
+        {
+          title: "Updates to This Policy",
+          content: "We may update this Privacy Policy from time to time. The latest version will be published on this page.",
+        },
+      ],
     },
     terms: {
-      about: {
-        title: "About these terms",
-        description: "These terms govern your use of the Trennt website at trennt.sa. By using the site, you agree to them. If you don't agree, please don't use the site."
-      },
-      benchmark: {
-        title: "The benchmark tool",
-        description: "Our Internal Audit Maturity Benchmark is provided free of charge for informational and self-assessment purposes. It is not professional advice, and we make no warranty as to its accuracy or suitability for your situation. Your results are indicative, not definitive, and should not be the sole basis for strategic decisions."
-      },
-      content_user: {
-        title: "Your content",
-        description: "You retain ownership of the information you submit via our forms and benchmark. By submitting it, you grant us a non-exclusive licence to use it to deliver the service you requested (e.g. computing your benchmark, responding to your enquiry) and to aggregate it into anonymised statistics. You confirm that the information you provide is accurate and that you have the right to share it."
-      },
-      content_our: {
-        title: "Our content",
-        description: "All content on this site — including articles, case studies, methodologies, and the benchmark question set — is owned by Trennt Partners and protected by copyright. You may share links freely. You may not reproduce, republish, or commercially exploit our content without written permission."
-      },
-      use: {
-        title: "Acceptable use",
-        description: "You agree not to:",
-        items: [
-          "Use the site in a way that breaches any law or regulation.",
-          "Attempt to gain unauthorised access to our systems or data.",
-          "Submit data that is unlawful, defamatory, or infringes others' rights.",
-          "Scrape, mirror, or overload the site with automated requests."
-        ]
-      },
-      liability: {
-        title: "Liability",
-        description: "The site and benchmark are provided \"as is\" without warranties of any kind. To the maximum extent permitted by law, Trennt Partners shall not be liable for any indirect, incidental, or consequential damages arising from your use of the site. Nothing in these terms limits liability that cannot be limited under applicable law."
-      },
-      changes: {
-        title: "Changes",
-        description: "We may update these terms from time to time. The \"last updated\" date above reflects the most recent revision. Continued use after changes constitutes acceptance."
-      },
-      law: {
-        title: "Governing law",
-        description: "These terms are governed by the laws of England & Wales. Any disputes will be subject to the exclusive jurisdiction of the courts of England & Wales."
-      }
+      title: "2. Terms of Use",
+      sections: [
+        {
+          title: "About These Terms",
+          content: "These Terms of Use govern your access to and use of the Trennt website at trennt.sa.\n\nBy using the website, you agree to these Terms.",
+        },
+        {
+          title: "Website Information",
+          content: "The information provided on this website is for general informational purposes only.\n\nNothing on the website constitutes internal audit, legal, financial, regulatory, or other professional advice.\n\nAny professional services provided by Trennt are governed separately by the relevant engagement agreement.",
+        },
+        {
+          title: "Benchmark and Website Tools",
+          content: "Any benchmark, assessment, diagnostic, or similar tool made available through the website is provided for general informational and self-assessment purposes.\n\nResults are indicative and should not be relied upon as a substitute for professional judgement or a formal internal audit assessment.",
+        },
+        {
+          title: "Intellectual Property",
+          content: "Unless otherwise stated, the content of this website, including its text, branding, methodologies, graphics, tools, and other materials, is owned by or licensed to Trennt.\n\nYou may view and use website content for legitimate personal or business reference.\n\nYou may not reproduce, distribute, modify, commercially exploit, or systematically extract website content without Trennt’s prior written permission.",
+        },
+        {
+          title: "Acceptable Use",
+          intro: "You must not:",
+          items: [
+            "Use the website unlawfully",
+            "Attempt to gain unauthorised access to the website, systems, or data",
+            "Interfere with the security or operation of the website",
+            "Use automated methods to scrape or extract website content without permission",
+            "Submit unlawful, harmful, or misleading content",
+          ],
+        },
+        {
+          title: "Third-Party Links",
+          content: "The website may contain links to third-party websites or services.\n\nTrennt is not responsible for the content, availability, or privacy practices of third-party websites.",
+        },
+        {
+          title: "Availability",
+          content: "We may modify, suspend, or discontinue any part of the website at any time.\n\nWe do not guarantee that the website will always be available or free from errors.",
+        },
+        {
+          title: "Limitation of Liability",
+          content: "To the extent permitted by applicable law, Trennt is not responsible for losses arising solely from reliance on general information or tools provided through the website.\n\nNothing in these Terms excludes or limits liability where such exclusion or limitation is not permitted by applicable law.",
+        },
+        {
+          title: "Changes to These Terms",
+          content: "We may update these Terms from time to time. The latest version will be published on this page.",
+        },
+        {
+          title: "Governing Law",
+          content: "These Terms are governed by the applicable laws and regulations of the Kingdom of Saudi Arabia.\n\nAny dispute relating to the website or these Terms will be subject to the jurisdiction of the competent courts of the Kingdom of Saudi Arabia.",
+        },
+      ],
     },
     cookies: {
-      what: {
-        title: "What cookies are",
-        description: "Cookies are small text files stored on your device when you visit a website. They help the site function, remember your preferences, and understand how the site is used."
-      },
-      use: {
-        title: "The cookies we use",
-        columns: {
-          name: "Cookie",
-          purpose: "Purpose",
-          duration: "Duration",
-          type: "Type"
+      title: "3. Cookie Policy",
+      sections: [
+        {
+          title: "What Are Cookies?",
+          content: "Cookies and similar technologies are small files or identifiers used by websites to support functionality, remember preferences, and understand website usage.",
         },
-        items: [
-          { name: "next-auth.session-token", purpose: "Keeps you signed in (if applicable)", duration: "Session", type: "Essential" },
-          { name: "theme", purpose: "Remembers your light/dark preference", duration: "1 year", type: "Essential" },
-          { name: "trennt_anon", purpose: "Privacy-preserving analytics (no PII)", duration: "24 hours", type: "Analytics" },
-          { name: "newsletter_seen", purpose: "Remembers if you closed the newsletter prompt", duration: "30 days", type: "Functional" }
-        ]
-      },
-      manage: {
-        title: "Managing cookies",
-        description: "You can control and delete cookies through your browser settings. Disabling essential cookies will affect site functionality (e.g. theme persistence). Analytics cookies can be disabled without affecting functionality."
-      },
-      third_party: {
-        title: "Third-party services",
-        description: "We do not use advertising cookies or third-party advertising networks. Our analytics are privacy-preserving and do not set personally identifiable cookies. If we ever add a third-party service that sets cookies, we'll update this policy and seek your consent where required."
-      }
-    }
+        {
+          title: "How We Use Cookies",
+          intro: "Trennt may use:",
+          items: [
+            {
+              name: "Essential Cookies",
+              desc: "Required for the website to operate securely and correctly.",
+            },
+            {
+              name: "Preference Cookies",
+              desc: "Used to remember website settings and preferences.",
+            },
+            {
+              name: "Analytics Cookies",
+              desc: "Used to understand how visitors use the website and to improve its performance and content.",
+            },
+          ],
+          footer: "We do not use cookies to sell personal data.",
+        },
+        {
+          title: "Managing Cookies",
+          content: "Where required, you can manage non-essential cookies through the cookie settings available on the website.\n\nYou can also control or delete cookies through your browser settings.\n\nDisabling certain cookies may affect some website functionality.",
+        },
+        {
+          title: "Third-Party Services",
+          content: "Some website functions may rely on third-party technology providers.\n\nWhere those services process personal data or use cookies, they are subject to applicable data protection requirements.",
+        },
+        {
+          title: "Changes to This Cookie Policy",
+          content: "We may update this Cookie Policy if our website or use of cookies changes.\n\nThe latest version will be published on this page.",
+        },
+      ],
+    },
+    contact: {
+      title: "Contact",
+      desc: "For questions about these policies or the Trennt website, please contact:",
+      company: "Trennt",
+      email: "info@trennt.sa",
+      website: "trennt.sa",
+    },
   },
   benchmark_landing: {
     hero: {

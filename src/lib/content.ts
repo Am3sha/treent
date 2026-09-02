@@ -25,7 +25,7 @@ export const COMPANY = {
   email: "info@trennt.sa",
   phone: "+966 50 123 4567",
   address: {
-    en: "Riyadh, Saudi",
+    en: "Riyadh,Saudi Arabia",
     ar: "الرياض، السعودية"
   },
   offices: [
@@ -33,8 +33,8 @@ export const COMPANY = {
   ],
   social: {
     linkedin: "https://linkedin.com",
-    twitter: "https://twitter.com",
-    youtube: "https://youtube.com",
+    twitter: "https://x.com",
+    
   },
 };
 

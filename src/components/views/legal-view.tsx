@@ -3,7 +3,6 @@
 import * as React from "react";
 import { ShieldCheck, FileText, Cookie, Mail, ArrowUpRight } from "lucide-react";
 import { useNav } from "@/lib/store";
-import { COMPANY } from "@/lib/content";
 import { useTranslation } from "@/lib/i18n";
 import { Reveal, Eyebrow } from "@/components/site/reveal";
 import { cn } from "@/lib/utils";
@@ -17,8 +16,9 @@ import {
 } from "@/components/ui/tabs";
 
 export function LegalView() {
-  const { t, l, lang, isRTL } = useTranslation();
+  const { t, isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
+
   return (
     <div className="bg-background">
       {/* Hero */}
@@ -36,14 +36,7 @@ export function LegalView() {
           </Reveal>
           <Reveal delay={0.1}>
             <p className={cn("mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg", isRTL && "mr-0 ml-auto")}>
-              {t('legal.hero.description_start')}{" "}
-              <button
-                onClick={() => navigate("contact")}
-                className="font-medium text-primary underline-offset-4 hover:underline"
-              >
-                {t('legal.hero.cta')}
-              </button>{" "}
-              {t('legal.hero.description_end')}
+              {t('legal.hero.description')}
             </p>
           </Reveal>
           <Reveal delay={0.15}>
@@ -87,156 +80,85 @@ export function LegalView() {
           {/* Privacy Policy */}
           <TabsContent value="privacy" className="mt-8">
             <LegalCard>
-              <LegalSection title={t('legal.privacy.who.title')}>
-                <p>
-                  {l(COMPANY.legalName as any)} {t('legal.privacy.who.desc_1')}{" "}
-                  {l(COMPANY.address as any)}. {t('legal.privacy.who.desc_2')}{" "}
-                  <a
-                    href={`mailto:${COMPANY.email}`}
-                    className="text-primary underline-offset-4 hover:underline"
-                  >
-                    {COMPANY.email}
-                  </a>{" "}
-                  {t('legal.privacy.who.desc_3')} {COMPANY.phone}.
-                </p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.privacy.collect.title')}>
-                <p>{t('legal.privacy.collect.intro')}</p>
-                <LegalList
-                  items={t('legal.privacy.collect.items', { returnObjects: true }) as string[]}
-                />
-              </LegalSection>
-
-              <LegalSection title={t('legal.privacy.why.title')}>
-                <p>{t('legal.privacy.why.intro')}</p>
-                <LegalList
-                  items={t('legal.privacy.why.items', { returnObjects: true }) as string[]}
-                />
-              </LegalSection>
-
-              <LegalSection title={t('legal.privacy.basis.title')}>
-                <p>
-                  {t('legal.privacy.basis.p1')} <strong>{t('legal.privacy.basis.consent')}</strong> {t('legal.privacy.basis.p2')}{" "}
-                  <strong>{t('legal.privacy.basis.legitimate')}</strong> {t('legal.privacy.basis.p3')}{" "}
-                  <strong>{t('legal.privacy.basis.contract')}</strong> {t('legal.privacy.basis.p4')}
-                </p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.privacy.retention.title')}>
-                <LegalList
-                  items={t('legal.privacy.retention.items', { returnObjects: true }) as string[]}
-                />
-              </LegalSection>
-
-              <LegalSection title={t('legal.privacy.sharing.title')}>
-                <p>{t('legal.privacy.sharing.desc')}</p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.privacy.rights.title')}>
-                <p>
-                  {t('legal.privacy.rights.desc_1')}{" "}
-                  <a
-                    href={`mailto:${COMPANY.email}`}
-                    className="text-primary underline-offset-4 hover:underline"
-                  >
-                    {COMPANY.email}
-                  </a>
-                  . {t('legal.privacy.rights.desc_2')}
-                </p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.privacy.transfers.title')}>
-                <p>{t('legal.privacy.transfers.desc')}</p>
-              </LegalSection>
+              <h2 className="text-xl font-bold tracking-tight text-foreground border-b border-border/60 pb-3 mb-6">
+                {t('legal.privacy.title')}
+              </h2>
+              {((t('legal.privacy.sections', { returnObjects: true }) as any[]) || []).map((sec: any, idx: number) => (
+                <LegalSection key={idx} title={sec.title}>
+                  {sec.content && (
+                    <div className="space-y-2 whitespace-pre-line">
+                      {sec.content}
+                      {sec.contactEmail && (
+                        <div>
+                          <a
+                            href={`mailto:${sec.contactEmail}`}
+                            className="font-medium text-primary underline underline-offset-4 hover:opacity-80"
+                          >
+                            {sec.contactEmail}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {sec.intro && <p>{sec.intro}</p>}
+                  {sec.items && (
+                    <LegalList items={sec.items} />
+                  )}
+                  {sec.footer && <p className="mt-2">{sec.footer}</p>}
+                </LegalSection>
+              ))}
             </LegalCard>
           </TabsContent>
 
           {/* Terms of Service */}
           <TabsContent value="terms" className="mt-8">
             <LegalCard>
-              <LegalSection title={t('legal.terms.about.title')}>
-                <p>
-                  {t('legal.terms.about.description').replace('Trennt', l(COMPANY.name as any))}
-                </p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.terms.benchmark.title')}>
-                <p>{t('legal.terms.benchmark.description')}</p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.terms.content_user.title')}>
-                <p>{t('legal.terms.content_user.description')}</p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.terms.content_our.title')}>
-                <p>
-                  {t('legal.terms.content_our.description').replace('Trennt Partners', l(COMPANY.legalName as any))}
-                </p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.terms.use.title')}>
-                <p>{t('legal.terms.use.description')}</p>
-                <LegalList items={t('legal.terms.use.items', { returnObjects: true }) as string[]} />
-              </LegalSection>
-
-              <LegalSection title={t('legal.terms.liability.title')}>
-                <p>
-                  {t('legal.terms.liability.description').replace('Trennt Partners', l(COMPANY.legalName as any))}
-                </p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.terms.changes.title')}>
-                <p>{t('legal.terms.changes.description')}</p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.terms.law.title')}>
-                <p>{t('legal.terms.law.description')}</p>
-              </LegalSection>
+              <h2 className="text-xl font-bold tracking-tight text-foreground border-b border-border/60 pb-3 mb-6">
+                {t('legal.terms.title')}
+              </h2>
+              {((t('legal.terms.sections', { returnObjects: true }) as any[]) || []).map((sec: any, idx: number) => (
+                <LegalSection key={idx} title={sec.title}>
+                  {sec.content && (
+                    <div className="space-y-2 whitespace-pre-line">
+                      {sec.content}
+                    </div>
+                  )}
+                  {sec.intro && <p>{sec.intro}</p>}
+                  {sec.items && (
+                    <LegalList items={sec.items} />
+                  )}
+                </LegalSection>
+              ))}
             </LegalCard>
           </TabsContent>
 
           {/* Cookie Policy */}
           <TabsContent value="cookies" className="mt-8">
             <LegalCard>
-              <LegalSection title={t('legal.cookies.what.title')}>
-                <p>{t('legal.cookies.what.description')}</p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.cookies.use.title')}>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse text-sm">
-                    <thead>
-                      <tr className={cn("border-b border-border/70", isRTL ? "text-right" : "text-left")}>
-                        <th className={cn("py-2 font-semibold", isRTL ? "pl-4" : "pr-4")}>{t('legal.cookies.use.columns.name')}</th>
-                        <th className={cn("py-2 font-semibold", isRTL ? "pl-4" : "pr-4")}>{t('legal.cookies.use.columns.purpose')}</th>
-                        <th className={cn("py-2 font-semibold", isRTL ? "pl-4" : "pr-4")}>{t('legal.cookies.use.columns.duration')}</th>
-                        <th className="py-2 font-semibold">{t('legal.cookies.use.columns.type')}</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-muted-foreground">
-                      {(t('legal.cookies.use.items', { returnObjects: true }) as any[]).map((item, i, arr) => (
-                        <tr key={item.name} className={cn(i !== arr.length - 1 && "border-b border-border/50")}>
-                          <td className={cn("py-2 font-mono text-xs text-foreground", isRTL ? "pl-4" : "pr-4")}>
-                            {item.name}
-                          </td>
-                          <td className={cn("py-2", isRTL ? "pl-4" : "pr-4")}>{item.purpose}</td>
-                          <td className={cn("py-2", isRTL ? "pl-4" : "pr-4")}>{item.duration}</td>
-                          <td className="py-2">{item.type}</td>
-                        </tr>
+              <h2 className="text-xl font-bold tracking-tight text-foreground border-b border-border/60 pb-3 mb-6">
+                {t('legal.cookies.title')}
+              </h2>
+              {((t('legal.cookies.sections', { returnObjects: true }) as any[]) || []).map((sec: any, idx: number) => (
+                <LegalSection key={idx} title={sec.title}>
+                  {sec.content && (
+                    <div className="space-y-2 whitespace-pre-line">
+                      {sec.content}
+                    </div>
+                  )}
+                  {sec.intro && <p>{sec.intro}</p>}
+                  {sec.items && (
+                    <ul className="space-y-3 my-3">
+                      {sec.items.map((item: any, i: number) => (
+                        <li key={i} className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-xs sm:text-sm">
+                          <span className="font-semibold text-foreground">{item.name}: </span>
+                          <span>{item.desc}</span>
+                        </li>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
-              </LegalSection>
-
-              <LegalSection title={t('legal.cookies.manage.title')}>
-                <p>{t('legal.cookies.manage.description')}</p>
-              </LegalSection>
-
-              <LegalSection title={t('legal.cookies.third_party.title')}>
-                <p>{t('legal.cookies.third_party.description')}</p>
-              </LegalSection>
+                    </ul>
+                  )}
+                  {sec.footer && <p className="mt-2">{sec.footer}</p>}
+                </LegalSection>
+              ))}
             </LegalCard>
           </TabsContent>
         </Tabs>
@@ -251,10 +173,13 @@ export function LegalView() {
                 </span>
                 <div>
                   <h3 className="text-base font-semibold">
-                    {t('legal.footer.title')}
+                    {t('legal.contact.title')}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {t('legal.footer.description')}
+                    {t('legal.contact.desc')}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground font-medium">
+                    {t('legal.contact.company')} · <a href={`mailto:${t('legal.contact.email')}`} className="text-primary underline underline-offset-2">{t('legal.contact.email')}</a> · {t('legal.contact.website')}
                   </p>
                 </div>
               </div>
@@ -264,12 +189,12 @@ export function LegalView() {
                   size="sm"
                   className={cn("gap-1.5 rounded-full", isRTL && "flex-row-reverse")}
                 >
-                  {t('legal.footer.cta')}
+                  {t('nav.contact')}
                   <ArrowUpRight className={cn("h-3.5 w-3.5", isRTL && "rotate-[-90deg]")} />
                 </Button>
-                <a href={`mailto:${COMPANY.email}`}>
+                <a href={`mailto:${t('legal.contact.email')}`}>
                   <Button size="sm" variant="outline" className="rounded-full">
-                    {COMPANY.email}
+                    {t('legal.contact.email')}
                   </Button>
                 </a>
               </div>
@@ -303,9 +228,9 @@ function LegalSection({
   const { isRTL } = useTranslation();
   return (
     <section className={cn(isRTL && "text-right")}>
-      <h2 className="text-lg font-semibold tracking-tight text-foreground">
+      <h3 className="text-lg font-semibold tracking-tight text-foreground">
         {title}
-      </h2>
+      </h3>
       <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
         {children}
       </div>

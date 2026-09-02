@@ -101,13 +101,13 @@ const CULTURE_VALUES = [
 const GENERAL_APPLICATION_ROLE: CareerItem = {
   slug: "general-application",
   title: { en: "General Application", ar: "تقديم طلب عام" },
-  team: { en: "Internal Audit", ar: "المراجعة الداخلية" },
+  team: { en: "All Fields & Specialties", ar: "جميع المجالات والتخصصات" },
   level: { en: "All Levels", ar: "كافة المستويات" },
   location: { en: "Riyadh, KSA", ar: "الرياض، المملكة العربية السعودية" },
   type: "Full-time",
   summary: {
-    en: "We are always interested in connecting with experienced internal audit professionals. Submit your CV and details for current or upcoming engagement opportunities.",
-    ar: "نرحب دائماً بالتواصل مع الكفاءات المتخصصة في المراجعة الداخلية. يمكنك تقديم بياناتك وسيرتك الذاتية للفرص الحالية والمستقبلية."
+    en: "We welcome applications across all fields—including Internal Audit, IT, AI, Strategy, and Advisory. Submit your CV and details for current or upcoming opportunities.",
+    ar: "نرحب بالتقديم من كافة التخصصات والمجالات (المراجعة الداخلية، تقنية المعلومات، الذكاء الاصطناعي، الاستراتيجية، وغيرها). يمكنك تقديم بياناتك وسيرتك الذاتية للفرص الحالية والمستقبلية."
   },
   responsibilities: [],
   requirements: [],
@@ -208,10 +208,7 @@ export function CareersView() {
                   <h3 className="text-xl font-semibold tracking-tight text-foreground">
                     {t('careers.roles.card_title')}
                   </h3>
-                  <p className="mt-1 text-xs font-medium text-muted-foreground">
-                    {t('careers.roles.card_subtitle')}
-                  </p>
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground/90">
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground/90">
                     {t('careers.roles.card_description')}
                   </p>
                 </div>
@@ -541,9 +538,11 @@ function ApplicationDialog({
               ? (lang === "ar" ? "تقديم طلب الانضمام" : "General Application")
               : `${t('careers.form.title')} ${l(role?.title)}`}
           </DialogTitle>
-          <DialogDescription className="mt-0.5 text-[11px] text-muted-foreground">
-            {l(role?.team)} · {l(role?.location)} · {role?.type} · {l(role?.level)}
-          </DialogDescription>
+          {role?.slug !== "general-application" && (
+            <DialogDescription className="mt-0.5 text-[11px] text-muted-foreground">
+              {l(role?.team)} · {l(role?.location)} · {role?.type} · {l(role?.level)}
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-1 space-y-2.5" noValidate>
