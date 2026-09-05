@@ -34,6 +34,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Icon } from "@/components/site/icon";
 import { cn } from "@/lib/utils";
 import { COMPANY_SIZES, COMPANY_SIZE_LABELS } from "@/lib/benchmark-constants";
+import { useTranslation } from "@/lib/i18n";
+import {
+  BENCHMARK_ARABIC_DIMENSIONS,
+  BENCHMARK_ARABIC_QUESTIONS,
+  BENCHMARK_ARABIC_QUIZ_UI,
+  BENCHMARK_ARABIC_INDUSTRIES,
+  COMPANY_SIZE_ARABIC_LABELS,
+} from "@/lib/translations/benchmark-ar";
 
 
 
@@ -75,6 +83,8 @@ export function BenchmarkQuizView() {
   const result = useNav((s) => s.result);
   const resetResponses = useNav((s) => s.resetResponses);
   const { toast } = useToast();
+  const { lang, isRTL } = useTranslation();
+  const quizUI = BENCHMARK_ARABIC_QUIZ_UI;
 
   const [step, setStep] = React.useState(0); // 0 = details, 1..5 = dimension steps
   const [submitting, setSubmitting] = React.useState(false);
@@ -179,15 +189,15 @@ export function BenchmarkQuizView() {
       setResult(resultJson.data);
       setRespondent(profile);
       toast({
-        title: "Benchmark submitted",
-        description: "Your maturity report is ready.",
+        title: lang === "ar" ? quizUI.toastSubmitTitle : "Benchmark submitted",
+        description: lang === "ar" ? quizUI.toastSubmitDesc : "Your maturity report is ready.",
       });
       navigate("benchmark-results");
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Something went wrong";
       toast({
-        title: "Could not submit",
-        description: msg,
+        title: lang === "ar" ? quizUI.toastErrorTitle : "Could not submit",
+        description: lang === "ar" ? quizUI.toastErrorDesc(msg) : msg,
         variant: "destructive",
       });
     } finally {
@@ -196,30 +206,41 @@ export function BenchmarkQuizView() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-secondary/20">
+    <div className="min-h-[calc(100vh-4rem)] bg-secondary/20" dir={isRTL ? "rtl" : "ltr"}>
       {/* PROGRESS HEADER ------------------------------------------------ */}
       <div className="sticky top-[88px] z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
-        <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-3">
+        <div className={cn("mx-auto max-w-4xl px-4 py-3 sm:px-6 lg:px-8", isRTL && "text-right")}>
+          <div className={cn("flex items-center justify-between gap-4", isRTL && "flex-row-reverse")}>
+            <div className={cn("flex min-w-0 items-center gap-3", isRTL && "flex-row-reverse")}>
               <span className="font-mono text-xs font-medium tracking-wider text-primary/80">
-                Step {step + 1} / {TOTAL_STEPS}
+                {lang === "ar"
+                  ? quizUI.progressStep(step + 1, TOTAL_STEPS, true)
+                  : `Step ${step + 1} / ${TOTAL_STEPS}`}
               </span>
               <span className="hidden truncate text-sm font-medium text-foreground sm:inline">
                 {isDetailsStep
-                  ? "Your details"
-                  : `${currentDim?.label ?? ""}`}
+                  ? lang === "ar"
+                    ? quizUI.detailsTitleContext
+                    : "Your details"
+                  : currentDim
+                    ? lang === "ar"
+                      ? BENCHMARK_ARABIC_DIMENSIONS[currentDim.key].label
+                      : currentDim.label
+                    : ""}
               </span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className={cn("flex items-center gap-4", isRTL && "flex-row-reverse")}>
             <span className="hidden text-xs text-muted-foreground sm:inline">
-                {answeredCount} / {TOTAL_QUESTIONS} answered
+                {lang === "ar"
+                  ? quizUI.answeredCount(answeredCount, TOTAL_QUESTIONS, true)
+                  : `${answeredCount} / ${TOTAL_QUESTIONS} answered`}
               </span>
               <button
                 onClick={handleExit}
                 className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
-                <X className="h-3.5 w-3.5" /> Exit
+                <X className="h-3.5 w-3.5" />
+                {lang === "ar" ? quizUI.exit : "Exit"}
               </button>
             </div>
           </div>
@@ -231,7 +252,7 @@ export function BenchmarkQuizView() {
       </div>
 
       {/* STEP BODY ------------------------------------------------------ */}
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className={cn("mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8", isRTL && "text-right")}>
         <AnimatePresence mode="wait">
           {!isDetailsStep ? (
             <motion.div
@@ -246,6 +267,8 @@ export function BenchmarkQuizView() {
                 questions={STEPS[step - 1].questions}
                 responses={responses}
                 onRespond={setResponse}
+                lang={lang}
+                isRTL={isRTL}
               />
             </motion.div>
           ) : (
@@ -265,21 +288,28 @@ export function BenchmarkQuizView() {
                 onSubmit={handleSubmit}
                 onAdvanceToQuestions={advanceFromDetails}
                 onGoToResults={() => navigate("benchmark-results")}
+                lang={lang}
+                isRTL={isRTL}
               />
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* NAV ----------------------------------------------------------- */}
-        <div className="mt-10 flex items-center justify-between gap-4 border-t border-border/70 pt-6">
+        <div className={cn(
+          "mt-10 flex items-center justify-between gap-4 border-t border-border/70 pt-6",
+          isRTL && "flex-row-reverse"
+        )}>
           <Button
             variant="ghost"
             onClick={step === 0 ? handleExit : goBack}
             disabled={submitting}
-            className="gap-1.5"
+            className={cn("gap-1.5", isRTL && "flex-row-reverse")}
           >
-            <ArrowLeft className="h-4 w-4" />
-            {step === 0 ? "Exit" : "Back"}
+            <ArrowLeft className={cn("h-4 w-4", isRTL && "rotate-180")} />
+            {step === 0
+              ? lang === "ar" ? quizUI.navExit : "Exit"
+              : lang === "ar" ? quizUI.navBack : "Back"}
           </Button>
           <div className="hidden text-xs text-muted-foreground sm:block">
             {!isDetailsStep && (
@@ -289,8 +319,8 @@ export function BenchmarkQuizView() {
                 )}
               >
                 {stepComplete
-                  ? "All set — continue when ready"
-                  : "Answer all questions to continue"}
+                  ? lang === "ar" ? quizUI.navAllSet : "All set — continue when ready"
+                  : lang === "ar" ? quizUI.navAnswerAll : "Answer all questions to continue"}
               </span>
             )}
           </div>
@@ -298,18 +328,18 @@ export function BenchmarkQuizView() {
             <Button
               onClick={goNext}
               disabled={!stepComplete}
-              className="gap-1.5"
+              className={cn("gap-1.5", isRTL && "flex-row-reverse")}
             >
               {step === STEPS.length
-                ? "Get my report"
-                : "Next"}
-              <ArrowRight className="h-4 w-4" />
+                ? lang === "ar" ? quizUI.navGetReport : "Get my report"
+                : lang === "ar" ? quizUI.navNext : "Next"}
+              <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
             </Button>
           ) : (
             <span className="text-sm text-muted-foreground">
               {doneWithQuestions
-                ? "Get your results on the form above"
-                : "Submit on the form above"}
+                ? lang === "ar" ? quizUI.navFormAboveResults : "Get your results on the form above"
+                : lang === "ar" ? quizUI.navFormAboveSubmit : "Submit on the form above"}
             </span>
           )}
         </div>
@@ -327,15 +357,23 @@ function DimensionStep({
   questions,
   responses,
   onRespond,
+  lang,
+  isRTL,
 }: {
   dimension: (typeof DIMENSIONS)[number];
   questions: BenchmarkQuestion[];
   responses: Record<string, string>;
   onRespond: (id: string, letter: string) => void;
+  lang: "en" | "ar";
+  isRTL: boolean;
 }) {
+  const arabicDimension = BENCHMARK_ARABIC_DIMENSIONS[dimension.key];
+  const displayDimension = lang === "ar" ? arabicDimension : dimension;
+  const quizUI = BENCHMARK_ARABIC_QUIZ_UI;
+
   return (
     <div>
-      <div className="mb-10 flex items-start gap-4">
+      <div className={cn("mb-10 flex items-start gap-4", isRTL && "flex-row-reverse")}>
         <div
           className={cn(
             "flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10",
@@ -345,14 +383,19 @@ function DimensionStep({
           <Icon name={dimension.icon} className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80">
-            Dimension {DIMENSIONS.indexOf(dimension) + 1} of {DIMENSIONS.length}
+          <p className={cn(
+            "text-xs font-medium tracking-[0.2em] text-primary/80",
+            isRTL ? "" : "uppercase"
+          )}>
+            {lang === "ar"
+              ? quizUI.dimensionCounter(DIMENSIONS.indexOf(dimension) + 1, DIMENSIONS.length)
+              : `Dimension ${DIMENSIONS.indexOf(dimension) + 1} of ${DIMENSIONS.length}`}
           </p>
           <h1 className="mt-1 text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
-            {dimension.label}
+            {displayDimension.label}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            {dimension.description}
+            {displayDimension.description}
           </p>
         </div>
       </div>
@@ -365,6 +408,7 @@ function DimensionStep({
             index={idx + 1}
             value={responses[q.id]}
             onRespond={(v) => onRespond(q.id, v)}
+            lang={lang}
           />
         ))}
       </div>
@@ -377,13 +421,23 @@ function QuestionCard({
   index,
   value,
   onRespond,
+  lang,
 }: {
   question: BenchmarkQuestion;
   index: number;
   value: string | undefined;
   onRespond: (v: string) => void;
+  lang: "en" | "ar";
 }) {
   const answered = value !== undefined;
+  const arabicQuestion = BENCHMARK_ARABIC_QUESTIONS[question.id];
+  const displayPrompt = lang === "ar" && arabicQuestion ? arabicQuestion.prompt : question.prompt;
+  const displayOptions = lang === "ar" && arabicQuestion
+    ? question.options.map((option) => ({
+        ...option,
+        label: arabicQuestion.options[option.letter] ?? option.label,
+      }))
+    : question.options;
   return (
     <div
       className={cn(
@@ -404,7 +458,7 @@ function QuestionCard({
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-balance text-base font-medium leading-snug sm:text-lg">
-            {question.prompt}
+            {displayPrompt}
           </p>
           {question.help && (
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -413,9 +467,10 @@ function QuestionCard({
           )}
 
           <LikertScale
-            options={question.options}
+            options={displayOptions}
             value={value}
             onChange={onRespond}
+            lang={lang}
           />
         </div>
       </div>
@@ -427,16 +482,22 @@ function LikertScale({
   options,
   value,
   onChange,
+  lang,
 }: {
   options: { letter: string; label: string }[];
   value: string | undefined;
   onChange: (v: string) => void;
+  lang: "en" | "ar";
 }) {
   return (
     <div className="mt-5">
       <div
         role="radiogroup"
-        aria-label="Choose the response that best matches your organisation"
+        aria-label={
+          lang === "ar"
+            ? "اختر الإجابة التي تصف وضع مؤسستك بأفضل شكل"
+            : "Choose the response that best matches your organisation"
+        }
         className="grid grid-cols-1 gap-2 sm:grid-cols-2"
       >
         {options.map((opt) => {
@@ -484,7 +545,9 @@ function LikertScale({
         })}
       </div>
       <div className="mt-2 text-[11px] uppercase tracking-wider text-muted-foreground/70">
-        Pick the single option that best describes your organisation today.
+        {lang === "ar"
+          ? "اختر الخيار الواحد الذي يصف وضع مؤسستك اليوم بأفضل شكل."
+          : "Pick the single option that best describes your organisation today."}
       </div>
     </div>
   );
@@ -503,6 +566,8 @@ function DetailsStep({
   onSubmit,
   onAdvanceToQuestions,
   onGoToResults,
+  lang,
+  isRTL,
 }: {
   initial: RespondentProfile | null;
   resultExists: boolean;
@@ -512,7 +577,10 @@ function DetailsStep({
   onSubmit: (p: RespondentProfile) => void;
   onAdvanceToQuestions?: () => void;
   onGoToResults: () => void;
+  lang: "en" | "ar";
+  isRTL: boolean;
 }) {
+  const quizUI = BENCHMARK_ARABIC_QUIZ_UI;
   const [name, setName] = React.useState(initial?.name ?? "");
   const [email, setEmail] = React.useState(initial?.email ?? "");
   const [company, setCompany] = React.useState(initial?.company ?? "");
@@ -527,16 +595,7 @@ function DetailsStep({
   const nameValid = name.trim().length >= 2;
   const emailValid = EMAIL_RE.test(email.trim());
   const profileReady = nameValid && emailValid && consent && !submitting;
-  // Details appears twice: first visit (before questions) only advances,
-  // final visit (after all questions) performs the real submission.
-  // `finalMode` is set by the parent when the user reaches the end of the
-  // question steps — it must NOT rely solely on answeredCount, because this
-  // component is re-mounted by AnimatePresence when returning from the last
-  // question step.
   const questionsDone = finalMode && answeredCount >= TOTAL_QUESTIONS;
-  // Persist the typed draft to the nav store so a re-mount (AnimatePresence
-  // wait mode) can restore it in final mode. Only while no real result exists
-  // — never overwrite the submitted respondent profile.
   const setRespondent = useNav((s) => s.setRespondent);
   const resultExistsNow = resultExists;
   React.useEffect(() => {
@@ -553,7 +612,6 @@ function DetailsStep({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, email, company, companySize, industry, country, role, consent]);
-  // Re-hydrate local fields when a store draft becomes available (remounts).
   const hydrateKey = JSON.stringify({
     name: initial?.name ?? null,
     email: initial?.email ?? null,
@@ -594,112 +652,172 @@ function DetailsStep({
   return (
     <div>
       <div className="mb-8">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80">
+        <p className={cn(
+          "text-xs font-medium tracking-[0.2em] text-primary/80",
+          isRTL ? "" : "uppercase"
+        )}>
           {answeredCount >= TOTAL_QUESTIONS
-            ? `Step ${TOTAL_STEPS} of ${TOTAL_STEPS} — Final step`
-            : `Step 1 of ${TOTAL_STEPS} — Your details`}
+            ? lang === "ar"
+              ? quizUI.detailsStepFinal(TOTAL_STEPS, TOTAL_STEPS)
+              : `Step ${TOTAL_STEPS} of ${TOTAL_STEPS} — Final step`
+            : lang === "ar"
+              ? quizUI.detailsStepFirst(1, TOTAL_STEPS)
+              : `Step 1 of ${TOTAL_STEPS} — Your details`}
         </p>
         <h1 className="mt-1 text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
           {answeredCount >= TOTAL_QUESTIONS
-            ? "A few details, then your report."
-            : "A few details, then the questions."}
+            ? lang === "ar" ? quizUI.detailsTitleFinal : "A few details, then your report."
+            : lang === "ar" ? quizUI.detailsTitleFirst : "A few details, then the questions."}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          We use this to compute your percentile against peer organisations and
-          to send you a copy of your results. Your responses stay confidential.
+          {lang === "ar"
+            ? quizUI.detailsSubtitle
+            : "We use this to compute your percentile against peer organisations and to send you a copy of your results. Your responses stay confidential."}
         </p>
       </div>
 
       {resultExists && (
-        <div className="mb-6 flex flex-col items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
+        <div className={cn(
+          "mb-6 flex flex-col items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4",
+          "sm:flex-row sm:items-center sm:justify-between",
+          isRTL && "sm:flex-row-reverse flex-row-reverse"
+        )}>
+          <div className={cn("flex items-start gap-3", isRTL && "flex-row-reverse")}>
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <div>
               <p className="text-sm font-medium">
-                You have a previous benchmark on file.
+                {lang === "ar" ? quizUI.prevBannerTitle : "You have a previous benchmark on file."}
               </p>
               <p className="text-xs text-muted-foreground">
-                You can jump straight to it, or submit again to refresh.
+                {lang === "ar" ? quizUI.prevBannerDesc : "You can jump straight to it, or submit again to refresh."}
               </p>
             </div>
           </div>
           <Button variant="outline" size="sm" onClick={onGoToResults}>
-            Go to results
+            {lang === "ar" ? quizUI.prevBannerButton : "Go to results"}
           </Button>
         </div>
       )}
 
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 sm:p-7">
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Full name" required>
+          <Field
+            label={lang === "ar" ? quizUI.labelName : "Full name"}
+            required
+            lang={lang}
+            isRTL={isRTL}
+          >
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoComplete="name"
+              placeholder={lang === "ar" ? quizUI.placeholderName : undefined}
+              dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>
-          <Field label="email" required>
+          <Field
+            label={lang === "ar" ? quizUI.labelEmail : "Work email"}
+            required
+            lang={lang}
+            isRTL={isRTL}
+          >
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
+              placeholder={lang === "ar" ? quizUI.placeholderEmail : undefined}
+              dir="ltr"
             />
           </Field>
-          <Field label="Company">
+          <Field
+            label={lang === "ar" ? quizUI.labelCompany : "Company"}
+            lang={lang}
+            isRTL={isRTL}
+          >
             <Input
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               autoComplete="organization"
+              placeholder={lang === "ar" ? quizUI.placeholderCompany : undefined}
+              dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>
-          <Field label="Company size">
+          <Field
+            label={lang === "ar" ? quizUI.labelCompanySize : "Company size"}
+            lang={lang}
+            isRTL={isRTL}
+          >
             <Select value={companySize} onValueChange={setCompanySize}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select range" />
+                <SelectValue placeholder={lang === "ar" ? quizUI.placeholderCompanySize : "Select range"} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent dir={isRTL ? "rtl" : "ltr"}>
                 {COMPANY_SIZES.map((s) => (
                   <SelectItem key={s} value={s}>
-                    {COMPANY_SIZE_LABELS[s]}
+                    {lang === "ar"
+                      ? COMPANY_SIZE_ARABIC_LABELS[s] ?? COMPANY_SIZE_LABELS[s]
+                      : COMPANY_SIZE_LABELS[s]}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Industry">
+          <Field
+            label={lang === "ar" ? quizUI.labelIndustry : "Industry"}
+            lang={lang}
+            isRTL={isRTL}
+          >
             <Select value={industry} onValueChange={setIndustry}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select industry" />
+                <SelectValue placeholder={lang === "ar" ? quizUI.placeholderIndustry : "Select industry"} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent dir={isRTL ? "rtl" : "ltr"}>
                 {INDUSTRIES.map((s) => (
                   <SelectItem key={s} value={s}>
-                    {s}
+                    {lang === "ar"
+                      ? BENCHMARK_ARABIC_INDUSTRIES[INDUSTRIES.indexOf(s)] ?? s
+                      : s}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Country">
+          <Field
+            label={lang === "ar" ? quizUI.labelCountry : "Country"}
+            lang={lang}
+            isRTL={isRTL}
+          >
             <Input
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               autoComplete="country-name"
+              placeholder={lang === "ar" ? quizUI.placeholderCountry : undefined}
+              dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>
-          <Field label="Role / title" className="sm:col-span-2">
+          <Field
+            label={lang === "ar" ? quizUI.labelRole : "Role / title"}
+            className="sm:col-span-2"
+            lang={lang}
+            isRTL={isRTL}
+          >
             <Input
               value={role}
               onChange={(e) => setRole(e.target.value)}
               autoComplete="organization-title"
+              placeholder={lang === "ar" ? quizUI.placeholderRole : undefined}
+              dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>
         </div>
 
         <label
           htmlFor="consent"
-          className="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-secondary/30 p-3.5 transition-colors hover:bg-secondary/60"
+          className={cn(
+            "flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-secondary/30 p-3.5 transition-colors hover:bg-secondary/60",
+            isRTL && "flex-row-reverse"
+          )}
         >
           <Checkbox
             id="consent"
@@ -708,15 +826,21 @@ function DetailsStep({
             className="mt-0.5"
           />
           <span className="text-sm leading-relaxed text-muted-foreground">
-            I agree to Trennt storing my responses to generate my benchmark
-            and for aggregated, anonymised reporting. I may be contacted about
-            my results.
+            {lang === "ar"
+              ? quizUI.consentText
+              : "I agree to Trennt storing my responses to generate my benchmark and for aggregated, anonymised reporting. I may be contacted about my results."}
           </span>
         </label>
 
-        <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className={cn(
+          "flex flex-col gap-3 border-t border-border pt-5",
+          "sm:flex-row sm:items-center sm:justify-between",
+          isRTL && "sm:flex-row-reverse"
+        )}>
           <p className="text-xs leading-relaxed text-muted-foreground">
-            By submitting, you'll see your full maturity report immediately.
+            {lang === "ar"
+              ? quizUI.formNote
+              : "By submitting, you'll see your full maturity report immediately."}
           </p>
           <Button
             type="button"
@@ -725,37 +849,39 @@ function DetailsStep({
             onClick={() =>
               questionsDone ? onSubmit(profile) : onAdvanceToQuestions?.()
             }
-            className="gap-2 sm:min-w-[200px]"
+            className={cn("gap-2 sm:min-w-[200px]", isRTL && "flex-row-reverse")}
           >
             {submitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Submitting…
+                {lang === "ar" ? quizUI.buttonSubmitting : "Submitting…"}
               </>
             ) : questionsDone ? (
               <>
-                Get my results
-                <ArrowRight className="h-4 w-4" />
+                {lang === "ar" ? quizUI.buttonGetResults : "Get my results"}
+                <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
               </>
             ) : (
               <>
-                Start the questions
-                <ArrowRight className="h-4 w-4" />
+                {lang === "ar" ? quizUI.buttonStartQuestions : "Start the questions"}
+                <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
               </>
             )}
           </Button>
         </div>
 
         {!canSubmit && !canAdvance && !submitting && (
-          <div className="flex items-start gap-2 text-xs text-muted-foreground">
+          <div className={cn("flex items-start gap-2 text-xs text-muted-foreground", isRTL && "flex-row-reverse")}>
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>
               {!nameValid
-                ? "Enter your name"
+                ? lang === "ar" ? quizUI.validationName : "Enter your name"
                 : !emailValid
-                  ? "Enter a valid email address"
+                  ? lang === "ar" ? quizUI.validationEmail : "Enter a valid email address"
                   : !consent
-                    ? "Please review and accept the consent statement to continue"
+                    ? lang === "ar"
+                      ? quizUI.validationConsent
+                      : "Please review and accept the consent statement to continue"
                     : ""}
             </span>
           </div>
@@ -770,17 +896,23 @@ function Field({
   required,
   children,
   className,
+  lang,
+  isRTL,
 }: {
   label: string;
   required?: boolean;
   children: React.ReactNode;
   className?: string;
+  lang: "en" | "ar";
+  isRTL: boolean;
 }) {
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       <Label className="text-xs font-medium text-foreground">
         {label}
-        {required && <span className="ml-0.5 text-primary">*</span>}
+        {required && (
+          <span className={cn("text-primary", isRTL ? "mr-0.5" : "ml-0.5")}>*</span>
+        )}
       </Label>
       {children}
     </div>
