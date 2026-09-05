@@ -7,7 +7,6 @@ import {
   Building2,
   Printer,
   RefreshCw,
-  Share2,
   ShieldCheck,
   TrendingUp,
   AlertCircle,
@@ -184,25 +183,6 @@ export function BenchmarkResultsView() {
           }
           generatePDF(result, respondent, currentStats, lang);
         }}
-        onShare={() => {
-          if (typeof navigator !== "undefined" && navigator.share) {
-            navigator
-              .share({
-                title:
-                  lang === "ar"
-                    ? ui.shareTitle
-                    : "My Internal Audit Maturity Benchmark",
-                text:
-                  lang === "ar"
-                    ? ui.shareText(result.overall)
-                    : `I scored ${result.overall}/100 on the Trennt Internal Audit Maturity Benchmark.`,
-                url: typeof window !== "undefined" ? window.location.href : "",
-              })
-              .catch(() => undefined);
-          } else if (typeof window !== "undefined") {
-            window.print();
-          }
-        }}
         onOpenService={() => navigate("services")}
         lang={lang}
         isRTL={isRTL}
@@ -325,7 +305,6 @@ function ResultsBody({
   onRetake,
   onFollowUp,
   onDownloadPDF,
-  onShare,
   onOpenService,
   lang,
   isRTL,
@@ -335,7 +314,6 @@ function ResultsBody({
   onRetake: () => void;
   onFollowUp: () => void;
   onDownloadPDF: (stats: BenchmarkStats | null) => void;
-  onShare: () => void;
   onOpenService: () => void;
   lang: "en" | "ar";
   isRTL: boolean;
@@ -910,36 +888,25 @@ function ResultsBody({
                 {lang === "ar" ? ui.ctaDesc : "A 30-minute call with a Trennt partner to walk through your results, pressure-test the read, and translate your focus areas into a concrete 90-day plan."}
               </p>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5 sm:w-64 sm:shrink-0">
               <Button
                 size="lg"
                 variant="secondary"
                 onClick={onFollowUp}
-                className={cn("gap-2 rounded-full bg-background text-foreground hover:bg-background/90", isRTL && "flex-row-reverse")}
+                className={cn("w-full gap-2 rounded-full bg-background text-foreground hover:bg-background/90", isRTL && "flex-row-reverse")}
               >
                 {lang === "ar" ? ui.ctaRequest : "Request a briefing"}
                 <ArrowUpRight className="h-4 w-4" />
               </Button>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={onRetake}
-                  className={cn("gap-1.5 rounded-full text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground", isRTL && "flex-row-reverse")}
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  {lang === "ar" ? ui.ctaRetake : "Retake"}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={onShare}
-                  className={cn("gap-1.5 rounded-full text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground", isRTL && "flex-row-reverse")}
-                >
-                  <Share2 className="h-3.5 w-3.5" />
-                  {lang === "ar" ? ui.ctaShare : "Share"}
-                </Button>
-              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onRetake}
+                className={cn("w-full gap-1.5 rounded-full text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground", isRTL && "flex-row-reverse")}
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                {lang === "ar" ? ui.ctaRetake : "Retake"}
+              </Button>
             </div>
           </div>
         </div>
