@@ -8,10 +8,6 @@ interface Particle {
     id: number;
     targetX: number;
     targetY: number;
-    startX: number;
-    startY: number;
-    delay: number;
-    size: number;
 }
 
 // Generate point coordinates outlining TRENNT in a 400x120 SVG viewport grid
@@ -56,26 +52,12 @@ export function TrenntParticleLogo({ className }: { className?: string }) {
         () => false
     );
 
-    // Generate deterministic particles with integer starting offsets
     const particles = React.useMemo<Particle[]>(() => {
-        return LOGO_POINTS.map(([x, y], idx) => {
-            // Integer deterministic pseudorandom scatter generator
-            const seed1 = Math.sin(idx + 1) * 10000;
-            const seed2 = Math.cos(idx + 1) * 10000;
-            const randX = Math.round((seed1 - Math.floor(seed1)) * 140 - 70);
-            const randY = Math.round((seed2 - Math.floor(seed2)) * 140 - 70);
-            const delay = Math.round(((idx * 37) % 400)) / 1000;
-
-            return {
-                id: idx,
-                targetX: x,
-                targetY: y,
-                startX: x + randX,
-                startY: y + randY,
-                delay,
-                size: idx % 3 === 0 ? 4.8 : 3.6,
-            };
-        });
+        return LOGO_POINTS.map(([x, y], idx) => ({
+            id: idx,
+            targetX: x,
+            targetY: y,
+        }));
     }, []);
 
     if (!mounted) {
@@ -90,7 +72,7 @@ export function TrenntParticleLogo({ className }: { className?: string }) {
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-full h-full overflow-visible"
             >
-                {/* Ambient Subtle Solid Fill Reveal After Convergence */}
+                {/* Ambient Subtle Solid Fill Reveal */}
                 <motion.text
                     x="200"
                     y="102"
@@ -103,37 +85,33 @@ export function TrenntParticleLogo({ className }: { className?: string }) {
                     initial={reduced ? { opacity: 0.15 } : { opacity: 0 }}
                     whileInView={reduced ? { opacity: 0.15 } : { opacity: 0.18 }}
                     viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 1, delay: reduced ? 0 : 0.7 }}
+                    transition={{ duration: 1, delay: reduced ? 0 : 0.2 }}
                 >
                     TRENNT
                 </motion.text>
 
-                {/* Converging Elongated Particles */}
-                {particles.map((p) => (
-                    <motion.rect
-                        key={p.id}
-                        width={p.id % 3 === 0 ? 4.2 : 3.2}
-                        height={p.id % 3 === 0 ? 8.5 : 6.5}
-                        rx="2"
-                        fill={p.id % 2 === 0 ? "#013D3E" : "#005A58"}
-                        initial={
-                            reduced
-                                ? { x: p.targetX - 2, y: p.targetY - 4, opacity: 0.7 }
-                                : { x: p.startX - 2, y: p.startY - 4, opacity: 0, scale: 0.4 }
-                        }
-                        whileInView={
-                            reduced
-                                ? { x: p.targetX - 2, y: p.targetY - 4, opacity: 0.7 }
-                                : { x: p.targetX - 2, y: p.targetY - 4, opacity: 0.85, scale: 1 }
-                        }
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{
-                            duration: reduced ? 0 : 0.75,
-                            delay: reduced ? 0 : p.delay,
-                            ease: [0.16, 1, 0.3, 1],
-                        }}
-                    />
-                ))}
+                {/* Composited Single Observer Particle Group */}
+                <motion.g
+                    initial={reduced ? { opacity: 0.7 } : { opacity: 0, scale: 0.96 }}
+                    whileInView={reduced ? { opacity: 0.7 } : { opacity: 0.85, scale: 1 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{
+                        duration: reduced ? 0 : 0.75,
+                        ease: [0.16, 1, 0.3, 1],
+                    }}
+                >
+                    {particles.map((p) => (
+                        <rect
+                            key={p.id}
+                            x={p.targetX - 2}
+                            y={p.targetY - 4}
+                            width={p.id % 3 === 0 ? 4.2 : 3.2}
+                            height={p.id % 3 === 0 ? 8.5 : 6.5}
+                            rx="2"
+                            fill={p.id % 2 === 0 ? "#013D3E" : "#005A58"}
+                        />
+                    ))}
+                </motion.g>
             </svg>
         </div>
     );

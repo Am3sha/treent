@@ -24,46 +24,17 @@ function AnimatedProgressRing({
   stroke?: number;
 }) {
   const reduced = useReducedMotion();
-  const [progress, setProgress] = React.useState(() =>
-    typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? percent
-      : 0
-  );
+  const [active, setActive] = React.useState(() => !!reduced);
 
   React.useEffect(() => {
-    if (reduced) {
-      queueMicrotask(() => setProgress(percent));
-      return;
-    }
-    let raf: number;
-    let timeoutId: ReturnType<typeof setTimeout>;
-    const startAnim = () => {
-      const start = performance.now();
-      const duration = 1200;
-      const animate = (now: number) => {
-        const elapsed = now - start;
-        const t = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - t, 3);
-        setProgress(percent * eased);
-        if (t < 1) {
-          raf = requestAnimationFrame(animate);
-        } else {
-          setProgress(percent);
-        }
-      };
-      raf = requestAnimationFrame(animate);
-    };
-    timeoutId = setTimeout(startAnim, 600);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(timeoutId);
-    };
-  }, [percent, reduced]);
+    if (reduced) return;
+    const timer = setTimeout(() => setActive(true), 400);
+    return () => clearTimeout(timer);
+  }, [reduced]);
 
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
-  const dashoffset = circumference * (1 - progress / 100);
+  const targetOffset = circumference * (1 - percent / 100);
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
@@ -87,12 +58,12 @@ function AnimatedProgressRing({
           fill="none"
           className="text-[#003D3C]"
           strokeDasharray={circumference}
-          strokeDashoffset={dashoffset}
-          style={{ transition: reduced ? "none" : undefined }}
+          strokeDashoffset={active ? targetOffset : circumference}
+          style={{ transition: reduced ? "none" : "stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1)" }}
         />
       </svg>
       <span className="absolute text-[12px] font-bold text-[#003D3C]">
-        {Math.round(progress)}%
+        {percent}%
       </span>
     </div>
   );
@@ -106,48 +77,21 @@ function AnimatedBar({
   delay?: number;
 }) {
   const reduced = useReducedMotion();
-  const [width, setWidth] = React.useState(() =>
-    typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? percent
-      : 0
-  );
+  const [active, setActive] = React.useState(() => !!reduced);
 
   React.useEffect(() => {
-    if (reduced) {
-      queueMicrotask(() => setWidth(percent));
-      return;
-    }
-    let raf: number;
-    let timeoutId: ReturnType<typeof setTimeout>;
-    const startAnim = () => {
-      const start = performance.now();
-      const duration = 1200;
-      const animate = (now: number) => {
-        const elapsed = now - start;
-        const t = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - t, 3);
-        setWidth(percent * eased);
-        if (t < 1) {
-          raf = requestAnimationFrame(animate);
-        } else {
-          setWidth(percent);
-        }
-      };
-      raf = requestAnimationFrame(animate);
-    };
-    timeoutId = setTimeout(startAnim, delay);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(timeoutId);
-    };
-  }, [percent, delay, reduced]);
+    if (reduced) return;
+    const timer = setTimeout(() => setActive(true), delay);
+    return () => clearTimeout(timer);
+  }, [delay, reduced]);
 
   return (
     <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
       <div
-        className="h-full rounded-full bg-[#003D3C]"
-        style={{ width: `${width}%` }}
+        className="h-full rounded-full bg-[#003D3C] origin-left transition-transform duration-1000 ease-out"
+        style={{
+          transform: active ? `scaleX(${percent / 100})` : "scaleX(0)",
+        }}
       />
     </div>
   );

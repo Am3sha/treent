@@ -1,11 +1,10 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useNav } from "@/lib/store";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
-import { BackToTop } from "@/components/site/back-to-top";
-import { CommandPalette } from "@/components/site/command-palette";
 import { LanguageSwitcher } from "@/components/site/language-switcher";
 import type { ViewKey } from "@/lib/types";
 import { SERVICES, FRAMEWORK_AGREEMENTS } from "@/lib/content";
@@ -14,8 +13,16 @@ import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
-import dynamic from "next/dynamic";
 import { HomeView } from "@/components/views/home-view";
+
+const BackToTop = dynamic(
+  () => import("@/components/site/back-to-top").then((m) => m.BackToTop),
+  { ssr: false }
+);
+const CommandPalette = dynamic(
+  () => import("@/components/site/command-palette").then((m) => m.CommandPalette),
+  { ssr: false }
+);
 
 const ViewLoader = () => (
   <div className="flex min-h-[60vh] items-center justify-center">
@@ -267,7 +274,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1 pt-[88px]">
+      <main className="flex-1 pt-[92px] md:pt-[98px]">
         <React.Suspense
           fallback={
             <div className="flex min-h-[60vh] items-center justify-center">
