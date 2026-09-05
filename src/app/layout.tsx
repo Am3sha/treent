@@ -16,7 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { getSiteUrl } from "@/lib/site-config";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "Trennt | Internal Audit Specialists",
   description:
     "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery. We support Boards, Audit Committees, and senior management by providing objective insight into the effectiveness of risk management, internal controls, and governance processes.",

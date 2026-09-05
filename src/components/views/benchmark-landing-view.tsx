@@ -16,7 +16,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
-import { DIMENSIONS, TIER_META } from "@/lib/content";
+import { DIMENSIONS, TIER_META, COMPANY } from "@/lib/content";
 import type { MaturityTier } from "@/lib/types";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
@@ -309,7 +309,7 @@ export function BenchmarkLandingView() {
                 <span>
                   {t("benchmark_landing.methodology.privacy")}{" "}
                   <span className="font-medium text-foreground dir-ltr inline-block">
-                    info@trennt.sa
+                    {COMPANY.email}
                   </span>
                   .
                 </span>

@@ -28,6 +28,7 @@ import {
     COMPANY_SIZE_ARABIC_LABELS,
 } from "./translations/benchmark-ar";
 import { shapeArabicForPdf } from "./arabic-pdf-shaper";
+import { getSiteDomain } from "./site-config";
 
 
 const COLORS = {
@@ -1145,7 +1146,7 @@ const PageFooter = () => (
             <View style={styles.footerLeft}>
                 <Image src={LOGO_ICON} style={styles.footerLogo} />
                 <Text style={styles.footerText}>
-                    Prepared by TRENNT — Internal Audit Specialists · trennt.sa
+                    {`Prepared by TRENNT — Internal Audit Specialists · ${getSiteDomain()}`}
                 </Text>
             </View>
             <Text
@@ -1256,7 +1257,7 @@ const PageFooterArabicClean = () => (
             <View style={arStyles.footerLeft}>
                 <Image src={LOGO_ICON} style={arStyles.footerLogo} />
                 <ArabicText style={arStyles.footerText}>
-                    {`أعده: ترينت — متخصصو المراجعة الداخلية · trennt.sa`}
+                    {`أعده: ترينت — متخصصو المراجعة الداخلية · ${getSiteDomain()}`}
                 </ArabicText>
             </View>
         </View>

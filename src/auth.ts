@@ -6,6 +6,7 @@ import {
   isLoginRateLimited,
   recordLoginFailure,
 } from "@/lib/request-security";
+import { getSiteEmail } from "./lib/site-config";
 
 declare module "next-auth" {
   interface Session {
@@ -34,25 +35,21 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "info@trennt.sa" },
+        email: { label: "Email", type: "email", placeholder: getSiteEmail() },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-
         if (!credentials?.email || !credentials?.password) {
-
           return null;
         }
 
         const email = String(credentials.email);
         if (isLoginRateLimited(req, email)) {
-
           return null;
         }
 
         const adminEmail = process.env.ADMIN_EMAIL?.trim().replace(/^["']|["']$/g, "");
         const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH?.trim().replace(/^["']|["']$/g, "");
-
 
         if (!adminEmail || !adminPasswordHash) {
           recordLoginFailure(req, email);
@@ -63,7 +60,6 @@ export const authOptions: NextAuthOptions = {
         const normalizedAdmin = adminEmail.trim().toLowerCase();
 
         if (normalizedInput !== normalizedAdmin) {
-
           recordLoginFailure(req, email);
           return null;
         }

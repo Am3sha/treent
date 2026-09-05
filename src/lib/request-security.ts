@@ -114,20 +114,10 @@ export function clearLoginFailures(
   for (const key of loginKeys(request, email)) loginAttempts.delete(key);
 }
 
+import { getAllowedOrigins } from "./site-config";
+
 function allowedOrigins(): string[] {
-  const raw = process.env.ALLOWED_FORM_ORIGINS;
-  const configured = raw?.split(",")
-    .map((origin) => origin.trim().replace(/^["']|["']$/g, ""))
-    .filter(Boolean) ?? [];
-  const defaults = ["https://trennt.sa", "https://www.trennt.sa"];
-
-  if (process.env.NODE_ENV !== "production") {
-    defaults.push("http://localhost", "https://localhost", "http://127.0.0.1", "https://127.0.0.1");
-  }
-
-  const result = [...new Set([...defaults, ...configured])];
-
-  return result;
+  return getAllowedOrigins();
 }
 
 function hasAllowedOrigin(request: Request): boolean {

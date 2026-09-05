@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
+import { COMPANY } from "@/lib/content";
 import { Reveal, Eyebrow } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import {
@@ -432,14 +433,14 @@ export function BenchmarkFollowupView() {
                     {lang === "ar" ? ui.contactDesc : "Reach us directly — we read every message."}
                   </p>
                   <a
-                    href="mailto:info@trennt.sa"
+                    href={`mailto:${COMPANY.email}`}
                     className={cn(
                       "mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline",
                       isRTL && "flex-row-reverse"
                     )}
                   >
                     <Mail className="h-4 w-4" />
-                    info@trennt.sa
+                    {COMPANY.email}
                   </a>
                   <a
                     href="tel:+966501234567"

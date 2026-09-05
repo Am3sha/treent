@@ -10,6 +10,8 @@ import type {
 // Company
 // ---------------------------------------------------------------------------
 
+import { getSiteEmail } from "./site-config";
+
 export const COMPANY = {
   name: "Trennt",
   legalName: "Trennt Partners",
@@ -22,7 +24,9 @@ export const COMPANY = {
     ar: "ترينت هي شركة سعودية متخصصة حصريا في المراجعة الداخلية. نحن نقدم لمجالس الإدارة ولجان المراجعة والإدارة التنفيذية رؤية واضحة وموضوعية حول فعالية الحوكمة وإدارة المخاطر والرقابة الداخلية."
   },
   foundedYear: 2014,
-  email: "info@trennt.sa",
+  get email() {
+    return getSiteEmail();
+  },
   phone: "+966 50 123 4567",
   address: {
     en: "Riyadh,Saudi Arabia",
@@ -34,7 +38,7 @@ export const COMPANY = {
   social: {
     linkedin: "https://linkedin.com",
     twitter: "https://x.com",
-    
+
   },
 };
 

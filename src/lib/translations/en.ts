@@ -1,3 +1,5 @@
+import { getSiteEmail, getSiteDomain } from "../site-config";
+
 export const en = {
   nav: {
     home: "Home",
@@ -206,7 +208,7 @@ export const en = {
         p1: "Each of the fifteen statements uses a 1–5 Likert scale. Your answers are normalised to a 0–100 internal audit maturity score per dimension (where 1 maps to 0 and 5 maps to 100), and a weighted overall score is computed across all five. The overall score places you in one of five tiers — Initial, Developing, Defined, Established, or Advanced — with bespoke recommendations for each.",
         p2: "Your percentile is computed against every other completed benchmark in our dataset. It is descriptive, not prescriptive: a low percentile is information, not a verdict.",
         trust_p1: "Your responses are stored securely and used only to compute your benchmark and improve aggregated, anonymised insights. We never share individual scores. You can request deletion at any time by emailing ",
-        trust_email: "info@trennt.sa",
+        get trust_email() { return getSiteEmail(); },
       },
       faq: {
         eyebrow: "Frequently asked",
@@ -587,7 +589,7 @@ export const en = {
         {
           title: "Your Rights",
           content: "You may have rights in relation to your personal data under applicable Saudi data protection laws, including rights relating to access, correction, and deletion of personal data, subject to applicable legal requirements.\n\nTo submit a privacy request, please contact:",
-          contactEmail: "info@trennt.sa",
+          get contactEmail() { return getSiteEmail(); },
         },
         {
           title: "Updates to This Policy",
@@ -600,7 +602,7 @@ export const en = {
       sections: [
         {
           title: "About These Terms",
-          content: "These Terms of Use govern your access to and use of the Trennt website at trennt.sa.\n\nBy using the website, you agree to these Terms.",
+          get content() { return `These Terms of Use govern your access to and use of the Trennt website at ${getSiteDomain()}.\n\nBy using the website, you agree to these Terms.`; },
         },
         {
           title: "Website Information",
@@ -691,8 +693,8 @@ export const en = {
       title: "Contact",
       desc: "For questions about these policies or the Trennt website, please contact:",
       company: "Trennt",
-      email: "info@trennt.sa",
-      website: "trennt.sa",
+      get email() { return getSiteEmail(); },
+      get website() { return getSiteDomain(); },
     },
   },
   benchmark_landing: {

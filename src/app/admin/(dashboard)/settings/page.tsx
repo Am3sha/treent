@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Copy, Check, Shield, Clock, KeyRound } from "lucide-react";
+import { getSiteEmail } from "@/lib/site-config";
 
 const SESSION_MAX_AGE = 8 * 60 * 60; // 8 hours, matching auth config
 
@@ -110,7 +111,7 @@ export default function AdminSettingsPage() {
           <div className="flex justify-between">
             <span className="text-muted-foreground">Email</span>
             <span className="font-medium">
-              {session?.user?.email ?? "info@trennt.sa"}
+              {session?.user?.email ?? getSiteEmail()}
             </span>
           </div>
         </div>
