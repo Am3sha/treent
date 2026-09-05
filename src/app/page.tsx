@@ -14,47 +14,71 @@ import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
-import { HomeView } from "@/components/views/home-view";
-import { AboutView } from "@/components/views/about-view";
-import { ServicesView } from "@/components/views/services-view";
-import { ContactView } from "@/components/views/contact-view";
-import { CareersView } from "@/components/views/careers-view";
-import { LegalView } from "@/components/views/legal-view";
-
-import { BenchmarkLandingView } from "@/components/views/benchmark-landing-view";
-import { BenchmarkQuizView } from "@/components/views/benchmark-quiz-view";
 import dynamic from "next/dynamic";
+import { HomeView } from "@/components/views/home-view";
+
+const ViewLoader = () => (
+  <div className="flex min-h-[60vh] items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+  </div>
+);
+
+const AboutView = dynamic(
+  () => import("@/components/views/about-view").then((m) => m.AboutView),
+  { loading: ViewLoader }
+);
+const ServicesView = dynamic(
+  () => import("@/components/views/services-view").then((m) => m.ServicesView),
+  { loading: ViewLoader }
+);
+const ContactView = dynamic(
+  () => import("@/components/views/contact-view").then((m) => m.ContactView),
+  { loading: ViewLoader }
+);
+const CareersView = dynamic(
+  () => import("@/components/views/careers-view").then((m) => m.CareersView),
+  { loading: ViewLoader }
+);
+const LegalView = dynamic(
+  () => import("@/components/views/legal-view").then((m) => m.LegalView),
+  { loading: ViewLoader }
+);
+
+const BenchmarkLandingView = dynamic(
+  () => import("@/components/views/benchmark-landing-view").then((m) => m.BenchmarkLandingView),
+  { loading: ViewLoader }
+);
+const BenchmarkQuizView = dynamic(
+  () => import("@/components/views/benchmark-quiz-view").then((m) => m.BenchmarkQuizView),
+  { loading: ViewLoader }
+);
 const BenchmarkResultsView = dynamic(
   () => import("@/components/views/benchmark-results-view").then((m) => m.BenchmarkResultsView),
-  {
-    loading: () => (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
-      </div>
-    ),
-  }
+  { loading: ViewLoader }
 );
-import { BenchmarkFollowupView } from "@/components/views/benchmark-followup-view";
+const BenchmarkFollowupView = dynamic(
+  () => import("@/components/views/benchmark-followup-view").then((m) => m.BenchmarkFollowupView),
+  { loading: ViewLoader }
+);
 const BenchmarkInsightsView = dynamic(
   () => import("@/components/views/benchmark-insights-view").then((m) => m.BenchmarkInsightsView),
-  {
-    loading: () => (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
-      </div>
-    ),
-  }
+  { loading: ViewLoader }
 );
-import { NotFoundView } from "@/components/views/not-found-view";
+const NotFoundView = dynamic(
+  () => import("@/components/views/not-found-view").then((m) => m.NotFoundView),
+  { loading: ViewLoader }
+);
 
 // Toggle: when false, the PUBLIC benchmark-insights page is hidden. Direct
 // navigation (/#/benchmark-insights) shows the branded NotFoundView instead.
-// To re-enable, flip this to true and restore the links removed in Phase 16.
 // NOTE: this only hides the public view — /admin/insights (NextAuth-protected)
 // and the /api/benchmark/stats endpoint are unaffected.
 const PUBLIC_BENCHMARK_INSIGHTS_ENABLED = false;
 
-import { ServiceDetailView } from "@/components/views/service-detail-view";
+const ServiceDetailView = dynamic(
+  () => import("@/components/views/service-detail-view").then((m) => m.ServiceDetailView),
+  { loading: ViewLoader }
+);
 
 import { useTranslation } from "@/lib/i18n";
 

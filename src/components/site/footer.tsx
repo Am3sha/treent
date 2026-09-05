@@ -169,6 +169,7 @@ export function Footer() {
                     <input
                       id="footer-newsletter"
                       type="email"
+                      autoComplete="email"
                       {...register("email")}
                       placeholder="you@company.com"
                       className="h-11 flex-1 rounded-full bg-transparent px-5 text-[14px] text-white placeholder:text-white/40 outline-none"

@@ -320,7 +320,7 @@ export function HomeView() {
                     width={500}
                     height={580}
                     priority
-                    sizes="(max-width: 1024px) 500px, 580px"
+                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 500px, 580px"
                     style={{ width: "auto", height: "auto" }}
                     className="h-[520px] w-full object-cover lg:h-[580px] transition-transform duration-[6000ms] ease-out hover:scale-[1.03]"
                   />
@@ -465,8 +465,8 @@ export function HomeView() {
                     src="/trennt-hero-02.webp"
                     alt="Our Expertise"
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                    priority
+                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 40vw"
+                    loading="lazy"
                     className="object-cover transition-transform duration-700 hover:scale-105"
                   />
                 </div>

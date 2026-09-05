@@ -612,6 +612,7 @@ function ApplicationDialog({
             <Input
               id="apply-linkedin"
               {...register("linkedin")}
+              autoComplete="url"
               className="h-8.5 rounded-xl text-xs"
             />
           </div>
