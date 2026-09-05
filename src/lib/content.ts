@@ -15,11 +15,11 @@ export const COMPANY = {
   legalName: "Trennt Partners",
   tagline: {
     en: "Internal Audit. Delivered with Independence.",
-    ar: "المراجعة الداخلية. تُقدم باستقلالية."
+    ar: "المراجعة الداخلية. تقدم باستقلالية."
   },
   description: {
     en: "Trennt is a Saudi Arabia-based firm specialising exclusively in internal audit. We give Boards, Audit Committees, and executive management clear, objective insight into governance, risk management, and internal control effectiveness.",
-    ar: "ترينت هي شركة سعودية متخصصة حصرياً في المراجعة الداخلية. نحن نقدم لمجالس الإدارة ولجان المراجعة والإدارة التنفيذية رؤية واضحة وموضوعية حول فعالية الحوكمة وإدارة المخاطر والرقابة الداخلية."
+    ar: "ترينت هي شركة سعودية متخصصة حصريا في المراجعة الداخلية. نحن نقدم لمجالس الإدارة ولجان المراجعة والإدارة التنفيذية رؤية واضحة وموضوعية حول فعالية الحوكمة وإدارة المخاطر والرقابة الداخلية."
   },
   foundedYear: 2014,
   email: "info@trennt.sa",
@@ -285,7 +285,7 @@ export const PERKS = [
     title: { en: "Specialist Focus", ar: "التركيز التخصصي" },
     description: {
       en: "Build deeper capability within a firm dedicated exclusively to internal audit.",
-      ar: "بناء خبرة أعمق في المراجعة الداخلية ضمن شركة متخصصة حصريًا في هذا المجال."
+      ar: "بناء خبرة أعمق في المراجعة الداخلية ضمن شركة متخصصة حصريا في هذا المجال."
     },
     icon: "Target"
   }

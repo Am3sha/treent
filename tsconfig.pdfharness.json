@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": ".tmp-pdfharness/out",
+    "rootDir": "src"
+  },
+  "include": ["src/lib/pdf-generator.tsx"]
+}

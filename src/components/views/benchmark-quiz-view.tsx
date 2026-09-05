@@ -210,8 +210,8 @@ export function BenchmarkQuizView() {
       {/* PROGRESS HEADER ------------------------------------------------ */}
       <div className="sticky top-[88px] z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
         <div className={cn("mx-auto max-w-4xl px-4 py-3 sm:px-6 lg:px-8", isRTL && "text-right")}>
-          <div className={cn("flex items-center justify-between gap-4", isRTL && "flex-row-reverse")}>
-            <div className={cn("flex min-w-0 items-center gap-3", isRTL && "flex-row-reverse")}>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-3">
               <span className="font-mono text-xs font-medium tracking-wider text-primary/80">
                 {lang === "ar"
                   ? quizUI.progressStep(step + 1, TOTAL_STEPS, true)
@@ -229,8 +229,8 @@ export function BenchmarkQuizView() {
                     : ""}
               </span>
             </div>
-            <div className={cn("flex items-center gap-4", isRTL && "flex-row-reverse")}>
-            <span className="hidden text-xs text-muted-foreground sm:inline">
+            <div className="flex items-center gap-4">
+              <span className="hidden text-xs text-muted-foreground sm:inline">
                 {lang === "ar"
                   ? quizUI.answeredCount(answeredCount, TOTAL_QUESTIONS, true)
                   : `${answeredCount} / ${TOTAL_QUESTIONS} answered`}
@@ -247,6 +247,7 @@ export function BenchmarkQuizView() {
           <Progress
             value={overallPct}
             className="mt-2 h-1.5 bg-primary/15"
+            dir={isRTL ? "rtl" : "ltr"}
           />
         </div>
       </div>
@@ -296,15 +297,12 @@ export function BenchmarkQuizView() {
         </AnimatePresence>
 
         {/* NAV ----------------------------------------------------------- */}
-        <div className={cn(
-          "mt-10 flex items-center justify-between gap-4 border-t border-border/70 pt-6",
-          isRTL && "flex-row-reverse"
-        )}>
+        <div className="mt-10 flex items-center justify-between gap-4 border-t border-border/70 pt-6">
           <Button
             variant="ghost"
             onClick={step === 0 ? handleExit : goBack}
             disabled={submitting}
-            className={cn("gap-1.5", isRTL && "flex-row-reverse")}
+            className="gap-1.5"
           >
             <ArrowLeft className={cn("h-4 w-4", isRTL && "rotate-180")} />
             {step === 0
@@ -328,7 +326,7 @@ export function BenchmarkQuizView() {
             <Button
               onClick={goNext}
               disabled={!stepComplete}
-              className={cn("gap-1.5", isRTL && "flex-row-reverse")}
+              className="gap-1.5"
             >
               {step === STEPS.length
                 ? lang === "ar" ? quizUI.navGetReport : "Get my report"
@@ -373,7 +371,7 @@ function DimensionStep({
 
   return (
     <div>
-      <div className={cn("mb-10 flex items-start gap-4", isRTL && "flex-row-reverse")}>
+      <div className="mb-10 flex items-start gap-4">
         <div
           className={cn(
             "flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10",
@@ -409,6 +407,7 @@ function DimensionStep({
             value={responses[q.id]}
             onRespond={(v) => onRespond(q.id, v)}
             lang={lang}
+            isRTL={isRTL}
           />
         ))}
       </div>
@@ -422,21 +421,23 @@ function QuestionCard({
   value,
   onRespond,
   lang,
+  isRTL,
 }: {
   question: BenchmarkQuestion;
   index: number;
   value: string | undefined;
   onRespond: (v: string) => void;
   lang: "en" | "ar";
+  isRTL?: boolean;
 }) {
   const answered = value !== undefined;
   const arabicQuestion = BENCHMARK_ARABIC_QUESTIONS[question.id];
   const displayPrompt = lang === "ar" && arabicQuestion ? arabicQuestion.prompt : question.prompt;
   const displayOptions = lang === "ar" && arabicQuestion
     ? question.options.map((option) => ({
-        ...option,
-        label: arabicQuestion.options[option.letter] ?? option.label,
-      }))
+      ...option,
+      label: arabicQuestion.options[option.letter] ?? option.label,
+    }))
     : question.options;
   return (
     <div
@@ -471,6 +472,7 @@ function QuestionCard({
             value={value}
             onChange={onRespond}
             lang={lang}
+            isRTL={isRTL}
           />
         </div>
       </div>
@@ -483,11 +485,13 @@ function LikertScale({
   value,
   onChange,
   lang,
+  isRTL,
 }: {
   options: { letter: string; label: string }[];
   value: string | undefined;
   onChange: (v: string) => void;
   lang: "en" | "ar";
+  isRTL?: boolean;
 }) {
   return (
     <div className="mt-5">
@@ -510,7 +514,8 @@ function LikertScale({
               aria-checked={selected}
               onClick={() => onChange(opt.letter)}
               className={cn(
-                "group flex min-h-[60px] flex-col items-start justify-between gap-2 rounded-lg border p-3 text-left transition-all sm:flex-row sm:items-start sm:gap-3",
+                "group flex min-h-[60px] flex-col items-start justify-between gap-2 rounded-lg border p-3 transition-all sm:flex-row sm:items-start sm:gap-3",
+                isRTL ? "text-right" : "text-left",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                 selected
                   ? "border-primary bg-primary text-primary-foreground shadow-sm"
@@ -711,7 +716,6 @@ function DetailsStep({
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoComplete="name"
-              placeholder={lang === "ar" ? quizUI.placeholderName : undefined}
               dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>
@@ -726,7 +730,6 @@ function DetailsStep({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
-              placeholder={lang === "ar" ? quizUI.placeholderEmail : undefined}
               dir="ltr"
             />
           </Field>
@@ -739,7 +742,6 @@ function DetailsStep({
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               autoComplete="organization"
-              placeholder={lang === "ar" ? quizUI.placeholderCompany : undefined}
               dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>
@@ -792,7 +794,6 @@ function DetailsStep({
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               autoComplete="country-name"
-              placeholder={lang === "ar" ? quizUI.placeholderCountry : undefined}
               dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>
@@ -806,7 +807,6 @@ function DetailsStep({
               value={role}
               onChange={(e) => setRole(e.target.value)}
               autoComplete="organization-title"
-              placeholder={lang === "ar" ? quizUI.placeholderRole : undefined}
               dir={isRTL ? "rtl" : "ltr"}
             />
           </Field>

@@ -177,7 +177,13 @@ export function BenchmarkResultsView() {
         respondent={respondent}
         onRetake={handleRetake}
         onFollowUp={() => navigate("benchmark-followup")}
-        onDownloadPDF={(currentStats) => generatePDF(result, respondent, currentStats, lang)}
+        onDownloadPDF={(currentStats) => {
+          if (!result) {
+            console.warn("[PDF] Skipping PDF generation: result object is missing");
+            return;
+          }
+          generatePDF(result, respondent, currentStats, lang);
+        }}
         onShare={() => {
           if (typeof navigator !== "undefined" && navigator.share) {
             navigator
@@ -419,13 +425,14 @@ function ResultsBody({
   const radarData = DIMENSIONS.map((d) => {
     const meta = getDim(d.key);
     return ({
-    dimension: meta.short,
-    score: result.scores[d.key],
-    benchmark:
-      stats && statsState === "loaded"
-        ? Math.round(stats.dimensionAverages[d.key] ?? 0)
-        : 0,
-  });});
+      dimension: meta.short,
+      score: result.scores[d.key],
+      benchmark:
+        stats && statsState === "loaded"
+          ? Math.round(stats.dimensionAverages[d.key] ?? 0)
+          : 0,
+    });
+  });
 
   return (
     <>

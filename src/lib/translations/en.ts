@@ -445,8 +445,8 @@ export const en = {
         optional: "Optional note for our hiring team."
       },
       placeholders: {
-        experience: "e.g. 7",
-        message: "Brief note about your experience and focus areas.",
+        experience: "",
+        message: "",
         cv: "Upload CV / Resume"
       },
       errors: {
@@ -482,11 +482,11 @@ export const en = {
         characters: "characters"
       },
       placeholders: {
-        name: "Full name",
-        email: "you@company.com",
-        company: "Company name",
-        phone: "+966 5x xxx xxxx",
-        message: "How can we assist?"
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        message: ""
       },
       topics: {
         general: { label: "General Enquiry", hint: "How can we assist?" },

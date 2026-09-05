@@ -598,7 +598,6 @@ function ApplicationDialog({
                 min={0}
                 max={50}
                 {...register("yearsExp")}
-                placeholder={t('careers.form.placeholders.experience')}
                 className="h-8.5 rounded-xl text-xs"
                 aria-invalid={!!errors.yearsExp}
               />
@@ -613,7 +612,6 @@ function ApplicationDialog({
             <Input
               id="apply-linkedin"
               {...register("linkedin")}
-              placeholder="https://linkedin.com/in/…"
               className="h-8.5 rounded-xl text-xs"
             />
           </div>
@@ -689,7 +687,6 @@ function ApplicationDialog({
             <Textarea
               id="apply-message"
               {...register("message")}
-              placeholder={t('careers.form.placeholders.message')}
               className="min-h-14 resize-y rounded-xl text-xs"
             />
             <p className="text-[10px] text-muted-foreground">

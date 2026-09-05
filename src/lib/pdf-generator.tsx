@@ -23,9 +23,12 @@ import {
     BENCHMARK_ARABIC_TIERS,
     BENCHMARK_ARABIC_TIER_RECOMMENDATIONS,
     BENCHMARK_ARABIC_DOMAIN_INTERPRETATION,
+    AR_DIMENSION_DETAIL_TEXTS,
     translateIndustryToArabic,
     COMPANY_SIZE_ARABIC_LABELS,
 } from "./translations/benchmark-ar";
+import { shapeArabicForPdf } from "./arabic-pdf-shaper";
+
 
 const COLORS = {
     primary: "#003D3C",
@@ -38,8 +41,19 @@ const COLORS = {
     track: "#F3F4F6",
 };
 
-const LOGO_ICON = "/trennt-logo.png";
-const LOGO_WORDMARK = "/trennt-logo.png";
+const resolveAsset = (path: string): string => {
+    if (typeof window !== "undefined") {
+        try {
+            return new URL(path, window.location.origin).href;
+        } catch {
+            return path;
+        }
+    }
+    return path;
+};
+
+const LOGO_ICON = resolveAsset("/trennt-logo.png");
+const LOGO_WORDMARK = resolveAsset("/trennt-logo.png");
 
 // ---------------------------------------------------------------------------
 // Arabic font registration
@@ -68,6 +82,28 @@ try {
 }
 
 const AR_FONT = "NotoNaskhArabic";
+
+// Recursively apply Arabic presentation-form shaping to Text content so the
+// react-pdf pipeline never has to perform GSUB shaping itself.
+const shapeChildren = (node: React.ReactNode): React.ReactNode => {
+    if (typeof node === "string") return shapeArabicForPdf(node);
+    if (Array.isArray(node)) return node.map(shapeChildren);
+    return node;
+};
+
+const ArabicText = ({ children, render, ...props }: any) => {
+    const safeContent = children === undefined || children === null ? "" : children;
+    return (
+        <Text
+            {...props}
+            {...(typeof render === "function"
+                ? { render: (args: any) => String(shapeArabicForPdf(String(render(args)))) }
+                : {})}
+        >
+            {shapeChildren(safeContent)}
+        </Text>
+    );
+};
 
 // ---------------------------------------------------------------------------
 // English styles (unchanged, preserve exact PDF output)
@@ -189,7 +225,7 @@ const styles = StyleSheet.create({
     },
     coverMetaValue: {
         flex: 1,
-        fontSize: 9,
+        fontSize: 10.5,
         fontFamily: "Helvetica-Bold",
         color: COLORS.dark,
     },
@@ -217,7 +253,7 @@ const styles = StyleSheet.create({
         paddingBottom: 4,
     },
     sectionSubheading: {
-        fontSize: 6.5,
+        fontSize: 7.5,
         letterSpacing: 0.8,
         textTransform: "uppercase",
         color: COLORS.muted,
@@ -345,7 +381,7 @@ const styles = StyleSheet.create({
         color: COLORS.primary,
     },
     dimDetail: {
-        fontSize: 6.5,
+        fontSize: 7.5,
         color: COLORS.muted,
         lineHeight: 1.25,
         marginTop: 1,
@@ -424,25 +460,43 @@ const styles = StyleSheet.create({
         fontFamily: "Helvetica-Bold",
     },
     roadmapSection: {
-        marginBottom: 12,
+        marginBottom: 16,
+        padding: 12,
+        backgroundColor: "#F8FAFC",
+        borderRadius: 6,
+        borderRightWidth: 4,
+        borderRightColor: COLORS.primary,
+    },
+    roadmapHeaderBox: {
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.soft,
+        paddingBottom: 6,
+        marginBottom: 10,
     },
     roadmapTitle: {
-        fontSize: 8.5,
+        fontSize: 12.5,
         fontFamily: "Helvetica-Bold",
         color: COLORS.primary,
-        marginBottom: 5,
-        paddingBottom: 3,
-        borderBottomWidth: 0.5,
-        borderBottomColor: COLORS.accent,
+        textAlign: "right",
+    },
+    roadmapBody: {
+        paddingRight: 2,
+    },
+    roadmapText: {
+        fontSize: 11,
+        lineHeight: 1.6,
+        color: COLORS.dark,
+        marginBottom: 8,
+        textAlign: "right",
     },
     confidentiality: {
         marginTop: 16,
         paddingTop: 8,
         borderTopWidth: 0.5,
         borderTopColor: COLORS.border,
-        fontSize: 6,
+        fontSize: 7.5,
         color: COLORS.muted,
-        lineHeight: 1.35,
+        lineHeight: 1.4,
         textAlign: "center",
     },
     preparedByRow: {
@@ -451,7 +505,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     metaLabelSmall: {
-        fontSize: 6,
+        fontSize: 7,
         color: COLORS.muted,
         textTransform: "uppercase",
         letterSpacing: 0.6,
@@ -534,11 +588,11 @@ const arStyles = StyleSheet.create({
         height: 17,
     },
     footerText: {
-        fontSize: 6.5,
+        fontSize: 7.5,
         color: COLORS.muted,
     },
     footerPage: {
-        fontSize: 6.5,
+        fontSize: 7.5,
         color: COLORS.muted,
     },
     coverLogo: {
@@ -547,13 +601,13 @@ const arStyles = StyleSheet.create({
         marginBottom: 14,
     },
     coverEyebrow: {
-        fontSize: 7.5,
+        fontSize: 8,
         color: COLORS.primary,
         marginBottom: 10,
         textAlign: "right",
     },
     coverTitle: {
-        fontSize: 22,
+        fontSize: 23,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
@@ -562,61 +616,62 @@ const arStyles = StyleSheet.create({
         textAlign: "right",
     },
     coverSubtitle: {
-        fontSize: 10.5,
+        fontSize: 11,
         color: COLORS.muted,
-        marginBottom: 26,
+        marginBottom: 20,
         lineHeight: 1.5,
         textAlign: "right",
     },
     coverMetaBlock: {
         borderTopWidth: 1,
         borderTopColor: COLORS.primary,
-        paddingTop: 14,
-        maxWidth: 320,
+        paddingTop: 12,
+        maxWidth: 340,
     },
     coverMetaRow: {
         flexDirection: "row-reverse",
-        marginBottom: 7,
+        marginBottom: 5,
     },
     coverMetaLabel: {
-        width: 110,
-        fontSize: 7,
+        width: 105,
+        fontSize: 8,
         color: COLORS.muted,
         fontWeight: "bold",
         textAlign: "right",
     },
     coverMetaValue: {
         flex: 1,
-        fontSize: 9,
+        fontSize: 10,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.dark,
     },
     coverDate: {
-        marginTop: 14,
-        fontSize: 7.5,
+        marginTop: 10,
+        fontSize: 8.5,
         color: COLORS.muted,
         textAlign: "right",
     },
     preparedForLine: {
-        marginTop: 14,
-        fontSize: 7.5,
+        marginTop: 10,
+        fontSize: 8.5,
         color: COLORS.muted,
         textAlign: "right",
     },
     sectionHeading: {
-        fontSize: 11,
+        fontSize: 16,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
-        marginBottom: 3,
+        marginBottom: 4,
+        marginTop: 6,
         textAlign: "right",
     },
     sectionRule: {
-        borderBottomWidth: 1,
+        borderBottomWidth: 1.5,
         borderBottomColor: COLORS.primary,
         marginBottom: 10,
-        paddingBottom: 4,
+        paddingBottom: 2,
     },
     execMetricsRow: {
         flexDirection: "row-reverse",
@@ -630,14 +685,14 @@ const arStyles = StyleSheet.create({
     execBlock: {
         borderTopWidth: 1,
         borderTopColor: COLORS.primary,
-        paddingTop: 16,
-        marginTop: 16,
+        paddingTop: 14,
+        marginTop: 14,
     },
     metricBlock: {
         flex: 1,
     },
     metricLabel: {
-        fontSize: 6.5,
+        fontSize: 7.5,
         color: COLORS.muted,
         fontWeight: "bold",
         marginBottom: 3,
@@ -661,8 +716,8 @@ const arStyles = StyleSheet.create({
         fontFamily: AR_FONT,
     },
     summaryQuote: {
-        fontSize: 9,
-        lineHeight: 1.7,
+        fontSize: 9.5,
+        lineHeight: 1.5,
         color: COLORS.dark,
         borderRightWidth: 2,
         borderRightColor: COLORS.accent,
@@ -677,7 +732,7 @@ const arStyles = StyleSheet.create({
         marginBottom: 1,
     },
     tableHeaderCell: {
-        fontSize: 6.5,
+        fontSize: 8,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
@@ -690,11 +745,11 @@ const arStyles = StyleSheet.create({
         borderBottomColor: COLORS.border,
     },
     tableCell: {
-        fontSize: 7.5,
+        fontSize: 8.5,
         color: COLORS.dark,
     },
     tableCellScore: {
-        fontSize: 7.5,
+        fontSize: 8.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
@@ -703,37 +758,45 @@ const arStyles = StyleSheet.create({
     dimTwoCol: {
         flexDirection: "row-reverse",
         flexWrap: "wrap",
-        gap: 8,
-        marginTop: 8,
+        gap: 12,
+        marginTop: 10,
+        marginBottom: 14,
     },
     dimCard: {
         width: "48%",
-        paddingVertical: 3,
-        borderBottomWidth: 0.5,
-        borderBottomColor: COLORS.border,
+        padding: 9,
+        backgroundColor: "#F8FAFC",
+        borderRadius: 6,
+        borderRightWidth: 3,
+        borderRightColor: COLORS.primary,
+        marginBottom: 8,
     },
     dimHeader: {
         flexDirection: "row-reverse",
         justifyContent: "space-between",
-        marginBottom: 1,
+        alignItems: "center",
+        marginBottom: 5,
+        paddingBottom: 3,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.border,
     },
     dimTitle: {
-        fontSize: 8,
+        fontSize: 12,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
     },
     dimScore: {
-        fontSize: 8,
+        fontSize: 12,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
     },
     dimDetail: {
-        fontSize: 7,
-        color: COLORS.muted,
-        lineHeight: 1.6,
-        marginTop: 1,
+        fontSize: 11,
+        color: COLORS.dark,
+        lineHeight: 1.5,
+        marginTop: 3,
         textAlign: "right",
     },
     dimLabel: {
@@ -742,70 +805,77 @@ const arStyles = StyleSheet.create({
         color: COLORS.primary,
     },
     chartCaption: {
-        fontSize: 6.5,
+        fontSize: 8.5,
         color: COLORS.muted,
         marginTop: 6,
         textAlign: "center",
     },
     benchmarkSection: {
-        marginTop: 10,
-        paddingTop: 8,
+        marginTop: 14,
+        paddingTop: 12,
         borderTopWidth: 0.5,
         borderTopColor: COLORS.border,
     },
     peerMetricsRow: {
         flexDirection: "row-reverse",
         justifyContent: "space-between",
-        marginBottom: 8,
+        gap: 10,
+        marginVertical: 12,
     },
     peerBlock: {
         flex: 1,
+        padding: 8,
+        backgroundColor: "#F8FAFC",
+        borderRadius: 5,
+        borderRightWidth: 2.5,
+        borderRightColor: COLORS.accent,
     },
     peerValue: {
-        fontSize: 11,
+        fontSize: 12.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
+        textAlign: "right",
     },
     peerSuffix: {
-        fontSize: 6.5,
+        fontSize: 8.5,
         color: COLORS.muted,
     },
     compactBar: {
         flexDirection: "row-reverse",
         alignItems: "center",
-        marginBottom: 5,
+        marginBottom: 6,
     },
     compactBarLabel: {
-        width: 100,
-        fontSize: 6.5,
+        width: 110,
+        fontSize: 9.5,
         color: COLORS.dark,
         textAlign: "right",
     },
     listsRow: {
         flexDirection: "row-reverse",
         gap: 16,
-        marginTop: 6,
+        marginTop: 12,
     },
     listColumn: {
         flex: 1,
     },
     listTitle: {
-        fontSize: 7.5,
+        fontSize: 11.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
-        marginBottom: 4,
+        marginBottom: 6,
         paddingBottom: 3,
-        borderBottomWidth: 0.5,
+        borderBottomWidth: 1,
         borderBottomColor: COLORS.border,
         textAlign: "right",
     },
     listItem: {
         flexDirection: "row-reverse",
-        marginBottom: 3,
-        fontSize: 7.5,
-        lineHeight: 1.55,
+        marginBottom: 4,
+        fontSize: 10.5,
+        lineHeight: 1.45,
     },
     bullet: {
         width: 10,
@@ -814,47 +884,134 @@ const arStyles = StyleSheet.create({
         fontWeight: "bold",
     },
     roadmapSection: {
-        marginBottom: 12,
+        marginBottom: 10,
     },
     roadmapTitle: {
-        fontSize: 9,
+        fontSize: 9.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
-        marginBottom: 5,
-        paddingBottom: 3,
+        marginBottom: 4,
+        paddingBottom: 2,
         borderBottomWidth: 0.5,
         borderBottomColor: COLORS.accent,
         textAlign: "right",
     },
     confidentiality: {
-        marginTop: 16,
-        paddingTop: 8,
+        marginTop: 12,
+        paddingTop: 6,
         borderTopWidth: 0.5,
         borderTopColor: COLORS.border,
-        fontSize: 6.5,
+        fontSize: 7.5,
         color: COLORS.muted,
-        lineHeight: 1.5,
+        lineHeight: 1.35,
         textAlign: "center",
     },
     preparedByRow: {
-        marginTop: 12,
+        marginTop: 10,
         flexDirection: "row-reverse",
         justifyContent: "space-between",
     },
     metaLabelSmall: {
-        fontSize: 6.5,
+        fontSize: 7,
         color: COLORS.muted,
         fontWeight: "bold",
         marginBottom: 2,
         textAlign: "right",
     },
     metaValueSmall: {
-        fontSize: 8.5,
+        fontSize: 9,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
         textAlign: "right",
+    },
+    p3HeaderRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 8,
+        marginTop: 4,
+    },
+    p3Logo: {
+        width: 54,
+        height: 24,
+    },
+    p3HeaderTitle: {
+        fontSize: 18,
+        fontFamily: AR_FONT,
+        fontWeight: "bold",
+        color: COLORS.primary,
+    },
+    p3HeaderRule: {
+        borderBottomWidth: 1.5,
+        borderBottomColor: COLORS.primary,
+        marginBottom: 20,
+    },
+    p3PhaseBlock: {
+        marginBottom: 10,
+    },
+    p3PhaseHeading: {
+        fontSize: 15.5,
+        fontFamily: AR_FONT,
+        fontWeight: "bold",
+        color: COLORS.primary,
+        marginBottom: 10,
+        textAlign: "right",
+    },
+    p3PhaseBody: {
+        paddingRight: 2,
+    },
+    p3RecParagraph: {
+        fontSize: 13.5,
+        lineHeight: 1.6,
+        color: COLORS.dark,
+        marginBottom: 14,
+        textAlign: "right",
+    },
+    p3PhaseDivider: {
+        borderBottomWidth: 0.5,
+        borderBottomColor: "#CBD5E1",
+        marginVertical: 14,
+    },
+    p3FooterContainer: {
+        marginTop: "auto",
+        paddingTop: 16,
+    },
+    p3FooterRule: {
+        borderTopWidth: 1,
+        borderTopColor: COLORS.primary,
+        marginBottom: 12,
+    },
+    p3FooterRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    },
+    p3FooterLabel: {
+        fontSize: 8.5,
+        color: COLORS.muted,
+        fontWeight: "bold",
+        marginBottom: 2,
+    },
+    p3FooterValue: {
+        fontSize: 10.5,
+        fontFamily: AR_FONT,
+        fontWeight: "bold",
+        color: COLORS.primary,
+    },
+    p3Confidentiality: {
+        fontSize: 8.5,
+        color: COLORS.muted,
+        lineHeight: 1.45,
+        textAlign: "center",
+        marginTop: 4,
+        marginBottom: 6,
+    },
+    p3PageNumber: {
+        fontSize: 8.5,
+        color: COLORS.muted,
+        textAlign: "center",
     },
 });
 
@@ -862,19 +1019,19 @@ const arStyles = StyleSheet.create({
 // Shared helpers
 // ---------------------------------------------------------------------------
 const computeComparison = (
-  result: AssessmentResult,
-  respondent: RespondentProfile | null,
-  stats: BenchmarkStats | null
+    result: AssessmentResult,
+    respondent: RespondentProfile | null,
+    stats: BenchmarkStats | null
 ) => {
-  const total = stats?.totalAssessments ?? 0;
-  let industryAvg: number | null = null;
-  if (respondent?.industry && stats && total > 0) {
-    const needle = respondent.industry.trim().toLowerCase();
-    const match = stats.byIndustry.find((r) => r.label.toLowerCase() === needle);
-    industryAvg = match ? match.average : stats.averageOverall;
-  }
-  const globalAvg: number | null = total > 0 ? stats!.averageOverall : null;
-  return { industryAvg, globalAvg, total };
+    const total = stats?.totalAssessments ?? 0;
+    let industryAvg: number | null = null;
+    if (respondent?.industry && stats && Array.isArray(stats.byIndustry) && total > 0) {
+        const needle = respondent.industry.trim().toLowerCase();
+        const match = stats.byIndustry.find((r) => r?.label && r.label.toLowerCase() === needle);
+        industryAvg = match ? match.average : (stats.averageOverall ?? null);
+    }
+    const globalAvg: number | null = total > 0 ? (stats?.averageOverall ?? null) : null;
+    return { industryAvg, globalAvg, total };
 };
 
 const EN_DIMENSION_DATA: Record<Dimension, { strength: string; improvement: string }> = {
@@ -974,12 +1131,12 @@ const CompactBenchmarkBars = ({
 };
 
 const PageHeader = () => (
-    <>
+    <View>
         <View style={styles.pageHeader} fixed>
             <Image src={LOGO_ICON} style={styles.headerLogo} />
         </View>
         <View style={styles.headerRule} fixed />
-    </>
+    </View>
 );
 
 const PageFooter = () => (
@@ -1003,28 +1160,28 @@ const PageFooter = () => (
 // ARABIC chart + layout components (RTL + Arabic labels)
 // ---------------------------------------------------------------------------
 const DimensionBarChartArabic = ({ scores }: { scores: Record<Dimension, number> }) => {
-    const trackWidth = 150;
-    const rowHeight = 17;
+    const trackWidth = 200;
+    const rowHeight = 22;
 
     return (
         <View>
             {DIMENSIONS.map((d) => {
-                const score = scores[d.key];
+                const score = scores[d.key] ?? 50;
                 const fillWidth = Math.max(0, Math.min(trackWidth, (score / 100) * trackWidth));
-                const dim = BENCHMARK_ARABIC_DIMENSIONS[d.key];
+                const dim = BENCHMARK_ARABIC_DIMENSIONS[d.key] || { label: d.label, short: d.short };
                 return (
                     <View
                         key={d.key}
-                        style={{ flexDirection: "row-reverse", alignItems: "center", height: rowHeight }}
+                        style={{ flexDirection: "row-reverse", alignItems: "center", height: rowHeight, marginBottom: 2 }}
                     >
-                        <Text style={{ width: 60, fontSize: 7, color: COLORS.dark, textAlign: "right", fontFamily: AR_FONT }}>
+                        <ArabicText style={{ width: 110, fontSize: 9.5, color: COLORS.dark, textAlign: "right", fontFamily: AR_FONT }}>
                             {dim.short}
-                        </Text>
-                        <Svg width={trackWidth + 2} height={7}>
-                            <Rect x={0} y={1} width={trackWidth} height={5} fill={COLORS.track} />
-                            <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={5} fill={COLORS.primary} />
+                        </ArabicText>
+                        <Svg width={trackWidth + 2} height={9}>
+                            <Rect x={0} y={1} width={trackWidth} height={7} fill={COLORS.track} rx={2} />
+                            <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={7} fill={COLORS.primary} rx={2} />
                         </Svg>
-                        <Text style={{ width: 26, fontSize: 7.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 5 }}>
+                        <Text style={{ width: 32, fontSize: 9.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 6 }}>
                             {score}
                         </Text>
                     </View>
@@ -1043,25 +1200,36 @@ const CompactBenchmarkBarsArabic = ({
     industryAvg: number | null;
     globalAvg: number | null;
 }) => {
-    const trackWidth = 170;
-    const bars = [{ label: "منظمتك", value: score }];
-    if (industryAvg !== null) bars.push({ label: "متوسط القطاع", value: industryAvg });
-    if (globalAvg !== null) bars.push({ label: "المتوسط العام", value: globalAvg });
+    const trackWidth = 220;
+    const shapedBars = [
+        { label: "منظمتك", value: score, isAvailable: true },
+        { label: "متوسط القطاع", value: industryAvg, isAvailable: industryAvg !== null },
+        { label: "المتوسط العام", value: globalAvg, isAvailable: globalAvg !== null },
+    ];
 
     return (
         <View>
-            {bars.map((bar) => {
-                const fillWidth = Math.max(0, Math.min(trackWidth, (bar.value / 100) * trackWidth));
+            {shapedBars.map((bar) => {
+                const val = bar.value ?? 0;
+                const fillWidth = Math.max(0, Math.min(trackWidth, (val / 100) * trackWidth));
                 return (
                     <View key={bar.label} style={arStyles.compactBar}>
-                        <Text style={arStyles.compactBarLabel}>{bar.label}</Text>
-                        <Svg width={trackWidth + 2} height={7}>
-                            <Rect x={0} y={1} width={trackWidth} height={5} fill={COLORS.track} />
-                            <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={5} fill={COLORS.primary} />
-                        </Svg>
-                        <Text style={{ width: 32, fontSize: 7.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 5 }}>
-                            {bar.value}
-                        </Text>
+                        <ArabicText style={arStyles.compactBarLabel}>{bar.label}</ArabicText>
+                        {bar.isAvailable ? (
+                            <>
+                                <Svg width={trackWidth + 2} height={9}>
+                                    <Rect x={0} y={1} width={trackWidth} height={7} fill={COLORS.track} rx={2} />
+                                    <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={7} fill={COLORS.primary} rx={2} />
+                                </Svg>
+                                <Text style={{ width: 32, fontSize: 9.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 6 }}>
+                                    {val}
+                                </Text>
+                            </>
+                        ) : (
+                            <ArabicText style={{ fontSize: 9, color: COLORS.muted, textAlign: "right" }}>
+                                غير متاح
+                            </ArabicText>
+                        )}
                     </View>
                 );
             })}
@@ -1070,26 +1238,26 @@ const CompactBenchmarkBarsArabic = ({
 };
 
 const PageHeaderArabic = () => (
-    <>
+    <View>
         <View style={arStyles.pageHeader} fixed>
             <Image src={LOGO_ICON} style={arStyles.headerLogo} />
         </View>
         <View style={arStyles.headerRule} fixed />
-    </>
+    </View>
 );
 
-const PageFooterArabic = () => (
+const PageFooterArabicClean = () => (
     <View style={arStyles.footer} fixed>
         <View style={arStyles.footerRule}>
-            <Text
+            <ArabicText
                 style={arStyles.footerPage}
-                render={({ pageNumber, totalPages }) => `صفحة ${pageNumber} من ${totalPages}`}
+                render={({ pageNumber, totalPages }: any) => `صفحة ${pageNumber} من ${totalPages}`}
             />
             <View style={arStyles.footerLeft}>
                 <Image src={LOGO_ICON} style={arStyles.footerLogo} />
-                <Text style={arStyles.footerText}>
-                    أعدّه: ترينت — متخصصو المراجعة الداخلية · trennt.sa
-                </Text>
+                <ArabicText style={arStyles.footerText}>
+                    {`أعده: ترينت — متخصصو المراجعة الداخلية · trennt.sa`}
+                </ArabicText>
             </View>
         </View>
     </View>
@@ -1098,7 +1266,7 @@ const PageFooterArabic = () => (
 // ---------------------------------------------------------------------------
 // ENGLISH report (untouched — keep it 100% identical)
 // ---------------------------------------------------------------------------
-const AssessmentPDFReport = ({
+export const AssessmentPDFReport = ({
     result,
     respondent,
     stats,
@@ -1373,8 +1541,9 @@ const AssessmentPDFReportFallback = ({
     respondent: RespondentProfile | null;
     stats: BenchmarkStats | null;
 }) => {
-    const tierMeta = TIER_META[result.tier as MaturityTier];
-    const recs = TIER_RECOMMENDATIONS[result.tier as MaturityTier];
+    const safeTier = (TIER_META[result?.tier as MaturityTier] ? result.tier : "defined") as MaturityTier;
+    const tierMeta = TIER_META[safeTier];
+    const recs = TIER_RECOMMENDATIONS[safeTier];
     const dateStr = new Date(result.createdAt).toLocaleDateString("en-GB", {
         day: "numeric",
         month: "long",
@@ -1469,10 +1638,17 @@ const AssessmentPDFReportFallback = ({
     );
 };
 
+const cleanArText = (text: string) => {
+    if (!text) return "";
+    let s = text.trim();
+    if (s.endsWith(".")) s = s.slice(0, -1);
+    return s;
+};
+
 // ---------------------------------------------------------------------------
 // ARABIC report (3 pages, RTL, Arabic font, mirroring)
 // ---------------------------------------------------------------------------
-const AssessmentPDFReportArabic = ({
+export const AssessmentPDFReportArabic = ({
     result,
     respondent,
     stats,
@@ -1481,18 +1657,34 @@ const AssessmentPDFReportArabic = ({
     respondent: RespondentProfile | null;
     stats: BenchmarkStats | null;
 }) => {
-    const tierAr = BENCHMARK_ARABIC_TIERS[result.tier as MaturityTier];
-    const recsAr = BENCHMARK_ARABIC_TIER_RECOMMENDATIONS[result.tier as MaturityTier];
-    const dateStr = new Date(result.createdAt).toLocaleDateString("ar-SA", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
+    const rawTier = String(result?.tier || "defined").toLowerCase() as MaturityTier;
+    const tierKey = (BENCHMARK_ARABIC_TIERS[rawTier] ? rawTier : "defined") as MaturityTier;
+    const tierAr = BENCHMARK_ARABIC_TIERS[tierKey] || BENCHMARK_ARABIC_TIERS.defined;
+    const recsAr = BENCHMARK_ARABIC_TIER_RECOMMENDATIONS[tierKey] || BENCHMARK_ARABIC_TIER_RECOMMENDATIONS.defined;
+
+    const dateVal = result?.createdAt ? new Date(result.createdAt) : new Date();
+    const dateStr = !isNaN(dateVal.getTime())
+        ? dateVal.toLocaleDateString("ar-SA", {
+            day: "numeric", month: "long", year: "numeric",
+            calendar: "gregory", numberingSystem: "latn",
+        } as Intl.DateTimeFormatOptions)
+        : new Date().toLocaleDateString("ar-SA", {
+            day: "numeric", month: "long", year: "numeric",
+            calendar: "gregory", numberingSystem: "latn",
+        } as Intl.DateTimeFormatOptions);
+
+    const scores = result?.scores || {
+        governance: 50,
+        risk: 50,
+        execution: 50,
+        reporting: 50,
+        capability: 50,
+    };
 
     const sortedDim = DIMENSIONS.map((d) => ({
         key: d.key,
-        label: BENCHMARK_ARABIC_DIMENSIONS[d.key].label,
-        score: result.scores[d.key],
+        label: BENCHMARK_ARABIC_DIMENSIONS[d.key]?.label || d.label,
+        score: scores[d.key] ?? 50,
     })).sort((a, b) => b.score - a.score);
 
     const topStrengths = sortedDim.slice(0, 3);
@@ -1504,11 +1696,11 @@ const AssessmentPDFReportArabic = ({
         respondent?.companySize ? COMPANY_SIZE_ARABIC_LABELS[respondent.companySize] ?? respondent.companySize : null;
 
     const preparedForText = respondent?.name && respondent?.company
-        ? `مُعدّ لصالح: ${respondent.name}، ${respondent.company}`
+        ? `معد لصالح: ${respondent.name}، ${respondent.company}`
         : respondent?.company
-            ? `مُعدّ لصالح: ${respondent.company}`
+            ? `معد لصالح: ${respondent.company}`
             : respondent?.name
-                ? `مُعدّ لصالح: ${respondent.name}`
+                ? `معد لصالح: ${respondent.name}`
                 : "";
 
     return (
@@ -1517,100 +1709,106 @@ const AssessmentPDFReportArabic = ({
             <Page size="A4" style={arStyles.coverPage}>
                 <Image src={LOGO_WORDMARK} style={arStyles.coverLogo} />
 
-                <Text style={arStyles.coverEyebrow}>سري · تقييم تنفيذي</Text>
-                <Text style={arStyles.coverTitle}>
+                <ArabicText style={arStyles.coverEyebrow}>سري · تقييم تنفيذي</ArabicText>
+                <ArabicText style={arStyles.coverTitle}>
                     {"تقرير معيار نضج المراجعة الداخلية"}{"\n"}
-                    {"— ترينت"}
-                </Text>
-                <Text style={arStyles.coverSubtitle}>التقييم التنفيذي السري للنتائج</Text>
+                    {"ترينت"}
+                </ArabicText>
+                <ArabicText style={arStyles.coverSubtitle}>التقييم التنفيذي السري للنتائج</ArabicText>
 
                 <View style={arStyles.coverMetaBlock}>
+                    {respondent?.name && (
+                        <View style={arStyles.coverMetaRow}>
+                            <ArabicText style={arStyles.coverMetaLabel}>اسم المسجل</ArabicText>
+                            <ArabicText style={arStyles.coverMetaValue}>{respondent.name}</ArabicText>
+                        </View>
+                    )}
+                    {respondent?.email && (
+                        <View style={arStyles.coverMetaRow}>
+                            <ArabicText style={arStyles.coverMetaLabel}>البريد الإلكتروني</ArabicText>
+                            <ArabicText style={arStyles.coverMetaValue}>{respondent.email}</ArabicText>
+                        </View>
+                    )}
                     {respondent?.company && (
                         <View style={arStyles.coverMetaRow}>
-                            <Text style={arStyles.coverMetaLabel}>المنظمة</Text>
-                            <Text style={arStyles.coverMetaValue}>{respondent.company}</Text>
+                            <ArabicText style={arStyles.coverMetaLabel}>المنظمة</ArabicText>
+                            <ArabicText style={arStyles.coverMetaValue}>{respondent.company}</ArabicText>
                         </View>
                     )}
-                    {arIndustry && (
-                        <View style={arStyles.coverMetaRow}>
-                            <Text style={arStyles.coverMetaLabel}>القطاع</Text>
-                            <Text style={arStyles.coverMetaValue}>{arIndustry}</Text>
-                        </View>
-                    )}
-                    {arCompanySize && (
-                        <View style={arStyles.coverMetaRow}>
-                            <Text style={arStyles.coverMetaLabel}>حجم الشركة</Text>
-                            <Text style={arStyles.coverMetaValue}>{arCompanySize} موظفًا</Text>
-                        </View>
-                    )}
-                    <View style={arStyles.coverMetaRow}>
-                        <Text style={arStyles.coverMetaLabel}>مستوى النضج</Text>
-                        <Text style={arStyles.coverMetaValue}>{tierAr.label} · {tierAr.range}</Text>
-                    </View>
-                    <Text style={arStyles.coverDate}>تقرير بتاريخ · {dateStr}</Text>
-                    {preparedForText && (
-                        <Text style={arStyles.preparedForLine}>{preparedForText}</Text>
-                    )}
+                    <ArabicText style={arStyles.coverDate}>{`تقرير بتاريخ · ${dateStr}`}</ArabicText>
                 </View>
 
                 <View style={arStyles.execBlock}>
                     <View style={arStyles.execMetricsRow}>
                         <View style={arStyles.metricBlock}>
-                            <Text style={arStyles.metricLabel}>النتيجة الإجمالية للنضج</Text>
+                            <ArabicText style={arStyles.metricLabel}>النتيجة الإجمالية للنضج</ArabicText>
                             <Text style={arStyles.metricValueLarge}>
                                 {result.overall}
                                 <Text style={arStyles.metricSuffix}>/100</Text>
                             </Text>
                         </View>
                         <View style={arStyles.metricBlock}>
-                            <Text style={arStyles.metricLabel}>مستوى النضج</Text>
-                            <Text style={arStyles.metricValueMedium}>{tierAr.label}</Text>
+                            <ArabicText style={arStyles.metricLabel}>مستوى النضج</ArabicText>
+                            <ArabicText style={arStyles.metricValueMedium}>{tierAr.label}</ArabicText>
                         </View>
                         <View style={arStyles.metricBlock}>
-                            <Text style={arStyles.metricLabel}>النسبة المئوية في المعيار</Text>
-                            <Text style={arStyles.metricValueMedium}>أعلى من {result.percentile}%</Text>
+                            <ArabicText style={arStyles.metricLabel}>النسبة المئوية في المعيار</ArabicText>
+                            <ArabicText style={arStyles.metricValueMedium}>{`أعلى من ${result.percentile}%`}</ArabicText>
                         </View>
                     </View>
-                    <Text style={arStyles.summaryQuote}>{tierAr.summary}</Text>
+                    <ArabicText style={arStyles.summaryQuote}>{tierAr.summary}</ArabicText>
                 </View>
 
-                <PageFooterArabic />
+                <PageFooterArabicClean />
             </Page>
 
             {/* PAGE 2: DIMENSION ANALYSIS + PEER COMPARISON */}
             <Page size="A4" style={arStyles.page}>
                 <PageHeaderArabic />
 
-                <Text style={arStyles.sectionHeading}>تحليل الأبعاد الخمسة للنضج</Text>
+                <ArabicText style={arStyles.sectionHeading}>تحليل الأبعاد الخمسة للنضج</ArabicText>
                 <View style={arStyles.sectionRule} />
 
-                <View style={{ marginTop: 6, marginBottom: 4, alignItems: "center" }}>
-                    <DimensionBarChartArabic scores={result.scores} />
-                    <Text style={arStyles.chartCaption}>الشكل ١ — درجات النضج حسب البعد</Text>
+                <View style={{ marginTop: 6, marginBottom: 8, alignItems: "center" }}>
+                    <DimensionBarChartArabic scores={scores} />
+                    <ArabicText style={arStyles.chartCaption}>الشكل ١ - درجات النضج حسب البعد</ArabicText>
                 </View>
 
                 <View style={arStyles.dimTwoCol} wrap={false}>
                     {DIMENSIONS.map((d) => {
-                        const arDim = BENCHMARK_ARABIC_DIMENSIONS[d.key];
-                        const band = bandFor(result.scores[d.key]);
-                        const interpret = BENCHMARK_ARABIC_DOMAIN_INTERPRETATION[d.key][band];
+                        const arDim = BENCHMARK_ARABIC_DIMENSIONS[d.key] || { label: d.label, short: d.short };
+                        const score = scores[d.key] ?? 50;
+                        const band = bandFor(score);
+                        const domainInterp = BENCHMARK_ARABIC_DOMAIN_INTERPRETATION[d.key] || { high: "", mid: "", low: "" };
+                        const interpret = domainInterp[band] || "";
+                        const detailObj = (AR_DIMENSION_DETAIL_TEXTS && AR_DIMENSION_DETAIL_TEXTS[d.key])
+                            ? AR_DIMENSION_DETAIL_TEXTS[d.key]
+                            : (EN_DIMENSION_DATA[d.key] || { strength: "", improvement: "" });
+
                         return (
                             <View key={d.key} style={arStyles.dimCard} wrap={false}>
                                 <View style={arStyles.dimHeader}>
-                                    <Text style={arStyles.dimTitle}>{arDim.label}</Text>
-                                    <Text style={arStyles.dimScore}>{result.scores[d.key]}/100</Text>
+                                    <ArabicText style={arStyles.dimTitle}>{arDim.label}</ArabicText>
+                                    <Text style={arStyles.dimScore}>{score}/100</Text>
                                 </View>
-                                <Text style={arStyles.dimDetail}>
-                                    <Text style={arStyles.dimLabel}>تقرير النتيجة: </Text>
-                                    {interpret}
-                                </Text>
+                                <ArabicText style={arStyles.dimDetail}>
+                                    {`نقطة القوة: ${cleanArText(detailObj.strength)}`}
+                                </ArabicText>
+                                <ArabicText style={arStyles.dimDetail}>
+                                    {`المسار التحسيني: ${cleanArText(detailObj.improvement)}`}
+                                </ArabicText>
+                                {interpret ? (
+                                    <ArabicText style={arStyles.dimDetail}>
+                                        {`قراءة النتيجة: ${cleanArText(interpret)}`}
+                                    </ArabicText>
+                                ) : null}
                             </View>
                         );
                     })}
                 </View>
 
                 <View style={arStyles.benchmarkSection} wrap={false}>
-                    <Text style={arStyles.sectionHeading}>المقارنة مع المعاير والمنظمات النظيرة</Text>
+                    <ArabicText style={arStyles.sectionHeading}>المقارنة مع المعايير والمنظمات النظيرة</ArabicText>
                     <View style={arStyles.sectionRule} />
 
                     <CompactBenchmarkBarsArabic
@@ -1621,129 +1819,135 @@ const AssessmentPDFReportArabic = ({
 
                     <View style={arStyles.peerMetricsRow}>
                         <View style={arStyles.peerBlock}>
-                            <Text style={arStyles.metricLabel}>متوسط القطاع</Text>
-                            <Text style={arStyles.peerValue}>
-                                {industryAvg ?? "—"}<Text style={arStyles.peerSuffix}> / 100</Text>
-                            </Text>
+                            <ArabicText style={arStyles.metricLabel}>متوسط القطاع</ArabicText>
+                            <ArabicText style={arStyles.peerValue}>
+                                {industryAvg !== null ? `${industryAvg} / 100` : "غير متاح"}
+                            </ArabicText>
                         </View>
                         <View style={arStyles.peerBlock}>
-                            <Text style={arStyles.metricLabel}>عدد المنظمات المقَيمّة</Text>
-                            <Text style={arStyles.peerValue}>
-                                {(stats?.totalAssessments ?? 0)}<Text style={arStyles.peerSuffix}> منظمة</Text>
-                            </Text>
+                            <ArabicText style={arStyles.metricLabel}>عدد المنظمات المقيمة</ArabicText>
+                            <ArabicText style={arStyles.peerValue}>{`${stats?.totalAssessments ?? 0} منظمة`}</ArabicText>
                         </View>
                         <View style={arStyles.peerBlock}>
-                            <Text style={arStyles.metricLabel}>النسبة المئوية العالمية</Text>
-                            <Text style={arStyles.peerValue}>أعلى من {result.percentile}<Text style={arStyles.peerSuffix}>%</Text></Text>
+                            <ArabicText style={arStyles.metricLabel}>النسبة المئوية العالمية</ArabicText>
+                            <ArabicText style={arStyles.peerValue}>{`أعلى من ${result.percentile}%`}</ArabicText>
                         </View>
                     </View>
 
                     <View style={arStyles.listsRow} wrap={false}>
                         <View style={arStyles.listColumn} wrap={false}>
-                            <Text style={arStyles.listTitle}>أبرز ٣ نقاط قوة</Text>
+                            <ArabicText style={arStyles.listTitle}>أبرز ٣ نقاط قوة</ArabicText>
                             {topStrengths.map((s, idx) => (
                                 <View key={idx} style={arStyles.listItem} wrap={false}>
-                                    <Text style={arStyles.bullet}>•</Text>
-                                    <Text>{s.label} ({s.score}/100)</Text>
+                                    <ArabicText style={arStyles.bullet}>•</ArabicText>
+                                    <ArabicText>{`${s.label} (${s.score}/100)`}</ArabicText>
                                 </View>
                             ))}
                         </View>
                         <View style={arStyles.listColumn} wrap={false}>
-                            <Text style={arStyles.listTitle}>أهم ٣ مجالات للتركيز</Text>
+                            <ArabicText style={arStyles.listTitle}>أهم ٣ مجالات للتركيز</ArabicText>
                             {topOpportunities.map((s, idx) => (
                                 <View key={idx} style={arStyles.listItem} wrap={false}>
-                                    <Text style={arStyles.bullet}>•</Text>
-                                    <Text>{s.label} ({s.score}/100)</Text>
+                                    <ArabicText style={arStyles.bullet}>•</ArabicText>
+                                    <ArabicText>{`${s.label} (${s.score}/100)`}</ArabicText>
                                 </View>
                             ))}
                         </View>
                     </View>
                 </View>
 
-                <PageFooterArabic />
+                <PageFooterArabicClean />
             </Page>
 
-            {/* PAGE 3: STRATEGIC RECOMMENDATIONS + FOOTER */}
+            {/* PAGE 3: STRATEGIC RECOMMENDATIONS + FOOTER (EXECUTIVE REDESIGN) */}
             <Page size="A4" style={arStyles.page}>
-                <PageHeaderArabic />
+                {/* 1. HEADER: Logo top-left, Section title top-right, clean divider */}
+                <View style={arStyles.p3HeaderRow}>
+                    <Image src={LOGO_WORDMARK} style={arStyles.p3Logo} />
+                    <ArabicText style={arStyles.p3HeaderTitle}>التوصيات الاستراتيجية</ArabicText>
+                </View>
+                <View style={arStyles.p3HeaderRule} />
 
-                <Text style={arStyles.sectionHeading}>التوصيات الاستراتيجية</Text>
-                <View style={arStyles.sectionRule} />
-
-                <View style={arStyles.roadmapSection} wrap={false}>
-                    <Text style={arStyles.roadmapTitle}>المرحلة الأولى: الأولويات العاجلة (٠–٣٠ يوم)</Text>
-                    <View style={{ paddingRight: 2 }} wrap={false}>
+                {/* 2. THREE EDITORIAL PHASES */}
+                <View style={arStyles.p3PhaseBlock} wrap={false}>
+                    <ArabicText style={arStyles.p3PhaseHeading}>
+                        المرحلة الأولى: الأولويات العاجلة — خلال ٣٠ يوماً
+                    </ArabicText>
+                    <View style={arStyles.p3PhaseBody}>
                         {recsAr.slice(0, 1).map((r, i) => (
-                            <View key={i} style={arStyles.listItem} wrap={false}>
-                                <Text style={arStyles.bullet}>•</Text>
-                                <Text style={{ fontSize: 8, lineHeight: 1.7 }}>{r}</Text>
-                            </View>
+                            <ArabicText key={i} style={arStyles.p3RecParagraph}>
+                                {cleanArText(r)}
+                            </ArabicText>
                         ))}
-                        <View style={arStyles.listItem} wrap={false}>
-                            <Text style={arStyles.bullet}>•</Text>
-                            <Text style={{ fontSize: 8, lineHeight: 1.7 }}>
-                                إجراء تقييم سريع لنضج بيئة الرقابة الحالية في بُعد «{topOpportunities[0].label}» ووضع خطة معالجة ذات ملكية وجداول زمنية واضحة.
-                            </Text>
-                        </View>
+                        <ArabicText style={arStyles.p3RecParagraph}>
+                            {cleanArText(`إجراء تقييم سريع لنضج بيئة الرقابة الحالية في بعد «${topOpportunities[0]?.label || ""}» ووضع خطة معالجة ذات ملكية وجداول زمنية واضحة`)}
+                        </ArabicText>
                     </View>
                 </View>
 
-                <View style={arStyles.roadmapSection} wrap={false}>
-                    <Text style={arStyles.roadmapTitle}>المرحلة الثانية: التحسينات متوسطة المدى (٣٠–٩٠ يوم)</Text>
-                    <View style={{ paddingRight: 2 }} wrap={false}>
+                <View style={arStyles.p3PhaseDivider} />
+
+                <View style={arStyles.p3PhaseBlock} wrap={false}>
+                    <ArabicText style={arStyles.p3PhaseHeading}>
+                        المرحلة الثانية: التحسينات متوسطة المدى — من ٣٠ إلى ٩٠ يوماً
+                    </ArabicText>
+                    <View style={arStyles.p3PhaseBody}>
                         {recsAr.slice(1, 2).map((r, i) => (
-                            <View key={i} style={arStyles.listItem} wrap={false}>
-                                <Text style={arStyles.bullet}>•</Text>
-                                <Text style={{ fontSize: 8, lineHeight: 1.7 }}>{r}</Text>
-                            </View>
+                            <ArabicText key={i} style={arStyles.p3RecParagraph}>
+                                {cleanArText(r)}
+                            </ArabicText>
                         ))}
-                        <View style={arStyles.listItem} wrap={false}>
-                            <Text style={arStyles.bullet}>•</Text>
-                            <Text style={{ fontSize: 8, lineHeight: 1.7 }}>
-                                تشكيل أطر حوكمة وضمان جودة منضبطة لبُعد «{topOpportunities[1].label}» يضمنان منهجية متسقة وسلامة دليلات الرقابة واتساق تنفيذ معايير المراجعة.
-                            </Text>
-                        </View>
+                        <ArabicText style={arStyles.p3RecParagraph}>
+                            {cleanArText(`تشكيل أطر حوكمة وضمان جودة منضبطة لبعد «${topOpportunities[1]?.label || ""}» يضمنان منهجية متسقة وسلامة دليلات الرقابة واتساق تنفيذ معايير المراجعة`)}
+                        </ArabicText>
                     </View>
                 </View>
 
-                <View style={arStyles.roadmapSection} wrap={false}>
-                    <Text style={arStyles.roadmapTitle}>المرحلة الثالثة: التشغيل طويل المدى (٩٠–١٨٠ يوم)</Text>
-                    <View style={{ paddingRight: 2 }} wrap={false}>
+                <View style={arStyles.p3PhaseDivider} />
+
+                <View style={arStyles.p3PhaseBlock} wrap={false}>
+                    <ArabicText style={arStyles.p3PhaseHeading}>
+                        المرحلة الثالثة: التشغيل طويل المدى — من ٩٠ إلى ١٨٠ يوماً
+                    </ArabicText>
+                    <View style={arStyles.p3PhaseBody}>
                         {recsAr.slice(2, 3).map((r, i) => (
-                            <View key={i} style={arStyles.listItem} wrap={false}>
-                                <Text style={arStyles.bullet}>•</Text>
-                                <Text style={{ fontSize: 8, lineHeight: 1.7 }}>{r}</Text>
-                            </View>
+                            <ArabicText key={i} style={arStyles.p3RecParagraph}>
+                                {cleanArText(r)}
+                            </ArabicText>
                         ))}
-                        <View style={arStyles.listItem} wrap={false}>
-                            <Text style={arStyles.bullet}>•</Text>
-                            <Text style={{ fontSize: 8, lineHeight: 1.7 }}>
-                                إدماج قدرات بُعد «{topStrengths[0].label}» في نموذج تشغيل المراجعة الداخلية الأوسع لدفع تغطية تأكيدية متكاملة وقيمة رؤى مخاطر إضافية للجنة المراجعة.
-                            </Text>
+                        <ArabicText style={arStyles.p3RecParagraph}>
+                            {cleanArText(`إدماج قدرات بعد «${topStrengths[0]?.label || ""}» في نموذج تشغيل المراجعة الداخلية الأوسع لدفع تغطية تأكيدية متكاملة وقيمة رؤى مخاطر إضافية للجنة المراجعة`)}
+                        </ArabicText>
+                    </View>
+                </View>
+
+                {/* 3. BOTTOM FOOTER AREA */}
+                <View style={arStyles.p3FooterContainer}>
+                    <View style={arStyles.p3FooterRule} />
+                    <View style={arStyles.p3FooterRow}>
+                        <View>
+                            <ArabicText style={arStyles.p3FooterLabel}>تم الإعداد من قبل</ArabicText>
+                            <ArabicText style={arStyles.p3FooterValue}>
+                                ترينت — متخصصو المراجعة الداخلية
+                            </ArabicText>
+                        </View>
+                        <View>
+                            <ArabicText style={arStyles.p3FooterLabel}>إطار التقييم</ArabicText>
+                            <ArabicText style={arStyles.p3FooterValue}>
+                                إطار ترينت لنضج المراجعة الداخلية
+                            </ArabicText>
                         </View>
                     </View>
+
+                    <ArabicText style={arStyles.p3Confidentiality}>
+                        يحتوي هذا التقرير على معلومات حصرية وسرية. تستند جميع التقييمات والتوصيات إلى إطار ترينت لنضج المراجعة الداخلية وتخضع لشروط وأحكام تعاقد الخدمة.
+                    </ArabicText>
+
+                    <ArabicText
+                        style={arStyles.p3PageNumber}
+                        render={({ pageNumber, totalPages }: any) => `صفحة ${pageNumber} من ${totalPages}`}
+                    />
                 </View>
-
-                <View style={arStyles.preparedByRow}>
-                    <View>
-                        <Text style={arStyles.metaLabelSmall}>تم الإعداد من قبل</Text>
-                        <Text style={arStyles.metaValueSmall}>
-                            ترينت — متخصصو المراجعة الداخلية
-                        </Text>
-                    </View>
-                    <View>
-                        <Text style={arStyles.metaLabelSmall}>إطار التقييم</Text>
-                        <Text style={arStyles.metaValueSmall}>
-                            إطار ترينت لنضج المراجعة الداخلية
-                        </Text>
-                    </View>
-                </View>
-
-                <Text style={arStyles.confidentiality}>
-                    يحتوي هذا التقرير على معلومات حصرية وسريّة. تستند جميع التقييمات والتوصيات إلى إطار ترينت لنضج المراجعة الداخلية وتخضع لشروط وأحكام تعاقد الخدمة.
-                </Text>
-
-                <PageFooterArabic />
             </Page>
         </Document>
     );
@@ -1752,71 +1956,13 @@ const AssessmentPDFReportArabic = ({
 const AssessmentPDFReportFallbackArabic = ({
     result,
     respondent,
+    stats = null,
 }: {
     result: AssessmentResult;
     respondent: RespondentProfile | null;
     stats?: BenchmarkStats | null;
 }) => {
-    const tierAr = BENCHMARK_ARABIC_TIERS[result.tier as MaturityTier];
-    const dateStr = new Date(result.createdAt).toLocaleDateString("ar-SA", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-
-    return (
-        <Document title={`تقرير ترينت التنفيذي - ${respondent?.company || "سري"}`}>
-            <Page size="A4" style={arStyles.coverPage}>
-                <Text style={arStyles.coverEyebrow}>سري · تقييم تنفيذي</Text>
-                <Text style={arStyles.coverTitle}>
-                    {"تقرير معيار نضج المراجعة الداخلية"}{"\n"}
-                    {"— ترينت"}
-                </Text>
-                <Text style={arStyles.coverSubtitle}>التقييم التنفيذي السري للنتائج</Text>
-
-                <View style={arStyles.coverMetaBlock}>
-                    {respondent?.company && (
-                        <View style={arStyles.coverMetaRow}>
-                            <Text style={arStyles.coverMetaLabel}>المنظمة</Text>
-                            <Text style={arStyles.coverMetaValue}>{respondent.company}</Text>
-                        </View>
-                    )}
-                    <View style={arStyles.coverMetaRow}>
-                        <Text style={arStyles.coverMetaLabel}>مستوى النضج</Text>
-                        <Text style={arStyles.coverMetaValue}>{tierAr.label} · {tierAr.range}</Text>
-                    </View>
-                    <Text style={arStyles.coverDate}>تقرير بتاريخ · {dateStr}</Text>
-                </View>
-
-                <View style={arStyles.execBlock}>
-                    <View style={arStyles.execMetricsRow}>
-                        <View style={arStyles.metricBlock}>
-                            <Text style={arStyles.metricLabel}>النتيجة الإجمالية للنضج</Text>
-                            <Text style={arStyles.metricValueLarge}>
-                                {result.overall}
-                                <Text style={arStyles.metricSuffix}>/100</Text>
-                            </Text>
-                        </View>
-                        <View style={arStyles.metricBlock}>
-                            <Text style={arStyles.metricLabel}>مستوى النضج</Text>
-                            <Text style={arStyles.metricValueMedium}>{tierAr.label}</Text>
-                        </View>
-                    </View>
-                    <Text style={arStyles.summaryQuote}>{tierAr.summary}</Text>
-                </View>
-
-                <PageFooterArabic />
-            </Page>
-            <Page size="A4" style={arStyles.page}>
-                <PageHeaderArabic />
-                <PageFooterArabic />
-            </Page>
-            <Page size="A4" style={arStyles.page}>
-                <PageHeaderArabic />
-                <PageFooterArabic />
-            </Page>
-        </Document>
-    );
+    return <AssessmentPDFReportArabic result={result} respondent={respondent} stats={stats || null} />;
 };
 
 // ---------------------------------------------------------------------------
@@ -1828,6 +1974,30 @@ export async function generatePDF(
     stats: BenchmarkStats | null = null,
     lang: "en" | "ar" = "en"
 ) {
+    if (!result) {
+        console.error("[PDF] generatePDF called with missing result object");
+        throw new Error("Missing assessment result data for PDF generation");
+    }
+
+    const rawTier = String(result?.tier || "defined").toLowerCase() as MaturityTier;
+    const safeTier = (TIER_META[rawTier] ? rawTier : "defined") as MaturityTier;
+
+    const safeResult: AssessmentResult = {
+        id: result?.id || `bench-${Date.now()}`,
+        overall: typeof result?.overall === "number" && !isNaN(result.overall) ? result.overall : 50,
+        scores: {
+            governance: typeof result?.scores?.governance === "number" ? result.scores.governance : 50,
+            risk: typeof result?.scores?.risk === "number" ? result.scores.risk : 50,
+            execution: typeof result?.scores?.execution === "number" ? result.scores.execution : 50,
+            reporting: typeof result?.scores?.reporting === "number" ? result.scores.reporting : 50,
+            capability: typeof result?.scores?.capability === "number" ? result.scores.capability : 50,
+        },
+        tier: safeTier,
+        percentile: typeof result?.percentile === "number" && !isNaN(result.percentile) ? result.percentile : 50,
+        questionCount: typeof result?.questionCount === "number" ? result.questionCount : 26,
+        createdAt: result?.createdAt || new Date().toISOString(),
+    };
+
     const { pdf } = await import("@react-pdf/renderer");
     const isAr = lang === "ar";
 
@@ -1837,13 +2007,18 @@ export async function generatePDF(
     let blob: Blob;
     try {
         blob = await pdf(
-            <Main result={result} respondent={respondent} stats={stats} />
+            <Main result={safeResult} respondent={respondent} stats={stats} />
         ).toBlob();
-    } catch (imageError) {
-        console.warn("[PDF] Logo image failed to load, generating fallback report without logo:", imageError);
-        blob = await pdf(
-            <Fallback result={result} respondent={respondent} stats={stats} />
-        ).toBlob();
+    } catch (mainError) {
+        console.warn("[PDF] Main report rendering failed, attempting fallback:", mainError);
+        try {
+            blob = await pdf(
+                <Fallback result={safeResult} respondent={respondent} stats={stats} />
+            ).toBlob();
+        } catch (fallbackError) {
+            console.error("[PDF] Fallback report also failed:", fallbackError);
+            throw fallbackError;
+        }
     }
 
     const url = URL.createObjectURL(blob);
