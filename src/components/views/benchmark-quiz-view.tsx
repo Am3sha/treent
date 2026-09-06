@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { EMAIL_RE } from "@/lib/validation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -70,7 +71,6 @@ const STEPS: { dimension: Dimension; questions: BenchmarkQuestion[] }[] =
 const TOTAL_STEPS = STEPS.length + 1; // +1 for the details step
 const TOTAL_QUESTIONS = BENCHMARK_QUESTIONS.length;
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function BenchmarkQuizView() {
   const responses = useNav((s) => s.responses);
@@ -563,6 +563,17 @@ function LikertScale({
 // Details step
 // ---------------------------------------------------------------------------
 
+interface DetailsState {
+  name: string;
+  email: string;
+  company: string;
+  companySize: string;
+  industry: string;
+  country: string;
+  role: string;
+  consent: boolean;
+}
+
 function DetailsStep({
   initial,
   resultExists,
@@ -587,37 +598,44 @@ function DetailsStep({
   isRTL: boolean;
 }) {
   const quizUI = BENCHMARK_ARABIC_QUIZ_UI;
-  const [name, setName] = React.useState(initial?.name ?? "");
-  const [email, setEmail] = React.useState(initial?.email ?? "");
-  const [company, setCompany] = React.useState(initial?.company ?? "");
-  const [companySize, setCompanySize] = React.useState(
-    initial?.companySize ?? ""
-  );
-  const [industry, setIndustry] = React.useState(initial?.industry ?? "");
-  const [country, setCountry] = React.useState(initial?.country ?? "");
-  const [role, setRole] = React.useState(initial?.role ?? "");
-  const [consent, setConsent] = React.useState(initial?.consentContact ?? false);
+  // One consolidated profile state instead of 8 parallel useState setters.
+  // The hydrate effect used to fire 8 synchronous setStates per run (cascading
+  // re-renders, real TBT contributor - eslint react-hooks/set-state-in-effect).
+  const [details, setDetails] = React.useState<DetailsState>(() => ({
+    name: initial?.name ?? "",
+    email: initial?.email ?? "",
+    company: initial?.company ?? "",
+    companySize: initial?.companySize ?? "",
+    industry: initial?.industry ?? "",
+    country: initial?.country ?? "",
+    role: initial?.role ?? "",
+    consent: initial?.consentContact ?? false,
+  }));
+  const { name, email, company, companySize, industry, country, role, consent } = details;
+  const setDetailsField = <K extends keyof DetailsState>(key: K, value: DetailsState[K]) =>
+    setDetails((d) => ({ ...d, [key]: value }));
 
   const nameValid = name.trim().length >= 2;
   const emailValid = EMAIL_RE.test(email.trim());
   const profileReady = nameValid && emailValid && consent && !submitting;
   const questionsDone = finalMode && answeredCount >= TOTAL_QUESTIONS;
   const setRespondent = useNav((s) => s.setRespondent);
-  const resultExistsNow = resultExists;
+
+  // Live-sync the typed profile into the store so answers survive navigation.
   React.useEffect(() => {
-    if (resultExistsNow) return;
+    if (resultExists) return;
     setRespondent({
-      name,
-      email,
-      company,
-      companySize,
-      industry,
-      country,
-      role,
-      consentContact: consent,
+      name: details.name,
+      email: details.email,
+      company: details.company,
+      companySize: details.companySize,
+      industry: details.industry,
+      country: details.country,
+      role: details.role,
+      consentContact: details.consent,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, email, company, companySize, industry, country, role, consent]);
+  }, [details, resultExists, setRespondent]);
+
   const hydrateKey = JSON.stringify({
     name: initial?.name ?? null,
     email: initial?.email ?? null,
@@ -628,19 +646,40 @@ function DetailsStep({
     role: initial?.role ?? null,
     consent: initial?.consentContact ?? null,
   });
-  React.useEffect(() => {
-    if (!initial) return;
-    if (initial.name !== undefined) setName(initial.name);
-    if (initial.email !== undefined) setEmail(initial.email);
-    if (initial.company !== undefined) setCompany(initial.company);
-    if (initial.companySize !== undefined) setCompanySize(initial.companySize);
-    if (initial.industry !== undefined) setIndustry(initial.industry);
-    if (initial.country !== undefined) setCountry(initial.country);
-    if (initial.role !== undefined) setRole(initial.role);
-    if (initial.consentContact !== undefined)
-      setConsent(initial.consentContact);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrateKey]);
+
+  // Pull external store changes back into local fields. Done as the
+  // React-recommended render-phase adjustment (compare key with previous)
+  // instead of a useEffect that cascade-rendered via 8 setStates.
+  const [prevHydrateKey, setPrevHydrateKey] = React.useState(hydrateKey);
+  if (initial && hydrateKey !== prevHydrateKey) {
+    setPrevHydrateKey(hydrateKey);
+    setDetails((d) => {
+      const next: DetailsState = {
+        name: initial.name === undefined ? d.name : initial.name,
+        email: initial.email === undefined ? d.email : initial.email,
+        company: initial.company === undefined ? d.company : initial.company,
+        companySize: initial.companySize === undefined ? d.companySize : initial.companySize,
+        industry: initial.industry === undefined ? d.industry : initial.industry,
+        country: initial.country === undefined ? d.country : initial.country,
+        role: initial.role === undefined ? d.role : initial.role,
+        consent: initial.consentContact === undefined ? d.consent : initial.consentContact,
+      };
+      // Preserve the old setState-value-equality bailout: if the store merely
+      // echoes identical values (our own sync above), keep the same object so
+      // React bails out of the extra render.
+      return next.name === d.name &&
+        next.email === d.email &&
+        next.company === d.company &&
+        next.companySize === d.companySize &&
+        next.industry === d.industry &&
+        next.country === d.country &&
+        next.role === d.role &&
+        next.consent === d.consent
+        ? d
+        : next;
+    });
+  }
+
   const canSubmit = questionsDone ? profileReady : false;
   const canAdvance = !questionsDone && nameValid && emailValid && consent;
 
@@ -715,7 +754,7 @@ function DetailsStep({
           >
             <Input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setDetailsField("name", e.target.value)}
               autoComplete="name"
               dir={isRTL ? "rtl" : "ltr"}
             />
@@ -729,7 +768,7 @@ function DetailsStep({
             <Input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setDetailsField("email", e.target.value)}
               autoComplete="email"
               dir="ltr"
             />
@@ -741,7 +780,7 @@ function DetailsStep({
           >
             <Input
               value={company}
-              onChange={(e) => setCompany(e.target.value)}
+              onChange={(e) => setDetailsField("company", e.target.value)}
               autoComplete="organization"
               dir={isRTL ? "rtl" : "ltr"}
             />
@@ -751,7 +790,7 @@ function DetailsStep({
             lang={lang}
             isRTL={isRTL}
           >
-            <Select value={companySize} onValueChange={setCompanySize}>
+            <Select value={companySize} onValueChange={(v) => setDetailsField("companySize", v)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={lang === "ar" ? quizUI.placeholderCompanySize : "Select range"} />
               </SelectTrigger>
@@ -771,7 +810,7 @@ function DetailsStep({
             lang={lang}
             isRTL={isRTL}
           >
-            <Select value={industry} onValueChange={setIndustry}>
+            <Select value={industry} onValueChange={(v) => setDetailsField("industry", v)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={lang === "ar" ? quizUI.placeholderIndustry : "Select industry"} />
               </SelectTrigger>
@@ -793,7 +832,7 @@ function DetailsStep({
           >
             <Input
               value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              onChange={(e) => setDetailsField("country", e.target.value)}
               autoComplete="country-name"
               dir={isRTL ? "rtl" : "ltr"}
             />
@@ -806,7 +845,7 @@ function DetailsStep({
           >
             <Input
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => setDetailsField("role", e.target.value)}
               autoComplete="organization-title"
               dir={isRTL ? "rtl" : "ltr"}
             />
@@ -823,7 +862,7 @@ function DetailsStep({
           <Checkbox
             id="consent"
             checked={consent}
-            onCheckedChange={(v) => setConsent(v === true)}
+            onCheckedChange={(v) => setDetailsField("consent", v === true)}
             className="mt-0.5"
           />
           <span className="text-sm leading-relaxed text-muted-foreground">

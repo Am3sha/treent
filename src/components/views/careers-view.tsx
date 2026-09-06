@@ -397,6 +397,14 @@ function ArrowDown({ className }: { className?: string }) {
   );
 }
 
+interface CvState {
+  file: File | null;
+  dataUrl: string | null;
+  error: string | null;
+}
+
+const EMPTY_CV: CvState = { file: null, dataUrl: null, error: null };
+
 function ApplicationDialog({
   role,
   onClose,
@@ -410,9 +418,11 @@ function ApplicationDialog({
 }) {
   const { t, l, lang } = useTranslation();
   const [submitting, setSubmitting] = React.useState(false);
-  const [cvFile, setCvFile] = React.useState<File | null>(null);
-  const [cvDataUrl, setCvDataUrl] = React.useState<string | null>(null);
-  const [cvError, setCvError] = React.useState<string | null>(null);
+  // One state object instead of three parallel useState setters: the reset
+  // effect (below) used to fire three synchronous setStates and trigger
+  // cascading re-renders (eslint react-hooks/set-state-in-effect).
+  const [cv, setCv] = React.useState<CvState>(EMPTY_CV);
+  const { file: cvFile, dataUrl: cvDataUrl, error: cvError } = cv;
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const {
@@ -432,7 +442,19 @@ function ApplicationDialog({
     },
   });
 
-  // Reset form whenever a new role is opened
+  // Clear the CV state when a different role is opened. Render-phase
+  // adjustment (setState-during-render with previous-value comparison)
+  // instead of an effect, so no cascading render is triggered. Gated on the
+  // new role being non-null so closing the dialog doesn't blank the content
+  // mid exit-animation (matches the previous effect's `if (role)` semantics).
+  const [prevRole, setPrevRole] = React.useState(role);
+  if (role !== prevRole) {
+    setPrevRole(role);
+    if (role) setCv(EMPTY_CV);
+  }
+
+  // Reset the typed form fields whenever a new role is opened.
+  // (RHF's reset() is not React setState, so this effect does not cascade.)
   React.useEffect(() => {
     if (role) {
       reset({
@@ -443,9 +465,6 @@ function ApplicationDialog({
         linkedin: "",
         message: "",
       });
-      setCvFile(null);
-      setCvDataUrl(null);
-      setCvError(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }, [role, reset]);
@@ -453,37 +472,28 @@ function ApplicationDialog({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
-      setCvFile(null);
-      setCvDataUrl(null);
-      setCvError(null);
+      setCv(EMPTY_CV);
       return;
     }
     const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
     if (ext !== ".pdf" && ext !== ".docx") {
-      setCvError(t('careers.form.errors.cv_invalid_type'));
-      setCvFile(null);
-      setCvDataUrl(null);
+      setCv({ ...EMPTY_CV, error: t('careers.form.errors.cv_invalid_type') });
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setCvError(t('careers.form.errors.cv_invalid_size'));
-      setCvFile(null);
-      setCvDataUrl(null);
+      setCv({ ...EMPTY_CV, error: t('careers.form.errors.cv_invalid_size') });
       return;
     }
-    setCvError(null);
-    setCvFile(file);
+    setCv({ file, dataUrl: null, error: null });
     const reader = new FileReader();
     reader.onload = () => {
-      setCvDataUrl(reader.result as string);
+      setCv((prev) => ({ ...prev, dataUrl: reader.result as string }));
     };
     reader.readAsDataURL(file);
   };
 
   const removeFile = () => {
-    setCvFile(null);
-    setCvDataUrl(null);
-    setCvError(null);
+    setCv(EMPTY_CV);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
