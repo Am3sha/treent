@@ -1,19 +1,28 @@
 // POST /api/careers — capture a career application.
-// Validates name/email/roleSlug/roleTitle, verifies CV upload magic bytes & size, persists to CareerApplication.
+// Validates name/email/roleSlug/roleTitle, verifies CV upload magic bytes & size,
+// uploads accepted files to Vercel Blob, and persists only the resulting public URL
+// in CareerApplication.resume (legacy rows may still contain inline base64 data URLs;
+// the admin download route handles both).
 
 import { db } from "@/lib/db";
 import { optionalSanitizedText, protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengths } from "@/lib/request-security";
+import { blobConfigured, storeResume } from "@/lib/blob-storage";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_CV_SIZE = 5 * 1024 * 1024; // 5MB
 
-function validateCvFile(resumeRaw: unknown): { ok: boolean; error?: string; sanitizedResume?: string } {
+type CvValidation =
+  | { ok: true; buffer: null; mime: null }
+  | { ok: true; buffer: Buffer; mime: string }
+  | { ok: false; error: string };
+
+function validateCvFile(resumeRaw: unknown): CvValidation {
   if (!resumeRaw || typeof resumeRaw !== "string") {
-    return { ok: true, sanitizedResume: undefined };
+    return { ok: true, buffer: null, mime: null };
   }
 
   const str = resumeRaw.trim();
-  if (!str) return { ok: true, sanitizedResume: undefined };
+  if (!str) return { ok: true, buffer: null, mime: null };
 
   // Expect data URL: data:<mime>;base64,<data>
   const match = str.match(/^data:([^;]+);base64,(.+)$/);
@@ -40,6 +49,9 @@ function validateCvFile(resumeRaw: unknown): { ok: boolean; error?: string; sani
   if (buffer.length > MAX_CV_SIZE) {
     return { ok: false, error: "File size exceeds maximum limit of 5MB." };
   }
+  if (buffer.length === 0) {
+    return { ok: false, error: "CV file is empty." };
+  }
 
   // Magic Byte Check
   if (isPdfMime) {
@@ -55,7 +67,8 @@ function validateCvFile(resumeRaw: unknown): { ok: boolean; error?: string; sani
     }
   }
 
-  return { ok: true, sanitizedResume: str };
+  const normalizedMime = isPdfMime ? "application/pdf" : mime === "application/msword" ? "application/msword" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  return { ok: true, buffer, mime: normalizedMime };
 }
 
 export async function POST(req: Request) {
@@ -91,6 +104,24 @@ export async function POST(req: Request) {
       return Response.json({ ok: false, error: cvValidation.error }, { status: 400 });
     }
 
+    // Never store base64 CV bytes in Postgres: reject uploads when object
+    // storage is not provisioned instead of falling back to the old column.
+    let resumeUrl: string | null = null;
+    if (cvValidation.buffer && cvValidation.mime) {
+      if (!blobConfigured()) {
+        return Response.json(
+          { ok: false, error: "CV upload is temporarily unavailable; object storage is not configured." },
+          { status: 503 }
+        );
+      }
+      try {
+        resumeUrl = await storeResume(cvValidation.buffer, cvValidation.mime);
+      } catch (uploadErr) {
+        console.error("[api/careers] blob upload failed:", uploadErr);
+        return Response.json({ ok: false, error: "file upload failed" }, { status: 502 });
+      }
+    }
+
     const textError = validateTextLengths(
       { name, email, phone, roleSlug, roleTitle, linkedin, message },
       { name: 200, email: 320, phone: 50, roleSlug: 200, roleTitle: 200, linkedin: 2048, message: 5000 }
@@ -120,7 +151,7 @@ export async function POST(req: Request) {
         yearsExp,
         linkedin,
         message,
-        resume: cvValidation.sanitizedResume || null,
+        resume: resumeUrl,
       },
     });
 

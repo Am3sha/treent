@@ -30,7 +30,7 @@ interface CareerApplication {
   linkedin: string | null;
   portfolio: string | null;
   message: string | null;
-  resume: string | null;
+  resumeAvailable: boolean;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -202,11 +202,11 @@ export default function AdminCareersPage() {
                       <p className="text-sm">{app.yearsExp} years</p>
                     </div>
                   )}
-                  {app.resume && (
+                  {app.resumeAvailable && (
                     <div>
                       <p className="text-xs text-muted-foreground mb-1 font-medium">CV / Resume Attachment</p>
                       <a
-                        href={app.resume}
+                        href={`/api/admin/careers/resume?id=${encodeURIComponent(app.id)}`}
                         download={`CV_${app.name.replace(/\s+/g, "_")}`}
                         target="_blank"
                         rel="noopener noreferrer"

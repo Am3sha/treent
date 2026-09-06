@@ -37,7 +37,7 @@ model CareerApplication {
   yearsExp  Int?
   linkedin  String?
   portfolio String?
-  resume    String? // stored as text (filename / data url reference)
+  resume    String? // public Vercel Blob URL (legacy rows may contain inline base64 data URLs)
   message   String?
   status    String   @default("new") // new | screening | interview | offer | rejected | hired
   createdAt DateTime @default(now())

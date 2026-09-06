@@ -63,7 +63,7 @@ export async function GET() {
             },
           }),
           db.contactInquiry.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
-          db.careerApplication.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
+          db.careerApplication.findMany({ take: 5, orderBy: { createdAt: "desc" }, omit: { resume: true } }),
         ]);
       });
     } catch (error) {
