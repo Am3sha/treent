@@ -4,32 +4,24 @@ import * as React from "react";
 import {
   ArrowRight,
   ArrowUpRight,
-  Briefcase,
-  Check,
   FileText,
   Loader2,
-  MapPin,
   Send,
   Upload,
   X,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
-import { CAREERS, PERKS } from "@/lib/content";
+import { PERKS } from "@/lib/content";
 import type { CareerItem } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/site/icon";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+
+
 import {
   Dialog,
   DialogContent,

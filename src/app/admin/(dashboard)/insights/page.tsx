@@ -25,7 +25,6 @@ import {
     Clock,
     ShieldCheck,
     Globe,
-    AlertCircle,
     ThumbsUp,
     ThumbsDown,
     Calendar,

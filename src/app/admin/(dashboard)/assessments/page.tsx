@@ -5,7 +5,6 @@ import {
   Download,
   Filter,
   RefreshCw,
-  FileText,
   MoreVertical,
   Search,
   ChevronLeft,
@@ -23,7 +22,6 @@ import {
   Building2,
   Globe,
   Briefcase,
-  ChevronDown,
 } from "lucide-react";
 import { DOMAIN_MAX_POINTS } from "@/lib/benchmark-scoring";
 import {

@@ -5,7 +5,7 @@
 // not bundled into the home page initial bundle via store.ts.
 // ============================================================
 
-import type { BenchmarkQuestion, BenchmarkOption } from "./types";
+import type { BenchmarkQuestion } from "./types";
 import {
   DOMAIN_ORDER,
   DOMAIN_MAX_POINTS,

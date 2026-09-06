@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, ArrowUpRight, CheckCircle2, ShieldCheck, MessagesSquare, Users, RefreshCw, Target } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle2, ShieldCheck, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { COMPANY } from "@/lib/content";
 import { Icon } from "@/components/site/icon";
-import { Reveal, RevealStagger, Eyebrow, useReducedMotion } from "@/components/site/reveal";
+import { Reveal, RevealStagger, useReducedMotion } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";

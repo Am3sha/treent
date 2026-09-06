@@ -10,7 +10,6 @@ import {
   Eye,
   Trash2,
   X,
-  Database,
   Mail,
   Filter,
   Calendar,

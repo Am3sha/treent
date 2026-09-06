@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { ArrowRight, BookOpen, Sparkles, LineChart } from "lucide-react";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { Button } from "@/components/ui/button";
-import { Reveal, RevealStagger, useReducedMotion } from "@/components/site/reveal";
+import { Reveal, useReducedMotion } from "@/components/site/reveal";
 import { CountUp } from "@/components/site/count-up";
 import { TrenntParticleLogo } from "@/components/site/trennt-particle-logo";
 import { useTranslation } from "@/lib/i18n";

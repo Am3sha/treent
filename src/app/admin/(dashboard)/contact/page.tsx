@@ -3,9 +3,7 @@
 import * as React from "react";
 import {
   Mail,
-  User,
   Building2,
-  Calendar,
   Trash2,
   Search,
   Filter,
@@ -15,7 +13,6 @@ import {
   Eye,
   MessageSquare,
   Phone,
-  Database,
   X,
 } from "lucide-react";
 import { formatDate, cn } from "@/lib/utils";
@@ -24,9 +21,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";

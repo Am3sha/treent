@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   ArrowRight,
   ArrowUpRight,
-  Clock,
   Compass,
   Lock,
   RefreshCw,
@@ -13,7 +12,6 @@ import {
   BarChart3,
   FileText,
   CheckCircle2,
-  ShieldCheck,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
 import { DIMENSIONS, TIER_META, COMPANY } from "@/lib/content";

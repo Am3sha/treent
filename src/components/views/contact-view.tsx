@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Mail,
   MapPin,
-  MessageSquare,
   Phone,
   Loader2,
 } from "lucide-react";

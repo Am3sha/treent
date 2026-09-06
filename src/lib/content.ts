@@ -1,10 +1,8 @@
 import type {
-  BenchmarkQuestion,
   CareerItem,
   Dimension,
   DimensionMeta,
   ServiceItem,
-  TeamMember,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -366,7 +364,6 @@ import {
   getMaturityLevel,
   getRecommendationBand,
   DOMAIN_ORDER,
-  MATURITY_LEVELS,
   type AnswerRecord,
 } from "./benchmark-scoring";
 

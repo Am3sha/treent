@@ -10,7 +10,7 @@ import type { ViewKey } from "@/lib/types";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Reveal, RevealStagger, RevealItem, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
+import { Reveal, RevealStagger, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
 import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
