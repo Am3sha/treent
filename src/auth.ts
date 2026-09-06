@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         const email = String(credentials.email);
-        if (isLoginRateLimited(req, email)) {
+        if (await isLoginRateLimited(req, email)) {
           return null;
         }
 
@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
         const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH?.trim().replace(/^["']|["']$/g, "");
 
         if (!adminEmail || !adminPasswordHash) {
-          recordLoginFailure(req, email);
+          await recordLoginFailure(req, email);
           return null;
         }
 
@@ -60,17 +60,17 @@ export const authOptions: NextAuthOptions = {
         const normalizedAdmin = adminEmail.trim().toLowerCase();
 
         if (normalizedInput !== normalizedAdmin) {
-          recordLoginFailure(req, email);
+          await recordLoginFailure(req, email);
           return null;
         }
 
         const passwordMatch = await bcrypt.compare(String(credentials.password), adminPasswordHash);
         if (!passwordMatch) {
-          recordLoginFailure(req, email);
+          await recordLoginFailure(req, email);
           return null;
         }
 
-        clearLoginFailures(req, email);
+        await clearLoginFailures(req, email);
 
         return {
           id: "admin",

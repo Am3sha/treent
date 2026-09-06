@@ -49,7 +49,7 @@ interface IncomingAnswer {
 }
 
 export async function POST(req: Request) {
-  const blocked = protectPublicPost(req, "assessment", 3);
+  const blocked = await protectPublicPost(req, "assessment", 3);
   if (blocked) return blocked;
   const oversized = rejectOversizedBody(req, 64 * 1024);
   if (oversized) return oversized;

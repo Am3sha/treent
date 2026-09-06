@@ -1,6 +1,12 @@
-const WINDOW_MS = 10 * 60 * 1000;
-const LOGIN_WINDOW_MS = 15 * 60 * 1000;
-const LOGIN_LIMIT = 5;
+import {
+  LOGIN_LIMIT,
+  checkPublicRateLimit,
+  clearLoginAttempts,
+  loginAttemptCount,
+  recordLoginAttempt,
+} from "./rate-limit";
+
+const PUBLIC_WINDOW_SEC = 10 * 60;
 const DEFAULT_TEXT_LIMITS: Record<string, number> = {
   name: 200,
   email: 320,
@@ -16,13 +22,9 @@ const DEFAULT_TEXT_LIMITS: Record<string, number> = {
   message: 5000,
 };
 
-type RateLimitEntry = { count: number; resetAt: number };
-const requests = new Map<string, RateLimitEntry>();
-const globalForSecurity = globalThis as typeof globalThis & {
-  trenntLoginAttempts?: Map<string, RateLimitEntry>;
-};
-const loginAttempts = globalForSecurity.trenntLoginAttempts ?? new Map<string, RateLimitEntry>();
-globalForSecurity.trenntLoginAttempts = loginAttempts;
+// Rate-limit counters live in src/lib/rate-limit.ts (Upstash Redis with an
+// in-memory fallback). This module only adds the origin gate + IP/identity
+// key derivation on top of them.
 
 export function rejectOversizedBody(request: Request, maxBytes: number): Response | null {
   const contentLength = request.headers.get("content-length");
@@ -66,12 +68,6 @@ function loginClientIp(request: NextAuthRequestLike | undefined): string {
     || "unknown";
 }
 
-function pruneLoginAttempts(now: number): void {
-  for (const [key, entry] of loginAttempts) {
-    if (entry.resetAt <= now) loginAttempts.delete(key);
-  }
-}
-
 function loginKeys(request: NextAuthRequestLike | undefined, email: string): string[] {
   return [
     `ip:${loginClientIp(request)}`,
@@ -79,39 +75,26 @@ function loginKeys(request: NextAuthRequestLike | undefined, email: string): str
   ];
 }
 
-export function isLoginRateLimited(
+export async function isLoginRateLimited(
   request: NextAuthRequestLike | undefined,
   email: string
-): boolean {
-  const now = Date.now();
-  pruneLoginAttempts(now);
-  return loginKeys(request, email).some((key) => {
-    const entry = loginAttempts.get(key);
-    return entry !== undefined && entry.resetAt > now && entry.count >= LOGIN_LIMIT;
-  });
+): Promise<boolean> {
+  const counts = await Promise.all(loginKeys(request, email).map((key) => loginAttemptCount(key)));
+  return counts.some((count) => count >= LOGIN_LIMIT);
 }
 
-export function recordLoginFailure(
+export async function recordLoginFailure(
   request: NextAuthRequestLike | undefined,
   email: string
-): void {
-  const now = Date.now();
-  pruneLoginAttempts(now);
-  for (const key of loginKeys(request, email)) {
-    const entry = loginAttempts.get(key);
-    if (!entry || entry.resetAt <= now) {
-      loginAttempts.set(key, { count: 1, resetAt: now + LOGIN_WINDOW_MS });
-    } else {
-      entry.count += 1;
-    }
-  }
+): Promise<void> {
+  await Promise.all(loginKeys(request, email).map((key) => recordLoginAttempt(key)));
 }
 
-export function clearLoginFailures(
+export async function clearLoginFailures(
   request: NextAuthRequestLike | undefined,
   email: string
-): void {
-  for (const key of loginKeys(request, email)) loginAttempts.delete(key);
+): Promise<void> {
+  await Promise.all(loginKeys(request, email).map((key) => clearLoginAttempts(key)));
 }
 
 import { getAllowedOrigins } from "./site-config";
@@ -148,27 +131,22 @@ function clientIp(request: Request): string {
     || "unknown";
 }
 
-export function protectPublicPost(request: Request, endpoint: string, limit: number): Response | null {
+export async function protectPublicPost(
+  request: Request,
+  endpoint: string,
+  limit: number
+): Promise<Response | null> {
   if (!hasAllowedOrigin(request)) {
     return Response.json({ ok: false, error: "forbidden origin" }, { status: 403 });
   }
 
-  const now = Date.now();
-  const key = `${endpoint}:${clientIp(request)}`;
-  const entry = requests.get(key);
-  if (!entry || entry.resetAt <= now) {
-    requests.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return null;
-  }
-
-  if (entry.count >= limit) {
+  const outcome = await checkPublicRateLimit(endpoint, clientIp(request), limit, PUBLIC_WINDOW_SEC);
+  if (!outcome.allowed) {
     return Response.json(
       { ok: false, error: "too many requests; please try again in 10 minutes" },
-      { status: 429, headers: { "Retry-After": String(Math.ceil((entry.resetAt - now) / 1000)) } }
+      { status: 429, headers: { "Retry-After": String(outcome.retryAfterSec) } }
     );
   }
-
-  entry.count += 1;
   return null;
 }
 

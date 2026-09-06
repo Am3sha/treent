@@ -16,7 +16,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALID_INTERESTS = new Set(["consultation", "report", "workshop", "partnership"]);
 
 export async function POST(req: Request) {
-  const blocked = protectPublicPost(req, "assessment-followup", 5);
+  const blocked = await protectPublicPost(req, "assessment-followup", 5);
   if (blocked) return blocked;
   const oversized = rejectOversizedBody(req, 32 * 1024);
   if (oversized) return oversized;

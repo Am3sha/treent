@@ -10,7 +10,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+]?[\d\s\-()]{6,30}$/;
 
 export async function POST(req: Request) {
-  const blocked = protectPublicPost(req, "contact", 5);
+  const blocked = await protectPublicPost(req, "contact", 5);
   if (blocked) return blocked;
   const oversized = rejectOversizedBody(req, 32 * 1024);
   if (oversized) return oversized;

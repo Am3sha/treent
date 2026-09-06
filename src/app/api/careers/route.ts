@@ -59,7 +59,7 @@ function validateCvFile(resumeRaw: unknown): { ok: boolean; error?: string; sani
 }
 
 export async function POST(req: Request) {
-  const blocked = protectPublicPost(req, "careers", 5);
+  const blocked = await protectPublicPost(req, "careers", 5);
   if (blocked) return blocked;
 
   // Allow up to 8MB request body to handle base64 encoded CV files up to 5MB

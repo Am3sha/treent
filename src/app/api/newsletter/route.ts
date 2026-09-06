@@ -8,7 +8,7 @@ import { protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengt
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: Request) {
-  const blocked = protectPublicPost(req, "newsletter", 5);
+  const blocked = await protectPublicPost(req, "newsletter", 5);
   if (blocked) return blocked;
   const oversized = rejectOversizedBody(req, 16 * 1024);
   if (oversized) return oversized;
