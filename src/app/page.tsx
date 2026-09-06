@@ -13,7 +13,15 @@ import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
-import { HomeView } from "@/components/views/home-view";
+const ViewLoader = () => (
+  <div className="flex min-h-[60vh] items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+  </div>
+);
+
+const HomeView = dynamic(
+  () => import("@/components/views/home-view").then((m) => m.HomeView)
+);
 
 const BackToTop = dynamic(
   () => import("@/components/site/back-to-top").then((m) => m.BackToTop),
@@ -22,12 +30,6 @@ const BackToTop = dynamic(
 const CommandPalette = dynamic(
   () => import("@/components/site/command-palette").then((m) => m.CommandPalette),
   { ssr: false }
-);
-
-const ViewLoader = () => (
-  <div className="flex min-h-[60vh] items-center justify-center">
-    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
-  </div>
 );
 
 const AboutView = dynamic(

@@ -19,8 +19,8 @@
 import { COMPANY_SIZES } from "@/lib/benchmark-constants";
 import type { CompanySize } from "@/lib/benchmark-constants";
 import { db } from "@/lib/db";
+import { BENCHMARK_QUESTIONS } from "@/lib/benchmark-questions";
 import {
-  BENCHMARK_QUESTIONS,
   DOMAIN_MAX_POINTS,
   calculateOverallScore,
   getMaturityLevel,
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       if (!DOMAIN_SET.has(domain)) {
         return Response.json({ ok: false, error: `answers[${i}].domain is invalid` }, { status: 400 });
       }
-      if (canonicalQuestion.domain !== domain) {
+      if (canonicalQuestion.dimension !== domain) {
         return Response.json({ ok: false, error: `answers[${i}].domain does not match questionId` }, { status: 400 });
       }
       if (!LETTERS.has(selectedOption) || !canonicalQuestion.options.some((o) => o.letter === selectedOption)) {

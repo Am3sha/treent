@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
 import { db } from "@/lib/db";
-import { BENCHMARK_QUESTIONS } from "@/lib/content";
+import { BENCHMARK_QUESTIONS } from "@/lib/benchmark-questions";
 import { prismaRetry } from "@/lib/prisma-retry";
 
 export async function GET() {

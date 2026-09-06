@@ -8,7 +8,28 @@ import type {
   RespondentProfile,
   ViewKey,
 } from "./types";
-import { BENCHMARK_QUESTIONS, computeResult } from "./content";
+import { computeResult, type AnswerRecord } from "./benchmark-scoring";
+
+let cachedQuestions: any[] | null = null;
+let questionsLoadPromise: Promise<void> | null = null;
+
+function getQuestionsOrKickoff(): any[] | null {
+  if (cachedQuestions) return cachedQuestions;
+  if (questionsLoadPromise) return null;
+  questionsLoadPromise = import("./benchmark-questions")
+    .then((mod) => {
+      cachedQuestions = mod.BENCHMARK_QUESTIONS;
+    })
+    .catch((e) => {
+      console.warn("[store] Failed to lazy-load benchmark questions:", e);
+      cachedQuestions = [];
+    });
+  return null;
+}
+
+if (typeof window !== "undefined") {
+  getQuestionsOrKickoff();
+}
 
 interface NavState {
   view: ViewKey;
@@ -126,19 +147,21 @@ export const useNav = create<NavState>((set, get) => {
       set({ responses: {}, result: null, startedAt: Date.now() }),
 
     computeLocalScores: () => {
+      const questions = getQuestionsOrKickoff();
+      if (!questions || questions.length === 0) return null;
       const responses = get().responses;
-      const answers = BENCHMARK_QUESTIONS.filter(
-        (q) => typeof responses[q.id] === "string",
-      ).map((q) => {
-        const letter = responses[q.id];
-        const opt = q.options.find((o) => o.letter === letter);
-        return {
-          questionId: q.id,
-          domain: q.dimension,
-          selectedOption: letter ?? "",
-          score: opt?.score ?? 0,
-        };
-      });
+      const answers: AnswerRecord[] = questions
+        .filter((q) => typeof responses[q.id] === "string")
+        .map((q) => {
+          const letter = responses[q.id];
+          const opt = q.options.find((o) => o.letter === letter);
+          return {
+            questionId: q.id,
+            domain: q.dimension,
+            selectedOption: letter ?? "",
+            score: opt?.score ?? 0,
+          };
+        });
       if (answers.length === 0) return null;
       const r = computeResult(answers);
       return {

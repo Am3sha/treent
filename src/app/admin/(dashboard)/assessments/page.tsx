@@ -26,7 +26,6 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { DOMAIN_MAX_POINTS } from "@/lib/benchmark-scoring";
-import { generatePDF } from "@/lib/pdf-generator";
 import {
   Dialog,
   DialogClose,
@@ -50,7 +49,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
-import { DIMENSIONS, BENCHMARK_QUESTIONS } from "@/lib/content";
+import { DIMENSIONS } from "@/lib/content";
+import { BENCHMARK_QUESTIONS } from "@/lib/benchmark-questions";
 import type { Dimension, MaturityTier } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -199,6 +199,7 @@ export default function AdminAssessmentsPage() {
         role: record.role || "",
         consentContact: record.consentContact,
       };
+      const { generatePDF } = await import("@/lib/pdf-generator");
       await generatePDF(result, respondent, null);
     } catch (err) {
       toast({ title: "Error", description: "Failed to generate PDF", variant: "destructive" });

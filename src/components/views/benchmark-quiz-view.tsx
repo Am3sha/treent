@@ -12,7 +12,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useNav } from "@/lib/store";
-import { BENCHMARK_QUESTIONS, DIMENSIONS } from "@/lib/content";
+import { BENCHMARK_QUESTIONS } from "@/lib/benchmark-questions";
+import { DIMENSIONS } from "@/lib/content";
 import type {
   Dimension,
   RespondentProfile,

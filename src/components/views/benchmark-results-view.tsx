@@ -12,7 +12,6 @@ import {
   AlertCircle,
   FileText,
 } from "lucide-react";
-import { generatePDF } from "@/lib/pdf-generator";
 import {
   Radar,
   RadarChart,
@@ -176,11 +175,12 @@ export function BenchmarkResultsView() {
         respondent={respondent}
         onRetake={handleRetake}
         onFollowUp={() => navigate("benchmark-followup")}
-        onDownloadPDF={(currentStats) => {
+        onDownloadPDF={async (currentStats) => {
           if (!result) {
             console.warn("[PDF] Skipping PDF generation: result object is missing");
             return;
           }
+          const { generatePDF } = await import("@/lib/pdf-generator");
           generatePDF(result, respondent, currentStats, lang);
         }}
         onOpenService={() => navigate("services")}

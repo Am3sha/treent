@@ -16,6 +16,7 @@ export function CountUp({
   delay?: number;
 }) {
   const ref = React.useRef<HTMLSpanElement>(null);
+  const valueRef = React.useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px 0px -40px 0px" });
   const reduced = useReducedMotion();
   const [display, setDisplay] = React.useState("0");
@@ -32,30 +33,40 @@ export function CountUp({
       return;
     }
     if (reduced) {
-      queueMicrotask(() =>
-        setDisplay(isDecimal ? num.toFixed(decimals) : Math.round(num).toString())
-      );
+      const finalVal = isDecimal ? num.toFixed(decimals) : Math.round(num).toString();
+      queueMicrotask(() => {
+        if (valueRef.current) {
+          valueRef.current.textContent = finalVal;
+        }
+        setDisplay(finalVal);
+      });
       return;
     }
     let raf: number;
     let timeoutId: ReturnType<typeof setTimeout>;
 
+    const formatValue = (v: number) =>
+      isDecimal ? v.toFixed(decimals) : Math.round(v).toString();
+
     const startAnim = () => {
       const start = performance.now();
+      const finalVal = formatValue(num);
       const animate = (now: number) => {
         const elapsed = now - start;
         const progress = Math.min(elapsed / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
         const current = num * eased;
-        setDisplay(
-          isDecimal ? current.toFixed(decimals) : Math.round(current).toString()
-        );
+        const text = formatValue(current);
+        if (valueRef.current) {
+          valueRef.current.textContent = text;
+        }
         if (progress < 1) {
           raf = requestAnimationFrame(animate);
         } else {
-          setDisplay(
-            isDecimal ? num.toFixed(decimals) : Math.round(num).toString()
-          );
+          if (valueRef.current) {
+            valueRef.current.textContent = finalVal;
+          }
+          setDisplay(finalVal);
         }
       };
       raf = requestAnimationFrame(animate);
@@ -76,8 +87,9 @@ export function CountUp({
   return (
     <span ref={ref} className={className}>
       {prefix}
-      {display}
+      <span ref={valueRef}>{display}</span>
       {suffix}
     </span>
   );
 }
+
