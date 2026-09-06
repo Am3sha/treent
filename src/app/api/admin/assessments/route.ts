@@ -75,12 +75,29 @@ export async function GET(req: Request) {
       }),
     ]);
 
+    // Batch-fetch every answer for the current page in ONE query instead of
+    // one per record (N+1: a 20-row page used to cost 20 extra queries),
+    // then group by assessmentId in memory.
+    const assessmentIds = records.map((r) => r.id);
+    const allAnswers = assessmentIds.length
+      ? await db.assessmentAnswer.findMany({
+          where: { assessmentId: { in: assessmentIds } },
+          select: { assessmentId: true, questionId: true, selectedOption: true, score: true },
+        })
+      : [];
+    const answersByAssessment = new Map<string, typeof allAnswers>();
+    for (const a of allAnswers) {
+      const list = answersByAssessment.get(a.assessmentId);
+      if (list) list.push(a);
+      else answersByAssessment.set(a.assessmentId, [a]);
+    }
+
     return Response.json({ ok: true, data: {
       total,
       page,
       pageSize,
       totalPages: Math.ceil(total / pageSize),
-      records: await Promise.all(records.map(async (r) => ({
+      records: records.map((r) => ({
         id: r.id,
         respondentName: r.respondentName,
         respondentEmail: r.respondentEmail,
@@ -103,7 +120,7 @@ export async function GET(req: Request) {
         durationSec: r.durationSec,
         createdAt: r.createdAt.toISOString(),
         responses: Object.fromEntries(
-          (await db.assessmentAnswer.findMany({ where: { assessmentId: r.id } })).map((a) => [a.questionId, { option: a.selectedOption || "", score: a.score }]),
+          (answersByAssessment.get(r.id) ?? []).map((a) => [a.questionId, { option: a.selectedOption || "", score: a.score }]),
         ),
         followUps: r.followUps.map((f) => ({
           id: f.id,
@@ -111,7 +128,7 @@ export async function GET(req: Request) {
           status: f.status,
           createdAt: f.createdAt.toISOString(),
         })),
-      }))),
+      })),
       filters: {
         industries: industries
           .map((i) => i.industry)
