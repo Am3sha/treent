@@ -265,7 +265,6 @@ export function HomeView() {
                     height={580}
                     priority
                     sizes="(max-width: 640px) 92vw, (max-width: 1024px) 500px, 580px"
-                    style={{ width: "auto", height: "auto" }}
                     className="h-[520px] w-full object-cover lg:h-[580px] transition-transform duration-[6000ms] ease-out hover:scale-[1.03]"
                   />
                 </motion.div>
