@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import type {
   AssessmentResult,
+  BenchmarkQuestion,
   Dimension,
   MaturityTier,
   RespondentProfile,
@@ -11,10 +12,10 @@ import type {
 import { computeResult, type AnswerRecord } from "./benchmark-scoring";
 import { isValidView, parseHashRoute } from "./routes";
 
-let cachedQuestions: any[] | null = null;
+let cachedQuestions: BenchmarkQuestion[] | null = null;
 let questionsLoadPromise: Promise<void> | null = null;
 
-function getQuestionsOrKickoff(): any[] | null {
+function getQuestionsOrKickoff(): BenchmarkQuestion[] | null {
   if (cachedQuestions) return cachedQuestions;
   if (questionsLoadPromise) return null;
   questionsLoadPromise = import("./benchmark-questions")
