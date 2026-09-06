@@ -10,9 +10,9 @@
 // If a non-empty assessmentId is provided but doesn't exist, we also return 400.
 
 import { db } from "@/lib/db";
+import { EMAIL_RE } from "@/lib/validation";
 import { optionalSanitizedText, protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengths } from "@/lib/request-security";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALID_INTERESTS = new Set(["consultation", "report", "workshop", "partnership"]);
 
 export async function POST(req: Request) {

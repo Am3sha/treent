@@ -1,4 +1,5 @@
 import * as React from "react";
+import { emptySubscribe } from "./utils";
 import { useNav } from "./store";
 import { en } from "./translations/en";
 
@@ -30,7 +31,6 @@ const arLoadPromise: Promise<void> = (async () => {
   }
 })();
 
-const emptySubscribe = () => () => {};
 
 function subscribeAr(cb: () => void): () => void {
   if (arLoaded) return () => {};

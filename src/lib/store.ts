@@ -9,7 +9,7 @@ import type {
   ViewKey,
 } from "./types";
 import { computeResult, type AnswerRecord } from "./benchmark-scoring";
-import { ALL_VIEWS } from "./routes";
+import { isValidView, parseHashRoute } from "./routes";
 
 let cachedQuestions: any[] | null = null;
 let questionsLoadPromise: Promise<void> | null = null;
@@ -63,19 +63,9 @@ const DEFAULT_VIEW: ViewKey = "home";
 function parseHash(): { view: ViewKey; lang: "en" | "ar" } {
   if (typeof window === "undefined") return { view: DEFAULT_VIEW, lang: "en" };
 
-  let h = window.location.hash.replace(/^#\/?/, "");
-  let lang: "en" | "ar" = "en";
-
-  if (h.startsWith("ar/")) {
-    lang = "ar";
-    h = h.replace("ar/", "");
-  } else if (h === "ar") {
-    lang = "ar";
-    h = "";
-  }
-
-  const view = (h || DEFAULT_VIEW) as ViewKey;
-  const finalView = (ALL_VIEWS as readonly ViewKey[]).includes(view) ? view : DEFAULT_VIEW;
+  const { lang, rest } = parseHashRoute(window.location.hash);
+  const view = (rest || DEFAULT_VIEW) as ViewKey;
+  const finalView = isValidView(view) ? view : DEFAULT_VIEW;
   return { view: finalView, lang };
 }
 

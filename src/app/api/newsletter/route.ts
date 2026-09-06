@@ -2,10 +2,10 @@
 // On duplicate email (P2002) returns 200 with alreadySubscribed:true instead of erroring.
 
 import { db } from "@/lib/db";
+import { EMAIL_RE } from "@/lib/validation";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengths } from "@/lib/request-security";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: Request) {
   const blocked = await protectPublicPost(req, "newsletter", 5);

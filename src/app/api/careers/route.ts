@@ -5,10 +5,10 @@
 // the admin download route handles both).
 
 import { db } from "@/lib/db";
+import { EMAIL_RE } from "@/lib/validation";
 import { optionalSanitizedText, protectPublicPost, rejectOversizedBody, sanitizeText, validateTextLengths } from "@/lib/request-security";
 import { blobConfigured, storeResume } from "@/lib/blob-storage";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_CV_SIZE = 5 * 1024 * 1024; // 5MB
 
 type CvValidation =

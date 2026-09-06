@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { emptySubscribe } from "@/lib/utils";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./logo";
@@ -15,7 +16,6 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
-const emptySubscribe = () => () => { };
 
 interface NavItem {
   label: string;

@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { emptySubscribe } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { useNav } from "@/lib/store";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { LanguageSwitcher } from "@/components/site/language-switcher";
 import type { ViewKey } from "@/lib/types";
-import { isValidView } from "@/lib/routes";
+import { isValidView, parseHashRoute } from "@/lib/routes";
 import { SERVICES, FRAMEWORK_AGREEMENTS } from "@/lib/content";
 import { Icon } from "@/components/site/icon";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
@@ -201,22 +202,13 @@ function useHashSync() {
 
   React.useEffect(() => {
     const apply = () => {
-      let raw = window.location.hash.replace(/^#\/?/, "");
-      let lang: "en" | "ar" = "en";
+      const { lang, rest } = parseHashRoute(window.location.hash);
 
-      if (raw.startsWith("ar/")) {
-        lang = "ar";
-        raw = raw.replace("ar/", "");
-      } else if (raw === "ar") {
-        lang = "ar";
-        raw = "";
-      }
-
-      const firstSegment = raw.split("/")[0];
+      const firstSegment = rest.split("/")[0];
 
       const v = isValidView(firstSegment)
         ? firstSegment
-        : raw.length > 0
+        : rest.length > 0
           ? "not-found"
           : "home";
 
@@ -236,7 +228,6 @@ function useHashSync() {
   }, [setView, setLang]);
 }
 
-const emptySubscribe = () => () => { };
 
 export default function Home() {
   const storeView = useNav((s) => s.view);

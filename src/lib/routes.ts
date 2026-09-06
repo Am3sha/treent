@@ -39,6 +39,26 @@ export function isValidView(segment: string): segment is ViewKey {
 }
 
 /**
+ * Pure "ar/<view>" language-prefix splitter shared by the two hash entry
+ * points (store.ts initial parse + page.tsx hashchange sync). Only the
+ * parsing is shared; each site deliberately keeps its own fallback policy
+ * (initial load -> home, bad hashchange -> not-found) and its DOM side
+ * effects, exactly as before this extraction.
+ */
+export function parseHashRoute(hash: string): { lang: "en" | "ar"; rest: string } {
+  let raw = hash.replace(/^#\/?/, "");
+  let lang: "en" | "ar" = "en";
+  if (raw.startsWith("ar/")) {
+    lang = "ar";
+    raw = raw.slice("ar/".length);
+  } else if (raw === "ar") {
+    lang = "ar";
+    raw = "";
+  }
+  return { lang, rest: raw };
+}
+
+/**
  * Routes that should appear in sitemap.xml.
  * Excluded: not-found (branded 404), benchmark-results + benchmark-followup
  * (personal, post-submission pages), benchmark-insights (public view is

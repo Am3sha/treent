@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+/** No-op getServerSnapshot subscribe for React.useSyncExternalStore. */
+export const emptySubscribe = () => () => {}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

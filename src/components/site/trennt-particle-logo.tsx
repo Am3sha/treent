@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { emptySubscribe } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useReducedMotion } from "@/components/site/reveal";
 
@@ -42,7 +43,6 @@ const LOGO_POINTS: [number, number][] = [
     [355, 40], [355, 55], [355, 70], [355, 85], [355, 100],
 ];
 
-const emptySubscribe = () => () => { };
 
 export function TrenntParticleLogo({ className }: { className?: string }) {
     const reduced = useReducedMotion();

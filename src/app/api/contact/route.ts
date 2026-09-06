@@ -2,11 +2,11 @@
 // Validates name/email/message, defaults topic to "general", persists to ContactInquiry.
 
 import { db } from "@/lib/db";
+import { EMAIL_RE } from "@/lib/validation";
 import { optionalSanitizedText, protectPublicPost, rejectOversizedBody, sanitizePhone, sanitizeText, validateTextLengths } from "@/lib/request-security";
 
 const VALID_TOPICS = new Set(["general", "services", "framework", "other"]);
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+]?[\d\s\-()]{6,30}$/;
 
 export async function POST(req: Request) {
