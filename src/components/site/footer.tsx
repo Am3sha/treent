@@ -247,12 +247,12 @@ export function Footer() {
                   <h3 className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#ADDFB3]/80">
                     {col.heading}
                   </h3>
-                  <ul className="mt-4 space-y-2.5">
+                  <ul className="mt-3 space-y-1">
                     {col.links.map((l) => (
                       <li key={l.label}>
                         <button
                           onClick={() => navigate(l.view)}
-                          className="group inline-flex items-center gap-1.5 text-[14px] text-white/75 transition-colors duration-200 ease-out hover:text-white"
+                          className="group inline-flex min-h-11 w-full items-center gap-1.5 text-[14px] text-white/75 transition-colors duration-200 ease-out hover:text-white"
                         >
                           <span className="hover-underline-grow">{l.label}</span>
                           <ArrowUpRight className={cn("h-3 w-3 opacity-0 transition-all duration-250 ease-out group-hover:opacity-100 group-hover:translate-x-0", isRTL ? "translate-x-1" : "-translate-x-1")} />
@@ -270,17 +270,17 @@ export function Footer() {
           <RevealStagger stagger={0.05} delay={reduced ? 0 : 0.42} y={10} childDuration={0.5}>
             <div className="flex items-start gap-6">
               <div className="flex flex-wrap flex-1 items-center gap-x-8 gap-y-3 text-[13px] text-white/55">
-                <div className="flex items-start gap-2.5">
-                  <Mail className="mt-0.5 h-4 w-4 text-[#ADDFB3]/70" strokeWidth={1.6} />
+                <div className="flex items-center gap-2.5">
+                  <Mail className="h-4 w-4 shrink-0 text-[#ADDFB3]/70" strokeWidth={1.6} />
                   <a
                     href={`mailto:${COMPANY.email}`}
-                    className="transition-colors duration-200 ease-out hover:text-white hover-underline-grow"
+                    className="inline-flex min-h-11 items-center transition-colors duration-200 ease-out hover:text-white hover-underline-grow"
                   >
                     {COMPANY.email}
                   </a>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <MapPin className="mt-0.5 h-4 w-4 text-[#ADDFB3]/70" strokeWidth={1.6} />
+                <div className="flex items-center gap-2.5">
+                  <MapPin className="h-4 w-4 shrink-0 text-[#ADDFB3]/70" strokeWidth={1.6} />
                   <span>{l(COMPANY.address)}</span>
                 </div>
               </div>
@@ -303,7 +303,7 @@ export function Footer() {
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 <button
                   onClick={() => navigate("legal")}
-                  className="inline-flex items-center gap-1 transition-colors duration-200 ease-out hover:text-white group"
+                  className="inline-flex min-h-11 items-center gap-1 transition-colors duration-200 ease-out hover:text-white group"
                 >
                   <span className="hover-underline-grow">Privacy &amp; Terms</span>
                   <ArrowUpRight className="h-3 w-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

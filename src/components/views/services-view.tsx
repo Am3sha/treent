@@ -320,7 +320,7 @@ export function ServicesView() {
                               variant="outline"
                               size="sm"
                               onClick={() => navigate(activeService.slug as ViewKey)}
-                              className="gap-2 rounded-full border-gray-300 bg-white text-[#003D3C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#003D3C]/30 hover:scale-[1.02] active:scale-[0.98]"
+                              className="min-h-9 gap-2 rounded-full border-gray-300 bg-white text-[#003D3C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#003D3C]/30 hover:scale-[1.02] active:scale-[0.98]"
                             >
                               {t("services.common.learn_more")}
                               <ArrowRight className={cn("h-3.5 w-3.5", isRTL && "rotate-180")} />
@@ -444,7 +444,7 @@ export function ServicesView() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleNavClick(s.slug)}
-                          className="gap-2 rounded-full border-gray-300 bg-white text-[#003D3C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#003D3C]/30 hover:scale-[1.02] active:scale-[0.98]"
+                          className="min-h-9 gap-2 rounded-full border-gray-300 bg-white text-[#003D3C] font-semibold transition-all duration-200 ease-out hover:bg-[#EEF4F2] hover:border-[#003D3C]/30 hover:scale-[1.02] active:scale-[0.98]"
                         >
                           {t("services.common.jump_to_overview")}
                           <ArrowRight className={cn("h-3.5 w-3.5", isRTL && "rotate-180")} />

@@ -53,7 +53,7 @@ export function LegalView() {
           <TabsList className="grid w-full grid-cols-3 rounded-lg border border-border/60 bg-secondary/30 p-1">
             <TabsTrigger
               value="privacy"
-              className="gap-1.5 rounded-md text-xs sm:text-sm"
+              className="gap-1.5 rounded-md text-xs min-h-9 sm:text-sm"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{t('legal.tabs.privacy')}</span>
@@ -61,7 +61,7 @@ export function LegalView() {
             </TabsTrigger>
             <TabsTrigger
               value="terms"
-              className="gap-1.5 rounded-md text-xs sm:text-sm"
+              className="gap-1.5 rounded-md text-xs min-h-9 sm:text-sm"
             >
               <FileText className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{t('legal.tabs.terms')}</span>
@@ -69,7 +69,7 @@ export function LegalView() {
             </TabsTrigger>
             <TabsTrigger
               value="cookies"
-              className="gap-1.5 rounded-md text-xs sm:text-sm"
+              className="gap-1.5 rounded-md text-xs min-h-9 sm:text-sm"
             >
               <Cookie className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{t('legal.tabs.cookies')}</span>
@@ -187,13 +187,13 @@ export function LegalView() {
                 <Button
                   onClick={() => navigate("contact")}
                   size="sm"
-                  className={cn("gap-1.5 rounded-full", isRTL && "flex-row-reverse")}
+                  className={cn("gap-1.5 rounded-full min-h-9", isRTL && "flex-row-reverse")}
                 >
                   {t('nav.contact')}
                   <ArrowUpRight className={cn("h-3.5 w-3.5", isRTL && "rotate-[-90deg]")} />
                 </Button>
                 <a href={`mailto:${t('legal.contact.email')}`}>
-                  <Button size="sm" variant="outline" className="rounded-full">
+                  <Button size="sm" variant="outline" className="rounded-full min-h-9">
                     {t('legal.contact.email')}
                   </Button>
                 </a>

@@ -238,7 +238,7 @@ export function BenchmarkQuizView() {
               </span>
               <button
                 onClick={handleExit}
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                className="-my-3 inline-flex min-h-11 items-center gap-1 py-3 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
                 {lang === "ar" ? quizUI.exit : "Exit"}
