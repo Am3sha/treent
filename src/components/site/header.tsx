@@ -59,7 +59,7 @@ function ServicesDropdownPanel({
   onNavigate,
   className,
 }: ServicesDropdownPanelProps) {
-  const { l } = useTranslation();
+  const { l, t } = useTranslation();
   const { core, development } = getServiceGroups();
 
   const renderGroup = (label: string, items: typeof SERVICES) => (
@@ -104,7 +104,7 @@ function ServicesDropdownPanel({
         onClick={() => onNavigate("services")}
         className="mx-2 flex w-[calc(100%-1rem)] items-center justify-between rounded-[6px] px-3 py-2.5 text-left text-[13px] font-semibold text-[#013D3E] transition-colors duration-150 hover:bg-[#ADDFB3]/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/50"
       >
-        View all services
+        {t("services.common.view_all")}
         <ArrowUpRight className="h-3.5 w-3.5 text-[#013D3E]/70" />
       </button>
     </div>
@@ -336,7 +336,7 @@ function MobileServicesNav({
                 onClick={() => onNavigate("services")}
                 className="mt-1 flex w-full items-center justify-between rounded-lg py-3 px-3 text-left text-[15px] font-semibold text-[#ADDFB3] transition-colors duration-200 hover:bg-[#ADDFB3]/10"
               >
-                View all services
+                {t("services.common.view_all")}
                 <ArrowUpRight className="h-4 w-4" />
               </motion.button>
             </div>
