@@ -17,15 +17,18 @@
 //   rounded. If there are no other assessments yet, percentile = 50.
 
 import { COMPANY_SIZES } from "@/lib/benchmark-constants";
+import { EMAIL_RE } from "@/lib/validation";
 import type { CompanySize } from "@/lib/benchmark-constants";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { BENCHMARK_QUESTIONS } from "@/lib/benchmark-questions";
 import {
   DOMAIN_MAX_POINTS,
+  DOMAIN_ORDER,
   calculateOverallScore,
   getMaturityLevel,
   type AnswerRecord,
+  type DomainKey,
 } from "@/lib/benchmark-scoring";
 import {
   optionalSanitizedText,
@@ -35,10 +38,8 @@ import {
   validateTextLengths,
 } from "@/lib/request-security";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const DOMAINS = ["governance", "risk", "execution", "reporting", "capability"] as const;
-type Domain = (typeof DOMAINS)[number];
-const DOMAIN_SET = new Set<string>(DOMAINS);
+const DOMAIN_SET = new Set<string>(DOMAIN_ORDER);
+type Domain = DomainKey;
 const LETTERS = new Set(["A", "B", "C", "D"]);
 
 interface IncomingAnswer {

@@ -1,6 +1,7 @@
 import type {
   BenchmarkQuestion,
   CareerItem,
+  Dimension,
   DimensionMeta,
   ServiceItem,
   TeamMember,
@@ -304,9 +305,14 @@ export const PERKS = [
 // Canonical question set and score math live in benchmark-scoring.ts.
 // ---------------------------------------------------------------------------
 
-export const DIMENSIONS: DimensionMeta[] = [
-  {
-    key: "governance",
+// Display metadata for the benchmark's five domains. Record<Dimension, ...>
+// makes the compiler enforce exact key coverage in ONE place, and the array
+// order is derived from DOMAIN_ORDER (benchmark-scoring.ts, imported below -
+// ESM hoisting makes the binding available here), so the key list itself is
+// never duplicated in this file. Labels/summaries stay here for content
+// editing convenience.
+const DIMENSION_CONTENT: Record<Dimension, Omit<DimensionMeta, "key">> = {
+  governance: {
     label: "Governance & Operating Model",
     short: "Governance",
     description:
@@ -314,8 +320,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     icon: "ShieldCheck",
     accent: "text-emerald-700",
   },
-  {
-    key: "risk",
+  risk: {
     label: "Risk Assessment & Planning",
     short: "Risk",
     description:
@@ -323,8 +328,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     icon: "Target",
     accent: "text-amber-700",
   },
-  {
-    key: "execution",
+  execution: {
     label: "Audit Execution & Methodology",
     short: "Execution",
     description:
@@ -332,8 +336,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     icon: "Workflow",
     accent: "text-teal-700",
   },
-  {
-    key: "reporting",
+  reporting: {
     label: "Reporting & Follow-Up",
     short: "Reporting",
     description:
@@ -341,8 +344,7 @@ export const DIMENSIONS: DimensionMeta[] = [
     icon: "FileChartColumn",
     accent: "text-blue-700",
   },
-  {
-    key: "capability",
+  capability: {
     label: "Capability & Quality",
     short: "Capability",
     description:
@@ -350,7 +352,12 @@ export const DIMENSIONS: DimensionMeta[] = [
     icon: "GraduationCap",
     accent: "text-orange-700",
   },
-];
+};
+
+export const DIMENSIONS: DimensionMeta[] = DOMAIN_ORDER.map((key) => ({
+  key,
+  ...DIMENSION_CONTENT[key],
+}));
 
 // Scoring helpers — delegate to the single source of truth in benchmark-scoring.ts
 import {

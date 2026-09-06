@@ -20,8 +20,10 @@ export type ViewKey =
   | "benchmark-insights"
   | "not-found";
 
-// Note: the canonical question set + all score math live in
-// src/lib/benchmark-scoring.ts (client-approved 26 questions, A=3/B=2/C=1/D=0).
+// Canonical domain keys for the benchmark's 5 dimensions. Single source of
+// truth: benchmark-scoring.ts aliases this as DomainKey, content.ts derives
+// the DIMENSIONS array order from DOMAIN_ORDER, benchmark-ar.ts is keyed by
+// Record<Dimension, ...> so any rename here is a compile error everywhere.
 export type Dimension =
   | "governance"
   | "risk"

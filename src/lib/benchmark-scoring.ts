@@ -8,25 +8,19 @@
 // and import scoring math from this file as needed.
 // ============================================================
 
-export type DomainKey =
-  | "governance"
-  | "risk"
-  | "execution"
-  | "reporting"
-  | "capability";
+// The single canonical domain set is the Dimension union in ./types.
+// DomainKey below is an alias, not a redefinition - the 5 literals are not
+// maintained in two places anymore.
+import type { Dimension } from "./types";
+export type DomainKey = Dimension;
 
 export type { BenchmarkOption, BenchmarkQuestion } from "./types";
 
 // ---------- Domain constants ----------
 
-export const DOMAIN_LABELS: Record<DomainKey, string> = {
-  governance: "Governance & Operating Model",
-  risk: "Risk Assessment & Planning",
-  execution: "Audit Execution & Strategic Alignment",
-  reporting: "Reporting & Impact",
-  capability: "Capability & Continuous Improvement",
-};
-
+// Canonical ordering + membership used by every consumer (content.ts derives
+// its DIMENSIONS array from DOMAIN_ORDER, the API validates against it).
+// Display labels/descriptions live once, in content.ts DIMENSIONS.
 export const DOMAIN_ORDER: DomainKey[] = [
   "governance",
   "risk",
