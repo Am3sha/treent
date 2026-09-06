@@ -19,6 +19,7 @@
 import { COMPANY_SIZES } from "@/lib/benchmark-constants";
 import type { CompanySize } from "@/lib/benchmark-constants";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 import { BENCHMARK_QUESTIONS } from "@/lib/benchmark-questions";
 import {
   DOMAIN_MAX_POINTS,
@@ -220,6 +221,14 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    // The public stats endpoint is ISR-cached (revalidate=120); keep a fresh
+    // submission visible immediately instead of lagging up to two minutes.
+    try {
+      revalidatePath("/api/benchmark/stats");
+    } catch {
+      // Cache invalidation is best-effort; never fail a completed submission.
+    }
 
     // ---- Percentile vs other assessments (excluding self) ----
     const [totalOthers, lowerOrEqualOthers] = await Promise.all([

@@ -9,6 +9,20 @@ import { db } from "@/lib/db";
 
 type Tier = "initial" | "developing" | "defined" | "established" | "advanced";
 
+// This endpoint runs several full-table count/aggregate/groupBy queries + a raw
+// trend query on every call and is hit by every Benchmark landing/results visit.
+// The GET() uses no request-derived input (no cookies/headers), so it is fully
+// static. ISR caches the JSON at the edge for 2min and regenerates in the
+// background (stale-while-revalidate), so a traffic spike no longer multiplies
+// DB queries. Stats are aggregate/rounded "how you compare" data - sub-minute
+// freshness is irrelevant here. A fresh submission can also force an early
+// refresh via revalidatePath("/api/benchmark/stats") from the POST handler.
+export const revalidate = 120;
+
+const STATS_CACHE_HEADERS = {
+  "Cache-Control": "public, s-maxage=120, stale-while-revalidate=600",
+};
+
 function emptyTierDist(): Record<Tier, number> {
   return { initial: 0, developing: 0, defined: 0, established: 0, advanced: 0 };
 }
@@ -86,7 +100,7 @@ export async function GET() {
           trend: [],
           avgDurationSec: 0,
         } },
-        { status: 200 }
+        { status: 200, headers: STATS_CACHE_HEADERS }
       );
     }
 
@@ -153,7 +167,7 @@ export async function GET() {
         trend,
         avgDurationSec: r(agg._avg.durationSec),
       } },
-      { status: 200 }
+      { status: 200, headers: STATS_CACHE_HEADERS }
     );
   } catch (err) {
     console.error("[api/benchmark/stats] error:", err);
