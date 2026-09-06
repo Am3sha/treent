@@ -93,7 +93,7 @@ export const useNav = create<NavState>((set, get) => {
       if (typeof window !== "undefined") {
         const prefix = lang === "ar" ? "ar/" : "";
         window.location.hash = `#/${prefix}${view}`;
-        window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+        window.scrollTo({ top: 0, behavior: "auto" });
       }
       set({ view });
     },
