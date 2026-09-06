@@ -7,6 +7,7 @@ import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { LanguageSwitcher } from "@/components/site/language-switcher";
 import type { ViewKey } from "@/lib/types";
+import { isValidView } from "@/lib/routes";
 import { SERVICES, FRAMEWORK_AGREEMENTS } from "@/lib/content";
 import { Icon } from "@/components/site/icon";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
@@ -211,29 +212,9 @@ function useHashSync() {
         raw = "";
       }
 
-      const firstSegment = raw.split("/")[0] as ViewKey;
-      const valid: ViewKey[] = [
-        "home",
-        "about",
-        "services",
-        "internal-audit-outsourcing",
-        "internal-audit-co-sourcing",
-        "internal-audit-function-establishment",
-        "internal-audit-transformation",
-        "quality-assurance-and-improvement-program",
-        "framework-agreements",
-        "contact",
-        "careers",
-        "legal",
-        "benchmark-landing",
-        "benchmark-quiz",
-        "benchmark-results",
-        "benchmark-followup",
-        "benchmark-insights",
-        "not-found",
-      ];
+      const firstSegment = raw.split("/")[0];
 
-      const v = valid.includes(firstSegment)
+      const v = isValidView(firstSegment)
         ? firstSegment
         : raw.length > 0
           ? "not-found"

@@ -9,6 +9,7 @@ import type {
   ViewKey,
 } from "./types";
 import { computeResult, type AnswerRecord } from "./benchmark-scoring";
+import { ALL_VIEWS } from "./routes";
 
 let cachedQuestions: any[] | null = null;
 let questionsLoadPromise: Promise<void> | null = null;
@@ -74,27 +75,7 @@ function parseHash(): { view: ViewKey; lang: "en" | "ar" } {
   }
 
   const view = (h || DEFAULT_VIEW) as ViewKey;
-  const valid: ViewKey[] = [
-    "home",
-    "about",
-    "services",
-    "internal-audit-outsourcing",
-    "internal-audit-co-sourcing",
-    "internal-audit-function-establishment",
-    "internal-audit-transformation",
-    "quality-assurance-and-improvement-program",
-    "framework-agreements",
-    "contact",
-    "careers",
-    "legal",
-    "benchmark-landing",
-    "benchmark-quiz",
-    "benchmark-results",
-    "benchmark-followup",
-    "benchmark-insights",
-    "not-found",
-  ];
-  const finalView = valid.includes(view) ? view : DEFAULT_VIEW;
+  const finalView = (ALL_VIEWS as readonly ViewKey[]).includes(view) ? view : DEFAULT_VIEW;
   return { view: finalView, lang };
 }
 
