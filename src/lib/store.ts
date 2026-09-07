@@ -11,6 +11,7 @@ import type {
 } from "./types";
 import { computeResult, type AnswerRecord } from "./benchmark-scoring";
 import { isValidView, parseHashRoute } from "./routes";
+import { ensureArabicLoaded } from "./i18n";
 
 let cachedQuestions: BenchmarkQuestion[] | null = null;
 let questionsLoadPromise: Promise<void> | null = null;
@@ -93,6 +94,9 @@ export const useNav = create<NavState>((set, get) => {
 
     setLang: (lang) => {
       const { view } = get();
+      if (lang === "ar") {
+        ensureArabicLoaded();
+      }
       if (typeof window !== "undefined") {
         const prefix = lang === "ar" ? "ar/" : "";
         window.location.hash = `#/${prefix}${view}`;

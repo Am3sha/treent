@@ -12,28 +12,36 @@ const translations: Record<Language, any> = {
 
 const arListeners = new Set<() => void>();
 let arLoaded = false;
+let arLoadPromise: Promise<void> | null = null;
 
-const arLoadPromise: Promise<void> = (async () => {
-  try {
-    const mod = await import("./translations/ar");
-    translations.ar = mod.ar;
-  } catch (e) {
-    console.warn("[i18n] Failed to load Arabic translations, falling back to keys:", e);
-    translations.ar = {};
-  } finally {
-    arLoaded = true;
-    arListeners.forEach((fn) => {
-      try {
-        fn();
-      } catch {}
-    });
-    arListeners.clear();
-  }
-})();
+export function ensureArabicLoaded(): Promise<void> {
+  if (arLoaded && translations.ar) return Promise.resolve();
+  if (arLoadPromise) return arLoadPromise;
+
+  arLoadPromise = (async () => {
+    try {
+      const mod = await import("./translations/ar");
+      translations.ar = mod.ar;
+    } catch (e) {
+      console.warn("[i18n] Failed to load Arabic translations, falling back to keys:", e);
+      translations.ar = {};
+    } finally {
+      arLoaded = true;
+      arListeners.forEach((fn) => {
+        try {
+          fn();
+        } catch { }
+      });
+      arListeners.clear();
+    }
+  })();
+
+  return arLoadPromise;
+}
 
 
 function subscribeAr(cb: () => void): () => void {
-  if (arLoaded) return () => {};
+  if (arLoaded) return () => { };
   arListeners.add(cb);
   return () => arListeners.delete(cb);
 }
@@ -54,6 +62,12 @@ export function useTranslation() {
   const storeLang = useNav((s) => (s as any).lang || "en");
   const lang: Language = mounted ? storeLang : "en";
   const setLang = useNav((s) => (s as any).setLang);
+
+  React.useEffect(() => {
+    if (lang === "ar") {
+      ensureArabicLoaded();
+    }
+  }, [lang]);
 
   const getDict = (l: Language) => {
     const d = translations[l];
