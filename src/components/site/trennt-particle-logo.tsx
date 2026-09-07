@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { emptySubscribe } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import { useReducedMotion } from "@/components/site/reveal";
 
 interface Particle {

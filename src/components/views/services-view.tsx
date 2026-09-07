@@ -15,11 +15,7 @@ import {
   FileText,
   CheckSquare,
 } from "lucide-react";
-import {
-  motion,
-  AnimatePresence,
-  type Variants,
-} from "framer-motion";
+import { m as motion, AnimatePresence, type Variants } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { METHODOLOGY, SERVICES } from "@/lib/content";
 import type { ViewKey } from "@/lib/types";

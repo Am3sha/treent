@@ -10,6 +10,7 @@ import type { ViewKey } from "@/lib/types";
 import { isValidView, parseHashRoute } from "@/lib/routes";
 import { FRAMEWORK_AGREEMENTS } from "@/lib/content";
 import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
+import { SiteMotionProvider } from "@/components/site/motion-provider";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
@@ -244,22 +245,24 @@ export default function Home() {
       : (VIEWS[view] ?? HomeView);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Header />
-      <main className="flex-1 pt-[92px] md:pt-[98px]">
-        <React.Suspense
-          fallback={
-            <div className="flex min-h-[60vh] items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
-            </div>
-          }
-        >
-          <ViewComponent />
-        </React.Suspense>
-      </main>
-      <Footer />
-      <BackToTop />
-      <CommandPalette />
-    </div>
+    <SiteMotionProvider>
+      <div className="flex min-h-screen flex-col bg-background">
+        <Header />
+        <main className="flex-1 pt-[92px] md:pt-[98px]">
+          <React.Suspense
+            fallback={
+              <div className="flex min-h-[60vh] items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+              </div>
+            }
+          >
+            <ViewComponent />
+          </React.Suspense>
+        </main>
+        <Footer />
+        <BackToTop />
+        <CommandPalette />
+      </div>
+    </SiteMotionProvider>
   );
 }

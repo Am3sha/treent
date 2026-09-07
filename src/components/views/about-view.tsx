@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ArrowRight, ArrowUpRight, CheckCircle2, ShieldCheck, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { COMPANY } from "@/lib/content";
 import { Icon } from "@/components/site/icon";

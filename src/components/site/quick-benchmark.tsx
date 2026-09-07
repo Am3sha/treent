@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, RotateCcw, Sparkles, Check } from "lucide-react";
 import { useNav } from "@/lib/store";
 import { BENCHMARK_QUESTIONS } from "@/lib/benchmark-questions";

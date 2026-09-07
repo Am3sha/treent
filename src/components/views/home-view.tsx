@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { m as motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Reveal, useReducedMotion } from "@/components/site/reveal";
@@ -27,7 +27,7 @@ function AnimatedProgressRing({
 
   React.useEffect(() => {
     if (reduced) return;
-    const timer = setTimeout(() => setActive(true), 200);
+    const timer = setTimeout(() => setActive(true), 100);
     return () => clearTimeout(timer);
   }, [reduced]);
 
@@ -58,7 +58,7 @@ function AnimatedProgressRing({
           className="text-[#003D3C]"
           strokeDasharray={circumference}
           strokeDashoffset={active ? targetOffset : circumference}
-          style={{ transition: reduced ? "none" : "stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }}
+          style={{ transition: reduced ? "none" : "stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}
         />
       </svg>
       <span className="absolute text-[12px] font-bold text-[#003D3C]">
@@ -87,7 +87,7 @@ function AnimatedBar({
   return (
     <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
       <div
-        className="h-full rounded-full bg-[#003D3C] origin-left transition-transform duration-700 ease-out"
+        className="h-full rounded-full bg-[#003D3C] origin-left transition-transform duration-500 ease-out"
         style={{
           transform: active ? `scaleX(${percent / 100})` : "scaleX(0)",
         }}
@@ -253,7 +253,7 @@ export function HomeView() {
             >
               <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
                 <motion.div
-                  style={{ y: heroImgY, scale: heroImgScale }}
+                  style={{ y: heroImgY }}
                   className="overflow-hidden rounded-t-[36px] border border-white/10 shadow-2xl"
                 >
                   <Image
@@ -308,7 +308,7 @@ export function HomeView() {
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
                     <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
-                      <CountUp value="94%" duration={750} delay={350} />
+                      <CountUp value="94%" duration={550} delay={150} />
                     </span>
                     <div className="text-right">
                       <span className="text-[12px] font-bold text-[#008A54]">
@@ -320,7 +320,7 @@ export function HomeView() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <AnimatedBar percent={94} delay={400} />
+                    <AnimatedBar percent={94} delay={200} />
                   </div>
                 </motion.div>
 
@@ -339,7 +339,7 @@ export function HomeView() {
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
                     <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
-                      <CountUp value="92%" duration={750} delay={450} />
+                      <CountUp value="92%" duration={550} delay={200} />
                     </span>
                     <div className="text-right">
                       <span className="text-[12px] font-bold text-[#E69D00]">
@@ -351,7 +351,7 @@ export function HomeView() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <AnimatedBar percent={92} delay={500} />
+                    <AnimatedBar percent={92} delay={260} />
                   </div>
                 </motion.div>
               </div>

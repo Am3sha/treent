@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import { Linkedin, Mail, MapPin, ArrowUpRight } from "lucide-react";
 import { Logo } from "./logo";
 import { useNav } from "@/lib/store";

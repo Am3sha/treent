@@ -3,7 +3,7 @@
 import * as React from "react";
 import { emptySubscribe } from "@/lib/utils";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./logo";
 import { LanguageSwitcher } from "./language-switcher";
 import { useReducedMotion } from "@/components/site/reveal";

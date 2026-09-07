@@ -8,7 +8,7 @@ import {
   Phone,
   Loader2,
 } from "lucide-react";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { m as motion, AnimatePresence, type Variants } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { COMPANY } from "@/lib/content";
 import { Reveal, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
