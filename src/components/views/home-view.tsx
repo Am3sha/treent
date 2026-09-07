@@ -27,7 +27,7 @@ function AnimatedProgressRing({
 
   React.useEffect(() => {
     if (reduced) return;
-    const timer = setTimeout(() => setActive(true), 400);
+    const timer = setTimeout(() => setActive(true), 200);
     return () => clearTimeout(timer);
   }, [reduced]);
 
@@ -58,7 +58,7 @@ function AnimatedProgressRing({
           className="text-[#003D3C]"
           strokeDasharray={circumference}
           strokeDashoffset={active ? targetOffset : circumference}
-          style={{ transition: reduced ? "none" : "stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1)" }}
+          style={{ transition: reduced ? "none" : "stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }}
         />
       </svg>
       <span className="absolute text-[12px] font-bold text-[#003D3C]">
@@ -87,7 +87,7 @@ function AnimatedBar({
   return (
     <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
       <div
-        className="h-full rounded-full bg-[#003D3C] origin-left transition-transform duration-1000 ease-out"
+        className="h-full rounded-full bg-[#003D3C] origin-left transition-transform duration-700 ease-out"
         style={{
           transform: active ? `scaleX(${percent / 100})` : "scaleX(0)",
         }}
@@ -110,7 +110,7 @@ export function HomeView() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.8, ease: EASE_OUT, delay: reduced ? 0 : 0.1 },
+      transition: { duration: reduced ? 0 : 0.55, ease: EASE_OUT, delay: reduced ? 0 : 0.06 },
     },
   };
 
@@ -119,7 +119,7 @@ export function HomeView() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.6, ease: EASE_OUT },
+      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT },
     },
   };
 
@@ -128,7 +128,7 @@ export function HomeView() {
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.65, ease: EASE_OUT, delay: reduced ? 0 : 0.4 + i * 0.1 },
+      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.18 + i * 0.08 },
     }),
   };
 
@@ -137,17 +137,17 @@ export function HomeView() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.55, ease: EASE_OUT, delay: reduced ? 0 : 0.7 },
+      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.26 },
     },
   };
 
   const heroImageContainer: Variants = {
-    hidden: { opacity: 0, scale: reduced ? 1 : 0.96, y: reduced ? 0 : 18 },
+    hidden: { opacity: 0.5, scale: reduced ? 1 : 0.96, y: reduced ? 0 : 18 },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.85, ease: EASE_OUT, delay: reduced ? 0 : 0.2 },
+      transition: { duration: reduced ? 0 : 0.55, ease: EASE_OUT, delay: reduced ? 0 : 0.1 },
     },
   };
 
@@ -157,7 +157,7 @@ export function HomeView() {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.65, ease: EASE_OUT, delay: reduced ? 0 : 0.55 },
+      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.22 },
     },
   };
 
@@ -166,7 +166,7 @@ export function HomeView() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.65, ease: EASE_OUT, delay: reduced ? 0 : 0.75 },
+      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.32 },
     },
   };
 
@@ -176,7 +176,7 @@ export function HomeView() {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.65, ease: EASE_OUT, delay: reduced ? 0 : 0.95 },
+      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.42 },
     },
   };
 
@@ -309,7 +309,7 @@ export function HomeView() {
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
                     <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
-                      <CountUp value="94%" duration={1300} delay={800} />
+                      <CountUp value="94%" duration={750} delay={350} />
                     </span>
                     <div className="text-right">
                       <span className="text-[12px] font-bold text-[#008A54]">
@@ -321,7 +321,7 @@ export function HomeView() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <AnimatedBar percent={94} delay={900} />
+                    <AnimatedBar percent={94} delay={400} />
                   </div>
                 </motion.div>
 
@@ -340,7 +340,7 @@ export function HomeView() {
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
                     <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
-                      <CountUp value="92%" duration={1300} delay={1000} />
+                      <CountUp value="92%" duration={750} delay={450} />
                     </span>
                     <div className="text-right">
                       <span className="text-[12px] font-bold text-[#E69D00]">
@@ -352,7 +352,7 @@ export function HomeView() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <AnimatedBar percent={92} delay={1100} />
+                    <AnimatedBar percent={92} delay={500} />
                   </div>
                 </motion.div>
               </div>

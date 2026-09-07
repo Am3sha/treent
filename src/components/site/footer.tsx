@@ -133,7 +133,10 @@ export function Footer() {
 
   return (
     <footer className={cn("mt-auto bg-[#013D3E] text-white", isRTL && "font-arabic")}>
-      <div className="section-shell pt-16 pb-7">
+      <div
+        className="section-shell pt-16 pb-7"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1.75rem)" }}
+      >
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
           <Reveal y={12} duration={0.58} className="lg:col-span-4">
             <div className="space-y-5">
