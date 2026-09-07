@@ -5,6 +5,7 @@
 // payload so one page load of /admin/careers never serializes megabytes of CVs.
 
 import { getServerSession } from "next-auth/next";
+import { get } from "@vercel/blob";
 import { authOptions } from "@/auth";
 import { db } from "@/lib/db";
 import { decodeDataUrl, isBlobUrl } from "@/lib/blob-storage";
@@ -39,13 +40,34 @@ export async function GET(req: Request) {
 
     const safeBase = `cv-${(application.roleSlug || application.name || "applicant").replace(/[^a-zA-Z0-9_-]+/g, "-").slice(0, 60)}`;
 
-    // New-style: stored object URL -> redirect straight to the blob CDN.
+    // New-style: stored object URL -> retrieve and stream private blob from Vercel Blob.
     if (!application.resume.startsWith("data:") && /^https?:\/\//.test(application.resume)) {
       if (!isBlobUrl(application.resume)) {
-        // Unknown external URL — do not redirect to it from an authenticated context.
+        // Unknown external URL — do not fetch/redirect from an authenticated context.
         return Response.json({ ok: false, error: "invalid stored resume url" }, { status: 500 });
       }
-      return Response.redirect(application.resume.toString(), 307);
+
+      try {
+        const blobResult = await get(application.resume, { access: "private" });
+        if (!blobResult || blobResult.statusCode !== 200 || !blobResult.stream) {
+          return Response.json({ ok: false, error: "resume file not found in storage" }, { status: 404 });
+        }
+
+        const contentType = blobResult.blob.contentType || "application/pdf";
+        const ext = MIME_EXTENSIONS[contentType] ?? "pdf";
+
+        return new Response(blobResult.stream, {
+          status: 200,
+          headers: {
+            "Content-Type": contentType,
+            "Content-Disposition": `attachment; filename="${safeBase}.${ext}"`,
+            "Cache-Control": "private, no-store",
+          },
+        });
+      } catch (getErr) {
+        console.error("[Careers Resume Download API Error] Blob fetch failed:", getErr);
+        return Response.json({ ok: false, error: "failed to retrieve resume from storage" }, { status: 502 });
+      }
     }
 
     // Legacy inline base64 data URL.

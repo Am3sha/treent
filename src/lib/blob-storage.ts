@@ -34,7 +34,7 @@ export async function storeResume(
   }
   const ext = EXT_BY_MIME[mime] ?? "bin";
   const blob = await put(`resumes/${randomUUID()}.${ext}`, buffer, {
-    access: "public",
+    access: "private",
     contentType: mime,
   });
   return blob.url;
