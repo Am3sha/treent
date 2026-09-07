@@ -90,18 +90,16 @@
     @apply border-border outline-ring/50;
   }
 
-  html,
-  body,
-  * {
+  /* Keep inner scroll containers bar-free (chips, panels, menus), but never
+     hide the document scrollbar: users need visible scroll progress. */
+  *:not(html):not(body) {
     -ms-overflow-style: none !important;
     /* IE and Edge */
     scrollbar-width: none !important;
     /* Firefox */
   }
 
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar,
-  *::-webkit-scrollbar {
+  *:not(html):not(body)::-webkit-scrollbar {
     display: none !important;
     /* Chrome, Brave, Safari, Edge (Chromium) */
     width: 0 !important;
@@ -109,9 +107,29 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(1, 61, 62, 0.28) transparent;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+
+  html::-webkit-scrollbar {
+    width: 11px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-color: rgba(1, 61, 62, 0.28);
+    background-clip: content-box;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(1, 61, 62, 0.45);
   }
 
   body {

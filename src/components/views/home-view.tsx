@@ -106,77 +106,76 @@ export function HomeView() {
   const heroImgScale = useTransform(scrollY, [0, 600], [1, reduced ? 1 : 1.03]);
 
   const heroHeadline: Variants = {
-    hidden: { opacity: 0.001, y: reduced ? 0 : 20 },
+    hidden: { opacity: 1, y: reduced ? 0 : 12 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.55, ease: EASE_OUT, delay: reduced ? 0 : 0.06 },
+      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.06 },
     },
   };
 
   const heroEyebrow: Variants = {
-    hidden: { opacity: 0.001, y: reduced ? 0 : 12 },
+    hidden: { opacity: 1, y: reduced ? 0 : 10 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT },
+      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT },
     },
   };
 
   const heroBody: Variants = {
-    hidden: { opacity: 0.001, y: reduced ? 0 : 16 },
+    hidden: { opacity: 1, y: reduced ? 0 : 10 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.18 + i * 0.08 },
+      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.1 + i * 0.05 },
     }),
   };
 
   const heroCta: Variants = {
-    hidden: { opacity: 0.001, y: reduced ? 0 : 14 },
+    hidden: { opacity: 1, y: reduced ? 0 : 8 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.26 },
+      transition: { duration: reduced ? 0 : 0.35, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
     },
   };
 
   const heroImageContainer: Variants = {
-    hidden: { opacity: 0.5, scale: reduced ? 1 : 0.96, y: reduced ? 0 : 18 },
+    hidden: { opacity: 1, y: reduced ? 0 : 12 },
     visible: {
       opacity: 1,
-      scale: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.55, ease: EASE_OUT, delay: reduced ? 0 : 0.1 },
+      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.1 },
     },
   };
 
   const statCard1: Variants = {
-    hidden: { opacity: 0, x: reduced ? 0 : -24, y: reduced ? 0 : 10 },
+    hidden: { opacity: 1, x: reduced ? 0 : -12, y: reduced ? 0 : 8 },
     visible: {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.22 },
+      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
     },
   };
 
   const statCard2: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : 22 },
+    hidden: { opacity: 1, y: reduced ? 0 : 10 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.32 },
+      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
     },
   };
 
   const statCard3: Variants = {
-    hidden: { opacity: 0, x: reduced ? 0 : 24, y: reduced ? 0 : 12 },
+    hidden: { opacity: 1, x: reduced ? 0 : 12, y: reduced ? 0 : 8 },
     visible: {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.42 },
+      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
     },
   };
 

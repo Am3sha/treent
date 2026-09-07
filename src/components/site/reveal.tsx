@@ -21,6 +21,36 @@ function useReducedMotion() {
   return reduced;
 }
 
+/**
+ * Entrance gate: "static" = SSR + first client paint (always rendered visible,
+ * so server HTML is readable without JS), "armed" = below the fold, may hide
+ * and animate in on scroll, "played" = inside the first viewport (or reduced
+ * motion) and therefore never hidden.
+ */
+type EntrancePhase = "static" | "armed" | "played";
+
+function useEntrancePhase(
+  ref: React.RefObject<HTMLElement | null>,
+  disabled: boolean
+): EntrancePhase {
+  const [phase, setPhase] = React.useState<EntrancePhase>("static");
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (disabled || !el) {
+      setPhase("played");
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    const viewportHeight =
+      window.innerHeight || document.documentElement.clientHeight;
+    const inFirstViewport = rect.bottom > 0 && rect.top < viewportHeight;
+    setPhase(inFirstViewport ? "played" : "armed");
+  }, [ref, disabled]);
+
+  return phase;
+}
+
 export function Reveal({
   children,
   className,
@@ -39,27 +69,35 @@ export function Reveal({
   const ref = React.useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px 0px -60px 0px" });
   const reduced = useReducedMotion();
+  const phase = useEntrancePhase(ref, reduced);
   const Tag = motion[as] as typeof motion.div;
 
+  const hidden = phase === "armed" && !inView;
+
   const variants: Variants = {
-    hidden: { opacity: 0.001, y: reduced ? 0 : y }, // Almost transparent but not 0 to avoid layout issues
-    visible: { opacity: 1, y: 0 },
+    hidden: {
+      opacity: 0,
+      y: reduced ? 0 : y,
+      transition: { duration: 0 },
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: reduced ? 0 : duration,
+        ease: EASE_OUT,
+        delay: reduced ? 0 : delay,
+      },
+    },
   };
 
   return (
     <Tag
       ref={ref}
       className={className}
-      initial={reduced ? "visible" : "hidden"}
-      animate={inView ? "visible" : (reduced ? "visible" : "hidden")}
+      initial={false}
+      animate={hidden ? "hidden" : "visible"}
       variants={variants}
-      transition={{
-        duration: reduced ? 0 : duration,
-        ease: EASE_OUT,
-        delay: reduced ? 0 : delay,
-      }}
-      // Ensure content is visible if JS fails or slow
-      style={{ opacity: inView ? 1 : (reduced ? 1 : 0.001) }}
     >
       {children}
     </Tag>
@@ -86,11 +124,15 @@ export function RevealStagger({
   const ref = React.useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px 0px -60px 0px" });
   const reduced = useReducedMotion();
+  const phase = useEntrancePhase(ref, reduced);
   const Tag = motion[as] as typeof motion.div;
 
+  const hidden = phase === "armed" && !inView;
+
   const container: Variants = {
-    hidden: {},
+    hidden: { opacity: 1, transition: { duration: 0 } },
     visible: {
+      opacity: 1,
       transition: {
         staggerChildren: reduced ? 0 : stagger,
         delayChildren: reduced ? 0 : delay,
@@ -99,7 +141,11 @@ export function RevealStagger({
   };
 
   const item: Variants = {
-    hidden: { opacity: 0.001, y: reduced ? 0 : y },
+    hidden: {
+      opacity: 0,
+      y: reduced ? 0 : y,
+      transition: { duration: 0 },
+    },
     visible: {
       opacity: 1,
       y: 0,
@@ -114,8 +160,8 @@ export function RevealStagger({
     <Tag
       ref={ref}
       className={className}
-      initial={reduced ? "visible" : "hidden"}
-      animate={inView ? "visible" : (reduced ? "visible" : "hidden")}
+      initial={false}
+      animate={hidden ? "hidden" : "visible"}
       variants={container}
     >
       {React.Children.map(children, (child) => {
@@ -143,7 +189,7 @@ export function RevealItem({
 }) {
   const reduced = useReducedMotion();
   const variants: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : y },
+    hidden: { opacity: 0, y: reduced ? 0 : y, transition: { duration: 0 } },
     visible: {
       opacity: 1,
       y: 0,
