@@ -148,6 +148,14 @@
     font-family: var(--font-arabic), var(--font-geist-sans), sans-serif;
   }
 
+  /* C4: Arabic-deep-link first paint (see boot script in layout.tsx): make the
+     body RTL via CSS before any content paints, so the later body.dir attribute
+     (set by LanguageAttributes to the same computed direction) causes no shift.
+     Cleared by LanguageAttributes once hydration owns body.dir. */
+  html[data-ar-boot] body {
+    direction: rtl;
+  }
+
   /* Arabic shaping is handled by the font; do not apply Latin tracking. */
   html[dir="rtl"] body,
   html[dir="rtl"] body *,

@@ -1,5 +1,6 @@
 "use client";
 
+import { startTransition } from "react";
 import { create } from "zustand";
 import type {
   AssessmentResult,
@@ -89,7 +90,7 @@ export const useNav = create<NavState>((set, get) => {
         window.location.hash = `#/${prefix}${view}`;
         window.scrollTo({ top: 0, behavior: "auto" });
       }
-      set({ view });
+      startTransition(() => set({ view }));
     },
 
     setLang: (lang) => {
@@ -105,7 +106,7 @@ export const useNav = create<NavState>((set, get) => {
         document.documentElement.dir = "ltr";
         document.body.dir = lang === "ar" ? "rtl" : "ltr";
       }
-      set({ lang });
+      startTransition(() => set({ lang }));
     },
 
     navigate: (view) => get().setView(view),
@@ -150,3 +151,15 @@ export const useNav = create<NavState>((set, get) => {
     },
   };
 });
+
+// C4: for /#/ar/... deep links, start the Arabic dictionary chunk fetch at
+// module-eval time - parallel to app JS and hydration - so the AR text for the
+// route swap commit is already loaded and Arabic webfont fetch begins early.
+// Direction/layout flipping is done declaratively: an inline <head> script in
+// layout.tsx sets html[data-ar-boot] when the landing hash is Arabic, and a
+// globals.css rule applies RTL direction to <body> via that attribute - before
+// any AR paint - instead of mutating DOM body.dir mid-session (which caused a
+// full-viewport horizontal shift while a transition held the old page visible).
+if (typeof window !== "undefined" && parseHash().lang === "ar") {
+  void ensureArabicLoaded();
+}

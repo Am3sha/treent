@@ -12,6 +12,9 @@ export function LanguageAttributes() {
     document.documentElement.dir = "ltr";
     // Apply rtl/ltr to body so all content, text, and Tailwind rtl: variants function properly
     document.body.dir = lang === "ar" ? "rtl" : "ltr";
+    // Boot-script RTL (html[data-ar-boot], globals.css) has served until the
+    // first frame; body.dir now owns direction, so later EN/AR toggles work.
+    document.documentElement.removeAttribute("data-ar-boot");
   }, [lang]);
 
   return null;

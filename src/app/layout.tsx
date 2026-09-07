@@ -65,7 +65,23 @@ export default function RootLayout({
         {/* 
           Hydration script removed to fix "script tag while rendering" warning.
           LanguageAttributes and useHashSync handle document attributes.
+
+          EXCEPTION (approved CLS fix C4): a static, side-effect-free boot script
+          placed as the FIRST body child, before any streamed content exists.
+          For Arabic deep links (location.hash #/ar/...) it sets html lang and
+          html[data-ar-boot] once, so the FIRST painted frame is already
+          Arabic-font + RTL. Previously body.dir was flipped in a post-hydration
+          effect AFTER LTR content had painted, which horizontally shifted the
+          whole viewport (a large counted layout shift, worse while a
+          startTransition held the streamed content on screen).
+          No React state, no re-render, no inline logic beyond attribute set.
         */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{if(/^#\\/ar([\\/?#]|$)/i.test(location.hash)){var e=document.documentElement;e.lang="ar";e.setAttribute("data-ar-boot","1")}}catch(_){}',
+          }}
+        />
         <LanguageAttributes />
         <Providers>
           <ThemeProvider

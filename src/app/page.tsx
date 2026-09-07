@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { emptySubscribe } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { useNav } from "@/lib/store";
 import { Header } from "@/components/site/header";
@@ -212,10 +211,14 @@ function useHashSync() {
           : "home";
 
       if (useNav.getState().view !== v) {
-        useNav.setState({ view: v });
+        React.startTransition(() => {
+          useNav.setState({ view: v });
+        });
       }
       if (useNav.getState().lang !== lang) {
-        useNav.setState({ lang });
+        React.startTransition(() => {
+          useNav.setState({ lang });
+        });
         document.documentElement.lang = lang;
         document.documentElement.dir = "ltr";
         document.body.dir = lang === "ar" ? "rtl" : "ltr";
@@ -230,11 +233,16 @@ function useHashSync() {
 
 export default function Home() {
   const storeView = useNav((s) => s.view);
-  const mounted = React.useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    // Mark the hydration mount flip as a Transition: a deep link like /#/services
+    // would otherwise let its still-loading lazy view replace the streamed Home
+    // content with the 60vh Suspense fallback (page collapse = the CLS spike).
+    // In a transition, React keeps the old committed content until the new view
+    // is ready, then swaps both in one commit.
+    React.startTransition(() => setMounted(true));
+  }, []);
 
   useHashSync();
 
