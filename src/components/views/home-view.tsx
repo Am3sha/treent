@@ -236,10 +236,14 @@ export function HomeView() {
                 className="mt-8"
               >
                 <Button
-                  onClick={() => navigate("services")}
+                  asChild
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate("services");
+                  }}
                   className="h-12 rounded-[10px] bg-white px-8 text-[15px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#ADDFB3] hover:shadow-[0_10px_30px_-12px_rgba(173,223,179,0.7)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  {t("home.hero.cta_primary")}
+                  <a href="/#/services">{t("home.hero.cta_primary")}</a>
                 </Button>
               </motion.div>
             </div>
@@ -448,10 +452,14 @@ export function HomeView() {
 
               <div className={cn("mt-8 flex", isRTL && "justify-end")}>
                 <Button
-                  onClick={() => navigate("services")}
+                  asChild
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate("services");
+                  }}
                   className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  {t('home.capabilities.cta')}
+                  <a href="/#/services">{t("home.capabilities.cta")}</a>
                 </Button>
               </div>
             </Reveal>

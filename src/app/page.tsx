@@ -14,7 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
 const ViewLoader = () => (
-  <div className="flex min-h-[60vh] items-center justify-center">
+  // min-h-[100vh]: the fallback must keep <footer> below the fold during the
+  // streamed-home/hold window. At 60vh the footer top sat inside the desktop
+  // viewport, so the later content swap pushed it out of view - that jump was
+  // the CLS event (0.26 desktop / 0.288-0.576 mobile). A full-viewport
+  // fallback puts the footer outside the impact area in BOTH states, making
+  // the swap structurally shift-free regardless of paint timing.
+  <div className="flex min-h-[100vh] items-center justify-center">
     <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
   </div>
 );
@@ -32,35 +38,29 @@ const CommandPalette = dynamic(
   { ssr: false }
 );
 
-const AboutView = dynamic(
-  () => import("@/components/views/about-view").then((m) => m.AboutView),
-  { loading: ViewLoader }
-);
-const ServicesView = dynamic(
-  () => import("@/components/views/services-view").then((m) => m.ServicesView),
-  { loading: ViewLoader }
-);
-const ContactView = dynamic(
-  () => import("@/components/views/contact-view").then((m) => m.ContactView),
-  { loading: ViewLoader }
-);
-const CareersView = dynamic(
-  () => import("@/components/views/careers-view").then((m) => m.CareersView),
-  { loading: ViewLoader }
-);
-const LegalView = dynamic(
-  () => import("@/components/views/legal-view").then((m) => m.LegalView),
-  { loading: ViewLoader }
-);
+// Shared loader fns: used both by the next/dynamic views AND the prefetch
+// helpers below. The browser module cache is shared, so prefetching a loader
+// makes the corresponding dynamic view resolve instantly at click time while
+// leaving the startTransition-based CLS behavior untouched.
+type PrefetchFn = () => Promise<unknown>;
 
-const BenchmarkLandingView = dynamic(
-  () => import("@/components/views/benchmark-landing-view").then((m) => m.BenchmarkLandingView),
-  { loading: ViewLoader }
-);
-const BenchmarkQuizView = dynamic(
-  () => import("@/components/views/benchmark-quiz-view").then((m) => m.BenchmarkQuizView),
-  { loading: ViewLoader }
-);
+const loadAbout = () => import("@/components/views/about-view").then((m) => m.AboutView);
+const loadServices = () => import("@/components/views/services-view").then((m) => m.ServicesView);
+const loadContact = () => import("@/components/views/contact-view").then((m) => m.ContactView);
+const loadCareers = () => import("@/components/views/careers-view").then((m) => m.CareersView);
+const loadLegal = () => import("@/components/views/legal-view").then((m) => m.LegalView);
+const loadBenchmarkLanding = () => import("@/components/views/benchmark-landing-view").then((m) => m.BenchmarkLandingView);
+const loadBenchmarkQuiz = () => import("@/components/views/benchmark-quiz-view").then((m) => m.BenchmarkQuizView);
+const loadServiceDetail = () => import("@/components/views/service-detail-view").then((m) => m.ServiceDetailView);
+
+const AboutView = dynamic(loadAbout, { loading: ViewLoader });
+const ServicesView = dynamic(loadServices, { loading: ViewLoader });
+const ContactView = dynamic(loadContact, { loading: ViewLoader });
+const CareersView = dynamic(loadCareers, { loading: ViewLoader });
+const LegalView = dynamic(loadLegal, { loading: ViewLoader });
+
+const BenchmarkLandingView = dynamic(loadBenchmarkLanding, { loading: ViewLoader });
+const BenchmarkQuizView = dynamic(loadBenchmarkQuiz, { loading: ViewLoader });
 const BenchmarkResultsView = dynamic(
   () => import("@/components/views/benchmark-results-view").then((m) => m.BenchmarkResultsView),
   { loading: ViewLoader }
@@ -84,10 +84,49 @@ const NotFoundView = dynamic(
 // and the /api/benchmark/stats endpoint are unaffected.
 const PUBLIC_BENCHMARK_INSIGHTS_ENABLED = false;
 
-const ServiceDetailView = dynamic(
-  () => import("@/components/views/service-detail-view").then((m) => m.ServiceDetailView),
-  { loading: ViewLoader }
-);
+const ServiceDetailView = dynamic(loadServiceDetail, { loading: ViewLoader });
+
+// ---------------------------------------------------------------------------
+// Navigation prefetch (progressive enhancement)
+//
+// benchmark-results/-insights are intentionally NOT registered here: they
+// pull the heavy recharts/@react-pdf chunk (~1.2MB) and are never linked
+// from the nav, so they stay on-demand only.
+// ---------------------------------------------------------------------------
+
+const PREFETCH_BY_VIEW: Partial<Record<ViewKey, PrefetchFn>> = {
+  about: loadAbout,
+  services: loadServices,
+  contact: loadContact,
+  careers: loadCareers,
+  legal: loadLegal,
+  "benchmark-landing": loadBenchmarkLanding,
+  "benchmark-quiz": loadBenchmarkQuiz,
+  "internal-audit-outsourcing": loadServiceDetail,
+  "internal-audit-co-sourcing": loadServiceDetail,
+  "internal-audit-function-establishment": loadServiceDetail,
+  "internal-audit-transformation": loadServiceDetail,
+  "quality-assurance-and-improvement-program": loadServiceDetail,
+};
+
+const prefetchedViews = new Set<string>();
+function prefetchView(key: string) {
+  if (!key || prefetchedViews.has(key)) return;
+  prefetchedViews.add(key);
+  void PREFETCH_BY_VIEW[key as ViewKey]?.().catch(() => {});
+}
+
+function viewFromHref(href: string | null | undefined): string {
+  if (!href) return "";
+  const { rest } = parseHashRoute(href.replace(/^\//, ""));
+  return rest.split("/")[0];
+}
+
+// Deep-link boot: fetch the landing view's chunk at module-eval time,
+// parallel to app JS/hydration, instead of after the first render needs it.
+if (typeof window !== "undefined") {
+  prefetchView(viewFromHref(window.location.hash));
+}
 
 import { useTranslation } from "@/lib/i18n";
 
@@ -242,6 +281,55 @@ export default function Home() {
     // In a transition, React keeps the old committed content until the new view
     // is ready, then swaps both in one commit.
     React.startTransition(() => setMounted(true));
+  }, []);
+
+  React.useEffect(() => {
+    // Navigation prefetch on approach: hovering/keyboard-focusing any crawl
+    // /#/... link warms that view's chunk, so the click-time transition has
+    // an already-resolved loader and swaps almost instantly.
+    const onNear = (e: Event) => {
+      const el = (e.target as Element | null)?.closest?.('a[href^="/#/"]');
+      if (!el) return;
+      prefetchView(viewFromHref(el.getAttribute("href")));
+    };
+    window.addEventListener("pointerover", onNear, { passive: true });
+    window.addEventListener("focusin", onNear);
+
+    // Post-load idle prefetch for the most likely next pages.
+    // Gated deliberately:
+    //  - Desktop pointer/coarse-fine + big viewport only (hover covers mobile;
+    //    mobile LCP/CLS must not compete with speculative fetches).
+    //  - Light marketing chunks ONLY: benchmark-quiz/landing share the heavy
+    //    ~700KB-1.2MB graph (recharts/@react-pdf) and stay hover/deeplink-only.
+    const idleTargets = ["services", "about", "contact", "careers"];
+    const runIdle = () => {
+      for (const t of idleTargets) prefetchView(t);
+    };
+    const nav = window.navigator as Navigator & {
+      connection?: { effectiveType?: string; saveData?: boolean };
+    };
+    const connOk = !nav.connection || (!nav.connection.saveData && /4g/i.test(nav.connection.effectiveType || "4g"));
+    const desktop = window.matchMedia("(min-width: 1024px) and (pointer: fine)").matches;
+    let idleHandle = 0;
+    let timerHandle = 0;
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (desktop && connOk) {
+      if (typeof w.requestIdleCallback === "function") {
+        idleHandle = w.requestIdleCallback(runIdle, { timeout: 3000 });
+      } else {
+        timerHandle = window.setTimeout(runIdle, 1800);
+      }
+    }
+
+    return () => {
+      window.removeEventListener("pointerover", onNear);
+      window.removeEventListener("focusin", onNear);
+      if (idleHandle && typeof w.cancelIdleCallback === "function") w.cancelIdleCallback(idleHandle);
+      if (timerHandle) window.clearTimeout(timerHandle);
+    };
   }, []);
 
   useHashSync();

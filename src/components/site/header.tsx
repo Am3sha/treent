@@ -70,15 +70,18 @@ function ServicesDropdownPanel({
       <ul className="space-y-0.5" role="none">
         {items.map((service) => (
           <li key={service.slug} role="none">
-            <button
-              type="button"
+            <a
               role="menuitem"
-              onClick={() => onNavigate(service.slug as ViewKey)}
+              href={`/#/${service.slug}`}
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate(service.slug as ViewKey);
+              }}
               className="group relative flex w-full items-center rounded-[6px] px-3 py-2.5 text-left text-[13px] font-medium leading-snug text-[#013D3E] transition-colors duration-150 hover:bg-[#ADDFB3]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/50"
             >
               <span className="absolute left-0 h-0 w-[3px] rounded-full bg-[#ADDFB3] opacity-0 transition-all duration-150 group-hover:h-[60%] group-hover:opacity-100 group-focus-visible:h-[60%] group-focus-visible:opacity-100" />
               <span className="relative">{l(service.title)}</span>
-            </button>
+            </a>
           </li>
         ))}
       </ul>
@@ -98,15 +101,18 @@ function ServicesDropdownPanel({
       <div className="my-2 border-t border-[#013D3E]/10" role="separator" />
       {renderGroup("Development", development)}
       <div className="my-2 border-t border-[#013D3E]/10" role="separator" />
-      <button
-        type="button"
+      <a
         role="menuitem"
-        onClick={() => onNavigate("services")}
+        href="/#/services"
+        onClick={(e) => {
+          e.preventDefault();
+          onNavigate("services");
+        }}
         className="mx-2 flex w-[calc(100%-1rem)] items-center justify-between rounded-[6px] px-3 py-2.5 text-left text-[13px] font-semibold text-[#013D3E] transition-colors duration-150 hover:bg-[#ADDFB3]/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/50"
       >
         {t("services.common.view_all")}
         <ArrowUpRight className="h-3.5 w-3.5 text-[#013D3E]/70" />
-      </button>
+      </a>
     </div>
   );
 }
@@ -176,11 +182,14 @@ function DesktopServicesNav({ active, onNavigate, reduced }: DesktopServicesNavP
         }
       }}
     >
-      <button
-        type="button"
+      <a
+        href="/#/services"
         aria-haspopup="menu"
         aria-expanded={open}
-        onClick={() => onNavigate("services")}
+        onClick={(e) => {
+          e.preventDefault();
+          onNavigate("services");
+        }}
         className={cn(
           "relative inline-flex items-center gap-1 text-[14px] font-medium tracking-wide py-1 group",
           "transition-colors duration-200 ease-out",
@@ -205,7 +214,7 @@ function DesktopServicesNav({ active, onNavigate, reduced }: DesktopServicesNavP
               : "w-0 bg-[#ADDFB3] group-hover:w-full"
           )}
         />
-      </button>
+      </a>
 
       <AnimatePresence>
         {open && (
@@ -456,13 +465,17 @@ export function Header() {
       )}
     >
       <div className="section-shell flex h-[92px] md:h-[98px] items-center justify-between">
-        <button
-          onClick={() => go("home")}
+        <a
+          href="/#/"
+          onClick={(e) => {
+            e.preventDefault();
+            go("home");
+          }}
           className="flex items-center outline-none focus-visible:ring-2 focus-visible:ring-[#ADDFB3]/40 rounded-sm py-1 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
           aria-label="TRENNT — Home"
         >
           <Logo variant="light" />
-        </button>
+        </a>
 
         <nav
           className={cn(
@@ -485,9 +498,13 @@ export function Header() {
 
             const active = item.view ? view === item.view : false;
             return (
-              <button
+              <a
                 key={item.label}
-                onClick={() => go(item.view)}
+                href={`/#/${item.view}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  go(item.view);
+                }}
                 className={cn(
                   "relative text-[14px] font-medium tracking-wide py-1 group",
                   "transition-colors duration-200 ease-out",
@@ -505,14 +522,18 @@ export function Header() {
                       : "w-0 bg-[#ADDFB3] group-hover:w-full"
                   )}
                 />
-              </button>
+              </a>
             );
           })}
         </nav>
 
         <div className="flex items-center gap-4 sm:gap-5">
-          <button
-            onClick={() => go("benchmark-quiz")}
+          <a
+            href="/#/benchmark-quiz"
+            onClick={(e) => {
+              e.preventDefault();
+              go("benchmark-quiz");
+            }}
             className={cn(
               "hidden md:inline-flex text-[14px] font-semibold tracking-wide transition-colors duration-200 py-1 border-b border-transparent hover:border-[#ADDFB3]",
               isRTL && "font-arabic",
@@ -522,17 +543,23 @@ export function Header() {
             )}
           >
             {t("nav.start_assessment")}
-          </button>
+          </a>
 
           <Button
-            onClick={() => go("contact")}
+            asChild
+            onClick={(e) => {
+              e.preventDefault();
+              go("contact");
+            }}
             className={cn(
               "hidden sm:inline-flex h-11 items-center gap-2 rounded-[10px] bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#013D3E] shadow-none transition-all duration-200 ease-out hover:bg-[#c2e8c4] hover:shadow-[0_6px_20px_-8px_rgba(173,223,179,0.6)] hover:scale-[1.02] active:scale-[0.98]",
               isRTL && "font-arabic"
             )}
           >
-            {t("nav.contact")}
-            <ArrowUpRight className="h-4 w-4 text-[#013D3E] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <a href="/#/contact">
+              {t("nav.contact")}
+              <ArrowUpRight className="h-4 w-4 text-[#013D3E] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
           </Button>
 
           <LanguageSwitcher className="hidden sm:inline-flex" />

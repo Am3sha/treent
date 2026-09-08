@@ -15,13 +15,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import { getSiteUrl } from "@/lib/site-config";
+import { getSiteUrl, getSiteEmail } from "@/lib/site-config";
+import { COMPANY } from "@/lib/content";
+
+const SITE_URL = getSiteUrl();
+
+const SITE_TITLE = "TRENNT — Internal Audit & Advisory Services";
+const SITE_DESCRIPTION =
+  "TRENNT is a specialist Internal Audit firm supporting Boards, Audit Committees, and senior management with objective insight across governance, risk, and internal control.";
+const OG_IMAGE_URL = "/og/trennt-og-1200x630.png";
+const LOGO_ICON_URL = "/icons/icon-512.png";
+const OG_ALT = "TRENNT - Internal Audit. Delivered with Independence.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
-  title: "Trennt | Internal Audit Specialists",
-  description:
-    "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery. We support Boards, Audit Committees, and senior management by providing objective insight into the effectiveness of risk management, internal controls, and governance processes.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   keywords: [
     "internal audit",
     "internal audit outsourcing",
@@ -36,16 +45,72 @@ export const metadata: Metadata = {
     "IIA standards",
   ],
   authors: [{ name: "Trennt" }],
+  alternates: {
+    canonical: `${SITE_URL}/`,
+  },
   icons: {
-    icon: "/logo.svg",
+    icon: [
+      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: LOGO_ICON_URL, sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "Trennt ",
-    description:
-      "Trennt is an internal audit firm based in Saudi Arabia, dedicated exclusively to internal audit delivery.",
-    siteName: "Trennt",
     type: "website",
+    url: `${SITE_URL}/`,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: "TRENNT",
+    locale: "en_US",
+    alternateLocale: ["ar_SA"],
+    images: [
+      {
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: OG_ALT,
+      },
+    ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: OG_ALT,
+      },
+    ],
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: `${SITE_URL}/`,
+      name: "TRENNT",
+      description: SITE_DESCRIPTION,
+      inLanguage: ["en", "ar"],
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "TRENNT",
+      legalName: COMPANY.legalName,
+      url: `${SITE_URL}/`,
+      logo: `${SITE_URL}${LOGO_ICON_URL}`,
+      description: SITE_DESCRIPTION,
+      foundingDate: String(COMPANY.foundedYear),
+      email: getSiteEmail(),
+    },
+  ],
 };
 
 import { notoSansArabic } from "@/lib/fonts-arabic";
@@ -83,6 +148,10 @@ export default function RootLayout({
           }}
         />
         <LanguageAttributes />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Providers>
           <ThemeProvider
             attribute="class"

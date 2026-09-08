@@ -253,13 +253,17 @@ export function Footer() {
                   <ul className="mt-3 space-y-1">
                     {col.links.map((l) => (
                       <li key={l.label}>
-                        <button
-                          onClick={() => navigate(l.view)}
+                        <a
+                          href={`/#/${l.view}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            navigate(l.view);
+                          }}
                           className="group inline-flex min-h-11 w-full items-center gap-1.5 text-[14px] text-white/75 transition-colors duration-200 ease-out hover:text-white"
                         >
                           <span className="hover-underline-grow">{l.label}</span>
                           <ArrowUpRight className={cn("h-3 w-3 opacity-0 transition-all duration-250 ease-out group-hover:opacity-100 group-hover:translate-x-0", isRTL ? "translate-x-1" : "-translate-x-1")} />
-                        </button>
+                        </a>
                       </li>
                     ))}
                   </ul>
@@ -287,8 +291,12 @@ export function Footer() {
                   <span>{l(COMPANY.address)}</span>
                 </div>
               </div>
-              <motion.button
-                onClick={() => navigate("contact")}
+              <motion.a
+                href="/#/contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("contact");
+                }}
                 whileHover={reduced ? {} : { scale: 1.025, y: -1 }}
                 whileTap={reduced ? {} : { scale: 0.99 }}
                 transition={{ duration: 0.22, ease: EASE_OUT }}
@@ -296,7 +304,7 @@ export function Footer() {
               >
                 {t("footer.cta_talk")}
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-250 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.8} />
-              </motion.button>
+              </motion.a>
             </div>
 
             <div className="mt-2.5 flex flex-col items-start justify-between gap-3 text-[12px] text-white/45 sm:flex-row sm:items-center">
@@ -304,13 +312,17 @@ export function Footer() {
                 {t("footer.copyright").replace("{year}", new Date().getFullYear().toString())}
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                <button
-                  onClick={() => navigate("legal")}
+                <a
+                  href="/#/legal"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate("legal");
+                  }}
                   className="inline-flex min-h-11 items-center gap-1 transition-colors duration-200 ease-out hover:text-white group"
                 >
                   <span className="hover-underline-grow">Privacy &amp; Terms</span>
                   <ArrowUpRight className="h-3 w-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </button>
+                </a>
               </div>
             </div>
           </RevealStagger>
