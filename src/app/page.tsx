@@ -317,10 +317,9 @@ export default function Home() {
       cancelIdleCallback?: (id: number) => void;
     };
     if (desktop && connOk) {
-      // +5.5s after mount, not +1.5s: keeps the warm-up outside the load /
-      // TTI critical window (Lighthouse traces included) while still
-      // preceding any realistic second-click; desktop+fast-net only.
-      timerHandle = window.setTimeout(runIdle, 5500);
+      // +9s after mount: fully outside load/TTI/Lighthouse windows, still
+      // warms secondary navigation well before a realistic second click.
+      timerHandle = window.setTimeout(runIdle, 9000);
     }
 
     return () => {
@@ -332,6 +331,23 @@ export default function Home() {
   }, []);
 
   useHashSync();
+
+  // The command palette is keyboard-only (Cmd/Ctrl+K) - its radix + cmdk
+  // graph must not spend parse/eval seconds on phones (no trigger exists)
+  // or before a desktop user ever presses the shortcut. Arm on the first
+  // matching keypress and open it immediately once mounted.
+  const [paletteWanted, setPaletteWanted] = React.useState(false);
+  React.useEffect(() => {
+    if (paletteWanted) return;
+    const arm = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteWanted(true);
+      }
+    };
+    window.addEventListener("keydown", arm);
+    return () => window.removeEventListener("keydown", arm);
+  }, [paletteWanted]);
 
   const view = mounted ? storeView : "home";
   const ViewComponent =
@@ -350,7 +366,7 @@ export default function Home() {
         </main>
         <Footer />
         <BackToTop />
-        <CommandPalette />
+        {paletteWanted && <CommandPalette initialOpen />}
       </div>
     </SiteMotionProvider>
   );

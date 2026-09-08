@@ -52,9 +52,9 @@ interface SearchEntry {
   keywords?: string;
 }
 
-export function CommandPalette() {
+export function CommandPalette({ initialOpen = false }: { initialOpen?: boolean }) {
   const { l } = useTranslation();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(initialOpen);
   const navigate = useNav((s) => s.navigate);
 
   // Cmd/Ctrl+K to open
