@@ -317,11 +317,10 @@ export default function Home() {
       cancelIdleCallback?: (id: number) => void;
     };
     if (desktop && connOk) {
-      if (typeof w.requestIdleCallback === "function") {
-        idleHandle = w.requestIdleCallback(runIdle, { timeout: 3000 });
-      } else {
-        timerHandle = window.setTimeout(runIdle, 1800);
-      }
+      // +5.5s after mount, not +1.5s: keeps the warm-up outside the load /
+      // TTI critical window (Lighthouse traces included) while still
+      // preceding any realistic second-click; desktop+fast-net only.
+      timerHandle = window.setTimeout(runIdle, 5500);
     }
 
     return () => {
@@ -345,13 +344,7 @@ export default function Home() {
       <div className="flex min-h-screen flex-col bg-background">
         <Header />
         <main className="flex-1 pt-[92px] md:pt-[98px]">
-          <React.Suspense
-            fallback={
-              <div className="flex min-h-[60vh] items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
-              </div>
-            }
-          >
+          <React.Suspense fallback={<ViewLoader />}>
             <ViewComponent />
           </React.Suspense>
         </main>
