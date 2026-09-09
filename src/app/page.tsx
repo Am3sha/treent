@@ -8,7 +8,7 @@ import { Footer } from "@/components/site/footer";
 import type { ViewKey } from "@/lib/types";
 import { isValidView, parseHashRoute } from "@/lib/routes";
 import { FRAMEWORK_AGREEMENTS } from "@/lib/content";
-import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
+import { Reveal, Eyebrow } from "@/components/site/reveal";
 import { SiteMotionProvider } from "@/components/site/motion-provider";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
@@ -157,12 +157,7 @@ function FrameworkAgreementsView() {
       </section>
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <div className="max-w-3xl">
-          <SectionHeading
-            eyebrow={t('services.framework.eyebrow')}
-            title={t('services.framework.title')}
-            description=""
-          />
-          <ul className="mt-8 space-y-4">
+          <ul className="space-y-4">
             {FRAMEWORK_AGREEMENTS.includes.map((item, i) => (
               <Reveal key={i} delay={i * 0.05}>
                 <li className="flex items-start gap-3 text-base leading-relaxed text-foreground">

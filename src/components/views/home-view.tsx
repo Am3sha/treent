@@ -196,7 +196,7 @@ export function HomeView() {
                   />
                 </div>
 
-                {/* CARD 1: TOP LEFT BADGE — INTERNAL AUDIT PROGRESS */}
+                {/* CARD 1: TOP LEFT BADGE â€” INTERNAL AUDIT PROGRESS */}
                 <div className="absolute left-2 top-8 z-20 w-[220px] sm:w-[240px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-6">
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Internal Audit
@@ -217,7 +217,7 @@ export function HomeView() {
                   </div>
                 </div>
 
-                {/* CARD 2: BOTTOM LEFT BADGE — INTERNAL CONTROLS */}
+                {/* CARD 2: BOTTOM LEFT BADGE â€” INTERNAL CONTROLS */}
                 <div className="absolute left-2 bottom-10 z-20 w-[210px] sm:w-[230px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-8">
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Internal Controls
@@ -243,7 +243,7 @@ export function HomeView() {
                   </div>
                 </div>
 
-                {/* CARD 3: BOTTOM RIGHT BADGE — GOVERNANCE ASSESSMENT */}
+                {/* CARD 3: BOTTOM RIGHT BADGE â€” GOVERNANCE ASSESSMENT */}
                 <div className="absolute right-2 bottom-4 z-20 w-[210px] sm:w-[235px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-right-4">
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Governance Assessment

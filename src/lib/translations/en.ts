@@ -15,7 +15,7 @@ export const en = {
     services_heading: "Services",
     benchmark_heading: "Benchmark",
     copyright: "© {year} Trennt. All rights reserved.",
-    cta_talk: "Let's talk internal audit.",
+    cta_talk: "Contact",
     cta_description: "Connect with our Riyadh-based team to discuss how we can support your audit function.",
   },
   home: {

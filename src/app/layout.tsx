@@ -19,7 +19,7 @@ import { COMPANY } from "@/lib/content";
 
 const SITE_URL = getSiteUrl();
 
-const SITE_TITLE = "TRENNT — Internal Audit & Advisory Services";
+const SITE_TITLE = "TRENNT — Internal Audit";
 const SITE_DESCRIPTION =
   "TRENNT is a specialist Internal Audit firm supporting Boards, Audit Committees, and senior management with objective insight across governance, risk, and internal control.";
 const OG_IMAGE_URL = "/og/trennt-og-1200x630.png";

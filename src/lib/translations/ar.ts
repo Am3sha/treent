@@ -15,7 +15,7 @@ export const ar = {
     services_heading: "الخدمات",
     benchmark_heading: "التقييم",
     copyright: "© {year} ترينت. جميع الحقوق محفوظة.",
-    cta_talk: "دعنا نتحدث عن المراجعة الداخلية.",
+    cta_talk: "تواصل معنا",
     cta_description: "تواصل مع فريقنا في الرياض لمناقشة كيف يمكننا دعم وظيفة المراجعة لديك.",
   },
   home: {

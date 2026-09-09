@@ -67,12 +67,12 @@ export function Footer() {
     {
       heading: t("footer.services_heading"),
       links: [
-        { label: isRTL ? "الاستعانة بمصادر خارجية للمراجعة الداخلية" : "Internal Audit Outsourcing", view: "internal-audit-outsourcing" as ViewKey },
-        { label: isRTL ? "المشاركة في المراجعة الداخلية" : "Internal Audit Co-Sourcing", view: "internal-audit-co-sourcing" as ViewKey },
-        { label: isRTL ? "تأسيس وظيفة المراجعة" : "Function Establishment", view: "internal-audit-function-establishment" as ViewKey },
-        { label: isRTL ? "تحول المراجعة الداخلية" : "Internal Audit Transformation", view: "internal-audit-transformation" as ViewKey },
-        { label: isRTL ? "برنامج ضمان وتحسين الجودة" : "QAIP", view: "quality-assurance-and-improvement-program" as ViewKey },
-        { label: isRTL ? "اتفاقيات الإطار" : "Framework Agreements", view: "framework-agreements" as ViewKey },
+        { label: isRTL ? "المراجعة الداخلية بنموذج Outsourcing" : "Internal Audit Outsourcing", view: "internal-audit-outsourcing" as ViewKey },
+        { label: isRTL ? "المراجعة الداخلية بنموذج Co-Sourcing" : "Internal Audit Co-Sourcing", view: "internal-audit-co-sourcing" as ViewKey },
+        { label: isRTL ? "تأسيس نشاط المراجعة الداخلية" : "Function Establishment", view: "internal-audit-function-establishment" as ViewKey },
+        { label: isRTL ? "تطوير نشاط المراجعة الداخلية" : "Internal Audit Transformation", view: "internal-audit-transformation" as ViewKey },
+        { label: isRTL ? "برنامج ضمان وتحسين الجودة (QAIP)" : "QAIP", view: "quality-assurance-and-improvement-program" as ViewKey },
+        { label: isRTL ? "الاتفاقيات الإطارية" : "Framework Agreements", view: "framework-agreements" as ViewKey },
       ],
     },
     {
