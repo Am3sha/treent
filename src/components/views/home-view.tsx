@@ -2,18 +2,12 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { m as motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { useNav } from "@/lib/store";
 import { Button } from "@/components/ui/button";
-import { Reveal, useReducedMotion } from "@/components/site/reveal";
-import { CountUp } from "@/components/site/count-up";
-import { TrenntParticleLogo } from "@/components/site/trennt-particle-logo";
 import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-const EASE_OUT = [0.16, 1, 0.3, 1] as const;
-
-function AnimatedProgressRing({
+function StatProgressRing({
   percent,
   size = 56,
   stroke = 4,
@@ -22,15 +16,6 @@ function AnimatedProgressRing({
   size?: number;
   stroke?: number;
 }) {
-  const reduced = useReducedMotion();
-  const [active, setActive] = React.useState(() => !!reduced);
-
-  React.useEffect(() => {
-    if (reduced) return;
-    const timer = setTimeout(() => setActive(true), 100);
-    return () => clearTimeout(timer);
-  }, [reduced]);
-
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const targetOffset = circumference * (1 - percent / 100);
@@ -57,8 +42,7 @@ function AnimatedProgressRing({
           fill="none"
           className="text-[#003D3C]"
           strokeDasharray={circumference}
-          strokeDashoffset={active ? targetOffset : circumference}
-          style={{ transition: reduced ? "none" : "stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}
+          strokeDashoffset={targetOffset}
         />
       </svg>
       <span className="absolute text-[12px] font-bold text-[#003D3C]">
@@ -68,116 +52,84 @@ function AnimatedProgressRing({
   );
 }
 
-function AnimatedBar({
-  percent,
-  delay = 0,
-}: {
-  percent: number;
-  delay?: number;
-}) {
-  const reduced = useReducedMotion();
-  const [active, setActive] = React.useState(() => !!reduced);
-
-  React.useEffect(() => {
-    if (reduced) return;
-    const timer = setTimeout(() => setActive(true), delay);
-    return () => clearTimeout(timer);
-  }, [delay, reduced]);
-
+function StatBar({ percent }: { percent: number }) {
   return (
     <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
       <div
-        className="h-full rounded-full bg-[#003D3C] origin-left transition-transform duration-500 ease-out"
+        className="h-full rounded-full bg-[#003D3C] origin-left"
         style={{
-          transform: active ? `scaleX(${percent / 100})` : "scaleX(0)",
+          transform: `scaleX(${percent / 100})`,
         }}
       />
     </div>
   );
 }
 
+// Static watermark logo for the capabilities section: same geometry and
+// final opacities the animated version settled on, zero motion.
+const WATERMARK_POINTS: [number, number][] = [
+  [20, 25], [35, 25], [50, 25], [65, 25], [80, 25],
+  [50, 40], [50, 55], [50, 70], [50, 85], [50, 100],
+  [95, 25], [95, 40], [95, 55], [95, 70], [95, 85], [95, 100],
+  [110, 25], [125, 25], [135, 35], [135, 50], [125, 60], [110, 60],
+  [115, 75], [125, 88], [135, 100],
+  [150, 25], [150, 40], [150, 55], [150, 70], [150, 85], [150, 100],
+  [165, 25], [180, 25], [190, 25],
+  [165, 60], [180, 60],
+  [165, 100], [180, 100], [190, 100],
+  [205, 25], [205, 40], [205, 55], [205, 70], [205, 85], [205, 100],
+  [217, 45], [228, 65], [238, 85],
+  [250, 25], [250, 40], [250, 55], [250, 70], [250, 85], [250, 100],
+  [265, 25], [265, 40], [265, 55], [265, 70], [265, 85], [265, 100],
+  [277, 45], [288, 65], [298, 85],
+  [310, 25], [310, 40], [310, 55], [310, 70], [310, 85], [310, 100],
+  [325, 25], [340, 25], [355, 25], [370, 25], [385, 25],
+  [355, 40], [355, 55], [355, 70], [355, 85], [355, 100],
+];
+
+function WatermarkLogo() {
+  return (
+    <div className="relative w-full max-w-[420px] aspect-[400/120]">
+      <svg
+        viewBox="0 0 400 125"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-full h-full overflow-visible"
+      >
+        <text
+          x="200"
+          y="102"
+          textAnchor="middle"
+          fontSize="92"
+          fontWeight="900"
+          letterSpacing="0.08em"
+          className="font-sans select-none"
+          fill="#013D3E"
+          opacity="0.18"
+        >
+          TRENNT
+        </text>
+        <g opacity="0.85">
+          {WATERMARK_POINTS.map(([x, y], idx) => (
+            <rect
+              key={idx}
+              x={x - 2}
+              y={y - 4}
+              width={idx % 3 === 0 ? 4.2 : 3.2}
+              height={idx % 3 === 0 ? 8.5 : 6.5}
+              rx="2"
+              fill={idx % 2 === 0 ? "#013D3E" : "#005A58"}
+            />
+          ))}
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export function HomeView() {
-  const { t, l, isRTL } = useTranslation();
+  const { t, isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
-  const reduced = useReducedMotion();
-
-  const { scrollY } = useScroll();
-  const heroImgY = useTransform(scrollY, [0, 600], [0, reduced ? 0 : -20]);
-  const heroImgScale = useTransform(scrollY, [0, 600], [1, reduced ? 1 : 1.03]);
-
-  const heroHeadline: Variants = {
-    hidden: { opacity: 1, y: reduced ? 0 : 12 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.06 },
-    },
-  };
-
-  const heroEyebrow: Variants = {
-    hidden: { opacity: 1, y: reduced ? 0 : 10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT },
-    },
-  };
-
-  const heroBody: Variants = {
-    hidden: { opacity: 1, y: reduced ? 0 : 10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.1 + i * 0.05 },
-    }),
-  };
-
-  const heroCta: Variants = {
-    hidden: { opacity: 1, y: reduced ? 0 : 8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.35, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
-    },
-  };
-
-  const heroImageContainer: Variants = {
-    hidden: { opacity: 1, y: reduced ? 0 : 12 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.45, ease: EASE_OUT, delay: reduced ? 0 : 0.1 },
-    },
-  };
-
-  const statCard1: Variants = {
-    hidden: { opacity: 1, x: reduced ? 0 : -12, y: reduced ? 0 : 8 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
-    },
-  };
-
-  const statCard2: Variants = {
-    hidden: { opacity: 1, y: reduced ? 0 : 10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
-    },
-  };
-
-  const statCard3: Variants = {
-    hidden: { opacity: 1, x: reduced ? 0 : 12, y: reduced ? 0 : 8 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: { duration: reduced ? 0 : 0.4, ease: EASE_OUT, delay: reduced ? 0 : 0.15 },
-    },
-  };
 
   return (
     <div className="flex flex-col bg-white text-[#121212] overflow-x-hidden">
@@ -192,20 +144,12 @@ export function HomeView() {
           <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
             {/* LEFT COLUMN: TYPOGRAPHY & CTA */}
             <div className={cn("lg:col-span-6 xl:col-span-6 z-10", isRTL && "font-arabic")}>
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={heroEyebrow}
-                className="text-[13px] font-semibold uppercase tracking-[0.2em] text-[#ADDFB3]"
-              >
+              <div className="text-[13px] font-semibold uppercase tracking-[0.2em] text-[#ADDFB3]">
                 {t("home.hero.eyebrow")}
-              </motion.div>
+              </div>
 
-              <motion.h1
+              <h1
                 id="hero-heading"
-                initial="hidden"
-                animate="visible"
-                variants={heroHeadline}
                 className={cn(
                   "mt-5 text-balance tracking-tight leading-[1.08]",
                   isRTL && "font-arabic"
@@ -217,24 +161,13 @@ export function HomeView() {
                 <span className="mt-1 sm:mt-2 block text-3xl font-extrabold tracking-tight text-[#ADDFB3] sm:text-4xl md:text-5xl lg:text-[56px]">
                   {t("home.hero.title_p2")}
                 </span>
-              </motion.h1>
+              </h1>
 
-              <motion.p
-                initial="hidden"
-                animate="visible"
-                custom={0}
-                variants={heroBody}
-                className="mt-6 max-w-md text-[16px] leading-[1.7] text-white/85 font-normal"
-              >
+              <p className="mt-6 max-w-md text-[16px] leading-[1.7] text-white/85 font-normal">
                 {t("home.hero.description")}
-              </motion.p>
+              </p>
 
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={heroCta}
-                className="mt-8"
-              >
+              <div className="mt-8">
                 <Button
                   asChild
                   onClick={(e) => {
@@ -245,21 +178,13 @@ export function HomeView() {
                 >
                   <a href="/#/services">{t("home.hero.cta_primary")}</a>
                 </Button>
-              </motion.div>
+              </div>
             </div>
 
             {/* RIGHT COLUMN: EXECUTIVE PORTRAIT & 3 FLOATING METRIC CARDS */}
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={heroImageContainer}
-              className="relative lg:col-span-6 xl:col-span-6 lg:mt-0"
-            >
+            <div className="relative lg:col-span-6 xl:col-span-6 lg:mt-0">
               <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
-                <motion.div
-                  style={{ y: heroImgY }}
-                  className="overflow-hidden rounded-t-[36px] border border-white/10 shadow-2xl"
-                >
+                <div className="overflow-hidden rounded-t-[36px] border border-white/10 shadow-2xl">
                   <Image
                     src="/trennt-hero-01.webp"
                     alt="TRENNT Executive Specialist"
@@ -267,17 +192,12 @@ export function HomeView() {
                     height={580}
                     priority
                     sizes="(max-width: 640px) 92vw, (max-width: 1024px) 500px, 580px"
-                    className="h-[520px] w-full object-cover lg:h-[580px] transition-transform duration-[6000ms] ease-out hover:scale-[1.03]"
+                    className="h-[520px] w-full object-cover lg:h-[580px]"
                   />
-                </motion.div>
+                </div>
 
                 {/* CARD 1: TOP LEFT BADGE — INTERNAL AUDIT PROGRESS */}
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={statCard1}
-                  className="absolute left-2 top-8 z-20 w-[220px] sm:w-[240px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-6"
-                >
+                <div className="absolute left-2 top-8 z-20 w-[220px] sm:w-[240px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-6">
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Internal Audit
                   </div>
@@ -285,7 +205,7 @@ export function HomeView() {
                     Engagement Progress
                   </div>
                   <div className="mt-3 flex items-center gap-3">
-                    <AnimatedProgressRing percent={78} />
+                    <StatProgressRing percent={78} />
                     <div>
                       <div className="text-[12px] font-bold text-[#003D3C] leading-tight">
                         Engagement<br />Completion
@@ -295,15 +215,10 @@ export function HomeView() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* CARD 2: BOTTOM LEFT BADGE — INTERNAL CONTROLS */}
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={statCard2}
-                  className="absolute left-2 bottom-10 z-20 w-[210px] sm:w-[230px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-8"
-                >
+                <div className="absolute left-2 bottom-10 z-20 w-[210px] sm:w-[230px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-left-8">
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Internal Controls
                   </div>
@@ -312,10 +227,10 @@ export function HomeView() {
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
                     <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
-                      <CountUp value="94%" duration={550} delay={150} />
+                      94%
                     </span>
                     <div className="text-right">
-                      <span className="text-[12px] font-bold text-[#008A54]">
+                      <span className="text-[12px] font-bold text-[#00794A]">
                         Effective
                       </span>
                       <div className="text-[10px] text-gray-500">
@@ -324,17 +239,12 @@ export function HomeView() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <AnimatedBar percent={94} delay={200} />
+                    <StatBar percent={94} />
                   </div>
-                </motion.div>
+                </div>
 
                 {/* CARD 3: BOTTOM RIGHT BADGE — GOVERNANCE ASSESSMENT */}
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={statCard3}
-                  className="absolute right-2 bottom-4 z-20 w-[210px] sm:w-[235px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-right-4"
-                >
+                <div className="absolute right-2 bottom-4 z-20 w-[210px] sm:w-[235px] rounded-[16px] bg-white p-4 shadow-2xl border border-black/5 text-[#121212] sm:-right-4">
                   <div className="text-[13px] font-bold text-[#003D3C]">
                     Governance Assessment
                   </div>
@@ -343,10 +253,10 @@ export function HomeView() {
                   </div>
                   <div className="mt-3 flex items-baseline justify-between">
                     <span className="text-[30px] font-extrabold text-[#003D3C] leading-none tracking-tight">
-                      <CountUp value="92%" duration={550} delay={200} />
+                      92%
                     </span>
                     <div className="text-right">
-                      <span className="text-[12px] font-bold text-[#E69D00]">
+                      <span className="text-[12px] font-bold text-[#9A6800]">
                         Strong
                       </span>
                       <div className="text-[10px] text-gray-500">
@@ -355,11 +265,11 @@ export function HomeView() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <AnimatedBar percent={92} delay={260} />
+                    <StatBar percent={92} />
                   </div>
-                </motion.div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -370,15 +280,13 @@ export function HomeView() {
       <section className="bg-[#F8F9FA] py-20 lg:py-28 border-b border-gray-100">
         <div className="section-shell">
           <div className={cn("max-w-4xl w-full", isRTL && "ml-auto text-right")}>
-            <Reveal y={16} duration={0.6}>
-              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                {t('home.about.eyebrow')}
-              </div>
-              <h2 className="mt-6 text-[32px] sm:text-[40px] font-medium leading-[1.25] text-[#121212] tracking-tight">
-                {t('home.about.heading')}
-              </h2>
-            </Reveal>
+            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+              {t('home.about.eyebrow')}
+            </div>
+            <h2 className="mt-6 text-[32px] sm:text-[40px] font-medium leading-[1.25] text-[#121212] tracking-tight">
+              {t('home.about.heading')}
+            </h2>
           </div>
         </div>
       </section>
@@ -390,32 +298,28 @@ export function HomeView() {
         <div className="section-shell">
           <div className="grid items-center gap-12 lg:grid-cols-12">
             <div className={cn("lg:col-span-5", isRTL && "text-right")}>
-              <Reveal y={16} duration={0.6}>
-                <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                  <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                  {t('home.expertise.eyebrow')}
-                </div>
-                <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212] whitespace-pre-line">
-                  {t('home.expertise.heading')}
-                </h2>
-                <p className={cn("mt-6 text-[15px] leading-relaxed text-gray-500 max-w-2xl", isRTL && "mr-0 ml-auto")}>
-                  {t('home.expertise.description')}
-                </p>
-              </Reveal>
+              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+                {t('home.expertise.eyebrow')}
+              </div>
+              <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212] whitespace-pre-line">
+                {t('home.expertise.heading')}
+              </h2>
+              <p className={cn("mt-6 text-[15px] leading-relaxed text-gray-500 max-w-2xl", isRTL && "mr-0 ml-auto")}>
+                {t('home.expertise.description')}
+              </p>
             </div>
             <div className={cn("lg:col-span-7")}>
-              <Reveal y={16} duration={0.6} delay={0.1}>
-                <div className="relative overflow-hidden rounded-[24px] border border-gray-100 shadow-xl aspect-[4/3]">
-                  <Image
-                    src="/trennt-hero-02.webp"
-                    alt="Our Expertise"
-                    fill
-                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 40vw"
-                    loading="lazy"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
-                  />
-                </div>
-              </Reveal>
+              <div className="relative overflow-hidden rounded-[24px] border border-gray-100 shadow-xl aspect-[4/3]">
+                <Image
+                  src="/trennt-hero-02.webp"
+                  alt="Our Expertise"
+                  fill
+                  sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 40vw"
+                  loading="lazy"
+                  className="object-cover"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -423,12 +327,7 @@ export function HomeView() {
 
       {/* 4. WATERMARK & SERVICES SECTION                                  */}
       {/* ================================================================ */}
-      <Reveal
-        as="section"
-        y={18}
-        duration={0.65}
-        className="relative py-24 lg:py-36 bg-[#F4F7F6] overflow-hidden border-t border-b border-gray-100"
-      >
+      <section className="relative py-24 lg:py-36 bg-[#F4F7F6] overflow-hidden border-t border-b border-gray-100">
         <div
           className={cn(
             "absolute top-1/2 -translate-y-1/2 w-[36%] max-w-[420px] pointer-events-none select-none hidden md:block",
@@ -436,36 +335,34 @@ export function HomeView() {
           )}
           aria-hidden="true"
         >
-          <TrenntParticleLogo />
+          <WatermarkLogo />
         </div>
 
         <div className="section-shell relative z-10">
           <div className={cn("max-w-3xl w-full", isRTL && "ml-auto text-right")}>
-            <Reveal y={16} duration={0.6}>
-              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                {t('home.capabilities.eyebrow')}
-              </div>
-              <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
-                {t('home.capabilities.heading')}
-              </h2>
+            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
+              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+              {t('home.capabilities.eyebrow')}
+            </div>
+            <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
+              {t('home.capabilities.heading')}
+            </h2>
 
-              <div className={cn("mt-8 flex", isRTL && "justify-end")}>
-                <Button
-                  asChild
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate("services");
-                  }}
-                  className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <a href="/#/services">{t("home.capabilities.cta")}</a>
-                </Button>
-              </div>
-            </Reveal>
+            <div className={cn("mt-8 flex", isRTL && "justify-end")}>
+              <Button
+                asChild
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("services");
+                }}
+                className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <a href="/#/services">{t("home.capabilities.cta")}</a>
+              </Button>
+            </div>
           </div>
         </div>
-      </Reveal>
+      </section>
 
 
     </div>

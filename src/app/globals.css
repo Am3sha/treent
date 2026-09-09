@@ -295,14 +295,16 @@
     position: absolute;
     bottom: -2px;
     left: 0;
-    width: 0;
+    width: 100%;
     height: 1px;
     background-color: currentColor;
-    transition: width 0.3s ease;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s ease;
   }
 
   .hover-underline-grow:hover::after {
-    width: 100%;
+    transform: scaleX(1);
   }
 
   .number-display {

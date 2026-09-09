@@ -3,6 +3,11 @@
  * Serves as the single source of truth for site URL, domain name, public contact email, and CORS/allowed origins.
  */
 
+// Production canonical domain: trennt.net (apex - Vercel dashboard set the
+// Primary/Production domain to the bare apex; www redirects to it).
+// metadataBase/canonical/og:url/sitemap/robots/JSON-LD all derive from this
+// single value. getAllowedOrigins() still accepts both hosts for form
+// submissions, so visitors landing on either host keep working forms.
 const DEFAULT_SITE_URL = "https://trennt.net";
 
 /**

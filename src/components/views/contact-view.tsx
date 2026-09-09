@@ -441,7 +441,7 @@ export function ContactView() {
                             initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0.5, y: 0 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={reduced ? { duration: 0 } : { duration: 0.25, ease: EASE_OUT }}
-                            className="text-xs text-gray-400 tabular-nums"
+                            className="text-xs text-gray-500 tabular-nums"
                           >
                             {charCount} {t('contact.form.labels.characters')}
                           </motion.p>

@@ -51,6 +51,30 @@ function useEntrancePhase(
   return phase;
 }
 
+/**
+ * Low-power device detection (<=4 CPU cores or Data-Saver). Hydration-safe:
+ * server and first client paint render the full-fidelity tree (server
+ * snapshot = false), and the true value applies in the first post-mount
+ * render - before framer features start any animation.
+ */
+export function useLowPower(): boolean {
+  return React.useSyncExternalStore(
+    () => () => {},
+    () => {
+      try {
+        const cores = navigator.hardwareConcurrency || 8;
+        const conn = (
+          navigator as Navigator & { connection?: { saveData?: boolean } }
+        ).connection;
+        return cores <= 4 || conn?.saveData === true;
+      } catch {
+        return false;
+      }
+    },
+    () => false
+  );
+}
+
 export function Reveal({
   children,
   className,

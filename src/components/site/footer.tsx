@@ -7,9 +7,7 @@ import { Logo } from "./logo";
 import { useNav } from "@/lib/store";
 import { COMPANY } from "@/lib/content";
 import type { ViewKey } from "@/lib/types";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { EMAIL_RE } from "@/lib/validation";
 import { Reveal, RevealStagger, useReducedMotion, EASE_OUT } from "@/components/site/reveal";
 import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -51,12 +49,6 @@ const FOOTER_NAV: { heading: string; links: { label: string; view: ViewKey }[] }
   },
 ];
 
-const newsletterFormSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
-
-type NewsletterFormValues = z.infer<typeof newsletterFormSchema>;
-
 export function Footer() {
   const { t, l, isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
@@ -92,33 +84,35 @@ export function Footer() {
     },
   ];
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<NewsletterFormValues>({
-    resolver: zodResolver(newsletterFormSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
+  const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState<string | null>(null);
 
-  const subscribe = async (data: NewsletterFormValues) => {
+  const subscribe = async () => {
     setStatus("loading");
     try {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email }),
+        body: JSON.stringify({ email }),
       });
       const result = (await res.json()) as { ok: boolean; data?: { alreadySubscribed?: boolean } };
       if (!res.ok) throw new Error("failed");
       setStatus(result.data?.alreadySubscribed ? "already-subscribed" : "ok");
-      reset();
+      setEmail("");
     } catch {
       setStatus("err");
     }
+  };
+
+  const onNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmed = email.trim();
+    if (!EMAIL_RE.test(trimmed)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    setEmailError(null);
+    void subscribe();
   };
 
   const socialHover = reduced
@@ -160,7 +154,7 @@ export function Footer() {
                 <Logo variant="light" />
               </motion.div>
 
-              <form onSubmit={handleSubmit(subscribe)} className="max-w-sm">
+              <form onSubmit={onNewsletterSubmit} className="max-w-sm">
                 <label
                   htmlFor="footer-newsletter"
                   className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#ADDFB3]/80"
@@ -173,7 +167,8 @@ export function Footer() {
                       id="footer-newsletter"
                       type="email"
                       autoComplete="email"
-                      {...register("email")}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@company.com"
                       className="h-11 flex-1 rounded-full bg-transparent px-5 text-[14px] text-white placeholder:text-white/40 outline-none"
                     />
@@ -188,9 +183,9 @@ export function Footer() {
                       {status === "loading" ? "…" : "Subscribe"}
                     </motion.button>
                   </div>
-                  {errors.email && (
+                  {emailError && (
                     <p className="text-[12px] text-[#FFB4B4]">
-                      {errors.email.message}
+                      {emailError}
                     </p>
                   )}
                   {status === "ok" && (

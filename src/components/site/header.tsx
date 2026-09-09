@@ -208,10 +208,10 @@ function DesktopServicesNav({ active, onNavigate, reduced }: DesktopServicesNavP
         />
         <span
           className={cn(
-            "absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ease-out",
+            "absolute left-0 -bottom-1 h-[2px] w-full origin-left rounded-full bg-[#ADDFB3] transition-transform duration-300 ease-out",
             active
-              ? "w-full bg-[#ADDFB3]"
-              : "w-0 bg-[#ADDFB3] group-hover:w-full"
+              ? "scale-x-100"
+              : "scale-x-0 group-hover:scale-x-100"
           )}
         />
       </a>
@@ -516,10 +516,10 @@ export function Header() {
                 {item.label}
                 <span
                   className={cn(
-                    "absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ease-out",
+                    "absolute left-0 -bottom-1 h-[2px] w-full origin-left rounded-full bg-[#ADDFB3] transition-transform duration-300 ease-out",
                     active
-                      ? "w-full bg-[#ADDFB3]"
-                      : "w-0 bg-[#ADDFB3] group-hover:w-full"
+                      ? "scale-x-100"
+                      : "scale-x-0 group-hover:scale-x-100"
                   )}
                 />
               </a>
