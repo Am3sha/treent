@@ -26,7 +26,7 @@ export const COMPANY = {
   get email() {
     return getSiteEmail();
   },
-  phone: "+966 50 123 4567",
+  phone: "+966 51 050 6606",
   address: {
     en: "Riyadh,Saudi Arabia",
     ar: "الرياض، السعودية"

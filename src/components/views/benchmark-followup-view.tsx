@@ -443,14 +443,14 @@ export function BenchmarkFollowupView() {
                     {COMPANY.email}
                   </a>
                   <a
-                    href="tel:+966501234567"
+                    href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}
                     className={cn(
                       "mt-2 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground",
                       isRTL && "flex-row-reverse"
                     )}
                   >
                     <Phone className="h-3.5 w-3.5" />
-                    +966 50 123 4567
+                    {COMPANY.phone}
                   </a>
                 </CardContent>
               </Card>
