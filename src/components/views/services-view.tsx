@@ -215,7 +215,7 @@ export function ServicesView() {
                           : "bg-white text-[#003D3C]/70 border border-gray-200 group-hover:border-[#003D3C]/20"
                       )}
                     >
-                      {String(i + 1).padStart(2, "0")}
+                      {String(i + 1)}
                     </span>
                     <span className="relative z-10 tracking-tight">
                       {l(s.title)}
@@ -277,13 +277,13 @@ export function ServicesView() {
                               )}
                             </span>
                             <span className="font-mono text-xs font-semibold text-[#003D3C]/70 bg-white border border-[#003D3C]/10 px-2.5 py-0.5 rounded-full">
-                              {String(activeIdx + 1).padStart(2, "0")}
+                              {String(activeIdx + 1)}
                             </span>
                             <Badge
                               className={cn(
                                 "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider border-0 shadow-2xs",
                                 category.isCore
-                                  ? "bg-[#003D3C] text-white"
+                                  ? "bg-[#ADDFB3] text-[#003D3C]"
                                   : "bg-[#ADDFB3] text-[#003D3C]"
                               )}
                             >
@@ -358,7 +358,7 @@ export function ServicesView() {
                               <motion.li
                                 key={i}
                                 variants={itemVariants}
-                                className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"
+                                className="flex items-start gap-2.5 text-sm leading-relaxed text-[#003D3C] font-medium"
                               >
                                 <span
                                   className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#003D3C]/60"
@@ -413,13 +413,13 @@ export function ServicesView() {
                           )}
                         </span>
                         <span className="font-mono text-xs font-semibold text-[#003D3C]/70 bg-gray-50 border border-gray-200 px-2.5 py-0.5 rounded-full">
-                          {String(i + 1).padStart(2, "0")}
+                          {String(i + 1)}
                         </span>
                         <Badge
                           className={cn(
                             "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider border-0 shadow-2xs",
                             category.isCore
-                              ? "bg-[#003D3C] text-white"
+                              ? "bg-[#ADDFB3] text-[#003D3C]"
                               : "bg-[#ADDFB3] text-[#003D3C]"
                           )}
                         >
@@ -476,7 +476,7 @@ export function ServicesView() {
                             {s.deliverables.map((d, i) => (
                               <li
                                 key={i}
-                                className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"
+                                className="flex items-start gap-2.5 text-sm leading-relaxed text-[#003D3C] font-medium"
                               >
                                 <span
                                   className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#003D3C]/60"

@@ -144,8 +144,11 @@
 
   html[dir="rtl"] body,
   [lang="ar"] body,
-  [lang="ar"] .font-arabic {
-    font-family: var(--font-arabic), var(--font-geist-sans), sans-serif;
+  [lang="ar"] .font-arabic,
+  body[dir="rtl"],
+  body[dir="rtl"] .font-arabic,
+  html[data-ar-boot] body {
+    font-family: var(--font-arabic), "Noto Naskh Arabic", "Arial", var(--font-geist-sans), sans-serif;
   }
 
   /* C4: Arabic-deep-link first paint (see boot script in layout.tsx): make the
@@ -156,12 +159,53 @@
     direction: rtl;
   }
 
-  /* Arabic shaping is handled by the font; do not apply Latin tracking. */
-  html[dir="rtl"] body,
-  html[dir="rtl"] body *,
-  html[lang="ar"] body,
-  html[lang="ar"] body * {
-    letter-spacing: 0;
+  /* Arabic shaping is handled by the font; do not apply Latin tracking.
+     - Geist-specific font-feature-settings "ss01","cv11" on body must NOT leak
+       into Arabic: Noto Sans Arabic lacks them, and Safari Core Text can
+       interpret unknown OpenType feature tags in a way that breaks Arabic
+       ligature shaping (lam-alef, meem-lam, connected letters like ممارسة حصرية).
+     - letter-spacing MUST be `normal` (not literal `0`) on Arabic: Safari
+       distinguishes the two, and literal `0` overrides the font's own
+       inter-glyph shaping metrics for connected scripts.
+     - body[dir="rtl"] is the real RTL signal because LanguageAttributes keeps
+       html.dir=="ltr" (scrollbar stays on the right) and flips only body.dir.
+     - html[data-ar-boot] covers the first-paint boot-script window before
+       LanguageAttributes hydrates body.dir (see C4 above). */
+  html[lang="ar"] *,
+  body[dir="rtl"] *,
+  .font-arabic,
+  .font-arabic *,
+  html[data-ar-boot] * {
+    letter-spacing: normal;
+    font-feature-settings: normal;
+    font-kerning: normal;
+    font-variant-ligatures: normal;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Explicit neutralization for the named utility classes that carry Latin
+     tracking (eyebrow labels and editorial headings). The generic rule above
+     already wins on specificity against anonymous Tailwind `tracking-*` classes
+     (attribute+type [0,1,1] > class-only [0,1,0]). These per-class overrides
+     guard against future refactors where those utilities might gain extra
+     selectors; scope is purely Arabic so !important is safe and contained. */
+  html[lang="ar"] .eyebrow-label,
+  body[dir="rtl"] .eyebrow-label,
+  html[data-ar-boot] .eyebrow-label,
+  html[lang="ar"] .eyebrow-label-inverse,
+  body[dir="rtl"] .eyebrow-label-inverse,
+  html[data-ar-boot] .eyebrow-label-inverse,
+  html[lang="ar"] .editorial-h1,
+  body[dir="rtl"] .editorial-h1,
+  html[data-ar-boot] .editorial-h1,
+  html[lang="ar"] .editorial-h2,
+  body[dir="rtl"] .editorial-h2,
+  html[data-ar-boot] .editorial-h2,
+  html[lang="ar"] .editorial-h3,
+  body[dir="rtl"] .editorial-h3,
+  html[data-ar-boot] .editorial-h3 {
+    letter-spacing: normal !important;
   }
 
   ::selection {

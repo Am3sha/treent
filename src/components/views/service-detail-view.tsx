@@ -87,7 +87,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                     className={cn(
                                         "inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider shadow-2xs",
                                         category.isCore
-                                            ? "bg-[#003D3C] text-white"
+                                            ? "bg-[#ADDFB3] text-[#003D3C]"
                                             : "bg-[#ADDFB3] text-[#003D3C]"
                                     )}
                                 >
@@ -169,7 +169,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                     <RevealStagger className="mt-6 space-y-3.5">
                                         {service.deliverables.map((deliverable, i) => (
                                             <Reveal key={i} delay={i * 0.04}>
-                                                <li className="flex items-start gap-3 text-sm font-medium text-gray-700 leading-snug">
+                                                <li className="flex items-start gap-3 text-sm font-medium text-[#003D3C] leading-snug">
                                                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#003D3C]" aria-hidden />
                                                     <span>{l(deliverable)}</span>
                                                 </li>
@@ -226,7 +226,7 @@ export function ServiceDetailView({ slug }: { slug: string }) {
                                                     className={cn(
                                                         "rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider",
                                                         cat.isCore
-                                                            ? "bg-[#003D3C] text-white"
+                                                            ? "bg-[#ADDFB3] text-[#003D3C]"
                                                             : "bg-[#ADDFB3] text-[#003D3C]"
                                                     )}
                                                 >
