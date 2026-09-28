@@ -161,16 +161,25 @@
 
   /* Arabic shaping is handled by the font; do not apply Latin tracking.
      - Geist-specific font-feature-settings "ss01","cv11" on body must NOT leak
-       into Arabic: Noto Sans Arabic lacks them, and Safari Core Text can
-       interpret unknown OpenType feature tags in a way that breaks Arabic
-       ligature shaping (lam-alef, meem-lam, connected letters like ممارسة حصرية).
-     - letter-spacing MUST be `normal` (not literal `0`) on Arabic: Safari
-       distinguishes the two, and literal `0` overrides the font's own
-       inter-glyph shaping metrics for connected scripts.
+       into Arabic: Noto Sans Arabic does not define those tags. The impact of
+       unknown OpenType feature tags on connected-script shaping is a HYPOTHESIS
+       (not verified against real iOS Safari / Core Text in this session) — the
+       safe default is `normal` regardless, so unknown tags are not requested.
+       Reported symptom candidate: broken Arabic ligature shaping (lam-alef,
+       meem-lam, connected letters such as ممارسة حصرية rendering as disjoint).
+     - letter-spacing MUST be `normal` (not literal `0`) on Arabic. Whether a
+       literal `letter-spacing: 0` on connected scripts overrides the font's
+       own inter-glyph shaping metrics in WebKit/Core Text is a HYPOTHESIS (not
+       verified against real iOS Safari / Core Text in this session). Using
+       `normal` is the safer primitive and is what was verified via off-device
+       Playwright WebKit computed-style checks in this repository.
      - body[dir="rtl"] is the real RTL signal because LanguageAttributes keeps
        html.dir=="ltr" (scrollbar stays on the right) and flips only body.dir.
      - html[data-ar-boot] covers the first-paint boot-script window before
-       LanguageAttributes hydrates body.dir (see C4 above). */
+       LanguageAttributes hydrates body.dir (see C4 above). PROVEN off-device
+       via simulated data-ar-boot injection: BODY direction becomes `rtl`,
+       Arabic font loads, and `letter-spacing`/`font-feature-settings` on
+       tracking-bearing elements neutralize to `normal`. */
   html[lang="ar"] *,
   body[dir="rtl"] *,
   .font-arabic,
@@ -354,4 +363,98 @@
   .number-display {
     @apply font-mono text-sm font-medium opacity-60 tracking-wide;
   }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   GLOBAL ARABIC TYPOGRAPHY NORMALIZATION
+   ──────────────────────────────────────────────────────────────────────────
+   PLACEMENT: This block lives OUTSIDE every @layer. By CSS Cascade Layer
+   rules, style rules declared outside any layer ALWAYS win over rules
+   declared inside layers (base / components / utilities), regardless of specificity.
+   This is the only reliable way to neutralize Tailwind's `tracking-*` utility
+   classes AND custom utilities like `.editorial-h1` and `.eyebrow-label`
+   that ship `letter-spacing` in the utilities layer. PROVEN off-device:
+   Playwright WebKit (Windows build) reports `letter-spacing: normal` and
+   `font-feature-settings: normal` on 40/40 Arabic samples across 6 pages
+   (home / services / benchmark-landing / contact / careers / about),
+   and 66/66 English-page samples retain original Latin tracking values,
+   confirming zero bleed in either direction.
+
+   WHY THIS SHAPING-FOCUS (NOT CONFIRMED — FRAMED AS WORKING HYPOTHESIS):
+   The Arabic visual symptom we are guarding against is "disconnected Arabic
+   letters" in connected-script rendering (e.g. ممارسة حصرية appearing with lam-alef or
+   meem-lam ligatures split into disjoint glyphs). A possible cause COULD BE:
+   • A Latin-oriented `letter-spacing` / `font-feature-settings` combo
+     being applied to a connected-script font (Noto Sans Arabic) in
+     Safari WebKit / Core Text, which is known to be stricter about
+     connected-script layout rules than Chromium/HarfBuzz.
+   • HYPOTHETICAL MECHANISM (NOT CONFIRMED ON REAL IOS SAFARI / CORE TEXT
+     IN THIS SESSION — real-device glyph shaping cannot be proven from Playwright
+     WebKit on Windows):
+     → Any non-`normal` letter-spacing could interfere with the font's
+       cursive-joining tables for connected glyphs (ﻡﻣﺎﺭﺳﺓ vs ممارسة).
+     → Unknown OpenType feature tags ("ss01", "cv11" are Geist/Latin
+       only — unknown to Noto Sans Arabic) COULD IN THEORY be interpreted by
+       Core Text as "disable unknown features globally" and accidentally
+       disable `curs`, `liga`, `kern` that Noto Sans Arabic needs for
+       shaping. This claim is made as a working hypothesis, not as confirmed
+       fact.
+     → `font-kerning: auto` on WebKit also inherits Latin tracking
+       values into Arabic text runs unless explicitly reset (also a
+       working hypothesis, not confirmed on real iOS Safari in this
+       session).
+
+   WHAT WAS VERIFIED (off-device, computed CSS only):
+   • Arabic pages (6) → ALL tracking-tight / tracking-wide / tracking-widest /
+     tracking-[0.2em] / .eyebrow-label / .editorial-h1/h2/h3 elements report
+     getComputedStyle().letterSpacing === "normal".
+   • English pages (6) → same elements retain original Latin
+     letter-spacing (e.g. eyebrow-label 0.22em equivalent,
+     editorial-h1 -0.03em equivalent, body font-feature-settings
+     "ss01","cv11" preserved for Geist body level).
+   • Simulated html[data-ar-boot] first-paint state → BODY direction:rtl,
+     Arabic font loaded, tracking-bearing elements neutralize to normal before
+     LanguageAttributes hydrates and removes data-ar-boot.
+   • Client-side language toggles (EN ↔ AR via header toggle) → attributes
+     correctly, FFS restores to "ss01","cv11" on EN and resets to
+     normal on AR.
+
+   SELECTOR COVERAGE — every possible way Arabic is active:
+   • html[lang="ar"]       — set by LanguageAttributes on hydration AND
+                             by the #/ar/ deep-link boot script (before
+                             body.dir is flipped)
+   • body[dir="rtl"]       — the real direction signal after hydration
+                             (html.dir is intentionally left "ltr" to keep
+                             scrollbar on the right for both langs)
+   • html[data-ar-boot]    — first-paint deep-link boot state, cleared
+                             by LanguageAttributes after first render (PROVEN
+                             via simulated attribute injection in the
+                             integrated browser — direction/state above)
+   • .font-arabic          — explicit opt-in class (defensive)
+
+   All properties are `!important` because:
+   (a) scope is PURELY Arabic (no English bleed — PROVEN),
+   (b) inline `style="letter-spacing: ..."` would otherwise win, and
+   (c) it guarantees no future refactor can accidentally reintroduce
+       Latin tracking on Arabic text.
+   ──────────────────────────────────────────────────────────────────────── */
+html[lang="ar"] *,
+html[lang="ar"] *::before,
+html[lang="ar"] *::after,
+body[dir="rtl"] *,
+body[dir="rtl"] *::before,
+body[dir="rtl"] *::after,
+html[data-ar-boot] *,
+html[data-ar-boot] *::before,
+html[data-ar-boot] *::after,
+.font-arabic,
+.font-arabic *,
+.font-arabic *::before,
+.font-arabic *::after {
+  letter-spacing: normal !important;
+  font-feature-settings: normal !important;
+  font-kerning: normal !important;
+  font-variant-ligatures: normal !important;
+  font-optical-sizing: auto !important;
+  text-rendering: optimizeLegibility !important;
 }
