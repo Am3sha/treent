@@ -351,7 +351,7 @@ export function BenchmarkLandingView() {
                 className="absolute inset-0 rounded-3xl opacity-60"
                 style={{
                   background:
-                    "linear-gradient(135deg, oklch(0.38 0.06 162), oklch(0.72 0.13 75), oklch(0.52 0.1 195))",
+                    "linear-gradient(135deg, #003D3C, #ADDFB3)",
                 }}
                 aria-hidden
               />

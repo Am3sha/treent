@@ -6,8 +6,11 @@ import { useNav } from "@/lib/store";
 import { Reveal, Eyebrow } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 export function NotFoundView() {
+  const { isRTL } = useTranslation();
   const navigate = useNav((s) => s.navigate);
   const attemptedPath =
     typeof window !== "undefined"
@@ -23,7 +26,7 @@ export function NotFoundView() {
   ];
 
   return (
-    <div className="bg-background">
+    <div className="bg-background" dir={isRTL ? "rtl" : "ltr"}>
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60 bg-secondary/30">
         <div className="absolute inset-0 bg-radial-fade opacity-70" />
@@ -75,7 +78,7 @@ export function NotFoundView() {
           <Reveal delay={0.25}>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button size="lg" onClick={() => navigate("home")}>
-                <HomeIcon className="mr-2 h-4 w-4" />
+                <HomeIcon className="mr-2 h-4 w-4 rtl:mr-0 rtl:ml-2" />
                 Back to home
               </Button>
               <Button
@@ -83,7 +86,7 @@ export function NotFoundView() {
                 variant="outline"
                 onClick={() => navigate("benchmark-landing")}
               >
-                <Search className="mr-2 h-4 w-4" />
+                <Search className="mr-2 h-4 w-4 rtl:mr-0 rtl:ml-2" />
                 Try the benchmark
               </Button>
             </div>
@@ -103,7 +106,7 @@ export function NotFoundView() {
             <Reveal key={s.label} delay={0.05 * i}>
               <button
                 onClick={() => navigate(s.view)}
-                className="group w-full text-left"
+                className="group w-full text-left rtl:text-right"
               >
                 <Card className="h-full p-5 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5">
                   <div className="flex items-center justify-between">
@@ -113,7 +116,7 @@ export function NotFoundView() {
                         {s.hint}
                       </p>
                     </div>
-                    <ArrowLeft className="h-4 w-4 text-muted-foreground/50 transition-all duration-300 group-hover:-translate-x-0.5 group-hover:text-primary" />
+                    <ArrowLeft className={cn("h-4 w-4 text-muted-foreground/50 transition-all duration-300 group-hover:text-primary", isRTL ? "rotate-180 group-hover:translate-x-0.5" : "group-hover:-translate-x-0.5")} />
                   </div>
                 </Card>
               </button>

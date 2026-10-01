@@ -15,7 +15,7 @@ import { PERKS } from "@/lib/content";
 import type { CareerItem } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/site/icon";
-import { Reveal, Eyebrow, SectionHeading } from "@/components/site/reveal";
+import { Reveal } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -118,31 +118,33 @@ export function CareersView() {
       {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="careers-hero-heading"
-        className="relative overflow-hidden border-b border-border/60"
+        className="relative overflow-hidden bg-[#003D3C] text-white py-16 lg:py-24 border-b border-white/10"
       >
-        <div className="absolute inset-0 bg-radial-fade" aria-hidden />
-        <div className="absolute inset-0 bg-grid mask-fade-b opacity-50" aria-hidden />
-        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 md:pb-24 md:pt-24 lg:px-8">
+        <div className="section-shell relative z-10">
           <div className="grid items-center gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-7">
-              <Reveal>
-                <Eyebrow>{t('careers.hero.eyebrow')}</Eyebrow>
+            <div className="lg:col-span-8">
+              <Reveal y={14} duration={0.55}>
+                <div className="text-[16px] sm:text-[18px] font-bold uppercase tracking-[0.18em] text-[#ADDFB3]">
+                  {t('careers.hero.eyebrow')}
+                </div>
               </Reveal>
-              <Reveal delay={0.05}>
+              <Reveal y={14} duration={0.55} delay={0.05}>
                 <h1
                   id="careers-hero-heading"
-                  className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl md:leading-[1.02]"
+                  className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
                 >
                   {t('careers.hero.heading')}{" "}
-                  <span className="text-primary">{t('careers.hero.heading_accent')}</span>
+                  {t('careers.hero.heading_accent') && (
+                    <span className="text-[#ADDFB3]">{t('careers.hero.heading_accent')}</span>
+                  )}
                 </h1>
               </Reveal>
-              <Reveal delay={0.1}>
-                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance">
+              <Reveal y={14} duration={0.55} delay={0.1}>
+                <p className="mt-6 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80">
                   {t('careers.hero.description')}
                 </p>
               </Reveal>
-              <Reveal delay={0.15}>
+              <Reveal y={14} duration={0.55} delay={0.15}>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Button
                     size="lg"
@@ -150,7 +152,7 @@ export function CareersView() {
                       const el = document.getElementById("open-roles");
                       el?.scrollIntoView({ behavior: "smooth", block: "start" });
                     }}
-                    className="h-11 gap-2 rounded-full bg-primary px-6 text-primary-foreground shadow-sm hover:bg-primary/90"
+                    className="h-11 gap-2 rounded-full bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#003D3C] hover:bg-[#c2e8c4] transition-all"
                   >
                     {t('careers.hero.cta_roles')}
                     <ArrowDown className="h-4 w-4" />
@@ -159,7 +161,7 @@ export function CareersView() {
                     size="lg"
                     variant="outline"
                     onClick={() => setActiveRole(GENERAL_APPLICATION_ROLE)}
-                    className="h-11 gap-2 rounded-full border-border/70 px-6 hover:bg-accent hover:text-accent-foreground"
+                    className="h-11 gap-2 rounded-full border-white/20 bg-white/10 px-6 text-[14px] font-semibold text-white hover:bg-white hover:text-[#003D3C] transition-all"
                   >
                     {t('careers.hero.cta_apply')}
                     <ArrowRight className="h-4 w-4" />
@@ -167,7 +169,6 @@ export function CareersView() {
                 </div>
               </Reveal>
             </div>
-
           </div>
         </div>
       </section>
@@ -178,29 +179,34 @@ export function CareersView() {
       <section
         id="open-roles"
         aria-labelledby="open-roles-heading"
-        className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 md:py-28 lg:px-8"
+        className="section-shell scroll-mt-20 py-20 lg:py-28"
       >
-        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeading
-            eyebrow={t('careers.roles.eyebrow')}
-            title={t('careers.roles.title')}
-            description={t('careers.roles.description')}
-            className="max-w-2xl"
-          />
-        </div>
+        <Reveal y={14} duration={0.55}>
+          <div className="max-w-3xl">
+            <h2
+              id="open-roles-heading"
+              className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-[#121212] leading-[1.15] tracking-tight"
+            >
+              {t('careers.roles.title')}
+            </h2>
+            <p className="mt-4 text-[16px] sm:text-[18px] text-gray-600 leading-relaxed">
+              {t('careers.roles.description')}
+            </p>
+          </div>
+        </Reveal>
 
-        <Reveal>
-          <div className="mt-12 overflow-hidden rounded-2xl border border-border/70 bg-card p-6 sm:p-8 transition-all hover:border-primary/30 hover:shadow-md">
+        <Reveal y={14} duration={0.55} delay={0.08}>
+          <div className="mt-10 overflow-hidden rounded-[20px] border border-gray-200 bg-white p-6 sm:p-8 shadow-sm transition-all hover:border-[#003D3C]/30 hover:shadow-md">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4">
-                <span className="mt-0.5 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span className="mt-0.5 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#EEF4F2] text-[#003D3C]">
                   <Send className="h-5 w-5" />
                 </span>
                 <div>
-                  <h3 className="text-xl font-semibold tracking-tight text-foreground">
+                  <h3 className="text-[20px] font-bold text-[#121212] tracking-tight">
                     {t('careers.roles.card_title')}
                   </h3>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground/90">
+                  <p className="mt-2 max-w-2xl text-[14px] sm:text-[15px] leading-relaxed text-gray-600">
                     {t('careers.roles.card_description')}
                   </p>
                 </div>
@@ -209,7 +215,7 @@ export function CareersView() {
                 <Button
                   onClick={() => setActiveRole(GENERAL_APPLICATION_ROLE)}
                   size="lg"
-                  className="h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground shadow-sm hover:bg-primary/90"
+                  className="h-11 gap-2 rounded-full bg-[#ADDFB3] px-7 text-[14px] font-semibold text-[#003D3C] hover:bg-[#c2e8c4] transition-all"
                 >
                   {t('careers.roles.apply_button')}
                   <ArrowUpRight className="h-4 w-4" />
@@ -225,26 +231,33 @@ export function CareersView() {
       {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="perks-heading"
-        className="border-y border-border/60 bg-secondary/40"
+        className="bg-[#F8F9FA] py-20 lg:py-28 border-y border-gray-100"
       >
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-          <SectionHeading
-            eyebrow={t('careers.perks.eyebrow')}
-            title={t('careers.perks.title')}
-            description={t('careers.perks.description')}
-            className="max-w-2xl"
-          />
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="section-shell">
+          <Reveal y={14} duration={0.55}>
+            <div className="max-w-3xl">
+              <h2
+                id="perks-heading"
+                className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-[#121212] leading-[1.15] tracking-tight"
+              >
+                {t('careers.perks.title')}
+              </h2>
+              <p className="mt-4 text-[16px] sm:text-[18px] text-gray-600 leading-relaxed">
+                {t('careers.perks.description')}
+              </p>
+            </div>
+          </Reveal>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {PERKS.map((p, i) => (
-              <Reveal key={i} delay={(i % 3) * 0.06}>
-                <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-sm">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-primary/8 text-primary">
+              <Reveal key={i} y={14} duration={0.55} delay={(i % 3) * 0.06}>
+                <div className="flex h-full flex-col rounded-[16px] border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-[#003D3C]/30 hover:shadow-md">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#EEF4F2] text-[#003D3C]">
                     <Icon name={p.icon} className="h-5 w-5" />
                   </span>
-                  <h3 className="mt-5 text-base font-semibold tracking-tight">
+                  <h3 className="mt-5 text-[18px] font-bold text-[#121212] tracking-tight">
                     {l(p.title)}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-[14px] leading-relaxed text-gray-600">
                     {l(p.description)}
                   </p>
                 </div>
@@ -259,37 +272,37 @@ export function CareersView() {
       {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="culture-heading"
-        className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8"
+        className="section-shell py-20 lg:py-28"
       >
-        <div className="grid gap-12 lg:grid-cols-12">
+        <div className="grid gap-12 lg:grid-cols-12 items-start">
           <div className="lg:col-span-5">
-            <SectionHeading
-              eyebrow={t('careers.culture.eyebrow')}
-              title={t('careers.culture.title')}
-            />
-            <Reveal delay={0.05}>
-              <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+            <Reveal y={14} duration={0.55}>
+              <h2
+                id="culture-heading"
+                className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-[#121212] leading-[1.15] tracking-tight"
+              >
+                {t('careers.culture.title')}
+              </h2>
+              <p className="mt-6 text-[16px] sm:text-[18px] leading-relaxed text-gray-600">
                 {t('careers.culture.p1')}
               </p>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+              <p className="mt-4 text-[16px] sm:text-[18px] leading-relaxed text-gray-600">
                 {t('careers.culture.p2')}
               </p>
             </Reveal>
           </div>
           <div className="lg:col-span-7">
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               {CULTURE_VALUES.map((v, i) => (
-                <Reveal key={i} delay={(i % 2) * 0.06}>
-                  <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-sm">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-primary/8 text-primary">
+                <Reveal key={i} y={14} duration={0.55} delay={(i % 2) * 0.06}>
+                  <div className="flex h-full flex-col rounded-[16px] border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-[#003D3C]/30 hover:shadow-md">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#EEF4F2] text-[#003D3C]">
                       <Icon name={v.icon} className="h-5 w-5" />
                     </span>
-                    <h3 className="mt-5 text-base font-semibold tracking-tight">
+                    <h3 className="mt-5 text-[18px] font-bold text-[#121212] tracking-tight">
                       {l(v.title)}
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-2 text-[14px] leading-relaxed text-gray-600">
                       {l(v.description)}
                     </p>
                   </div>
@@ -305,33 +318,31 @@ export function CareersView() {
       {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="careers-cta-heading"
-        className="border-t border-border/60 bg-secondary/40"
+        className="bg-[#003D3C] text-white py-20 lg:py-28"
       >
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-24 lg:px-8">
-          <Reveal>
-            <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-card p-8 sm:p-12 md:p-16">
-              <div
-                className="absolute inset-0 -z-10 bg-radial-fade opacity-80"
-                aria-hidden
-              />
-              <div className="grid items-center gap-10 lg:grid-cols-2">
-                <div>
-                  <Eyebrow>{t('careers.cta.eyebrow')}</Eyebrow>
+        <div className="section-shell">
+          <Reveal y={14} duration={0.55}>
+            <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-8 sm:p-12 md:p-16 backdrop-blur-md">
+              <div className="grid items-center gap-10 lg:grid-cols-12">
+                <div className="lg:col-span-8">
+                  <div className="text-[14px] font-semibold text-[#ADDFB3] tracking-wide">
+                    {t('careers.cta.eyebrow')}
+                  </div>
                   <h2
                     id="careers-cta-heading"
-                    className="mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl"
+                    className="mt-3 text-[32px] sm:text-[44px] font-bold text-white leading-tight"
                   >
                     {t('careers.cta.title')}
                   </h2>
-                  <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground text-balance">
+                  <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-white/80">
                     {t('careers.cta.description')}
                   </p>
                 </div>
-                <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
+                <div className="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:justify-end">
                   <Button
                     size="lg"
                     onClick={() => navigate("contact")}
-                    className="h-11 gap-2 rounded-full bg-primary px-6 text-primary-foreground shadow-sm hover:bg-primary/90"
+                    className="h-11 gap-2 rounded-full bg-[#ADDFB3] px-6 text-[14px] font-semibold text-[#003D3C] hover:bg-[#c2e8c4] transition-all"
                   >
                     {t('careers.cta.button')}
                     <ArrowRight className="h-4 w-4" />

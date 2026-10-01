@@ -64,8 +64,7 @@ export function AboutView() {
           <div className="grid items-start gap-8 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <Reveal y={14} duration={0.55}>
-                <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
-                  <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
+                <div className="text-[16px] sm:text-[18px] font-bold uppercase tracking-[0.18em] text-[#ADDFB3]">
                   {t("about.hero.eyebrow")}
                 </div>
               </Reveal>
@@ -172,21 +171,20 @@ export function AboutView() {
         <div className="grid gap-12 lg:grid-cols-12 items-start">
           <div className="lg:col-span-5">
             <Reveal y={14} duration={0.55}>
-              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-                {t("about.who.eyebrow")}
-              </div>
               <h2
                 id="who-we-are-heading"
-                className="mt-4 text-[32px] sm:text-[42px] font-bold text-[#121212] leading-tight"
+                className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-[#121212] leading-[1.15] tracking-tight"
               >
-                {t("about.who.title")}
+                {t("about.who.eyebrow")}
               </h2>
+              <p className="mt-4 text-[20px] sm:text-[24px] font-semibold text-[#003D3C] leading-snug">
+                {t("about.who.title")}
+              </p>
             </Reveal>
           </div>
           <div className="lg:col-span-7">
             <Reveal y={14} duration={0.55} delay={0.08}>
-              <div className="space-y-6 text-[15px] sm:text-[16px] leading-relaxed text-gray-600">
+              <div className="space-y-6 text-[17px] sm:text-[19px] leading-relaxed text-gray-600">
                 <p>
                   {t("about.who.p1")}
                 </p>
@@ -211,17 +209,16 @@ export function AboutView() {
       >
         <div className="section-shell">
           <Reveal y={14} duration={0.55}>
-            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
-              {t("about.values.eyebrow")}
-            </div>
             <h2
               id="values-heading"
-              className="mt-4 text-[32px] sm:text-[42px] font-bold text-[#121212]"
+              className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-[#121212] leading-[1.15] tracking-tight"
             >
-              {t("about.values.title")}
+              {t("about.values.eyebrow")}
             </h2>
-            <p className="mt-3 max-w-2xl text-[14px] text-gray-500 leading-relaxed">
+            <p className="mt-4 text-[20px] sm:text-[24px] font-semibold text-[#003D3C] leading-snug">
+              {t("about.values.title")}
+            </p>
+            <p className="mt-3 max-w-2xl text-[16px] sm:text-[18px] text-gray-600 leading-relaxed">
               {t("about.values.description")}
             </p>
           </Reveal>
@@ -263,8 +260,7 @@ export function AboutView() {
             <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-8 sm:p-12 md:p-16 backdrop-blur-md">
               <div className="grid items-center gap-10 lg:grid-cols-12">
                 <div className="lg:col-span-8">
-                  <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
-                    <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
+                  <div className="text-[14px] font-semibold text-[#ADDFB3] tracking-wide">
                     {t("about.cta.eyebrow")}
                   </div>
                   <h2

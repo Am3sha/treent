@@ -144,7 +144,7 @@ export function HomeView() {
           <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
             {/* LEFT COLUMN: TYPOGRAPHY & CTA */}
             <div className={cn("lg:col-span-6 xl:col-span-6 z-10", isRTL && "font-arabic")}>
-              <div className="text-[13px] font-semibold uppercase tracking-[0.2em] text-[#ADDFB3]">
+              <div className="text-[16px] sm:text-[18px] font-bold uppercase tracking-[0.18em] text-[#ADDFB3]">
                 {t("home.hero.eyebrow")}
               </div>
 
@@ -280,32 +280,44 @@ export function HomeView() {
       <section className="bg-[#F8F9FA] py-20 lg:py-28 border-b border-gray-100">
         <div className="section-shell">
           <div className={cn("max-w-4xl w-full", isRTL && "ml-auto text-right")}>
-            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+            <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold leading-[1.15] text-[#121212] tracking-tight">
               {t('home.about.eyebrow')}
-            </div>
-            <h2 className="mt-6 text-[32px] sm:text-[40px] font-medium leading-[1.25] text-[#121212] tracking-tight">
-              {t('home.about.heading')}
             </h2>
+            <p className="mt-6 text-[18px] sm:text-[22px] font-normal leading-relaxed text-gray-600 max-w-3xl">
+              {t('home.about.heading')}
+            </p>
+
+            <div className={cn("mt-8 flex", isRTL && "justify-end")}>
+              <Button
+                asChild
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("about");
+                }}
+                className="h-11 rounded-[8px] bg-[#EEF4F2] px-6 text-[14px] font-semibold text-[#003D3C] shadow-sm transition-all duration-200 ease-out hover:bg-[#D5EBD6] hover:shadow-[0_8px_20px_-12px_rgba(0,61,60,0.35)] hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <a href="/#/about">{t("home.capabilities.cta")}</a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
 
+      {/* ================================================================ */}
       {/* 3. OUR EXPERTISE SECTION (Built Around Internal Audit)           */}
       {/* ================================================================ */}
       <section className="py-20 lg:py-28 bg-white">
         <div className="section-shell">
           <div className="grid items-center gap-12 lg:grid-cols-12">
             <div className={cn("lg:col-span-5", isRTL && "text-right")}>
-              <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-                <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+              <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold leading-[1.15] text-[#121212] tracking-tight">
                 {t('home.expertise.eyebrow')}
-              </div>
-              <h2 className="mt-4 text-[36px] sm:text-[44px] font-bold leading-[1.15] text-[#121212] whitespace-pre-line">
-                {t('home.expertise.heading')}
               </h2>
-              <p className={cn("mt-6 text-[15px] leading-relaxed text-gray-500 max-w-2xl", isRTL && "mr-0 ml-auto")}>
+              <p className="mt-4 text-[20px] sm:text-[24px] font-semibold text-[#003D3C] leading-snug">
+                {t('home.expertise.heading')}
+              </p>
+              <p className={cn("mt-4 text-[16px] sm:text-[18px] leading-relaxed text-gray-600 max-w-2xl", isRTL && "mr-0 ml-auto")}>
                 {t('home.expertise.description')}
               </p>
             </div>
@@ -325,6 +337,7 @@ export function HomeView() {
         </div>
       </section>
 
+      {/* ================================================================ */}
       {/* 4. WATERMARK & SERVICES SECTION                                  */}
       {/* ================================================================ */}
       <section className="relative py-24 lg:py-36 bg-[#F4F7F6] overflow-hidden border-t border-b border-gray-100">
@@ -340,13 +353,12 @@ export function HomeView() {
 
         <div className="section-shell relative z-10">
           <div className={cn("max-w-3xl w-full", isRTL && "ml-auto text-right")}>
-            <div className="flex items-center gap-2 text-[12px] font-bold text-gray-500">
-              <span className="h-2 w-2 rounded-full bg-[#003D3C]" />
+            <h2 className="text-[32px] sm:text-[40px] lg:text-[48px] font-bold leading-[1.15] text-[#121212] tracking-tight">
               {t('home.capabilities.eyebrow')}
-            </div>
-            <h2 className="mt-6 text-[32px] sm:text-[44px] font-medium leading-[1.25] text-[#121212] tracking-tight">
-              {t('home.capabilities.heading')}
             </h2>
+            <p className="mt-6 text-[18px] sm:text-[22px] font-normal leading-relaxed text-gray-600 max-w-3xl">
+              {t('home.capabilities.heading')}
+            </p>
 
             <div className={cn("mt-8 flex", isRTL && "justify-end")}>
               <Button

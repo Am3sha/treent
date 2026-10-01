@@ -22,8 +22,6 @@ import type { ViewKey } from "@/lib/types";
 import { Icon } from "@/components/site/icon";
 import {
   Reveal,
-  Eyebrow,
-  SectionHeading,
   RevealStagger,
   useReducedMotion,
 } from "@/components/site/reveal";
@@ -120,50 +118,38 @@ export function ServicesView() {
       {/* ------------------------------------------------------------------ */}
       {/* HERO                                                                */}
       {/* ------------------------------------------------------------------ */}
+      {/* ------------------------------------------------------------------ */}
+      {/* HERO                                                                */}
+      {/* ------------------------------------------------------------------ */}
       <section
         aria-labelledby="services-hero-heading"
-        className="relative overflow-hidden border-b border-border/60"
+        className="relative overflow-hidden bg-[#003D3C] text-white py-16 lg:py-24 border-b border-white/10"
       >
-        <div className="absolute inset-0 bg-radial-fade" aria-hidden />
-        <motion.div
-          aria-hidden
-          className="absolute inset-0 bg-grid mask-fade-b opacity-50 pointer-events-none"
-          initial={false}
-          animate={
-            reduced
-              ? {}
-              : { x: [0, 6, 0], y: [0, -5, 0] }
-          }
-          transition={{
-            duration: 26,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "mirror",
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 md:pb-24 md:pt-24 lg:px-8">
+        <div className="section-shell relative z-10">
           <div className="max-w-4xl">
-            <Reveal>
-              <Eyebrow>{t("services.hero.eyebrow")}</Eyebrow>
+            <Reveal y={14} duration={0.55}>
+              <div className="text-[16px] sm:text-[18px] font-bold uppercase tracking-[0.18em] text-[#ADDFB3]">
+                {t("services.hero.eyebrow")}
+              </div>
             </Reveal>
-            <Reveal delay={0.05}>
+            <Reveal y={14} duration={0.55} delay={0.05}>
               <h1
                 id="services-hero-heading"
-                className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl md:leading-[1.02] text-[#121212]"
+                className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
               >
                 {t("services.hero.heading")}{" "}
-                <span className="bg-gradient-to-r from-[#003D3C] via-[#005B58] to-[#003D3C] bg-clip-text text-transparent">
-                  {t("services.hero.heading_accent")}
-                </span>
+                {t("services.hero.heading_accent") && (
+                  <span className="text-[#ADDFB3]">{t("services.hero.heading_accent")}</span>
+                )}
               </h1>
             </Reveal>
-            <Reveal delay={0.1}>
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance">
+            <Reveal y={14} duration={0.55} delay={0.1}>
+              <p className="mt-6 max-w-2xl text-[16px] sm:text-[18px] leading-relaxed text-white/80">
                 {t("services.hero.description")}
               </p>
             </Reveal>
-            <Reveal delay={0.15}>
-              <p className="mt-8 text-[15px] font-semibold text-[#003D3C]">
+            <Reveal y={14} duration={0.55} delay={0.15}>
+              <p className="mt-6 max-w-2xl text-[15px] sm:text-[16px] font-medium text-[#ADDFB3]/90 leading-relaxed">
                 {t("services.hero.highlight")}
               </p>
             </Reveal>
@@ -381,13 +367,18 @@ export function ServicesView() {
         {/* ------------------------------------------------------------------ */}
         {/* FULL SERVICES LIST (ALL 5 CARDS)                                    */}
         {/* ------------------------------------------------------------------ */}
-        <Reveal y={12} duration={0.55} delay={0.08} className="mt-20">
-          <SectionHeading
-            eyebrow={t("services.full_list.eyebrow")}
-            title={t("services.full_list.title")}
-            description={t("services.full_list.description")}
-            className="max-w-2xl"
-          />
+        <Reveal y={14} duration={0.55} className="mt-20">
+          <div className="max-w-3xl">
+            <div className="text-[14px] font-semibold text-[#003D3C] tracking-wide">
+              {t("services.full_list.eyebrow")}
+            </div>
+            <h2 className="mt-3 text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-[#121212] leading-[1.15] tracking-tight">
+              {t("services.full_list.title")}
+            </h2>
+            <p className="mt-4 text-[16px] sm:text-[18px] text-gray-600 leading-relaxed">
+              {t("services.full_list.description")}
+            </p>
+          </div>
         </Reveal>
 
         <div className="mt-14 space-y-8">
@@ -505,12 +496,19 @@ export function ServicesView() {
         className="border-y border-gray-200/80 bg-[#F8F9FA]"
       >
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-          <SectionHeading
-            eyebrow={t("services.process.eyebrow")}
-            title={t("services.process.heading")}
-            description={t("services.process.description")}
-            className="max-w-2xl"
-          />
+          <Reveal y={14} duration={0.55}>
+            <div className="max-w-3xl">
+              <div className="text-[14px] font-semibold text-[#003D3C] tracking-wide">
+                {t("services.process.eyebrow")}
+              </div>
+              <h2 className="mt-3 text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-[#121212] leading-[1.15] tracking-tight">
+                {t("services.process.heading")}
+              </h2>
+              <p className="mt-4 text-[16px] sm:text-[18px] text-gray-600 leading-relaxed">
+                {t("services.process.description")}
+              </p>
+            </div>
+          </Reveal>
           <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {METHODOLOGY.map((m, i) => {
               const ProcessIconCmp = PROCESS_ICONS[m.step];

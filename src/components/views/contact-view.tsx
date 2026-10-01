@@ -32,21 +32,6 @@ import { useTranslation } from "@/lib/i18n";
 
 type Topic = "general" | "services" | "framework" | "other";
 
-const TOPICS: { value: Topic; label: string; hint: string }[] = [
-  { value: "general", label: "General enquiry", hint: "Anything else on your mind." },
-  {
-    value: "services",
-    label: "Engagement enquiry",
-    hint: "Discuss a specific internal audit service.",
-  },
-  {
-    value: "framework",
-    label: "Framework agreement",
-    hint: "Discuss a framework agreement for ongoing services.",
-  },
-  { value: "other", label: "Other", hint: "Other questions or requests." },
-];
-
 const contactFormSchema = z.object({
   name: z.string().min(1, "Please tell us your name."),
   email: z.string().email("That doesn't look like a valid email."),
@@ -140,6 +125,7 @@ export function ContactView() {
     },
   });
 
+  const watchedTopic = useWatch({ control, name: "topic" });
   const watchedMessage = useWatch({ control, name: "message" });
   const charCount = watchedMessage?.length || 0;
 
@@ -202,16 +188,9 @@ export function ContactView() {
       >
         <div className="section-shell relative z-10">
           <div className="max-w-3xl">
-            <Reveal y={14} duration={0.55}>
-              <div className="flex items-center gap-2 text-[12px] font-bold text-[#ADDFB3]">
-                <span className="h-2 w-2 rounded-full bg-[#ADDFB3]" />
-                {t('contact.hero.eyebrow')}
-              </div>
-            </Reveal>
-
             <motion.h1
               id="contact-hero-heading"
-              className="mt-4 text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
+              className="text-[38px] sm:text-[52px] md:text-[60px] font-bold leading-[1.08] tracking-tight text-white"
               initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={reduced ? { duration: 0 } : { duration: 0.7, ease: EASE_OUT, delay: 0.06 }}
@@ -415,8 +394,8 @@ export function ContactView() {
                             </Select>
                           )}
                         />
-                        <p className="text-xs text-gray-500">
-                          {TOPICS.find((t) => t.value === control._formValues.topic)?.hint}
+                        <p className="min-h-[1.5rem] text-xs text-gray-500 flex items-center">
+                          {TOPICS.find((t) => t.value === watchedTopic)?.hint}
                         </p>
                       </motion.div>
 
@@ -436,15 +415,9 @@ export function ContactView() {
                             {errors.message.message}
                           </p>
                         ) : (
-                          <motion.p
-                            key={charCount}
-                            initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0.5, y: 0 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={reduced ? { duration: 0 } : { duration: 0.25, ease: EASE_OUT }}
-                            className="text-xs text-gray-500 tabular-nums"
-                          >
+                          <p className="text-xs text-gray-500 tabular-nums">
                             {charCount} {t('contact.form.labels.characters')}
-                          </motion.p>
+                          </p>
                         )}
                       </motion.div>
 
