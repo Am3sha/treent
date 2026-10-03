@@ -49,7 +49,7 @@ export function getSiteEmail(): string {
     if (envEmail) {
         return envEmail.trim().replace(/^["']|["']$/g, "");
     }
-    return `info@${getSiteDomain()}`;
+    return "info@trennt.sa";
 }
 
 /**
