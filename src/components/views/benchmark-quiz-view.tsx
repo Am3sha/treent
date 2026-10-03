@@ -89,11 +89,6 @@ export function BenchmarkQuizView() {
 
   const [step, setStep] = React.useState(0); // 0 = details, 1..5 = dimension steps
   const [submitting, setSubmitting] = React.useState(false);
-  // Track that the user has completed all 26 questions. DetailsStep is
-  // re-mounted (AnimatePresence wait mode) when returning from the last
-  // question step, so this flag — not just answeredCount — determines the
-  // final-submission mode of the details form.
-  const [doneWithQuestions, setDoneWithQuestions] = React.useState(false);
 
   // Start a fresh assessment if there are no responses and no startedAt.
   React.useEffect(() => {
@@ -112,11 +107,7 @@ export function BenchmarkQuizView() {
     () => TOTAL_QUESTIONS - countUnanswered(responses),
     [responses]
   );
-  const overallPct = isDetailsStep
-    ? answeredCount >= TOTAL_QUESTIONS
-      ? 100
-      : 0
-    : Math.round((step / TOTAL_STEPS) * 100);
+  const overallPct = Math.round((step / TOTAL_STEPS) * 100);
 
   // For dimension steps, check whether all questions on this step are answered.
   const stepComplete = React.useMemo(() => {
@@ -128,33 +119,43 @@ export function BenchmarkQuizView() {
   const currentDim = !isDetailsStep ? DIMENSIONS[step - 1] : null;
 
   const goNext = () => {
-    if (!stepComplete) return;
+    if (submitting) return;
+    if (!isDetailsStep && !stepComplete) return;
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (isDetailsStep) {
-      // Details is the first step: advance into the questions.
       setStep(1);
       return;
     }
     if (step === STEPS.length) {
-      // All 26 questions answered — return to details for the final submit.
-      setDoneWithQuestions(true);
-      setStep(0);
+      const stateResp = useNav.getState().respondent;
+      if (!stateResp) {
+        toast({
+          title: lang === "ar" ? quizUI.toastErrorTitle : "Could not submit",
+          description:
+            lang === "ar"
+              ? "الرجاء التأكد من إكمال تفاصيل الملف الشخصي"
+              : "Please ensure your profile details are complete",
+          variant: "destructive",
+        });
+        return;
+      }
+      const profile: RespondentProfile = {
+        name: stateResp.name.trim(),
+        email: stateResp.email.trim(),
+        company: stateResp.company.trim(),
+        companySize: stateResp.companySize,
+        industry: stateResp.industry,
+        country: stateResp.country.trim(),
+        role: stateResp.role.trim(),
+        consentContact: stateResp.consentContact,
+      };
+      void handleSubmit(profile);
       return;
     }
     setStep((s) => s + 1);
   };
-  const advanceFromDetails = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setStep(1);
-  };
   const goBack = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    if (isDetailsStep) {
-      // Coming back from the details form: go to the last question step so
-      // the user can review answers before submitting.
-      setStep(doneWithQuestions && answeredCount >= TOTAL_QUESTIONS ? STEPS.length : 0);
-      return;
-    }
     setStep((s) => Math.max(s - 1, 0));
   };
 
@@ -286,9 +287,8 @@ export function BenchmarkQuizView() {
                 resultExists={!!result}
                 submitting={submitting}
                 answeredCount={answeredCount}
-                finalMode={doneWithQuestions}
                 onSubmit={handleSubmit}
-                onAdvanceToQuestions={advanceFromDetails}
+                onAdvanceToQuestions={goNext}
                 onGoToResults={() => navigate("benchmark-results")}
                 lang={lang}
                 isRTL={isRTL}
@@ -326,19 +326,23 @@ export function BenchmarkQuizView() {
           {!isDetailsStep ? (
             <Button
               onClick={goNext}
-              disabled={!stepComplete}
+              disabled={submitting || (!stepComplete && step < STEPS.length) || (step === STEPS.length && !stepComplete)}
               className="gap-1.5"
             >
               {step === STEPS.length
-                ? lang === "ar" ? quizUI.navGetReport : "Get my report"
+                ? submitting
+                  ? lang === "ar" ? quizUI.buttonSubmitting : "Submitting…"
+                  : lang === "ar" ? quizUI.navGetReport : "Get my report"
                 : lang === "ar" ? quizUI.navNext : "Next"}
-              <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
+              {submitting ? (
+                <Loader2 className={cn("h-4 w-4 animate-spin")} />
+              ) : (
+                <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
+              )}
             </Button>
           ) : (
             <span className="text-sm text-muted-foreground">
-              {doneWithQuestions
-                ? lang === "ar" ? quizUI.navFormAboveResults : "Get your results on the form above"
-                : lang === "ar" ? quizUI.navFormAboveSubmit : "Submit on the form above"}
+              {lang === "ar" ? quizUI.navFormAboveSubmit : "Submit on the form above"}
             </span>
           )}
         </div>
@@ -579,7 +583,6 @@ function DetailsStep({
   resultExists,
   submitting,
   answeredCount,
-  finalMode,
   onSubmit,
   onAdvanceToQuestions,
   onGoToResults,
@@ -590,7 +593,6 @@ function DetailsStep({
   resultExists: boolean;
   submitting: boolean;
   answeredCount: number;
-  finalMode: boolean;
   onSubmit: (p: RespondentProfile) => void;
   onAdvanceToQuestions?: () => void;
   onGoToResults: () => void;
@@ -617,8 +619,6 @@ function DetailsStep({
 
   const nameValid = name.trim().length >= 2;
   const emailValid = EMAIL_RE.test(email.trim());
-  const profileReady = nameValid && emailValid && consent && !submitting;
-  const questionsDone = finalMode && answeredCount >= TOTAL_QUESTIONS;
   const setRespondent = useNav((s) => s.setRespondent);
 
   // Live-sync the typed profile into the store so answers survive navigation.
@@ -680,8 +680,7 @@ function DetailsStep({
     });
   }
 
-  const canSubmit = questionsDone ? profileReady : false;
-  const canAdvance = !questionsDone && nameValid && emailValid && consent;
+  const canAdvance = nameValid && emailValid && consent && !!companySize && !!industry;
 
   const profile: RespondentProfile = {
     name: name.trim(),
@@ -701,18 +700,12 @@ function DetailsStep({
           "text-xs font-medium tracking-[0.2em] text-primary/80",
           isRTL ? "" : "uppercase"
         )}>
-          {answeredCount >= TOTAL_QUESTIONS
-            ? lang === "ar"
-              ? quizUI.detailsStepFinal(TOTAL_STEPS, TOTAL_STEPS)
-              : `Step ${TOTAL_STEPS} of ${TOTAL_STEPS} — Final step`
-            : lang === "ar"
-              ? quizUI.detailsStepFirst(1, TOTAL_STEPS)
-              : `Step 1 of ${TOTAL_STEPS} — Your details`}
+          {lang === "ar"
+            ? quizUI.detailsStepFirst(1, TOTAL_STEPS)
+            : `Step 1 of ${TOTAL_STEPS} — Your details`}
         </p>
         <h1 className="mt-1 text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
-          {answeredCount >= TOTAL_QUESTIONS
-            ? lang === "ar" ? quizUI.detailsTitleFinal : "A few details, then your report."
-            : lang === "ar" ? quizUI.detailsTitleFirst : "A few details, then the questions."}
+          {lang === "ar" ? quizUI.detailsTitleFirst : "A few details, then the questions."}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           {lang === "ar"
@@ -787,6 +780,7 @@ function DetailsStep({
           </Field>
           <Field
             label={lang === "ar" ? quizUI.labelCompanySize : "Company size"}
+            required
             lang={lang}
             isRTL={isRTL}
           >
@@ -807,6 +801,7 @@ function DetailsStep({
           </Field>
           <Field
             label={lang === "ar" ? quizUI.labelIndustry : "Industry"}
+            required
             lang={lang}
             isRTL={isRTL}
           >
@@ -880,26 +875,19 @@ function DetailsStep({
           <p className="text-xs leading-relaxed text-muted-foreground">
             {lang === "ar"
               ? quizUI.formNote
-              : "By submitting, you'll see your full maturity report immediately."}
+              : "Answer all 26 questions after this step. On the final dimension, you'll submit and see your report instantly."}
           </p>
           <Button
             type="button"
             size="lg"
-            disabled={questionsDone ? !canSubmit : !canAdvance}
-            onClick={() =>
-              questionsDone ? onSubmit(profile) : onAdvanceToQuestions?.()
-            }
+            disabled={!canAdvance || submitting}
+            onClick={() => onAdvanceToQuestions?.()}
             className={cn("gap-2 sm:min-w-[200px]", isRTL && "flex-row-reverse")}
           >
             {submitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 {lang === "ar" ? quizUI.buttonSubmitting : "Submitting…"}
-              </>
-            ) : questionsDone ? (
-              <>
-                {lang === "ar" ? quizUI.buttonGetResults : "Get my results"}
-                <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
               </>
             ) : (
               <>
@@ -910,7 +898,7 @@ function DetailsStep({
           </Button>
         </div>
 
-        {!canSubmit && !canAdvance && !submitting && (
+        {!canAdvance && !submitting && (
           <div className={cn("flex items-start gap-2 text-xs text-muted-foreground", isRTL && "flex-row-reverse")}>
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>
@@ -918,11 +906,19 @@ function DetailsStep({
                 ? lang === "ar" ? quizUI.validationName : "Enter your name"
                 : !emailValid
                   ? lang === "ar" ? quizUI.validationEmail : "Enter a valid email address"
-                  : !consent
+                  : !companySize
                     ? lang === "ar"
-                      ? quizUI.validationConsent
-                      : "Please review and accept the consent statement to continue"
-                    : ""}
+                      ? "الرجاء تحديد حجم الشركة"
+                      : "Select your company size"
+                    : !industry
+                      ? lang === "ar"
+                        ? "الرجاء تحديد قطاع الشركة"
+                        : "Select your industry"
+                      : !consent
+                        ? lang === "ar"
+                          ? quizUI.validationConsent
+                          : "Please review and accept the consent statement to continue"
+                        : ""}
             </span>
           </div>
         )}

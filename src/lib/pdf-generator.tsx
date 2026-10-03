@@ -111,8 +111,8 @@ const ArabicText = ({ children, render, ...props }: any) => {
 // ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
     page: {
-        paddingTop: 48,
-        paddingBottom: 64,
+        paddingTop: 36,
+        paddingBottom: 48,
         paddingHorizontal: 46,
         backgroundColor: COLORS.white,
         fontFamily: "Helvetica",
@@ -121,8 +121,8 @@ const styles = StyleSheet.create({
         position: "relative",
     },
     coverPage: {
-        paddingTop: 44,
-        paddingBottom: 64,
+        paddingTop: 34,
+        paddingBottom: 48,
         paddingHorizontal: 46,
         backgroundColor: COLORS.white,
         fontFamily: "Helvetica",
@@ -357,12 +357,12 @@ const styles = StyleSheet.create({
     dimTwoCol: {
         flexDirection: "row",
         flexWrap: "wrap",
-        gap: 8,
-        marginTop: 8,
+        gap: 6,
+        marginTop: 6,
     },
     dimCard: {
         width: "48%",
-        paddingVertical: 3,
+        paddingVertical: 2,
         borderBottomWidth: 0.5,
         borderBottomColor: COLORS.border,
     },
@@ -398,8 +398,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     benchmarkSection: {
-        marginTop: 10,
-        paddingTop: 8,
+        marginTop: 6,
+        paddingTop: 4,
         borderTopWidth: 0.5,
         borderTopColor: COLORS.border,
     },
@@ -461,8 +461,8 @@ const styles = StyleSheet.create({
         fontFamily: "Helvetica-Bold",
     },
     roadmapSection: {
-        marginBottom: 16,
-        padding: 12,
+        marginBottom: 10,
+        padding: 9,
         backgroundColor: "#F8FAFC",
         borderRadius: 6,
         borderRightWidth: 4,
@@ -475,10 +475,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     roadmapTitle: {
-        fontSize: 12.5,
+        fontSize: 10.5,
         fontFamily: "Helvetica-Bold",
         color: COLORS.primary,
-        textAlign: "right",
+        textAlign: "left",
     },
     roadmapBody: {
         paddingRight: 2,
@@ -524,19 +524,19 @@ const styles = StyleSheet.create({
 // ---------------------------------------------------------------------------
 const arStyles = StyleSheet.create({
     page: {
-        paddingTop: 48,
-        paddingBottom: 64,
+        paddingTop: 36,
+        paddingBottom: 48,
         paddingHorizontal: 46,
         backgroundColor: COLORS.white,
         fontFamily: AR_FONT,
-        fontSize: 9,
+        fontSize: 8.5,
         color: COLORS.dark,
         position: "relative",
         direction: "rtl",
     },
     coverPage: {
-        paddingTop: 44,
-        paddingBottom: 64,
+        paddingTop: 34,
+        paddingBottom: 48,
         paddingHorizontal: 46,
         backgroundColor: COLORS.white,
         fontFamily: AR_FONT,
@@ -660,18 +660,18 @@ const arStyles = StyleSheet.create({
         textAlign: "right",
     },
     sectionHeading: {
-        fontSize: 16,
+        fontSize: 12,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
         marginBottom: 4,
-        marginTop: 6,
+        marginTop: 0,
         textAlign: "right",
     },
     sectionRule: {
-        borderBottomWidth: 1.5,
+        borderBottomWidth: 1,
         borderBottomColor: COLORS.primary,
-        marginBottom: 10,
+        marginBottom: 8,
         paddingBottom: 2,
     },
     execMetricsRow: {
@@ -717,8 +717,8 @@ const arStyles = StyleSheet.create({
         fontFamily: AR_FONT,
     },
     summaryQuote: {
-        fontSize: 9.5,
-        lineHeight: 1.5,
+        fontSize: 9,
+        lineHeight: 1.4,
         color: COLORS.dark,
         borderRightWidth: 2,
         borderRightColor: COLORS.accent,
@@ -759,45 +759,39 @@ const arStyles = StyleSheet.create({
     dimTwoCol: {
         flexDirection: "row-reverse",
         flexWrap: "wrap",
-        gap: 12,
-        marginTop: 10,
-        marginBottom: 14,
+        gap: 6,
+        marginTop: 6,
+        marginBottom: 4,
     },
     dimCard: {
         width: "48%",
-        padding: 9,
-        backgroundColor: "#F8FAFC",
-        borderRadius: 6,
-        borderRightWidth: 3,
-        borderRightColor: COLORS.primary,
-        marginBottom: 8,
+        paddingVertical: 3,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.border,
     },
     dimHeader: {
         flexDirection: "row-reverse",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 5,
-        paddingBottom: 3,
-        borderBottomWidth: 0.5,
-        borderBottomColor: COLORS.border,
+        marginBottom: 2,
     },
     dimTitle: {
-        fontSize: 12,
+        fontSize: 9.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
     },
     dimScore: {
-        fontSize: 12,
+        fontSize: 9.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
     },
     dimDetail: {
-        fontSize: 11,
+        fontSize: 8.5,
         color: COLORS.dark,
-        lineHeight: 1.5,
-        marginTop: 3,
+        lineHeight: 1.35,
+        marginTop: 1.5,
         textAlign: "right",
     },
     dimLabel: {
@@ -806,77 +800,71 @@ const arStyles = StyleSheet.create({
         color: COLORS.primary,
     },
     chartCaption: {
-        fontSize: 8.5,
+        fontSize: 7.5,
         color: COLORS.muted,
-        marginTop: 6,
+        marginTop: 4,
         textAlign: "center",
     },
     benchmarkSection: {
-        marginTop: 14,
-        paddingTop: 12,
+        marginTop: 4,
+        paddingTop: 4,
         borderTopWidth: 0.5,
         borderTopColor: COLORS.border,
     },
     peerMetricsRow: {
         flexDirection: "row-reverse",
         justifyContent: "space-between",
-        gap: 10,
-        marginVertical: 12,
+        marginBottom: 8,
     },
     peerBlock: {
         flex: 1,
-        padding: 8,
-        backgroundColor: "#F8FAFC",
-        borderRadius: 5,
-        borderRightWidth: 2.5,
-        borderRightColor: COLORS.accent,
     },
     peerValue: {
-        fontSize: 12.5,
+        fontSize: 11,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
         textAlign: "right",
     },
     peerSuffix: {
-        fontSize: 8.5,
+        fontSize: 7.5,
         color: COLORS.muted,
     },
     compactBar: {
         flexDirection: "row-reverse",
         alignItems: "center",
-        marginBottom: 6,
+        marginBottom: 5,
     },
     compactBarLabel: {
-        width: 110,
-        fontSize: 9.5,
+        width: 95,
+        fontSize: 7.5,
         color: COLORS.dark,
         textAlign: "right",
     },
     listsRow: {
         flexDirection: "row-reverse",
-        gap: 16,
-        marginTop: 12,
+        gap: 12,
+        marginTop: 6,
     },
     listColumn: {
         flex: 1,
     },
     listTitle: {
-        fontSize: 11.5,
+        fontSize: 8.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
-        marginBottom: 6,
+        marginBottom: 4,
         paddingBottom: 3,
-        borderBottomWidth: 1,
+        borderBottomWidth: 0.5,
         borderBottomColor: COLORS.border,
         textAlign: "right",
     },
     listItem: {
         flexDirection: "row-reverse",
-        marginBottom: 4,
-        fontSize: 10.5,
-        lineHeight: 1.45,
+        marginBottom: 2,
+        fontSize: 8.5,
+        lineHeight: 1.3,
     },
     bullet: {
         width: 10,
@@ -886,17 +874,22 @@ const arStyles = StyleSheet.create({
     },
     roadmapSection: {
         marginBottom: 10,
+        padding: 9,
+        backgroundColor: "#F8FAFC",
+        borderRadius: 6,
+        borderLeftWidth: 4,
+        borderLeftColor: COLORS.primary,
     },
     roadmapTitle: {
-        fontSize: 9.5,
+        fontSize: 15.5,
         fontFamily: AR_FONT,
         fontWeight: "bold",
         color: COLORS.primary,
-        marginBottom: 4,
-        paddingBottom: 2,
-        borderBottomWidth: 0.5,
-        borderBottomColor: COLORS.accent,
+        marginBottom: 6,
         textAlign: "right",
+    },
+    roadmapBody: {
+        paddingLeft: 2,
     },
     confidentiality: {
         marginTop: 12,
@@ -1161,8 +1154,8 @@ const PageFooter = () => (
 // ARABIC chart + layout components (RTL + Arabic labels)
 // ---------------------------------------------------------------------------
 const DimensionBarChartArabic = ({ scores }: { scores: Record<Dimension, number> }) => {
-    const trackWidth = 200;
-    const rowHeight = 22;
+    const trackWidth = 180;
+    const rowHeight = 18;
 
     return (
         <View>
@@ -1173,16 +1166,16 @@ const DimensionBarChartArabic = ({ scores }: { scores: Record<Dimension, number>
                 return (
                     <View
                         key={d.key}
-                        style={{ flexDirection: "row-reverse", alignItems: "center", height: rowHeight, marginBottom: 2 }}
+                        style={{ flexDirection: "row-reverse", alignItems: "center", height: rowHeight, marginBottom: 1 }}
                     >
-                        <ArabicText style={{ width: 110, fontSize: 9.5, color: COLORS.dark, textAlign: "right", fontFamily: AR_FONT }}>
+                        <ArabicText style={{ width: 90, fontSize: 8, color: COLORS.dark, textAlign: "right", fontFamily: AR_FONT }}>
                             {dim.short}
                         </ArabicText>
-                        <Svg width={trackWidth + 2} height={9}>
-                            <Rect x={0} y={1} width={trackWidth} height={7} fill={COLORS.track} rx={2} />
-                            <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={7} fill={COLORS.primary} rx={2} />
+                        <Svg width={trackWidth + 2} height={7}>
+                            <Rect x={0} y={1} width={trackWidth} height={5} fill={COLORS.track} rx={2} />
+                            <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={5} fill={COLORS.primary} rx={2} />
                         </Svg>
-                        <Text style={{ width: 32, fontSize: 9.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 6 }}>
+                        <Text style={{ width: 28, fontSize: 8.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 4 }}>
                             {score}
                         </Text>
                     </View>
@@ -1201,7 +1194,7 @@ const CompactBenchmarkBarsArabic = ({
     industryAvg: number | null;
     globalAvg: number | null;
 }) => {
-    const trackWidth = 220;
+    const trackWidth = 200;
     const shapedBars = [
         { label: "منظمتك", value: score, isAvailable: true },
         { label: "متوسط القطاع", value: industryAvg, isAvailable: industryAvg !== null },
@@ -1218,16 +1211,16 @@ const CompactBenchmarkBarsArabic = ({
                         <ArabicText style={arStyles.compactBarLabel}>{bar.label}</ArabicText>
                         {bar.isAvailable ? (
                             <>
-                                <Svg width={trackWidth + 2} height={9}>
-                                    <Rect x={0} y={1} width={trackWidth} height={7} fill={COLORS.track} rx={2} />
-                                    <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={7} fill={COLORS.primary} rx={2} />
+                                <Svg width={trackWidth + 2} height={7}>
+                                    <Rect x={0} y={1} width={trackWidth} height={5} fill={COLORS.track} rx={2} />
+                                    <Rect x={trackWidth - fillWidth} y={1} width={fillWidth} height={5} fill={COLORS.primary} rx={2} />
                                 </Svg>
-                                <Text style={{ width: 32, fontSize: 9.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 6 }}>
+                                <Text style={{ width: 28, fontSize: 8.5, fontFamily: AR_FONT, fontWeight: "bold", color: COLORS.primary, textAlign: "left", marginRight: 4 }}>
                                     {val}
                                 </Text>
                             </>
                         ) : (
-                            <ArabicText style={{ fontSize: 9, color: COLORS.muted, textAlign: "right" }}>
+                            <ArabicText style={{ fontSize: 8, color: COLORS.muted, textAlign: "right" }}>
                                 غير متاح
                             </ArabicText>
                         )}
@@ -1306,7 +1299,6 @@ export const AssessmentPDFReport = ({
 
                 <Text style={styles.coverEyebrow}>Confidential · Executive Assessment</Text>
                 <Text style={styles.coverTitle}>Internal Audit Maturity{"\n"}Benchmark Report</Text>
-                <Text style={styles.coverSubtitle}>Confidential Executive Assessment</Text>
 
                 <View style={styles.coverMetaBlock}>
                     {respondent?.company && (
@@ -1337,8 +1329,8 @@ export const AssessmentPDFReport = ({
                     )}
                 </View>
 
-                <View style={styles.execBlock}>
-                    <View style={styles.execMetricsRow}>
+                <View style={{ marginTop: 26, borderTopWidth: 0.5, borderTopColor: COLORS.border, paddingTop: 14 }} wrap={false}>
+                    <View style={styles.execMetricsRow} wrap={false}>
                         <View style={styles.metricBlock}>
                             <Text style={styles.metricLabel}>Overall Maturity Score</Text>
                             <Text style={styles.metricValueLarge}>
@@ -1355,14 +1347,17 @@ export const AssessmentPDFReport = ({
                             <Text style={styles.metricValueMedium}>{result.percentile}th</Text>
                         </View>
                     </View>
-                    <Text style={styles.summaryQuote}>{tierMeta.summary}</Text>
                 </View>
 
                 <PageFooter />
             </Page>
 
             <Page size="A4" style={styles.page}>
-                <PageHeader />
+                <View style={{ paddingTop: 6, marginTop: 0 }} wrap={false}>
+                    <Text style={styles.sectionHeading}>Executive Summary</Text>
+                    <View style={styles.sectionRule} />
+                    <Text style={styles.summaryQuote}>{tierMeta.summary}</Text>
+                </View>
 
                 <Text style={styles.sectionHeading}>Dimension Analysis</Text>
                 <View style={styles.sectionRule} />
@@ -1449,8 +1444,6 @@ export const AssessmentPDFReport = ({
             </Page>
 
             <Page size="A4" style={styles.page}>
-                <PageHeader />
-
                 <Text style={styles.sectionHeading}>Strategic Recommendations</Text>
                 <View style={styles.sectionRule} />
 
@@ -1706,7 +1699,7 @@ export const AssessmentPDFReportArabic = ({
 
     return (
         <Document title={`تقرير ترينت التنفيذي - ${respondent?.company || "سري"}`}>
-            {/* PAGE 1: COVER + EXECUTIVE SUMMARY */}
+            {/* PAGE 1: COVER */}
             <Page size="A4" style={arStyles.coverPage}>
                 <Image src={LOGO_WORDMARK} style={arStyles.coverLogo} />
 
@@ -1715,7 +1708,6 @@ export const AssessmentPDFReportArabic = ({
                     {"تقرير معيار نضج المراجعة الداخلية"}{"\n"}
                     {"ترينت"}
                 </ArabicText>
-                <ArabicText style={arStyles.coverSubtitle}>التقييم التنفيذي السري للنتائج</ArabicText>
 
                 <View style={arStyles.coverMetaBlock}>
                     {respondent?.name && (
@@ -1739,7 +1731,12 @@ export const AssessmentPDFReportArabic = ({
                     <ArabicText style={arStyles.coverDate}>{`تقرير بتاريخ · ${dateStr}`}</ArabicText>
                 </View>
 
-                <View style={arStyles.execBlock}>
+                <PageFooterArabicClean />
+            </Page>
+
+            {/* PAGE 2: EXECUTIVE SUMMARY + DIMENSION ANALYSIS + PEER COMPARISON */}
+            <Page size="A4" style={arStyles.page}>
+                <View style={arStyles.execBlock} wrap={false}>
                     <View style={arStyles.execMetricsRow}>
                         <View style={arStyles.metricBlock}>
                             <ArabicText style={arStyles.metricLabel}>النتيجة الإجمالية للنضج</ArabicText>
@@ -1760,17 +1757,10 @@ export const AssessmentPDFReportArabic = ({
                     <ArabicText style={arStyles.summaryQuote}>{tierAr.summary}</ArabicText>
                 </View>
 
-                <PageFooterArabicClean />
-            </Page>
-
-            {/* PAGE 2: DIMENSION ANALYSIS + PEER COMPARISON */}
-            <Page size="A4" style={arStyles.page}>
-                <PageHeaderArabic />
-
                 <ArabicText style={arStyles.sectionHeading}>تحليل الأبعاد الخمسة للنضج</ArabicText>
                 <View style={arStyles.sectionRule} />
 
-                <View style={{ marginTop: 6, marginBottom: 8, alignItems: "center" }}>
+                <View style={{ marginTop: 6, marginBottom: 4, alignItems: "center" }}>
                     <DimensionBarChartArabic scores={scores} />
                     <ArabicText style={arStyles.chartCaption}>الشكل ١ - درجات النضج حسب البعد</ArabicText>
                 </View>
@@ -1860,95 +1850,97 @@ export const AssessmentPDFReportArabic = ({
                 <PageFooterArabicClean />
             </Page>
 
-            {/* PAGE 3: STRATEGIC RECOMMENDATIONS + FOOTER (EXECUTIVE REDESIGN) */}
+            {/* PAGE 3: STRATEGIC RECOMMENDATIONS */}
             <Page size="A4" style={arStyles.page}>
-                {/* 1. HEADER: Logo top-left, Section title top-right, clean divider */}
-                <View style={arStyles.p3HeaderRow}>
-                    <Image src={LOGO_WORDMARK} style={arStyles.p3Logo} />
-                    <ArabicText style={arStyles.p3HeaderTitle}>التوصيات الاستراتيجية</ArabicText>
-                </View>
-                <View style={arStyles.p3HeaderRule} />
+                <ArabicText style={arStyles.sectionHeading}>التوصيات الاستراتيجية</ArabicText>
+                <View style={arStyles.sectionRule} />
 
-                {/* 2. THREE EDITORIAL PHASES */}
-                <View style={arStyles.p3PhaseBlock} wrap={false}>
-                    <ArabicText style={arStyles.p3PhaseHeading}>
+                <View style={arStyles.roadmapSection} wrap={false}>
+                    <ArabicText style={arStyles.roadmapTitle}>
                         المرحلة الأولى: الأولويات العاجلة — خلال ٣٠ يوماً
                     </ArabicText>
-                    <View style={arStyles.p3PhaseBody}>
+                    <View style={arStyles.roadmapBody}>
                         {recsAr.slice(0, 1).map((r, i) => (
-                            <ArabicText key={i} style={arStyles.p3RecParagraph}>
-                                {cleanArText(r)}
-                            </ArabicText>
+                            <View key={i} style={arStyles.listItem} wrap={false}>
+                                <ArabicText style={arStyles.bullet}>•</ArabicText>
+                                <ArabicText style={{ fontSize: 9, lineHeight: 1.45 }}>
+                                    {cleanArText(r)}
+                                </ArabicText>
+                            </View>
                         ))}
-                        <ArabicText style={arStyles.p3RecParagraph}>
-                            {cleanArText(`إجراء تقييم سريع لنضج بيئة الرقابة الحالية في بعد «${topOpportunities[0]?.label || ""}» ووضع خطة معالجة ذات ملكية وجداول زمنية واضحة`)}
-                        </ArabicText>
+                        <View style={arStyles.listItem} wrap={false}>
+                            <ArabicText style={arStyles.bullet}>•</ArabicText>
+                            <ArabicText style={{ fontSize: 9, lineHeight: 1.45 }}>
+                                {cleanArText(`إجراء تقييم سريع لنضج بيئة الرقابة الحالية في بعد «${topOpportunities[0]?.label || ""}» ووضع خطة معالجة ذات ملكية وجداول زمنية واضحة`)}
+                            </ArabicText>
+                        </View>
                     </View>
                 </View>
 
-                <View style={arStyles.p3PhaseDivider} />
-
-                <View style={arStyles.p3PhaseBlock} wrap={false}>
-                    <ArabicText style={arStyles.p3PhaseHeading}>
+                <View style={arStyles.roadmapSection} wrap={false}>
+                    <ArabicText style={arStyles.roadmapTitle}>
                         المرحلة الثانية: التحسينات متوسطة المدى — من ٣٠ إلى ٩٠ يوماً
                     </ArabicText>
-                    <View style={arStyles.p3PhaseBody}>
+                    <View style={arStyles.roadmapBody}>
                         {recsAr.slice(1, 2).map((r, i) => (
-                            <ArabicText key={i} style={arStyles.p3RecParagraph}>
-                                {cleanArText(r)}
-                            </ArabicText>
+                            <View key={i} style={arStyles.listItem} wrap={false}>
+                                <ArabicText style={arStyles.bullet}>•</ArabicText>
+                                <ArabicText style={{ fontSize: 9, lineHeight: 1.45 }}>
+                                    {cleanArText(r)}
+                                </ArabicText>
+                            </View>
                         ))}
-                        <ArabicText style={arStyles.p3RecParagraph}>
-                            {cleanArText(`تشكيل أطر حوكمة وضمان جودة منضبطة لبعد «${topOpportunities[1]?.label || ""}» يضمنان منهجية متسقة وسلامة دليلات الرقابة واتساق تنفيذ معايير المراجعة`)}
-                        </ArabicText>
+                        <View style={arStyles.listItem} wrap={false}>
+                            <ArabicText style={arStyles.bullet}>•</ArabicText>
+                            <ArabicText style={{ fontSize: 9, lineHeight: 1.45 }}>
+                                {cleanArText(`تشكيل أطر حوكمة وضمان جودة منضبطة لبعد «${topOpportunities[1]?.label || ""}» يضمنان منهجية متسقة وسلامة دليلات الرقابة واتساق تنفيذ معايير المراجعة`)}
+                            </ArabicText>
+                        </View>
                     </View>
                 </View>
 
-                <View style={arStyles.p3PhaseDivider} />
-
-                <View style={arStyles.p3PhaseBlock} wrap={false}>
-                    <ArabicText style={arStyles.p3PhaseHeading}>
+                <View style={arStyles.roadmapSection} wrap={false}>
+                    <ArabicText style={arStyles.roadmapTitle}>
                         المرحلة الثالثة: التشغيل طويل المدى — من ٩٠ إلى ١٨٠ يوماً
                     </ArabicText>
-                    <View style={arStyles.p3PhaseBody}>
+                    <View style={arStyles.roadmapBody}>
                         {recsAr.slice(2, 3).map((r, i) => (
-                            <ArabicText key={i} style={arStyles.p3RecParagraph}>
-                                {cleanArText(r)}
-                            </ArabicText>
+                            <View key={i} style={arStyles.listItem} wrap={false}>
+                                <ArabicText style={arStyles.bullet}>•</ArabicText>
+                                <ArabicText style={{ fontSize: 9, lineHeight: 1.45 }}>
+                                    {cleanArText(r)}
+                                </ArabicText>
+                            </View>
                         ))}
-                        <ArabicText style={arStyles.p3RecParagraph}>
-                            {cleanArText(`إدماج قدرات بعد «${topStrengths[0]?.label || ""}» في نموذج تشغيل المراجعة الداخلية الأوسع لدفع تغطية تأكيدية متكاملة وقيمة رؤى مخاطر إضافية للجنة المراجعة`)}
+                        <View style={arStyles.listItem} wrap={false}>
+                            <ArabicText style={arStyles.bullet}>•</ArabicText>
+                            <ArabicText style={{ fontSize: 9, lineHeight: 1.45 }}>
+                                {cleanArText(`إدماج قدرات بعد «${topStrengths[0]?.label || ""}» في نموذج تشغيل المراجعة الداخلية الأوسع لدفع تغطية تأكيدية متكاملة وقيمة رؤى مخاطر إضافية للجنة المراجعة`)}
+                            </ArabicText>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={arStyles.preparedByRow}>
+                    <View>
+                        <ArabicText style={arStyles.metaLabelSmall}>تم الإعداد من قبل</ArabicText>
+                        <ArabicText style={arStyles.metaValueSmall}>
+                            ترينت — متخصصو المراجعة الداخلية
+                        </ArabicText>
+                    </View>
+                    <View>
+                        <ArabicText style={arStyles.metaLabelSmall}>إطار التقييم</ArabicText>
+                        <ArabicText style={arStyles.metaValueSmall}>
+                            إطار ترينت لنضج المراجعة الداخلية
                         </ArabicText>
                     </View>
                 </View>
 
-                {/* 3. BOTTOM FOOTER AREA */}
-                <View style={arStyles.p3FooterContainer}>
-                    <View style={arStyles.p3FooterRule} />
-                    <View style={arStyles.p3FooterRow}>
-                        <View>
-                            <ArabicText style={arStyles.p3FooterLabel}>تم الإعداد من قبل</ArabicText>
-                            <ArabicText style={arStyles.p3FooterValue}>
-                                ترينت — متخصصو المراجعة الداخلية
-                            </ArabicText>
-                        </View>
-                        <View>
-                            <ArabicText style={arStyles.p3FooterLabel}>إطار التقييم</ArabicText>
-                            <ArabicText style={arStyles.p3FooterValue}>
-                                إطار ترينت لنضج المراجعة الداخلية
-                            </ArabicText>
-                        </View>
-                    </View>
+                <ArabicText style={arStyles.confidentiality}>
+                    يحتوي هذا التقرير على معلومات حصرية وسرية. تستند جميع التقييمات والتوصيات إلى إطار ترينت لنضج المراجعة الداخلية وتخضع لشروط وأحكام تعاقد الخدمة.
+                </ArabicText>
 
-                    <ArabicText style={arStyles.p3Confidentiality}>
-                        يحتوي هذا التقرير على معلومات حصرية وسرية. تستند جميع التقييمات والتوصيات إلى إطار ترينت لنضج المراجعة الداخلية وتخضع لشروط وأحكام تعاقد الخدمة.
-                    </ArabicText>
-
-                    <ArabicText
-                        style={arStyles.p3PageNumber}
-                        render={({ pageNumber, totalPages }: any) => `صفحة ${pageNumber} من ${totalPages}`}
-                    />
-                </View>
+                <PageFooterArabicClean />
             </Page>
         </Document>
     );

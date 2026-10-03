@@ -12,9 +12,9 @@ export type CompanySize = (typeof COMPANY_SIZES)[number];
 
 // Pretty labels for UI display only — the actual stored/sent value stays plain (COMPANY_SIZES above).
 export const COMPANY_SIZE_LABELS: Record<CompanySize, string> = {
-  "1-10": "1 – 10",
-  "11-50": "11 – 50",
-  "51-200": "51 – 200",
-  "201-1000": "201 – 1,000",
-  "1000+": "1,000+",
+  "1-10": "1 – 10 employees",
+  "11-50": "11 – 50 employees",
+  "51-200": "51 – 200 employees",
+  "201-1000": "201 – 1,000 employees",
+  "1000+": "1,000+ employees",
 };

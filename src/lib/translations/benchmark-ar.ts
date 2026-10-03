@@ -321,16 +321,16 @@ export function translateIndustryToArabic(enIndustry: string): string {
 }
 
 export const COMPANY_SIZE_ARABIC_LABELS: Record<string, string> = {
-  "1-10": "١ – ١٠",
-  "11-50": "١١ – ٥٠",
-  "51-200": "٥١ – ٢٠٠",
-  "201-1000": "٢٠١ – ١٠٠٠",
-  "1000+": "١٠٠٠+",
-  "1-10 employees": "١ – ١٠",
-  "11-50 employees": "١١ – ٥٠",
-  "51-200 employees": "٥١ – ٢٠٠",
-  "201-1000 employees": "٢٠١ – ١٠٠٠",
-  "1000+ employees": "١٠٠٠+",
+  "1-10": "١ – ١٠ موظفين",
+  "11-50": "١١ – ٥٠ موظف",
+  "51-200": "٥١ – ٢٠٠ موظف",
+  "201-1000": "٢٠١ – ١٠٠٠ موظف",
+  "1000+": "١٠٠٠+ موظف",
+  "1-10 employees": "١ – ١٠ موظفين",
+  "11-50 employees": "١١ – ٥٠ موظف",
+  "51-200 employees": "٥١ – ٢٠٠ موظف",
+  "201-1000 employees": "٢٠١ – ١٠٠٠ موظف",
+  "1000+ employees": "١٠٠٠+ موظف",
 };
 
 export const BENCHMARK_ARABIC_QUIZ_UI = {

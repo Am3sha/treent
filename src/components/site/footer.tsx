@@ -215,7 +215,7 @@ export function Footer() {
                     key={label}
                     href={href}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     aria-label={label}
                     initial={{ opacity: 1, backgroundColor: "transparent", color: "rgba(255,255,255,0.65)", scale: 1, y: 0, borderColor: "rgba(255,255,255,0.15)" }}
                     whileHover={socialHover}

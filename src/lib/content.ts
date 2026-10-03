@@ -35,7 +35,7 @@ export const COMPANY = {
     { city: "Riyadh", country: "Saudi Arabia", flag: "SA" },
   ],
   social: {
-    linkedin: "https://linkedin.com",
+    linkedin: "https://www.linkedin.com/company/trennt/",
     twitter: "https://x.com",
 
   },
